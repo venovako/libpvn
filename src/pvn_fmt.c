@@ -1,5 +1,28 @@
 #include "pvn.h"
 
+#ifdef PVN_TEST
+int main(int argc, char *argv[])
+{
+  if (argc != 3) {
+    fprintf(stderr, "%s size_t long_double\n", argv[0]);
+    return EXIT_FAILURE;
+  }
+
+  (void)printf("size_t=%zu\n", pvn_atoz(argv[1]));
+
+  char *e = (char*)NULL;
+  const long double ld = strtold(argv[2], &e);
+  if (!e || *e)
+    return EXIT_FAILURE;
+
+  char s[46u];
+  (void)printf("long double=%s\n", pvn_xtoa(s, ld));
+  (void)printf("double=%s\n", pvn_dtoa(s, (double)ld));
+  (void)printf("float=%s\n", pvn_stoa(s, (float)ld));
+
+  return EXIT_SUCCESS;
+}
+#else /* !PVN_TEST */
 size_t pvn_atoz(const char *const s)
 {
   char *e = (char*)NULL;
@@ -115,3 +138,4 @@ char *pvn_xtoa(char *const s, const long double x)
   }
   return s;
 }
+#endif /* ?PVN_TEST */

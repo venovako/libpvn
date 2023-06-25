@@ -1,5 +1,18 @@
 #include "pvn.h"
 
+#ifdef PVN_TEST
+int main(int argc, char *argv[])
+{
+  pvn_lock_t lock;
+  pvn_lock_init(&lock, true);
+  (void)printf("1st   lock = %d\n", pvn_lock(&lock));
+  (void)printf("2nd   lock = %d\n", pvn_lock(&lock));
+  (void)printf("1st unlock = %d\n", pvn_unlock(&lock));
+  (void)printf("3rd   lock = %d\n", pvn_lock(&lock));
+  pvn_lock_destroy(&lock);
+  return EXIT_SUCCESS;
+}
+#else /* !PVN_TEST */
 void pvn_lock_init(pvn_lock_t *const lock, const bool recursive)
 {
   PVN_SYSP_CALL(lock);
@@ -84,3 +97,4 @@ sig_atomic_t pvn_unlock(pvn_lock_t *const lock)
   }
   return (lock->count);
 }
+#endif /* ?PVN_TEST */

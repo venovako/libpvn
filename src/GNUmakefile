@@ -6,16 +6,19 @@ COMPILER=gcc
 endif # !COMPILER
 include $(COMPILER).mk
 
-OBJS=     \
-pvn_fmt.o \
-pvn_lock.o
+SRCS=     \
+pvn_bmp.c \
+pvn_fmt.c \
+pvn_lock.c
+OBJS=$(SRCS:.c=.o)
+EXES=$(SRCS:.c=.exe)
 
 .PHONY: all help clean
 
-all: libpvn.a
+all: libpvn.a $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=gcc|icx|clang] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [CFLAGS_SUFFIX=...] [NDEBUG=0|1|2|3|...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=gcc|clang|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [CFLAGS_SUFFIX=...] [NDEBUG=0|1|2|3|...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
@@ -23,7 +26,12 @@ libpvn.a: $(OBJS)
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+%.exe : %.c
+	$(CC) $(CFLAGS) -DPVN_TEST $< -o $@ -L. -lpvn $(LDFLAGS)
+
 clean:
+	-$(RM) $(EXES)
 	-$(RM) libpvn.a
 	-$(RM) $(OBJS)
-	-$(RM) $(OBJS:.o=.opt.yaml)
+	-$(RM) *.opt.yaml
+	-$(RM) *.dSYM
