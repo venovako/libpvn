@@ -1,0 +1,79 @@
+#ifndef PVN_ERROR_H
+#define PVN_ERROR_H
+
+#ifndef PVN_H
+#error pvn_error.h not intended for direct inclusion
+#endif /* !PVN_H */
+
+#ifndef PVN_BTRACE_BUFSIZ
+#define PVN_BTRACE_BUFSIZ 128
+#else /* PVN_BTRACE_BUFSIZ */
+#error PVN_BTRACE_BUFSIZ already defined
+#endif /* ?PVN_BTRACE_BUFSIZ */
+
+#ifndef PVN_BTRACE
+#define PVN_BTRACE {                                        \
+    void* buffer[PVN_BTRACE_BUFSIZ];                        \
+    const int bsz = backtrace(buffer, (PVN_BTRACE_BUFSIZ)); \
+    if (bsz > 0) {                                          \
+      backtrace_symbols_fd(buffer, bsz, STDERR_FILENO);     \
+      (void)fsync(STDERR_FILENO);                           \
+    }                                                       \
+  }
+#else /* PVN_BTRACE */
+#error PVN_BTRACE already defined
+#endif /* ?PVN_BTRACE */
+
+#ifndef PVN_STOP
+#ifdef _OPENMP
+#define PVN_STOP(msg) {                                         \
+    if (msg)                                                    \
+      (void)fprintf(stderr, "\n%s(%d) in thread %d (%p): %s\n", \
+                    __FILE__, __LINE__, omp_get_thread_num(),   \
+                    (const void*)pthread_self(), (msg));        \
+    else                                                        \
+      (void)fprintf(stderr, "\n%s(%d) in thread %d (%p):\n",    \
+                    __FILE__, __LINE__, omp_get_thread_num(),   \
+                    (const void*)pthread_self());               \
+    (void)fflush(stderr);                                       \
+    PVN_BTRACE;                                                 \
+    exit(EXIT_FAILURE);                                         \
+  }
+#else /* !_OPENMP */
+#define PVN_STOP(msg) {                                         \
+    if (msg)                                                    \
+      (void)fprintf(stderr, "\n%s(%d) in thread (%p): %s\n",    \
+                    __FILE__, __LINE__,                         \
+                    (const void*)pthread_self(), (msg));        \
+    else                                                        \
+      (void)fprintf(stderr, "\n%s(%d) in thread (%p):\n",       \
+                    __FILE__, __LINE__,                         \
+                    (const void*)pthread_self());               \
+    (void)fflush(stderr);                                       \
+    PVN_BTRACE;                                                 \
+    exit(EXIT_FAILURE);                                         \
+  }
+#endif /* ?_OPENMP */
+#else /* PVN_STOP */
+#error PVN_STOP already defined
+#endif /* ?PVN_STOP */
+
+#ifndef PVN_SYSI_CALL
+#define PVN_SYSI_CALL(call) {    \
+    if (0 != (int)(call))        \
+      PVN_STOP(strerror(errno)); \
+  }
+#else /* PVN_SYSI_CALL */
+#error PVN_SYSI_CALL already defined
+#endif /* ?PVN_SYSI_CALL */
+
+#ifndef PVN_SYSP_CALL
+#define PVN_SYSP_CALL(call) {        \
+    if (NULL == (const void*)(call)) \
+      PVN_STOP(strerror(errno));     \
+  }
+#else /* PVN_SYSP_CALL */
+#error PVN_SYSP_CALL already defined
+#endif /* ?PVN_SYSP_CALL */
+
+#endif /* !PVN_ERROR_H */

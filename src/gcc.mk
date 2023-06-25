@@ -1,0 +1,17 @@
+ARFLAGS=rsv
+CC=$(COMPILER_PREFIX)gcc$(COMPILER_SUFFIX)
+CFLAGS=-std=gnu18 -fPIC -fexceptions -ffp-contract=fast -fopenmp
+ifeq ($(ARCH),ppc64le)
+CFLAGS += -mcpu=native -mtraceback=full
+else # !ppc64le
+CFLAGS += -march=native
+endif # ?ppc64le
+ifdef NDEBUG
+CFLAGS += -DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -fopt-info-optimized-vec -fvect-cost-model=unlimited
+else # DEBUG
+CFLAGS += -Og -ggdb -ftrapv
+endif # ?NDEBUG
+ifdef CFLAGS_SUFFIX
+CFLAGS += $(CFLAGS_SUFFIX)
+endif # CFLAGS_SUFFIX
+LDFLAGS=-rdynamic
