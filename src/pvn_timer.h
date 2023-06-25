@@ -5,6 +5,16 @@
 #error pvn_timer.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+#ifndef PVN_CLOCK_MONOTONIC
+#ifdef CLOCK_MONOTONIC_RAW
+#define PVN_CLOCK_MONOTONIC CLOCK_MONOTONIC_RAW
+#else /* !CLOCK_MONOTONIC_RAW */
+#define PVN_CLOCK_MONOTONIC CLOCK_MONOTONIC
+#endif /* ?CLOCK_MONOTONIC_RAW */
+#else /* PVN_CLOCK_MONOTONIC */
+#error PVN_CLOCK_MONOTONIC already defined
+#endif /* ?PVN_CLOCK_MONOTONIC */
+
 static inline long pvn_t2ns(const struct timespec tp[static 1])
 {
   return (tp->tv_sec * 1000000000L + tp->tv_nsec);
@@ -40,7 +50,7 @@ static inline long pvn_time_thread_ns()
 static inline long pvn_time_sys_ns()
 {
   struct timespec t;
-  return (clock_gettime(CLOCK_MONOTONIC_RAW, &t) ? -1L : pvn_t2ns(&t));
+  return (clock_gettime(PVN_CLOCK_MONOTONIC, &t) ? -1L : pvn_t2ns(&t));
 }
 
 static inline long pvn_time_sys_us()
