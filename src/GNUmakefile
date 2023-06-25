@@ -1,4 +1,3 @@
-SHELL=/bin/bash
 OS=$(shell uname)
 ARCH=$(shell uname -m)
 RM=rm -rfv

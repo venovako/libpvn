@@ -1,11 +1,11 @@
 ARFLAGS=rsv
 CC=$(COMPILER_PREFIX)clang$(COMPILER_SUFFIX)
 CFLAGS=-std=gnu17 -fPIC -fexceptions -ffp-contract=fast -march=native
-ifeq ($(OS),Darwin)
-CFLAGS += -fopenmp-simd
-else # Linux
+ifeq ($(OS),Linux)
 CFLAGS += -fopenmp
-endif # ?Darwin
+else # !Linux
+CFLAGS += -fopenmp-simd
+endif # ?Linux
 ifdef NDEBUG
 CFLAGS += -DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno
 else # DEBUG
