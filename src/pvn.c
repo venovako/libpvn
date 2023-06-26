@@ -3,7 +3,7 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  (void)printf("libpvn built on %s ", __DATE__);
+  (void)printf("libpvn built on %s for %s on %s ", __DATE__, PVN_OS, PVN_ARCH);
 #ifdef NDEBUG
   (void)printf("with optimization level %d\n", NDEBUG);
 #else /* !NDEBUG */
