@@ -5,7 +5,7 @@ ifndef COMPILER
 COMPILER=gcc
 endif # !COMPILER
 include $(COMPILER).mk
-CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\""
+CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 
 SRCS=pvn.c  \
 pvn_bmp.c   \

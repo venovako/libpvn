@@ -14,4 +14,4 @@ endif # ?ppc64le
 ifdef CFLAGS_SUFFIX
 CFLAGS += $(CFLAGS_SUFFIX)
 endif # CFLAGS_SUFFIX
-LDFLAGS=-rdynamic
+LDFLAGS=-rdynamic -lm

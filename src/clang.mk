@@ -18,7 +18,4 @@ endif # ?Linux
 ifdef CFLAGS_SUFFIX
 CFLAGS += $(CFLAGS_SUFFIX)
 endif # CFLAGS_SUFFIX
-LDFLAGS=-rdynamic
-ifeq ($(ARCH),ppc64le)
-LDFLAGS += -lm
-endif # ppc64le
+LDFLAGS=-rdynamic -lm
