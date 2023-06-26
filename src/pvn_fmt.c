@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  (void)printf("size_t=%zu\n", pvn_atoz(argv[1]));
+  (void)printf("size_t     =%zu\n", pvn_atoz(argv[1]));
 
   char *e = (char*)NULL;
   const long double ld = strtold(argv[2], &e);
@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
 
   char s[46u];
   (void)printf("long double=%s\n", pvn_xtoa(s, ld));
-  (void)printf("double=%s\n", pvn_dtoa(s, (double)ld));
-  (void)printf("float=%s\n", pvn_stoa(s, (float)ld));
+  (void)printf("double     =%s\n", pvn_dtoa(s, (double)ld));
+  (void)printf("float      =%s\n", pvn_stoa(s, (float)ld));
 
   return EXIT_SUCCESS;
 }
