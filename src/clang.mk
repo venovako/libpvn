@@ -5,7 +5,7 @@ CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno
 else # DEBUG
 CFLAGS=-Og -g -ftrapv
 endif # ?NDEBUG
-CFLAGS += -std=gnu17 -fPIC -fexceptions -ffp-contract=fast -march=native
+CFLAGS += -std=gnu17 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -march=native
 ifeq ($(OS),Linux)
 CFLAGS += -fopenmp
 else # !Linux

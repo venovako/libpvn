@@ -83,8 +83,8 @@
 #error PVN_EXTERN_C already defined
 #endif /* ?PVN_EXTERN_C */
 
-#include "pvn_error.h"
 #include "pvn_bmp.h"
+#include "pvn_error.h"
 #include "pvn_fmt.h"
 #include "pvn_lock.h"
 #include "pvn_timer.h"

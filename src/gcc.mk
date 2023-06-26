@@ -5,7 +5,7 @@ CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -fopt-info-optimized-vec -
 else # DEBUG
 CFLAGS=-Og -ggdb -ftrapv
 endif # ?NDEBUG
-CFLAGS += -std=gnu18 -fPIC -fexceptions -ffp-contract=fast -fopenmp
+CFLAGS += -std=gnu18 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -fopenmp
 ifeq ($(ARCH),ppc64le)
 CFLAGS += -mcpu=native -mtraceback=full
 else # !ppc64le

@@ -6,10 +6,12 @@ COMPILER=gcc
 endif # !COMPILER
 include $(COMPILER).mk
 
-SRCS=     \
-pvn_bmp.c \
-pvn_fmt.c \
-pvn_lock.c
+SRCS=pvn.c  \
+pvn_bmp.c   \
+pvn_error.c \
+pvn_fmt.c   \
+pvn_lock.c  \
+pvn_timer.c
 OBJS=$(SRCS:.c=.o)
 EXES=$(SRCS:.c=.exe)
 
