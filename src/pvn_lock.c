@@ -5,10 +5,10 @@ int main(int argc, char *argv[])
 {
   pvn_lock_t lock;
   pvn_lock_init(&lock, true);
-  (void)printf("1st   lock = %d\n", pvn_lock(&lock));
-  (void)printf("2nd   lock = %d\n", pvn_lock(&lock));
-  (void)printf("1st unlock = %d\n", pvn_unlock(&lock));
-  (void)printf("3rd   lock = %d\n", pvn_lock(&lock));
+  (void)printf("1st   lock = %ld\n", (long)pvn_lock(&lock));
+  (void)printf("2nd   lock = %ld\n", (long)pvn_lock(&lock));
+  (void)printf("1st unlock = %ld\n", (long)pvn_unlock(&lock));
+  (void)printf("3rd   lock = %ld\n", (long)pvn_lock(&lock));
   pvn_lock_destroy(&lock);
   return EXIT_SUCCESS;
 }

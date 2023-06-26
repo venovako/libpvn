@@ -10,20 +10,22 @@ The library has been successfully compiled using:
 | -------- | ------- | -------- |
 | clang(1) | Darwin  | x86_64   |
 | clang(2) | Linux   | ppc64le  |
-| clang(3) | OpenBSD | x86_64   |
-| gcc(4)   | Darwin  | x86_64   |
-| gcc(5)   | Linux   | ppc64le  |
-| gcc(6)   | Linux   | x86_64   |
-| icx(7)   | Linux   | x86_64   |
-| nvc(8)   | Linux   | ppc64le  |
-| nvc(8)   | Linux   | x86_64   |
+| clang(3) | FreeBSD | amd64    |
+| clang(4) | OpenBSD | amd64    |
+| gcc(5)   | Darwin  | x86_64   |
+| gcc(6)   | Linux   | ppc64le  |
+| gcc(7)   | Linux   | x86_64   |
+| icx(8)   | Linux   | x86_64   |
+| nvc(9)   | Linux   | ppc64le  |
+| nvc(9)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been povided by:
 1. Apple,
 2. IBM Open XL C/C++,
-3. OpenBSD,
-4. Homebrew,
-5. openSUSE,
-6. Oracle Linux,
-7. Intel oneAPI,
-8. NVIDIA HPC SDK.
+3. FreeBSD,
+4. OpenBSD,
+5. Homebrew,
+6. openSUSE,
+7. Oracle Linux,
+8. Intel oneAPI,
+9. NVIDIA HPC SDK.
