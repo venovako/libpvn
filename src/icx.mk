@@ -10,7 +10,7 @@ CFLAGS += -std=gnu18 -fPIC -fexceptions -fp-model precise -fprotect-parens -fma 
 ifdef CFLAGS_SUFFIX
 CFLAGS += $(CFLAGS_SUFFIX)
 endif # CFLAGS_SUFFIX
-LDFLAGS=-rdynamic -lm
+LDFLAGS=-rdynamic -ldl -lm -lpthread
 ifeq ($(OS),Linux)
 LDFLAGS += -static-libgcc
 endif # Linux

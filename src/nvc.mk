@@ -9,4 +9,4 @@ CFLAGS += -mp -KPIC -Mframe -Meh_frame -Minfo -Mlarge_arrays -Mstack_arrays -Kie
 ifdef CFLAGS_SUFFIX
 CFLAGS += $(CFLAGS_SUFFIX)
 endif # CFLAGS_SUFFIX
-LDFLAGS=-Wl,-export-dynamic -lm
+LDFLAGS=-Wl,-export-dynamic -ldl -lm -lpthread
