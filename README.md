@@ -32,8 +32,19 @@ Recent versions of the compilers have been povided by:
 
 Examples of building the library:
 ```bash
+cd src
+# query the building options (GNU make is necessary)
+make help
+# the output should be something like:
+# make [COMPILER=gcc|clang|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [all|clean|help]
+# where gcc is the default compiler to be used on Linux, and clang is otherwise
+#
 # non-debug build with icx on x86_64
 make COMPILER=icx NDEBUG=3 clean all
+#
 # debug build with clang on ppc64le
 make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
+#
+# debug build with clang on Free/OpenBSD (note the usage of gmake instead of make)
+gmake clean all
 ```

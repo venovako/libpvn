@@ -2,7 +2,11 @@ OS=$(shell uname)
 ARCH=$(shell uname -m)
 RM=rm -rfv
 ifndef COMPILER
+ifeq ($(OS),Linux)
 COMPILER=gcc
+else # !Linux
+COMPILER=clang
+endif # ?Linux
 endif # !COMPILER
 include $(COMPILER).mk
 CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
