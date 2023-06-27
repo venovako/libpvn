@@ -15,6 +15,7 @@ SRCS=pvn.c  \
 pvn_bmp.c   \
 pvn_error.c \
 pvn_fmt.c   \
+pvn_mem.c   \
 pvn_lock.c  \
 pvn_timer.c
 OBJS=$(SRCS:.c=.o)
