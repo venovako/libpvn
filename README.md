@@ -29,3 +29,11 @@ Recent versions of the compilers have been povided by:
 7. Oracle Linux,
 8. Intel oneAPI,
 9. NVIDIA HPC SDK.
+
+Examples of building the library:
+```bash
+# non-debug build with icx on x86_64
+make COMPILER=icx NDEBUG=3 clean all
+# debug build with clang on ppc64le
+make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
+```

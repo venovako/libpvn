@@ -11,7 +11,10 @@ CFLAGS += -mcpu=native -mtraceback=full
 else # !ppc64le
 CFLAGS += -march=native
 endif # ?ppc64le
-ifdef CFLAGS_SUFFIX
-CFLAGS += $(CFLAGS_SUFFIX)
-endif # CFLAGS_SUFFIX
-LDFLAGS=-rdynamic -ldl -lm
+LDFLAGS=-rdynamic
+ifeq ($(findstring BSD,$(OS)),BSD)
+LDFLAGS += -lexecinfo
+else # !BSD
+LDFLAGS += -ldl
+endif # ?BSD
+LDFLAGS += -lm

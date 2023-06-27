@@ -6,9 +6,6 @@ else # DEBUG
 CFLAGS=-Og -g -ftrapv
 endif # ?NDEBUG
 CFLAGS += -std=gnu17 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread -march=native
-ifdef CFLAGS_SUFFIX
-CFLAGS += $(CFLAGS_SUFFIX)
-endif # CFLAGS_SUFFIX
 LDFLAGS=-rdynamic
 ifeq ($(findstring BSD,$(OS)),BSD)
 LDFLAGS += -lexecinfo

@@ -7,9 +7,6 @@ else # DEBUG
 CFLAGS=-O0 -g -debug extended -debug inline-debug-info -debug pubnames -debug parallel -ftrapv
 endif # ?NDEBUG
 CFLAGS += -std=gnu18 -fPIC -fexceptions -fp-model precise -fprotect-parens -fma -no-ftz -qopenmp -pthread -fno-omit-frame-pointer -traceback -xHost
-ifdef CFLAGS_SUFFIX
-CFLAGS += $(CFLAGS_SUFFIX)
-endif # CFLAGS_SUFFIX
 LDFLAGS=-rdynamic -ldl -lm
 ifeq ($(OS),Linux)
 LDFLAGS += -static-libgcc
