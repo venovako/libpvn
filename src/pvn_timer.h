@@ -15,14 +15,14 @@
 #error PVN_CLOCK_MONOTONIC already defined
 #endif /* ?PVN_CLOCK_MONOTONIC */
 
-static inline long pvn_t2ns(const struct timespec tp[static 1])
+static inline long pvn_t2ns(const struct timespec *const tp)
 {
-  return (tp->tv_sec * 1000000000L + tp->tv_nsec);
+  return (tp ? (tp->tv_sec * 1000000000L + tp->tv_nsec) : -1L);
 }
 
-static inline long pvn_t2us(const struct timeval tp[static 1])
+static inline long pvn_t2us(const struct timeval *const tp)
 {
-  return (tp->tv_sec * 1000000L + tp->tv_usec);
+  return (tp ? (tp->tv_sec * 1000000L + tp->tv_usec) : -1L);
 }
 
 static inline long pvn_ns2us(const long ns)
