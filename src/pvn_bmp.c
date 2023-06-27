@@ -52,8 +52,6 @@ int main(int argc, char *argv[])
 #else /* !PVN_TEST */
 int pvn_bmp_create(pvn_bmp_t *const bmp, const uint32_t width, const int32_t height, const uint16_t bpp)
 {
-  static const uint32_t size_headers = (uint32_t)sizeof(pvn_bmp_header_t);
-
   void *hdr_end;
   uint32_t c_palette;
   uint32_t size_palette;
@@ -87,7 +85,7 @@ int pvn_bmp_create(pvn_bmp_t *const bmp, const uint32_t width, const int32_t hei
   }
 
   size_palette = c_palette * (uint32_t)sizeof(pvn_bmp_palette_entry_t);
-  size_prolog = 2u /* BM */ + size_headers + size_palette + 2u /* GAP1 */;
+  size_prolog = 2u /* BM */ + (uint32_t)sizeof(pvn_bmp_header_t) + size_palette + 2u /* GAP1 */;
 
   lda = (width * bpp + 31u) >> 5u;
   size_pixel_row = lda * (uint32_t)sizeof(uint32_t);
@@ -96,7 +94,7 @@ int pvn_bmp_create(pvn_bmp_t *const bmp, const uint32_t width, const int32_t hei
 
   PVN_SYSP_CALL(*bmp = (pvn_bmp_t)calloc((size_t)((size_file >> 2u) + 6u), sizeof(uint32_t)));
 
-  hdr_end = (void*)((uint8_t*)&((*bmp)->header) + size_headers);
+  hdr_end = (void*)((uint8_t*)&((*bmp)->header) + sizeof(pvn_bmp_header_t));
   (*bmp)->palette = (pvn_bmp_palette_entry_t*)(c_palette ? hdr_end : NULL);
   (*bmp)->image = (uint8_t*)(c_palette ? (void*)((uint8_t*)((*bmp)->palette) + size_palette) : hdr_end);
 
