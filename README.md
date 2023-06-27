@@ -8,16 +8,16 @@ Some functions have been adapted from those in the repository [JACSD](https://gi
 The library has been successfully compiled using:
 | compiler | `uname` | platform |
 | -------- | ------- | -------- |
-| clang(1) | Darwin  | x86_64   |
-| clang(2) | Linux   | ppc64le  |
-| clang(3) | FreeBSD | amd64    |
-| clang(4) | OpenBSD | amd64    |
-| gcc(5)   | Darwin  | x86_64   |
-| gcc(6)   | Linux   | ppc64le  |
-| gcc(7)   | Linux   | x86_64   |
-| icx(8)   | Linux   | x86_64   |
-| nvc(9)   | Linux   | ppc64le  |
-| nvc(9)   | Linux   | x86_64   |
+| clang^1^ | Darwin  | x86_64   |
+| clang^2^ | Linux   | ppc64le  |
+| clang^3^ | FreeBSD | amd64    |
+| clang^4^ | OpenBSD | amd64    |
+| gcc^5^   | Darwin  | x86_64   |
+| gcc^6^   | Linux   | ppc64le  |
+| gcc^7^   | Linux   | x86_64   |
+| icx^8^   | Linux   | x86_64   |
+| nvc^9^   | Linux   | ppc64le  |
+| nvc^9^   | Linux   | x86_64   |
 
 Recent versions of the compilers have been povided by:
 1. Apple,
