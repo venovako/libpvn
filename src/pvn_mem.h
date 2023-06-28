@@ -20,10 +20,16 @@
 #endif /* !PVN_VECLEN */
 
 #ifndef PVN_SAFELEN
-#define PVN_SAFELEN(x) (PVN_VECLEN / sizeof(x))
+#define PVN_SAFELEN(x) ((PVN_VECLEN) / sizeof(x))
 #else /* PVN_SAFELEN */
 #error PVN_SAFELEN already defined
 #endif /* ?PVN_SAFELEN */
+
+#ifndef PVN_NOT_VECALIGNED
+#define PVN_NOT_VECALIGNED(x) ((uintptr_t)(x) & ((PVN_VECLEN) - 1u))
+#else /* PVN_NOT_VECALIGNED */
+#error PVN_NOT_VECALIGNED already defined
+#endif /* ?PVN_NOT_VECALIGNED */
 
 static inline size_t pvn_zmin(const size_t a, const size_t b)
 {
