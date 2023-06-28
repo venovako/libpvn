@@ -115,7 +115,8 @@ int pvn_bmp_create(pvn_bmp_t *const bmp, const uint32_t width, const int32_t hei
 
 void pvn_bmp_destroy(const pvn_bmp_t bmp)
 {
-  free(bmp);
+  if (bmp)
+    free(bmp);
 }
 
 int pvn_bmp_set_palette_color(const pvn_bmp_t bmp, const uint32_t ix, const uint32_t c)
@@ -165,10 +166,7 @@ static void bmp_set_pixel_04(const pvn_bmp_t bmp, const uint32_t x, const uint32
   uint8_t *const row = bmp->image + y * bmp->i_ldaB;
   const uint32_t ix = x >> 1u;
   const uint32_t byte = (uint32_t)(row[ix]);
-  if (x & 1u)
-    row[ix] = (uint8_t)((byte & 0xF0u) | c);
-  else
-    row[ix] = (uint8_t)((byte & 0x0Fu) | (c << 4u));
+  row[ix] = (uint8_t)((x & 1u) ? ((byte & 0xF0u) | c) : ((byte & 0x0Fu) | (c << 4u)));
 }
 
 static void bmp_set_pixel_04_c(const pvn_bmp_t bmp, const uint32_t x, const uint32_t y, const uint32_t c)
@@ -225,7 +223,7 @@ static uint32_t bmp_get_pixel_01(const pvn_bmp_t bmp, const uint32_t x, const ui
 {
   const uint8_t *const row = bmp->image + y * bmp->i_ldaB;
   const uint32_t ix = x >> 3u;
-  const uint32_t bit_ix = 7u - (x & 3u);
+  const uint32_t bit_ix = 7u - (x & 7u);
   const uint32_t mask = 1u << bit_ix;
   const uint32_t byte = (uint32_t)(row[ix]);
   return ((byte & mask) >> bit_ix);
@@ -241,10 +239,7 @@ static uint32_t bmp_get_pixel_04(const pvn_bmp_t bmp, const uint32_t x, const ui
   const uint8_t *const row = bmp->image + y * bmp->i_ldaB;
   const uint32_t ix = x >> 1u;
   const uint32_t byte = (uint32_t)(row[ix]);
-  if (x & 1u)
-    return (byte & 0x0Fu);
-  else
-    return ((byte & 0xF0u) >> 4u);
+  return ((x & 1u) ? (byte & 0x0Fu) : ((byte & 0xF0u) >> 4u));
 }
 
 static uint32_t bmp_get_pixel_04_c(const pvn_bmp_t bmp, const uint32_t x, const uint32_t y)
