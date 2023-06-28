@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
   (void)printf("PVN_SAFELEN(double) = %zu\n", PVN_SAFELEN(double));
   (void)printf("page size = %zu\n", pvn_pagesize());
   (void)printf("pvn_alignment(10) = %zu\n", pvn_alignment(10u));
+  return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
 size_t pvn_pagesize()

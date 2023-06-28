@@ -20,6 +20,7 @@ pvn_bmp.c   \
 pvn_error.c \
 pvn_fmt.c   \
 pvn_mem.c   \
+pvn_mtx.c   \
 pvn_lock.c  \
 pvn_timer.c
 OBJS=$(SRCS:.c=.o)
@@ -30,7 +31,7 @@ EXES=$(SRCS:.c=.exe)
 all: libpvn.a $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
@@ -45,5 +46,6 @@ clean:
 	-$(RM) $(EXES)
 	-$(RM) libpvn.a
 	-$(RM) $(OBJS)
+	-$(RM) *.optrpt
 	-$(RM) *.opt.yaml
 	-$(RM) *.dSYM
