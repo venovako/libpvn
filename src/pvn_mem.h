@@ -5,6 +5,26 @@
 #error pvn_mem.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+/* imperfect detection of the maximal vector length */
+#ifndef PVN_VECLEN
+#ifdef __AVX512F__
+#define PVN_VECLEN 64u
+#else /* !__AVX512F__ */
+#ifdef __x86_64__
+/* assume AVX */
+#define PVN_VECLEN 32u
+#else /* !__x86_64__ */
+#define PVN_VECLEN 16u
+#endif /* ?__x86_64__ */
+#endif /* ?__AVX512F__ */
+#endif /* !PVN_VECLEN */
+
+#ifndef PVN_SAFELEN
+#define PVN_SAFELEN(x) (PVN_VECLEN / sizeof(x))
+#else /* PVN_SAFELEN */
+#error PVN_SAFELEN already defined
+#endif /* ?PVN_SAFELEN */
+
 static inline size_t pvn_zmin(const size_t a, const size_t b)
 {
   return ((a <= b) ? a : b);
