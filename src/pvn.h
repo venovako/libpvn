@@ -87,6 +87,7 @@
 #include "pvn_error.h"
 #include "pvn_fmt.h"
 #include "pvn_mem.h"
+#include "pvn_mtx.h"
 #include "pvn_lock.h"
 #include "pvn_timer.h"
 
