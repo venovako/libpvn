@@ -5,6 +5,62 @@
 #error pvn_mtx.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+typedef int (*pvn_rop_f)(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB);
+typedef int (*pvn_rop)(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB);
+typedef int (*pvn_rop_l)(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB);
+
+typedef struct {
+  float minB, maxB;
+  pvn_rop_f op;
+  unsigned m, n;
+  float *B;
+  FILE *outB;
+} pvn_rvis_ctx_f;
+
+typedef struct {
+  double minB, maxB;
+  pvn_rop op;
+  unsigned m, n;
+  double *B;
+  FILE *outB;
+} pvn_rvis_ctx;
+
+typedef struct {
+  long double minB, maxB;
+  pvn_rop_l op;
+  unsigned m, n;
+  long double *B;
+  FILE *outB;
+} pvn_rvis_ctx_l;
+
+typedef int (*pvn_cop_f)(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC);
+typedef int (*pvn_cop)(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC);
+typedef int (*pvn_cop_l)(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC);
+
+typedef struct {
+  float minB, maxB, minC, maxC;
+  pvn_cop_f op;
+  unsigned m, n;
+  float *B, *C;
+  FILE *outB, *outC;
+} pvn_cvis_ctx_f;
+
+typedef struct {
+  double minB, maxB, minC, maxC;
+  pvn_cop op;
+  unsigned m, n;
+  double *B, *C;
+  FILE *outB, *outC;
+} pvn_cvis_ctx;
+
+typedef struct {
+  long double minB, maxB, minC, maxC;
+  pvn_cop_l op;
+  unsigned m, n;
+  long double *B, *C;
+  FILE *outB, *outC;
+} pvn_cvis_ctx_l;
+
 static inline unsigned pvn_umin(const unsigned a, const unsigned b)
 {
   return ((a <= b) ? a : b);

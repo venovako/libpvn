@@ -15,6 +15,8 @@ The library has been successfully built using:
 | gcc(5)   | Darwin  | x86_64   |
 | gcc(6)   | Linux   | ppc64le  |
 | gcc(7)   | Linux   | x86_64   |
+| icc(8)   | Darwin  | x86_64   |
+| icc(8)   | Linux   | x86_64   |
 | icx(8)   | Linux   | x86_64   |
 | nvc(9)   | Linux   | ppc64le  |
 | nvc(9)   | Linux   | x86_64   |
