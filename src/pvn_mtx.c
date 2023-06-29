@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB)
+int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -20,22 +20,33 @@ int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict 
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  float mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = A[i + offA];
+    for (unsigned i = 0u; i < m; ++i) {
+      float x = (B[i + offB] = A[i + offA]);
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminf(mB,  x);
+      MB = fminf(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB)
+int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -49,22 +60,33 @@ int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict 
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = A[i + offA];
+    for (unsigned i = 0u; i < m; ++i) {
+      double x = (B[i + offB] = A[i + offA]);
+      if (isnan(x))
+        x = INFINITY;
+      mB = fmin(mB,  x);
+      MB = fmin(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB)
+int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -78,22 +100,33 @@ int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const res
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  long double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = A[i + offA];
+    for (unsigned i = 0u; i < m; ++i) {
+      long double x = (B[i + offB] = A[i + offA]);
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminl(mB,  x);
+      MB = fminl(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB)
+int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -107,22 +140,33 @@ int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  float mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = fabsf(A[i + offA]);
+    for (unsigned i = 0u; i < m; ++i) {
+      float x = (B[i + offB] = fabsf(A[i + offA]));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminf(mB,  x);
+      MB = fminf(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB)
+int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -136,22 +180,33 @@ int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = fabs(A[i + offA]);
+    for (unsigned i = 0u; i < m; ++i) {
+      double x = (B[i + offB] = fabs(A[i + offA]));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fmin(mB,  x);
+      MB = fmin(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB)
+int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -165,22 +220,33 @@ int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const re
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  long double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = fabsl(A[i + offA]);
+    for (unsigned i = 0u; i < m; ++i) {
+      long double x = (B[i + offB] = fabsl(A[i + offA]));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminl(mB,  x);
+      MB = fminl(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB)
+int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -194,22 +260,33 @@ int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restri
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  float mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = log2f(fabsf(A[i + offA]));
+    for (unsigned i = 0u; i < m; ++i) {
+      float x = (B[i + offB] = log2f(fabsf(A[i + offA])));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminf(mB,  x);
+      MB = fminf(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB)
+int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -223,22 +300,33 @@ int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restri
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = log2(fabs(A[i + offA]));
+    for (unsigned i = 0u; i < m; ++i) {
+      double x = (B[i + offB] = log2(fabs(A[i + offA])));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fmin(mB,  x);
+      MB = fmin(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB)
+int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -252,22 +340,33 @@ int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const 
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  long double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = log2l(fabsl(A[i + offA]));
+    for (unsigned i = 0u; i < m; ++i) {
+      long double x = (B[i + offB] = log2l(fabsl(A[i + offA])));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminl(mB,  x);
+      MB = fminl(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB)
+int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -281,22 +380,33 @@ int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restr
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  float mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = log10f(fabsf(A[i + offA]));
+    for (unsigned i = 0u; i < m; ++i) {
+      float x = (B[i + offB] = log10f(fabsf(A[i + offA])));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminf(mB,  x);
+      MB = fminf(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB)
+int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -310,22 +420,33 @@ int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restr
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = log10(fabs(A[i + offA]));
+    for (unsigned i = 0u; i < m; ++i) {
+      double x = (B[i + offB] = log10(fabs(A[i + offA])));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fmin(mB,  x);
+      MB = fmin(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
-int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB)
+int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
     return -1;
@@ -339,18 +460,29 @@ int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const
     return -5;
   if (!ldB)
     return -6;
+  if (!minB)
+    return -7;
+  if (!maxB)
+    return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
+  long double mB = INFINITY, MB = INFINITY;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB)
+#pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
     const size_t offA = j * ldA;
     const size_t offB = j * ldB;
-#pragma omp simd
-    for (unsigned i = 0u; i < m; ++i)
-      B[i + offB] = log10l(fabsl(A[i + offA]));
+    for (unsigned i = 0u; i < m; ++i) {
+      long double x = (B[i + offB] = log10l(fabsl(A[i + offA])));
+      if (isnan(x))
+        x = INFINITY;
+      mB = fminl(mB,  x);
+      MB = fminl(MB, -x);
+    }
   }
+  *minB =  mB;
+  *maxB = -MB;
   return 0;
 }
 
