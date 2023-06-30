@@ -17,6 +17,10 @@
 #error VLA NOT SUPPORTED
 #endif /* ?__STDC_NO_VLA__ */
 
+//#ifndef __LITTLE_ENDIAN__
+//#error NOT A LITTLE ENDIAN SYSTEM
+//#endif /* !__LITTLE_ENDIAN__ */
+
 #if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #include <mathimf.h>
 #else /* !__ICC */

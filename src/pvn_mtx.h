@@ -12,25 +12,25 @@ typedef int (*pvn_rop_l)(const unsigned m, const unsigned n, const long double *
 typedef struct {
   float minB, maxB;
   pvn_rop_f op;
-  unsigned m, n;
   float *B;
-  FILE *outB;
+  unsigned m, n, cnt;
+  int fdB;
 } pvn_rvis_ctx_f;
 
 typedef struct {
   double minB, maxB;
   pvn_rop op;
-  unsigned m, n;
   double *B;
-  FILE *outB;
+  unsigned m, n, cnt;
+  int fdB;
 } pvn_rvis_ctx;
 
 typedef struct {
   long double minB, maxB;
   pvn_rop_l op;
-  unsigned m, n;
   long double *B;
-  FILE *outB;
+  unsigned m, n, cnt;
+  int fdB;
 } pvn_rvis_ctx_l;
 
 typedef int (*pvn_cop_f)(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC);
@@ -40,25 +40,25 @@ typedef int (*pvn_cop_l)(const unsigned m, const unsigned n, const long double c
 typedef struct {
   float minB, maxB, minC, maxC;
   pvn_cop_f op;
-  unsigned m, n;
   float *B, *C;
-  FILE *outB, *outC;
+  unsigned m, n, cnt;
+  int fdB, fdC, err;
 } pvn_cvis_ctx_f;
 
 typedef struct {
   double minB, maxB, minC, maxC;
   pvn_cop op;
-  unsigned m, n;
   double *B, *C;
-  FILE *outB, *outC;
+  unsigned m, n, cnt;
+  int fdB, fdC, err;
 } pvn_cvis_ctx;
 
 typedef struct {
   long double minB, maxB, minC, maxC;
   pvn_cop_l op;
-  unsigned m, n;
   long double *B, *C;
-  FILE *outB, *outC;
+  unsigned m, n, cnt;
+  int fdB, fdC, err;
 } pvn_cvis_ctx_l;
 
 static inline unsigned pvn_umin(const unsigned a, const unsigned b)

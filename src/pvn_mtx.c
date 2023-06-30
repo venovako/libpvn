@@ -708,10 +708,11 @@ int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const 
     }
   }
   *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
   *minC = fminf(*minC,  mC);
   *maxC = fmaxf(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
@@ -765,10 +766,11 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
     }
   }
   *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
+  *maxB = fmax(*maxB, (MB = -MB));
   *minC = fmin(*minC,  mC);
   *maxC = fmax(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
@@ -822,10 +824,11 @@ int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *
     }
   }
   *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
   *minC = fminl(*minC,  mC);
   *maxC = fmaxl(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
@@ -879,10 +882,11 @@ int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *cons
     }
   }
   *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
   *minC = fminf(*minC,  mC);
   *maxC = fmaxf(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
@@ -936,10 +940,11 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
     }
   }
   *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
+  *maxB = fmax(*maxB, (MB = -MB));
   *minC = fmin(*minC,  mC);
   *maxC = fmax(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
@@ -993,10 +998,11 @@ int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex
     }
   }
   *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
   *minC = fminl(*minC,  mC);
   *maxC = fmaxl(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
@@ -1050,10 +1056,11 @@ int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *con
     }
   }
   *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
   *minC = fminf(*minC,  mC);
   *maxC = fmaxf(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
@@ -1107,10 +1114,11 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
     }
   }
   *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
+  *maxB = fmax(*maxB, (MB = -MB));
   *minC = fmin(*minC,  mC);
   *maxC = fmax(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 
 int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
@@ -1164,9 +1172,10 @@ int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double comple
     }
   }
   *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
   *minC = fminl(*minC,  mC);
   *maxC = fmaxl(*maxC, -MC);
-  return 0;
+  /* check for overflow of |z| */
+  return (MB == INFINITY);
 }
 #endif /* ?PVN_TEST */
