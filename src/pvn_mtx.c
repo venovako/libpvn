@@ -6,6 +6,102 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+int pvn_rvis_start_f(pvn_rvis_ctx_f **const ctx, const unsigned m, const unsigned n, const pvn_rop_f op, const char *const fnB)
+{
+  if (!ctx)
+    return -1;
+  if (!m)
+    return -2;
+  if (!n)
+    return -3;
+  if (!op)
+    return -4;
+  if (!fnB)
+    return -5;
+
+  *ctx = (pvn_rvis_ctx_f*)malloc(sizeof(pvn_rvis_ctx_f));
+  PVN_SYSP_CALL(*ctx);
+  (*ctx)->minB =  INFINITY;
+  (*ctx)->maxB = -INFINITY;
+  (*ctx)->op = op;
+  (*ctx)->B = (float*)malloc(m * (n * sizeof(float)));
+  PVN_SYSP_CALL((*ctx)->B);
+  (*ctx)->m = m;
+  (*ctx)->n = n;
+  (*ctx)->cnt = 0u;
+  (*ctx)->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdB);
+  return 0;
+}
+
+int pvn_rvis_start(pvn_rvis_ctx **const ctx, const unsigned m, const unsigned n, const pvn_rop op, const char *const fnB)
+{
+  if (!ctx)
+    return -1;
+  if (!m)
+    return -2;
+  if (!n)
+    return -3;
+  if (!op)
+    return -4;
+  if (!fnB)
+    return -5;
+
+  *ctx = (pvn_rvis_ctx*)malloc(sizeof(pvn_rvis_ctx));
+  PVN_SYSP_CALL(*ctx);
+  (*ctx)->minB =  INFINITY;
+  (*ctx)->maxB = -INFINITY;
+  (*ctx)->op = op;
+  (*ctx)->B = (double*)malloc(m * (n * sizeof(double)));
+  PVN_SYSP_CALL((*ctx)->B);
+  (*ctx)->m = m;
+  (*ctx)->n = n;
+  (*ctx)->cnt = 0u;
+  (*ctx)->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdB);
+  return 0;
+}
+
+int pvn_rvis_start_l(pvn_rvis_ctx_l **const ctx, const unsigned m, const unsigned n, const pvn_rop_l op, const char *const fnB)
+{
+  if (!ctx)
+    return -1;
+  if (!m)
+    return -2;
+  if (!n)
+    return -3;
+  if (!op)
+    return -4;
+  if (!fnB)
+    return -5;
+
+  *ctx = (pvn_rvis_ctx_l*)malloc(sizeof(pvn_rvis_ctx_l));
+  PVN_SYSP_CALL(*ctx);
+  (*ctx)->minB =  INFINITY;
+  (*ctx)->maxB = -INFINITY;
+  (*ctx)->op = op;
+  (*ctx)->B = (long double*)malloc(m * (n * sizeof(long double)));
+  PVN_SYSP_CALL((*ctx)->B);
+  (*ctx)->m = m;
+  (*ctx)->n = n;
+  (*ctx)->cnt = 0u;
+  (*ctx)->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdB);
+  return 0;
+}
+
 int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
   if (!m)
