@@ -26,42 +26,44 @@
 
 #ifndef PVN_STOP
 #ifdef _OPENMP
-#define PVN_STOP(msg) {                                         \
-    if (msg)                                                    \
-      (void)fprintf(stderr, "\n%s(%d) in thread %d (%p): %s\n", \
-                    __FILE__, __LINE__, omp_get_thread_num(),   \
-                    (const void*)pthread_self(), (msg));        \
-    else                                                        \
-      (void)fprintf(stderr, "\n%s(%d) in thread %d (%p):\n",    \
-                    __FILE__, __LINE__, omp_get_thread_num(),   \
-                    (const void*)pthread_self());               \
-    (void)fflush(stderr);                                       \
-    PVN_BTRACE;                                                 \
-    exit(EXIT_FAILURE);                                         \
+#define PVN_STOP(msg) {                                                \
+    if (msg)                                                           \
+      (void)dprintf(STDERR_FILENO, "\n%s(%d) in thread %d (%p): %s\n", \
+                    __FILE__, __LINE__, omp_get_thread_num(),          \
+                    (const void*)pthread_self(), (msg));               \
+    else                                                               \
+      (void)dprintf(STDERR_FILENO, "\n%s(%d) in thread %d (%p):\n",    \
+                    __FILE__, __LINE__, omp_get_thread_num(),          \
+                    (const void*)pthread_self());                      \
+    (void)fsync(STDERR_FILENO);                                        \
+    PVN_BTRACE;                                                        \
+    exit(EXIT_FAILURE);                                                \
   }
 #else /* !_OPENMP */
-#define PVN_STOP(msg) {                                         \
-    if (msg)                                                    \
-      (void)fprintf(stderr, "\n%s(%d) in thread (%p): %s\n",    \
-                    __FILE__, __LINE__,                         \
-                    (const void*)pthread_self(), (msg));        \
-    else                                                        \
-      (void)fprintf(stderr, "\n%s(%d) in thread (%p):\n",       \
-                    __FILE__, __LINE__,                         \
-                    (const void*)pthread_self());               \
-    (void)fflush(stderr);                                       \
-    PVN_BTRACE;                                                 \
-    exit(EXIT_FAILURE);                                         \
+#define PVN_STOP(msg) {                                                \
+    if (msg)                                                           \
+      (void)dprintf(STDERR_FILENO, "\n%s(%d) in thread (%p): %s\n",    \
+                    __FILE__, __LINE__,                                \
+                    (const void*)pthread_self(), (msg));               \
+    else                                                               \
+      (void)dprintf(STDERR_FILENO, "\n%s(%d) in thread (%p):\n",       \
+                    __FILE__, __LINE__,                                \
+                    (const void*)pthread_self());                      \
+    (void)fsync(STDERR_FILENO);                                        \
+    PVN_BTRACE;                                                        \
+    exit(EXIT_FAILURE);                                                \
   }
 #endif /* ?_OPENMP */
 #else /* PVN_STOP */
 #error PVN_STOP already defined
 #endif /* ?PVN_STOP */
 
+PVN_EXTERN_C char *pvn_get_error();
+
 #ifndef PVN_SYSI_CALL
 #define PVN_SYSI_CALL(call) {    \
     if (0 != (int)(call))        \
-      PVN_STOP(strerror(errno)); \
+      PVN_STOP(pvn_get_error()); \
   }
 #else /* PVN_SYSI_CALL */
 #error PVN_SYSI_CALL already defined
@@ -70,7 +72,7 @@
 #ifndef PVN_SYSP_CALL
 #define PVN_SYSP_CALL(call) {        \
     if (NULL == (const void*)(call)) \
-      PVN_STOP(strerror(errno));     \
+      PVN_STOP(pvn_get_error());     \
   }
 #else /* PVN_SYSP_CALL */
 #error PVN_SYSP_CALL already defined
