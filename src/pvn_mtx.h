@@ -75,6 +75,18 @@ PVN_EXTERN_C int pvn_rvis_start_f(pvn_rvis_ctx_f **const ctx, const unsigned m, 
 PVN_EXTERN_C int pvn_rvis_start(pvn_rvis_ctx **const ctx, const unsigned m, const unsigned n, const pvn_rop op, const char *const fnB);
 PVN_EXTERN_C int pvn_rvis_start_l(pvn_rvis_ctx_l **const ctx, const unsigned m, const unsigned n, const pvn_rop_l op, const char *const fnB);
 
+PVN_EXTERN_C int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, const size_t ldA);
+PVN_EXTERN_C int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, const size_t ldA);
+PVN_EXTERN_C int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restrict A, const size_t ldA);
+
+PVN_EXTERN_C int pvn_cvis_start_f(pvn_cvis_ctx_f **const ctx, const unsigned m, const unsigned n, const pvn_cop_f op, const char *const fnB, const char *const fnC);
+PVN_EXTERN_C int pvn_cvis_start(pvn_cvis_ctx **const ctx, const unsigned m, const unsigned n, const pvn_cop op, const char *const fnB, const char *const fnC);
+PVN_EXTERN_C int pvn_cvis_start_l(pvn_cvis_ctx_l **const ctx, const unsigned m, const unsigned n, const pvn_cop_l op, const char *const fnB, const char *const fnC);
+
+PVN_EXTERN_C int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restrict A, const size_t ldA);
+PVN_EXTERN_C int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict A, const size_t ldA);
+PVN_EXTERN_C int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const restrict A, const size_t ldA);
+
 PVN_EXTERN_C int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB);
 PVN_EXTERN_C int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB);
 PVN_EXTERN_C int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB);

@@ -102,6 +102,246 @@ int pvn_rvis_start_l(pvn_rvis_ctx_l **const ctx, const unsigned m, const unsigne
   return 0;
 }
 
+int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, const size_t ldA)
+{
+  if (!ctx)
+    return -1;
+  if (!A)
+    return -2;
+  if (!ldA)
+    return -3;
+  size_t sz = (size_t)(ctx->m);
+  const int ret = (ctx->op)(ctx->m, ctx->n, A, ldA, ctx->B, sz, &(ctx->minB), &(ctx->maxB));
+  if (ret)
+    return ret;
+  sz *= ((ctx->n) * sizeof(float));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
+  ++(ctx->cnt);
+  return ret;
+}
+
+int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, const size_t ldA)
+{
+  if (!ctx)
+    return -1;
+  if (!A)
+    return -2;
+  if (!ldA)
+    return -3;
+  size_t sz = (size_t)(ctx->m);
+  const int ret = (ctx->op)(ctx->m, ctx->n, A, ldA, ctx->B, sz, &(ctx->minB), &(ctx->maxB));
+  if (ret)
+    return ret;
+  sz *= ((ctx->n) * sizeof(double));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
+  ++(ctx->cnt);
+  return ret;
+}
+
+int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restrict A, const size_t ldA)
+{
+  if (!ctx)
+    return -1;
+  if (!A)
+    return -2;
+  if (!ldA)
+    return -3;
+  size_t sz = (size_t)(ctx->m);
+  const int ret = (ctx->op)(ctx->m, ctx->n, A, ldA, ctx->B, sz, &(ctx->minB), &(ctx->maxB));
+  if (ret)
+    return ret;
+  sz *= ((ctx->n) * sizeof(long double));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
+  ++(ctx->cnt);
+  return ret;
+}
+
+int pvn_cvis_start_f(pvn_cvis_ctx_f **const ctx, const unsigned m, const unsigned n, const pvn_cop_f op, const char *const fnB, const char *const fnC)
+{
+  if (!ctx)
+    return -1;
+  if (!m)
+    return -2;
+  if (!n)
+    return -3;
+  if (!op)
+    return -4;
+  if (!fnB)
+    return -5;
+  if (!fnC)
+    return -6;
+
+  *ctx = (pvn_cvis_ctx_f*)malloc(sizeof(pvn_cvis_ctx_f));
+  PVN_SYSP_CALL(*ctx);
+  (*ctx)->minB =  INFINITY;
+  (*ctx)->maxB = -INFINITY;
+  (*ctx)->op = op;
+  const size_t sz = m * (n * sizeof(float));
+  (*ctx)->B = (float*)malloc(sz);
+  PVN_SYSP_CALL((*ctx)->B);
+  (*ctx)->C = (float*)malloc(sz);
+  PVN_SYSP_CALL((*ctx)->C);
+  (*ctx)->m = m;
+  (*ctx)->n = n;
+  (*ctx)->cnt = 0u;
+  (*ctx)->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdB);
+  (*ctx)->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdC);
+  return ((*ctx)->err = 0);
+}
+
+int pvn_cvis_start(pvn_cvis_ctx **const ctx, const unsigned m, const unsigned n, const pvn_cop op, const char *const fnB, const char *const fnC)
+{
+  if (!ctx)
+    return -1;
+  if (!m)
+    return -2;
+  if (!n)
+    return -3;
+  if (!op)
+    return -4;
+  if (!fnB)
+    return -5;
+  if (!fnC)
+    return -6;
+
+  *ctx = (pvn_cvis_ctx*)malloc(sizeof(pvn_cvis_ctx));
+  PVN_SYSP_CALL(*ctx);
+  (*ctx)->minB =  INFINITY;
+  (*ctx)->maxB = -INFINITY;
+  (*ctx)->op = op;
+  const size_t sz = m * (n * sizeof(double));
+  (*ctx)->B = (double*)malloc(sz);
+  PVN_SYSP_CALL((*ctx)->B);
+  (*ctx)->C = (double*)malloc(sz);
+  PVN_SYSP_CALL((*ctx)->C);
+  (*ctx)->m = m;
+  (*ctx)->n = n;
+  (*ctx)->cnt = 0u;
+  (*ctx)->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdB);
+  (*ctx)->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdC);
+  return ((*ctx)->err = 0);
+}
+
+int pvn_cvis_start_l(pvn_cvis_ctx_l **const ctx, const unsigned m, const unsigned n, const pvn_cop_l op, const char *const fnB, const char *const fnC)
+{
+  if (!ctx)
+    return -1;
+  if (!m)
+    return -2;
+  if (!n)
+    return -3;
+  if (!op)
+    return -4;
+  if (!fnB)
+    return -5;
+  if (!fnC)
+    return -6;
+
+  *ctx = (pvn_cvis_ctx_l*)malloc(sizeof(pvn_cvis_ctx_l));
+  PVN_SYSP_CALL(*ctx);
+  (*ctx)->minB =  INFINITY;
+  (*ctx)->maxB = -INFINITY;
+  (*ctx)->op = op;
+  const size_t sz = m * (n * sizeof(long double));
+  (*ctx)->B = (long double*)malloc(sz);
+  PVN_SYSP_CALL((*ctx)->B);
+  (*ctx)->C = (long double*)malloc(sz);
+  PVN_SYSP_CALL((*ctx)->C);
+  (*ctx)->m = m;
+  (*ctx)->n = n;
+  (*ctx)->cnt = 0u;
+  (*ctx)->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdB);
+  (*ctx)->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC
+#ifdef _LARGEFILE64_SOURCE
+                           | O_LARGEFILE
+#endif /* _LARGEFILE64_SOURCE */
+                           ), (S_IRUSR | S_IWUSR));
+  PVN_SYSI_CALL(-1 == (*ctx)->fdC);
+  return ((*ctx)->err = 0);
+}
+
+int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restrict A, const size_t ldA)
+{
+  if (!ctx)
+    return -1;
+  if (!A)
+    return -2;
+  if (!ldA)
+    return -3;
+  size_t sz = (size_t)(ctx->m);
+  ctx->err = (ctx->op)(ctx->m, ctx->n, A, ldA, ctx->B, sz, ctx->C, sz, &(ctx->minB), &(ctx->maxB), &(ctx->minC), &(ctx->maxC));
+  if (ctx->err < 0)
+    return (ctx->err);
+  sz *= ((ctx->n) * sizeof(float));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdC, ctx->C, sz));
+  ++(ctx->cnt);
+  return (ctx->err);
+}
+
+int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict A, const size_t ldA)
+{
+  if (!ctx)
+    return -1;
+  if (!A)
+    return -2;
+  if (!ldA)
+    return -3;
+  size_t sz = (size_t)(ctx->m);
+  ctx->err = (ctx->op)(ctx->m, ctx->n, A, ldA, ctx->B, sz, ctx->C, sz, &(ctx->minB), &(ctx->maxB), &(ctx->minC), &(ctx->maxC));
+  if (ctx->err < 0)
+    return (ctx->err);
+  sz *= ((ctx->n) * sizeof(double));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdC, ctx->C, sz));
+  ++(ctx->cnt);
+  return (ctx->err);
+}
+
+int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const restrict A, const size_t ldA)
+{
+  if (!ctx)
+    return -1;
+  if (!A)
+    return -2;
+  if (!ldA)
+    return -3;
+  size_t sz = (size_t)(ctx->m);
+  ctx->err = (ctx->op)(ctx->m, ctx->n, A, ldA, ctx->B, sz, ctx->C, sz, &(ctx->minB), &(ctx->maxB), &(ctx->minC), &(ctx->maxC));
+  if (ctx->err < 0)
+    return (ctx->err);
+  sz *= ((ctx->n) * sizeof(long double));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
+  PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdC, ctx->C, sz));
+  ++(ctx->cnt);
+  return (ctx->err);
+}
+
 int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
   if (!m)
