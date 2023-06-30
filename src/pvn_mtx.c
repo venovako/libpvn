@@ -41,8 +41,8 @@ int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict 
       MB = fminf(MB, -x);
     }
   }
-  *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
+  *minB = fminf(*minB, mB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -81,8 +81,8 @@ int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict 
       MB = fmin(MB, -x);
     }
   }
-  *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
+  *minB = fmin(*minB, mB);
+  *maxB = fmax(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -121,8 +121,8 @@ int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const res
       MB = fminl(MB, -x);
     }
   }
-  *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
+  *minB = fminl(*minB, mB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -161,8 +161,8 @@ int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict
       MB = fminf(MB, -x);
     }
   }
-  *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
+  *minB = fminf(*minB, mB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -201,8 +201,8 @@ int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict
       MB = fmin(MB, -x);
     }
   }
-  *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
+  *minB = fmin(*minB, mB);
+  *maxB = fmax(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -241,8 +241,8 @@ int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const re
       MB = fminl(MB, -x);
     }
   }
-  *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
+  *minB = fminl(*minB, mB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -281,8 +281,8 @@ int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restri
       MB = fminf(MB, -x);
     }
   }
-  *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
+  *minB = fminf(*minB, mB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -321,8 +321,8 @@ int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restri
       MB = fmin(MB, -x);
     }
   }
-  *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
+  *minB = fmin(*minB, mB);
+  *maxB = fmax(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -361,8 +361,8 @@ int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const 
       MB = fminl(MB, -x);
     }
   }
-  *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
+  *minB = fminl(*minB, mB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -401,8 +401,8 @@ int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restr
       MB = fminf(MB, -x);
     }
   }
-  *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
+  *minB = fminf(*minB, mB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -441,8 +441,8 @@ int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restr
       MB = fmin(MB, -x);
     }
   }
-  *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
+  *minB = fmin(*minB, mB);
+  *maxB = fmax(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -481,8 +481,8 @@ int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const
       MB = fminl(MB, -x);
     }
   }
-  *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
+  *minB = fminl(*minB, mB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
   return 0;
 }
 
@@ -536,10 +536,10 @@ int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const r
       MC = fminf(MC, -y);
     }
   }
-  *minB = fminf(*minB,  mB);
-  *maxB = fmaxf(*maxB, -MB);
-  *minC = fminf(*minC,  mC);
-  *maxC = fmaxf(*maxC, -MC);
+  *minB = fminf(*minB, mB);
+  *maxB = fmaxf(*maxB, (MB = -MB));
+  *minC = fminf(*minC, mC);
+  *maxC = fmaxf(*maxC, (MC = -MC));
   return 0;
 }
 
@@ -593,10 +593,10 @@ int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const r
       MC = fmin(MC, -y);
     }
   }
-  *minB = fmin(*minB,  mB);
-  *maxB = fmax(*maxB, -MB);
-  *minC = fmin(*minC,  mC);
-  *maxC = fmax(*maxC, -MC);
+  *minB = fmin(*minB, mB);
+  *maxB = fmax(*maxB, (MB = -MB));
+  *minC = fmin(*minC, mC);
+  *maxC = fmax(*maxC, (MC = -MC));
   return 0;
 }
 
@@ -650,10 +650,10 @@ int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *c
       MC = fminl(MC, -y);
     }
   }
-  *minB = fminl(*minB,  mB);
-  *maxB = fmaxl(*maxB, -MB);
-  *minC = fminl(*minC,  mC);
-  *maxC = fmaxl(*maxC, -MC);
+  *minB = fminl(*minB, mB);
+  *maxB = fmaxl(*maxB, (MB = -MB));
+  *minC = fminl(*minC, mC);
+  *maxC = fmaxl(*maxC, (MC = -MC));
   return 0;
 }
 
@@ -707,10 +707,10 @@ int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const 
       MC = fminf(MC, -y);
     }
   }
-  *minB = fminf(*minB,  mB);
+  *minB = fminf(*minB, mB);
   *maxB = fmaxf(*maxB, (MB = -MB));
-  *minC = fminf(*minC,  mC);
-  *maxC = fmaxf(*maxC, -MC);
+  *minC = fminf(*minC, mC);
+  *maxC = fmaxf(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -765,10 +765,10 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
       MC = fmin(MC, -y);
     }
   }
-  *minB = fmin(*minB,  mB);
+  *minB = fmin(*minB, mB);
   *maxB = fmax(*maxB, (MB = -MB));
-  *minC = fmin(*minC,  mC);
-  *maxC = fmax(*maxC, -MC);
+  *minC = fmin(*minC, mC);
+  *maxC = fmax(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -823,10 +823,10 @@ int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *
       MC = fminl(MC, -y);
     }
   }
-  *minB = fminl(*minB,  mB);
+  *minB = fminl(*minB, mB);
   *maxB = fmaxl(*maxB, (MB = -MB));
-  *minC = fminl(*minC,  mC);
-  *maxC = fmaxl(*maxC, -MC);
+  *minC = fminl(*minC, mC);
+  *maxC = fmaxl(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -881,10 +881,10 @@ int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *cons
       MC = fminf(MC, -y);
     }
   }
-  *minB = fminf(*minB,  mB);
+  *minB = fminf(*minB, mB);
   *maxB = fmaxf(*maxB, (MB = -MB));
-  *minC = fminf(*minC,  mC);
-  *maxC = fmaxf(*maxC, -MC);
+  *minC = fminf(*minC, mC);
+  *maxC = fmaxf(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -939,10 +939,10 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
       MC = fmin(MC, -y);
     }
   }
-  *minB = fmin(*minB,  mB);
+  *minB = fmin(*minB, mB);
   *maxB = fmax(*maxB, (MB = -MB));
-  *minC = fmin(*minC,  mC);
-  *maxC = fmax(*maxC, -MC);
+  *minC = fmin(*minC, mC);
+  *maxC = fmax(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -997,10 +997,10 @@ int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex
       MC = fminl(MC, -y);
     }
   }
-  *minB = fminl(*minB,  mB);
+  *minB = fminl(*minB, mB);
   *maxB = fmaxl(*maxB, (MB = -MB));
-  *minC = fminl(*minC,  mC);
-  *maxC = fmaxl(*maxC, -MC);
+  *minC = fminl(*minC, mC);
+  *maxC = fmaxl(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -1055,10 +1055,10 @@ int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *con
       MC = fminf(MC, -y);
     }
   }
-  *minB = fminf(*minB,  mB);
+  *minB = fminf(*minB, mB);
   *maxB = fmaxf(*maxB, (MB = -MB));
-  *minC = fminf(*minC,  mC);
-  *maxC = fmaxf(*maxC, -MC);
+  *minC = fminf(*minC, mC);
+  *maxC = fmaxf(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -1113,10 +1113,10 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
       MC = fmin(MC, -y);
     }
   }
-  *minB = fmin(*minB,  mB);
+  *minB = fmin(*minB, mB);
   *maxB = fmax(*maxB, (MB = -MB));
-  *minC = fmin(*minC,  mC);
-  *maxC = fmax(*maxC, -MC);
+  *minC = fmin(*minC, mC);
+  *maxC = fmax(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -1171,10 +1171,10 @@ int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double comple
       MC = fminl(MC, -y);
     }
   }
-  *minB = fminl(*minB,  mB);
+  *minB = fminl(*minB, mB);
   *maxB = fmaxl(*maxB, (MB = -MB));
-  *minC = fminl(*minC,  mC);
-  *maxC = fmaxl(*maxC, -MC);
+  *minC = fminl(*minC, mC);
+  *maxC = fmaxl(*maxC, (MC = -MC));
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }

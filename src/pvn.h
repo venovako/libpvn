@@ -68,9 +68,11 @@
 
 #include <stdalign.h>
 #include <execinfo.h>
+#include <fcntl.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/uio.h>
 #include <unistd.h>
 
 #ifdef _OPENMP
