@@ -71,9 +71,9 @@ static inline unsigned pvn_umax(const unsigned a, const unsigned b)
   return ((a >= b) ? a : b);
 }
 
-PVN_EXTERN_C int pvn_rvis_start_f(pvn_rvis_ctx_f **const ctx, const unsigned m, const unsigned n, const pvn_rop_f op, const char *const fnB);
-PVN_EXTERN_C int pvn_rvis_start(pvn_rvis_ctx **const ctx, const unsigned m, const unsigned n, const pvn_rop op, const char *const fnB);
-PVN_EXTERN_C int pvn_rvis_start_l(pvn_rvis_ctx_l **const ctx, const unsigned m, const unsigned n, const pvn_rop_l op, const char *const fnB);
+PVN_EXTERN_C int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned n, const pvn_rop_f op, const char *const fnB);
+PVN_EXTERN_C int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, const pvn_rop op, const char *const fnB);
+PVN_EXTERN_C int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned n, const pvn_rop_l op, const char *const fnB);
 
 PVN_EXTERN_C int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, const size_t ldA);
 PVN_EXTERN_C int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, const size_t ldA);
@@ -83,9 +83,9 @@ PVN_EXTERN_C int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, c
 PVN_EXTERN_C int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB);
 PVN_EXTERN_C int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB);
 
-PVN_EXTERN_C int pvn_cvis_start_f(pvn_cvis_ctx_f **const ctx, const unsigned m, const unsigned n, const pvn_cop_f op, const char *const fnB, const char *const fnC);
-PVN_EXTERN_C int pvn_cvis_start(pvn_cvis_ctx **const ctx, const unsigned m, const unsigned n, const pvn_cop op, const char *const fnB, const char *const fnC);
-PVN_EXTERN_C int pvn_cvis_start_l(pvn_cvis_ctx_l **const ctx, const unsigned m, const unsigned n, const pvn_cop_l op, const char *const fnB, const char *const fnC);
+PVN_EXTERN_C int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned n, const pvn_cop_f op, const char *const fnB, const char *const fnC);
+PVN_EXTERN_C int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, const pvn_cop op, const char *const fnB, const char *const fnC);
+PVN_EXTERN_C int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned n, const pvn_cop_l op, const char *const fnB, const char *const fnC);
 
 PVN_EXTERN_C int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restrict A, const size_t ldA);
 PVN_EXTERN_C int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict A, const size_t ldA);
