@@ -870,10 +870,10 @@ int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict 
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const float *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const float x = (B[i + offB] = A[i + offA]);
+      const float x = (cB[i] = cA[i]);
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -913,10 +913,10 @@ int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict 
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const double *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const double x = (B[i + offB] = A[i + offA]);
+      const double x = (cB[i] = cA[i]);
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -956,10 +956,10 @@ int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const res
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const long double *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double x = (B[i + offB] = A[i + offA]);
+      const long double x = (cB[i] = cA[i]);
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
@@ -999,10 +999,10 @@ int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const float *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const float x = (B[i + offB] = fabsf(A[i + offA]));
+      const float x = (cB[i] = fabsf(cA[i]));
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -1042,10 +1042,10 @@ int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const double *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const double x = (B[i + offB] = fabs(A[i + offA]));
+      const double x = (cB[i] = fabs(cA[i]));
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -1085,10 +1085,10 @@ int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const re
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const long double *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double x = (B[i + offB] = fabsl(A[i + offA]));
+      const long double x = (cB[i] = fabsl(cA[i]));
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
@@ -1128,10 +1128,10 @@ int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restri
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const float *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const float x = (B[i + offB] = log2f(fabsf(A[i + offA])));
+      const float x = (cB[i] = log2f(fabsf(cA[i])));
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -1171,10 +1171,10 @@ int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restri
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const double *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const double x = (B[i + offB] = log2(fabs(A[i + offA])));
+      const double x = (cB[i] = log2(fabs(cA[i])));
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -1214,10 +1214,10 @@ int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const 
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const long double *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double x = (B[i + offB] = log2l(fabsl(A[i + offA])));
+      const long double x = (cB[i] = log2l(fabsl(cA[i])));
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
@@ -1257,10 +1257,10 @@ int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restr
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const float *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const float x = (B[i + offB] = log10f(fabsf(A[i + offA])));
+      const float x = (cB[i] = log10f(fabsf(cA[i])));
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -1300,10 +1300,10 @@ int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restr
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const double *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const double x = (B[i + offB] = log10(fabs(A[i + offA])));
+      const double x = (cB[i] = log10(fabs(cA[i])));
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -1343,10 +1343,10 @@ int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
+    const long double *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double x = (B[i + offB] = log10l(fabsl(A[i + offA])));
+      const long double x = (cB[i] = log10l(fabsl(cA[i])));
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
@@ -1394,13 +1394,13 @@ int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const r
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const float complex *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
+    float *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const float complex z = A[i + offA];
-      const float x = (B[i + offB] = crealf(z));
-      const float y = (C[i + offC] = cimagf(z));
+      const float complex z = cA[i];
+      const float x = (cB[i] = crealf(z));
+      const float y = (cC[i] = cimagf(z));
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -1457,13 +1457,13 @@ int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const r
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const double complex *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
+    double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const double complex z = A[i + offA];
-      const double x = (B[i + offB] = creal(z));
-      const double y = (C[i + offC] = cimag(z));
+      const double complex z = cA[i];
+      const double x = (cB[i] = creal(z));
+      const double y = (cC[i] = cimag(z));
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -1520,13 +1520,13 @@ int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *c
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const long double complex *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
+    long double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double complex z = A[i + offA];
-      const long double x = (B[i + offB] = creall(z));
-      const long double y = (C[i + offC] = cimagl(z));
+      const long double complex z = cA[i];
+      const long double x = (cB[i] = creall(z));
+      const long double y = (cC[i] = cimagl(z));
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
@@ -1583,13 +1583,13 @@ int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const 
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const float complex *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
+    float *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const float complex z = A[i + offA];
-      const float x = (B[i + offB] = cabsf(z));
-      const float y = (C[i + offC] = cargf(z));
+      const float complex z = cA[i];
+      const float x = (cB[i] = cabsf(z));
+      const float y = (cC[i] = cargf(z));
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -1647,13 +1647,13 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const double complex *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
+    double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const double complex z = A[i + offA];
-      const double x = (B[i + offB] = cabs(z));
-      const double y = (C[i + offC] = carg(z));
+      const double complex z = cA[i];
+      const double x = (cB[i] = cabs(z));
+      const double y = (cC[i] = carg(z));
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -1711,13 +1711,13 @@ int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const long double complex *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
+    long double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double complex z = A[i + offA];
-      const long double x = (B[i + offB] = cabsl(z));
-      const long double y = (C[i + offC] = cargl(z));
+      const long double complex z = cA[i];
+      const long double x = (cB[i] = cabsl(z));
+      const long double y = (cC[i] = cargl(z));
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
@@ -1775,13 +1775,13 @@ int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *cons
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const float complex *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
+    float *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const float complex z = A[i + offA];
-      const float x = (B[i + offB] = log2f(cabsf(z)));
-      const float y = (C[i + offC] = cargf(z));
+      const float complex z = cA[i];
+      const float x = (cB[i] = log2f(cabsf(z)));
+      const float y = (cC[i] = cargf(z));
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -1839,13 +1839,13 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const double complex *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
+    double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const double complex z = A[i + offA];
-      const double x = (B[i + offB] = log2(cabs(z)));
-      const double y = (C[i + offC] = carg(z));
+      const double complex z = cA[i];
+      const double x = (cB[i] = log2(cabs(z)));
+      const double y = (cC[i] = carg(z));
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -1903,13 +1903,13 @@ int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const long double complex *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
+    long double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double complex z = A[i + offA];
-      const long double x = (B[i + offB] = log2l(cabsl(z)));
-      const long double y = (C[i + offC] = cargl(z));
+      const long double complex z = cA[i];
+      const long double x = (cB[i] = log2l(cabsl(z)));
+      const long double y = (cC[i] = cargl(z));
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
@@ -1967,13 +1967,13 @@ int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *con
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const float complex *const cA = A + j * ldA;
+    float *const cB = B + j * ldB;
+    float *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const float complex z = A[i + offA];
-      const float x = (B[i + offB] = log10f(cabsf(z)));
-      const float y = (C[i + offC] = cargf(z));
+      const float complex z = cA[i];
+      const float x = (cB[i] = log10f(cabsf(z)));
+      const float y = (cC[i] = cargf(z));
       if (isfinite(x)) {
         mB = fminf(mB,  x);
         MB = fminf(MB, -x);
@@ -2031,13 +2031,13 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const double complex *const cA = A + j * ldA;
+    double *const cB = B + j * ldB;
+    double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const double complex z = A[i + offA];
-      const double x = (B[i + offB] = log10(cabs(z)));
-      const double y = (C[i + offC] = carg(z));
+      const double complex z = cA[i];
+      const double x = (cB[i] = log10(cabs(z)));
+      const double y = (cC[i] = carg(z));
       if (isfinite(x)) {
         mB = fmin(mB,  x);
         MB = fmin(MB, -x);
@@ -2095,13 +2095,13 @@ int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double comple
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
   for (unsigned j = 0u; j < n; ++j) {
-    const size_t offA = j * ldA;
-    const size_t offB = j * ldB;
-    const size_t offC = j * ldC;
+    const long double complex *const cA = A + j * ldA;
+    long double *const cB = B + j * ldB;
+    long double *const cC = C + j * ldC;
     for (unsigned i = 0u; i < m; ++i) {
-      const long double complex z = A[i + offA];
-      const long double x = (B[i + offB] = log10l(cabsl(z)));
-      const long double y = (C[i + offC] = cargl(z));
+      const long double complex z = cA[i];
+      const long double x = (cB[i] = log10l(cabsl(z)));
+      const long double y = (cC[i] = cargl(z));
       if (isfinite(x)) {
         mB = fminl(mB,  x);
         MB = fminl(MB, -x);
