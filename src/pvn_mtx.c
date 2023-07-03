@@ -3,26 +3,30 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (2 != argc) {
-    (void)fprintf(stderr, "%s cnt\n", *argv);
+  if (3 != argc) {
+    (void)fprintf(stderr, "%s cnt bpp\n", *argv);
     return EXIT_FAILURE;
   }
   const unsigned m = 200u;
   const unsigned n = 320u;
   const unsigned sx = 2u;
   const unsigned sy = 2u;
-  const unsigned bpp = 8u;
   int c = atoi(argv[1u]);
   if (c <= 0)
     return EXIT_FAILURE;
   const unsigned cnt = (unsigned)c;
+  c = atoi(argv[2u]);
+  if ((c != 0) && (c != 1) && (c != 4) && (c != 8))
+    return EXIT_FAILURE;
+  const unsigned bpp = (unsigned)(c ? c : 1);
   pvn_rvis_ctx *ctx = (pvn_rvis_ctx*)NULL;
   const size_t ldA = (size_t)m;
   double *const A = (double*)malloc(m * (n * sizeof(double)));
   if (!A)
     return EXIT_FAILURE;
+  (void)system("rm -f ../etc/*.bmp ../etc/*.dat ../etc/*.gif ../etc/*.out ../etc/*.png");
   (void)fprintf(stderr, "pvn_rvis_start... ");
-  if (pvn_rvis_start(&ctx, m, n, pvn_rop_id, "../etc/pvn_mtx.dat")) {
+  if (pvn_rvis_start(&ctx, m, n, pvn_rop_id, "../etc/pvn_mtx_r.dat")) {
     (void)fprintf(stderr, "ERROR\n");
     return EXIT_FAILURE;
   }
@@ -31,7 +35,7 @@ int main(int argc, char *argv[])
     for (unsigned j = 0u; j < n; ++j) {
       double *const cA = A + j * ldA;
       for (unsigned i = 0u; i < m; ++i)
-        cA[i] = (i + j - k) % 254u;
+        cA[i] = (i + j + k) % 254u;
     }
     (void)fprintf(stderr, "pvn_rvis_frame %u... ", k);
     if (pvn_rvis_frame(ctx, A, ldA)) {
@@ -42,7 +46,14 @@ int main(int argc, char *argv[])
   }
   free(A);
   (void)fprintf(stderr, "pvn_rvis_stop... ");
-  c = pvn_rvis_stop(ctx, sx, sy, bpp, "../etc/pvn_mtx");
+  if (bpp == 1u)
+    c = pvn_rvis_stop(ctx, sx, sy, bpp, (c ? "../etc/pvn_mtx_r1" : "../etc/pvn_mtx_r0"));
+  else if (bpp == 4u)
+    c = pvn_rvis_stop(ctx, sx, sy, bpp, "../etc/pvn_mtx_r4");
+  else if (bpp == 8u)
+    c = pvn_rvis_stop(ctx, sx, sy, bpp, "../etc/pvn_mtx_r8");
+  else
+    c = -1;
   if (c <= 0) {
     (void)fprintf(stderr, "ERROR\n");
     return EXIT_FAILURE;
@@ -51,9 +62,9 @@ int main(int argc, char *argv[])
   (void)fprintf(stderr, "Converting the BMPs to the PNGs with ImageMagick...\n");
   (void)system("for B in ../etc/*.bmp; do convert $B -quality 90 ../etc/`basename $B bmp`png; done");
   (void)fprintf(stderr, "Assembling the APNG animation from the PNGs with apngasm...\n");
-  (void)system("apngasm -F -o ../etc/pvn_mtx.png -d 1:4 ../etc/*-*.png");
+  (void)system("apngasm -F -o ../etc/pvn_mtx_r.png -d 1:6 ../etc/*-*.png");
   (void)fprintf(stderr, "Converting the APNG to the animated GIF with apng2gif...\n");
-  (void)system("apng2gif ../etc/pvn_mtx.png ../etc/pvn_mtx.gif");
+  (void)system("apng2gif ../etc/pvn_mtx_r.png ../etc/pvn_mtx_r.gif");
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -227,7 +238,12 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
     return -5;
 
   float ubc, mid, shf;
-  if (bppB == 4u) {
+  if (bppB == 1u) {
+    ubc = 1.0f;
+    mid = 0.0f;
+    shf = 0.0f;
+  }
+  else if (bppB == 4u) {
     ubc = 15.0f;
     mid = 7.0f;
     shf = 13.0f;
@@ -289,13 +305,19 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   for (unsigned f = 0u; f < ctx->cnt; ++f) {
     PVN_SYSI_CALL((ssize_t)sz != read(ctx->fdB, ctx->B, sz));
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(ctx,ldB,ubc,wid,mid,shf)
+#pragma omp parallel for default(none) shared(ctx,ldB,bppB,ubc,wid,mid,shf)
 #endif /* _OPENMP */
     for (unsigned j = 0u; j < ctx->n; ++j) {
       float *const cB = ctx->B + j * ldB;
       for (unsigned i = 0u; i < ctx->m; ++i) {
         float *const b = cB + i;
-        if (*b == -INFINITY)
+        if (bppB == 1u) {
+          if (*b == 0.0f)
+            *b = 0.0f;
+          else
+            *b = 1.0f;
+        }
+        else if (*b == -INFINITY)
           *b = 0.0f;
         else if (!isfinite(*b)) /* +Inf || NaN */
           *b = ubc;
@@ -355,7 +377,12 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
     return -5;
 
   double ubc, mid, shf;
-  if (bppB == 4u) {
+  if (bppB == 1u) {
+    ubc = 1.0;
+    mid = 0.0;
+    shf = 0.0;
+  }
+  else if (bppB == 4u) {
     ubc = 15.0;
     mid = 7.0;
     shf = 13.0;
@@ -417,13 +444,19 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   for (unsigned f = 0u; f < ctx->cnt; ++f) {
     PVN_SYSI_CALL((ssize_t)sz != read(ctx->fdB, ctx->B, sz));
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(ctx,ldB,ubc,wid,mid,shf)
+#pragma omp parallel for default(none) shared(ctx,ldB,bppB,ubc,wid,mid,shf)
 #endif /* _OPENMP */
     for (unsigned j = 0u; j < ctx->n; ++j) {
       double *const cB = ctx->B + j * ldB;
       for (unsigned i = 0u; i < ctx->m; ++i) {
         double *const b = cB + i;
-        if (*b == -INFINITY)
+        if (bppB == 1u) {
+          if (*b == 0.0)
+            *b = 0.0;
+          else
+            *b = 1.0;
+        }
+        else if (*b == -INFINITY)
           *b = 0.0;
         else if (!isfinite(*b)) /* +Inf || NaN */
           *b = ubc;
@@ -483,7 +516,12 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
     return -5;
 
   long double ubc, mid, shf;
-  if (bppB == 4u) {
+  if (bppB == 1u) {
+    ubc = 1.0L;
+    mid = 0.0L;
+    shf = 0.0L;
+  }
+  else if (bppB == 4u) {
     ubc = 15.0L;
     mid = 7.0L;
     shf = 13.0L;
@@ -551,13 +589,19 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
   for (unsigned f = 0u; f < ctx->cnt; ++f) {
     PVN_SYSI_CALL((ssize_t)sz != read(ctx->fdB, ctx->B, sz));
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(ctx,ldB,ubc,wid,mid,shf)
+#pragma omp parallel for default(none) shared(ctx,ldB,bppB,ubc,wid,mid,shf)
 #endif /* _OPENMP */
     for (unsigned j = 0u; j < ctx->n; ++j) {
       long double *const cB = ctx->B + j * ldB;
       for (unsigned i = 0u; i < ctx->m; ++i) {
         long double *const b = cB + i;
-        if (*b == -INFINITY)
+        if (bppB == 1u) {
+          if (*b == 0.0L)
+            *b = 0.0L;
+          else
+            *b = 1.0L;
+        }
+        else if (*b == -INFINITY)
           *b = 0.0L;
         else if (!isfinite(*b)) /* +Inf || NaN */
           *b = ubc;
