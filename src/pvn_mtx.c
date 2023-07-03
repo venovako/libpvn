@@ -374,6 +374,7 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
 
   PVN_SYSI_CALL(close(ctx->fdB));
   free(ctx->B);
+  ctx->B = (float*)NULL;
   fn[bnl] = '.';
   fn[bnl + 1u] = 'o';
   fn[bnl + 2u] = 'u';
@@ -383,6 +384,7 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   PVN_SYSI_CALL(dprintf(ctx->fdB, "m: %u\nn: %u\nsx: %u\nsy: %u\nbpp: %u\ncnt: %u\nmin: %s\nmax: ", ctx->m, ctx->n, sx, sy, bppB, ctx->cnt, pvn_stoa(fn, ctx->minB)) <= 0);
   PVN_SYSI_CALL(dprintf(ctx->fdB, "%s\n", pvn_stoa(fn, ctx->maxB)) <= 0);
   PVN_SYSI_CALL(close(ctx->fdB));
+  ctx->fdB = -1;
   return (int)(ctx->cnt);
 }
 
@@ -510,6 +512,7 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
 
   PVN_SYSI_CALL(close(ctx->fdB));
   free(ctx->B);
+  ctx->B = (double*)NULL;
   fn[bnl] = '.';
   fn[bnl + 1u] = 'o';
   fn[bnl + 2u] = 'u';
@@ -519,6 +522,7 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   PVN_SYSI_CALL(dprintf(ctx->fdB, "m: %u\nn: %u\nsx: %u\nsy: %u\nbpp: %u\ncnt: %u\nmin: %s\nmax: ", ctx->m, ctx->n, sx, sy, bppB, ctx->cnt, pvn_dtoa(fn, ctx->minB)) <= 0);
   PVN_SYSI_CALL(dprintf(ctx->fdB, "%s\n", pvn_dtoa(fn, ctx->maxB)) <= 0);
   PVN_SYSI_CALL(close(ctx->fdB));
+  ctx->fdB = -1;
   return (int)(ctx->cnt);
 }
 
@@ -652,6 +656,7 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
 
   PVN_SYSI_CALL(close(ctx->fdB));
   free(ctx->B);
+  ctx->B = (long double*)NULL;
   fn[bnl] = '.';
   fn[bnl + 1u] = 'o';
   fn[bnl + 2u] = 'u';
@@ -661,6 +666,7 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
   PVN_SYSI_CALL(dprintf(ctx->fdB, "m: %u\nn: %u\nsx: %u\nsy: %u\nbpp: %u\ncnt: %u\nmin: %s\nmax: ", ctx->m, ctx->n, sx, sy, bppB, ctx->cnt, pvn_xtoa(fn, ctx->minB)) <= 0);
   PVN_SYSI_CALL(dprintf(ctx->fdB, "%s\n", pvn_xtoa(fn, ctx->maxB)) <= 0);
   PVN_SYSI_CALL(close(ctx->fdB));
+  ctx->fdB = -1;
   return (int)(ctx->cnt);
 }
 
@@ -884,13 +890,17 @@ int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned
   r.fdB = ctx->fdB;
   if (pvn_rvis_stop_f(&r, sx, sy, bppB, bnB) != (int)(ctx->cnt))
     return -4;
+  ctx->B = (float*)NULL;
+  ctx->fdB = -1;
   r.minB = ctx->minC;
   r.maxB = ctx->maxC;
   r.B = ctx->C;
   r.fdB = ctx->fdC;
   if (pvn_rvis_stop_f(&r, sx, sy, bppC, bnC) != (int)(ctx->cnt))
     return -6;
-  return 0;
+  ctx->C = (float*)NULL;
+  ctx->fdC = -1;
+  return (ctx->err);
 }
 
 int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB, const unsigned bppC, const char *const bnC)
@@ -921,13 +931,17 @@ int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   r.fdB = ctx->fdB;
   if (pvn_rvis_stop(&r, sx, sy, bppB, bnB) != (int)(ctx->cnt))
     return -4;
+  ctx->B = (double*)NULL;
+  ctx->fdB = -1;
   r.minB = ctx->minC;
   r.maxB = ctx->maxC;
   r.B = ctx->C;
   r.fdB = ctx->fdC;
   if (pvn_rvis_stop(&r, sx, sy, bppC, bnC) != (int)(ctx->cnt))
     return -6;
-  return 0;
+  ctx->C = (double*)NULL;
+  ctx->fdC = -1;
+  return (ctx->err);
 }
 
 int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB, const unsigned bppC, const char *const bnC)
@@ -958,13 +972,17 @@ int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned
   r.fdB = ctx->fdB;
   if (pvn_rvis_stop_l(&r, sx, sy, bppB, bnB) != (int)(ctx->cnt))
     return -4;
+  ctx->B = (long double*)NULL;
+  ctx->fdB = -1;
   r.minB = ctx->minC;
   r.maxB = ctx->maxC;
   r.B = ctx->C;
   r.fdB = ctx->fdC;
   if (pvn_rvis_stop_l(&r, sx, sy, bppC, bnC) != (int)(ctx->cnt))
     return -6;
-  return 0;
+  ctx->C = (long double*)NULL;
+  ctx->fdC = -1;
+  return (ctx->err);
 }
 
 int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)

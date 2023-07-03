@@ -309,7 +309,8 @@ int pvn_bmp_fwrite(const pvn_bmp_t bmp, const char *const fn)
   PVN_SYSI_CALL(fwrite("BM", sizeof(uint8_t), 2u, f) < 2u);
   PVN_SYSI_CALL(fwrite(&(bmp->header), sizeof(pvn_bmp_header_t), 1u, f) < 1u);
   PVN_SYSI_CALL(bmp->palette && (fwrite(bmp->palette, sizeof(pvn_bmp_palette_entry_t), bmp->header.c_palette, f) < bmp->header.c_palette));
-  PVN_SYSI_CALL(fwrite("\0", sizeof(uint8_t), 2u, f) < 2u);
+  /* mark the bitmap as made by libpvn by writing VN into the gap */
+  PVN_SYSI_CALL(fwrite("VN", sizeof(uint8_t), 2u, f) < 2u);
   PVN_SYSI_CALL(fwrite(bmp->image, sizeof(uint8_t) * bmp->i_ldaB, h, f) < h);
   PVN_SYSI_CALL(fclose(f));
 
