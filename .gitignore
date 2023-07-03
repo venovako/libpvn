@@ -54,3 +54,9 @@ dkms.conf
 # Optimization reports
 *.optrpt
 *.opt.yaml
+
+# Visualization outputs
+*.bmp
+*.dat
+*.gif
+*.png

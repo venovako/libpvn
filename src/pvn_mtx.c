@@ -3,6 +3,57 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
+  if (2 != argc) {
+    (void)fprintf(stderr, "%s cnt\n", *argv);
+    return EXIT_FAILURE;
+  }
+  const unsigned m = 200u;
+  const unsigned n = 320u;
+  const unsigned sx = 2u;
+  const unsigned sy = 2u;
+  const unsigned bpp = 8u;
+  int c = atoi(argv[1u]);
+  if (c <= 0)
+    return EXIT_FAILURE;
+  const unsigned cnt = (unsigned)c;
+  pvn_rvis_ctx *ctx = (pvn_rvis_ctx*)NULL;
+  const size_t ldA = (size_t)m;
+  double *const A = (double*)malloc(m * (n * sizeof(double)));
+  if (!A)
+    return EXIT_FAILURE;
+  (void)fprintf(stderr, "pvn_rvis_start... ");
+  if (pvn_rvis_start(&ctx, m, n, pvn_rop_id, "../etc/pvn_mtx.dat")) {
+    (void)fprintf(stderr, "ERROR\n");
+    return EXIT_FAILURE;
+  }
+  (void)fprintf(stderr, "OK\n");
+  for (unsigned k = 0u; k < cnt; ++k) {
+    for (unsigned j = 0u; j < n; ++j) {
+      double *const cA = A + j * ldA;
+      for (unsigned i = 0u; i < m; ++i)
+        cA[i] = (i + j - k) % 254u;
+    }
+    (void)fprintf(stderr, "pvn_rvis_frame %u... ", k);
+    if (pvn_rvis_frame(ctx, A, ldA)) {
+      (void)fprintf(stderr, "ERROR\n");
+      return EXIT_FAILURE;
+    }
+    (void)fprintf(stderr, "OK\n");
+  }
+  free(A);
+  (void)fprintf(stderr, "pvn_rvis_stop... ");
+  c = pvn_rvis_stop(ctx, sx, sy, bpp, "../etc/pvn_mtx");
+  if (c <= 0) {
+    (void)fprintf(stderr, "ERROR\n");
+    return EXIT_FAILURE;
+  }
+  (void)fprintf(stderr, "%d\n", c);
+  (void)fprintf(stderr, "Converting the BMPs to the PNGs with ImageMagick...\n");
+  (void)system("for B in ../etc/*.bmp; do convert $B -quality 90 ../etc/`basename $B bmp`png; done");
+  (void)fprintf(stderr, "Assembling the APNG animation from the PNGs with apngasm...\n");
+  (void)system("apngasm -F -o ../etc/pvn_mtx.png -d 1:4 ../etc/*-*.png");
+  (void)fprintf(stderr, "Converting the APNG to the animated GIF with apng2gif...\n");
+  (void)system("apng2gif ../etc/pvn_mtx.png ../etc/pvn_mtx.gif");
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -277,8 +328,8 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   PVN_SYSI_CALL(close(ctx->fdB));
   free(ctx->B);
   fn[bnl] = '.';
-  fn[bnl + 1u] = 't';
-  fn[bnl + 2u] = 'x';
+  fn[bnl + 1u] = 'o';
+  fn[bnl + 2u] = 'u';
   fn[bnl + 3u] = 't';
   fn[bnl + 4u] = '\0';
   PVN_SYSI_CALL(-1 == (ctx->fdB = open(fn, (O_WRONLY | O_CREAT | O_TRUNC), (S_IRUSR | S_IWUSR))));
@@ -405,12 +456,12 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   PVN_SYSI_CALL(close(ctx->fdB));
   free(ctx->B);
   fn[bnl] = '.';
-  fn[bnl + 1u] = 't';
-  fn[bnl + 2u] = 'x';
+  fn[bnl + 1u] = 'o';
+  fn[bnl + 2u] = 'u';
   fn[bnl + 3u] = 't';
   fn[bnl + 4u] = '\0';
   PVN_SYSI_CALL(-1 == (ctx->fdB = open(fn, (O_WRONLY | O_CREAT | O_TRUNC), (S_IRUSR | S_IWUSR))));
-  PVN_SYSI_CALL(dprintf(ctx->fdB, "m: %u\nn: %u\nsx: %u\nsy: %u\nbpp: %u\ncnt: %u\nmin: %s\nmax: ", ctx->m, ctx->n, sx, sy, bppB, ctx->cnt, pvn_stoa(fn, ctx->minB)) <= 0);
+  PVN_SYSI_CALL(dprintf(ctx->fdB, "m: %u\nn: %u\nsx: %u\nsy: %u\nbpp: %u\ncnt: %u\nmin: %s\nmax: ", ctx->m, ctx->n, sx, sy, bppB, ctx->cnt, pvn_dtoa(fn, ctx->minB)) <= 0);
   PVN_SYSI_CALL(dprintf(ctx->fdB, "%s\n", pvn_dtoa(fn, ctx->maxB)) <= 0);
   PVN_SYSI_CALL(close(ctx->fdB));
   ret = (int)(ctx->cnt);
@@ -539,12 +590,12 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
   PVN_SYSI_CALL(close(ctx->fdB));
   free(ctx->B);
   fn[bnl] = '.';
-  fn[bnl + 1u] = 't';
-  fn[bnl + 2u] = 'x';
+  fn[bnl + 1u] = 'o';
+  fn[bnl + 2u] = 'u';
   fn[bnl + 3u] = 't';
   fn[bnl + 4u] = '\0';
   PVN_SYSI_CALL(-1 == (ctx->fdB = open(fn, (O_WRONLY | O_CREAT | O_TRUNC), (S_IRUSR | S_IWUSR))));
-  PVN_SYSI_CALL(dprintf(ctx->fdB, "m: %u\nn: %u\nsx: %u\nsy: %u\nbpp: %u\ncnt: %u\nmin: %s\nmax: ", ctx->m, ctx->n, sx, sy, bppB, ctx->cnt, pvn_stoa(fn, ctx->minB)) <= 0);
+  PVN_SYSI_CALL(dprintf(ctx->fdB, "m: %u\nn: %u\nsx: %u\nsy: %u\nbpp: %u\ncnt: %u\nmin: %s\nmax: ", ctx->m, ctx->n, sx, sy, bppB, ctx->cnt, pvn_xtoa(fn, ctx->minB)) <= 0);
   PVN_SYSI_CALL(dprintf(ctx->fdB, "%s\n", pvn_xtoa(fn, ctx->maxB)) <= 0);
   PVN_SYSI_CALL(close(ctx->fdB));
   ret = (int)(ctx->cnt);
