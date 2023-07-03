@@ -5,6 +5,8 @@ A small portable C library with several utility functions.
 
 Some functions have been adapted from those in the repositories [JACSD](https://github.com/venovako/JACSD) and [VecJac](https://github.com/venovako/VecJac).
 
+## Building
+
 The library has been successfully built using:
 | compiler | `uname` | platform |
 | -------- | ------- | -------- |
@@ -51,7 +53,13 @@ make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
 gmake clean all
 ```
 
+## Using
+
 Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.a` static library, as shown in `GNUmakefile`.
 There are no global nor static variables present, and the functions can safely be called from multiple threads on *unrelated* data without locking.
 You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or not using OpenMP.
 Caveat: the library has never been tested on a big-endian system!
+
+## Examples
+
+Several examples and tests are built as `*.exe` executables in the `src` subdirectory and are meant to be run from there.
