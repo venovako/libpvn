@@ -58,6 +58,7 @@ gmake clean all
 Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.a` static library, as shown in `GNUmakefile`.
 There are no global nor static variables present, and the functions can safely be called from multiple threads on *unrelated* data without locking.
 You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or not using OpenMP.
+
 Caveat: the library has never been tested on a big-endian system!
 
 ## Examples

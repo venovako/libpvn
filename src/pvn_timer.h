@@ -47,6 +47,7 @@ static inline long pvn_time_thread_ns()
   return (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t) ? -1L : pvn_t2ns(&t));
 }
 
+
 static inline long pvn_time_sys_ns()
 {
   struct timespec t;
@@ -58,5 +59,9 @@ static inline long pvn_time_sys_us()
   struct timeval t;
   return (gettimeofday(&t, NULL) ? -1L : pvn_t2us(&t));
 }
+
+/* error checking performed and therefore not inlined */
+PVN_EXTERN_C long pvn_time_thread_res();
+PVN_EXTERN_C long pvn_time_sys_res();
 
 #endif /* !PVN_TIMER_H */
