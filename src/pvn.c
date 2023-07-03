@@ -12,4 +12,14 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+int pvn_le()
+{
+  return
+#ifdef __LITTLE_ENDIAN__
+    __LITTLE_ENDIAN__
+#else /* !__LITTLE_ENDIAN__ */
+    0
+#endif /* ?__LITTLE_ENDIAN__ */
+    ;
+}
 #endif /* ?PVN_TEST */
