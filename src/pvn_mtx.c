@@ -565,7 +565,7 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return ret;
 }
 
-int pvn_rvis_stop_f_(pvn_rvis_ctx_f **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int pvn_rvis_stop_f_(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
   assert(ctx);
   assert(sx);
@@ -573,10 +573,8 @@ int pvn_rvis_stop_f_(pvn_rvis_ctx_f **const ctx, const unsigned *const sx, const
   assert(bppB);
   assert(bnB);
   const int r = pvn_rvis_stop_f(*ctx, *sx, *sy, *bppB, bnB);
-  if (*ctx) {
+  if (*ctx)
     free(*ctx);
-    *ctx = (pvn_rvis_ctx_f*)NULL;
-  }
   return r;
 }
 
@@ -744,7 +742,7 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return ret;
 }
 
-int pvn_rvis_stop_(pvn_rvis_ctx **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int pvn_rvis_stop_(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
   assert(ctx);
   assert(sx);
@@ -752,10 +750,8 @@ int pvn_rvis_stop_(pvn_rvis_ctx **const ctx, const unsigned *const sx, const uns
   assert(bppB);
   assert(bnB);
   const int r = pvn_rvis_stop(*ctx, *sx, *sy, *bppB, bnB);
-  if (*ctx) {
+  if (*ctx)
     free(*ctx);
-    *ctx = (pvn_rvis_ctx*)NULL;
-  }
   return r;
 }
 
@@ -929,7 +925,7 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
   return ret;
 }
 
-int pvn_rvis_stop_l_(pvn_rvis_ctx_l **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int pvn_rvis_stop_l_(pvn_rvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
   assert(ctx);
   assert(sx);
@@ -937,10 +933,8 @@ int pvn_rvis_stop_l_(pvn_rvis_ctx_l **const ctx, const unsigned *const sx, const
   assert(bppB);
   assert(bnB);
   const int r = pvn_rvis_stop_l(*ctx, *sx, *sy, *bppB, bnB);
-  if (*ctx) {
+  if (*ctx)
     free(*ctx);
-    *ctx = (pvn_rvis_ctx_l*)NULL;
-  }
   return r;
 }
 
@@ -1394,7 +1388,7 @@ int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return (ret | ctx->err);
 }
 
-int pvn_cvis_stop_f_(pvn_cvis_ctx_f **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int pvn_cvis_stop_f_(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
   assert(ctx);
   assert(sx);
@@ -1404,10 +1398,8 @@ int pvn_cvis_stop_f_(pvn_cvis_ctx_f **const ctx, const unsigned *const sx, const
   assert(bppC);
   assert(bnC);
   const int r = pvn_cvis_stop_f(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
-  if (*ctx) {
+  if (*ctx)
     free(*ctx);
-    *ctx = (pvn_cvis_ctx_f*)NULL;
-  }
   return r;
 }
 
@@ -1453,7 +1445,7 @@ int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return (ret | ctx->err);
 }
 
-int pvn_cvis_stop_(pvn_cvis_ctx **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int pvn_cvis_stop_(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
   assert(ctx);
   assert(sx);
@@ -1463,10 +1455,8 @@ int pvn_cvis_stop_(pvn_cvis_ctx **const ctx, const unsigned *const sx, const uns
   assert(bppC);
   assert(bnC);
   const int r = pvn_cvis_stop(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
-  if (*ctx) {
+  if (*ctx)
     free(*ctx);
-    *ctx = (pvn_cvis_ctx*)NULL;
-  }
   return r;
 }
 
@@ -1512,7 +1502,7 @@ int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned
   return (ret | ctx->err);
 }
 
-int pvn_cvis_stop_l_(pvn_cvis_ctx_l **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int pvn_cvis_stop_l_(pvn_cvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
   assert(ctx);
   assert(sx);
@@ -1522,10 +1512,8 @@ int pvn_cvis_stop_l_(pvn_cvis_ctx_l **const ctx, const unsigned *const sx, const
   assert(bppC);
   assert(bnC);
   const int r = pvn_cvis_stop_l(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
-  if (*ctx) {
+  if (*ctx)
     free(*ctx);
-    *ctx = (pvn_cvis_ctx_l*)NULL;
-  }
   return r;
 }
 
