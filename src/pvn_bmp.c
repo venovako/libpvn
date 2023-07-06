@@ -92,7 +92,9 @@ int pvn_bmp_create(pvn_bmp_t *const bmp, const uint32_t width, const int32_t hei
   size_pixel_array = size_pixel_row * (uint32_t)abs(height);
   size_file = size_prolog + size_pixel_array;
 
-  PVN_SYSP_CALL(*bmp = (pvn_bmp_t)calloc((size_t)((size_file >> 2u) + 6u), sizeof(uint32_t)));
+  *bmp = (pvn_bmp_t)calloc((size_t)((size_file >> 2u) + 6u), sizeof(uint32_t));
+  if (!*bmp)
+    return 1;
 
   hdr_end = (void*)((uint8_t*)&((*bmp)->header) + sizeof(pvn_bmp_header_t));
   (*bmp)->palette = (pvn_bmp_palette_entry_t*)(c_palette ? hdr_end : NULL);
@@ -295,52 +297,73 @@ pvn_bmp_pixel_getter_t pvn_bmp_get_pixel_getter(const pvn_bmp_t bmp)
 
 int pvn_bmp_fwrite(const pvn_bmp_t bmp, const char *const fn)
 {
-  FILE *f = (FILE*)NULL;
-  size_t h = (size_t)0u;
-
   if (!bmp)
     return -1;
   if (!(fn && *fn))
     return -2;
 
-  PVN_SYSP_CALL(f = fopen(fn, "wb"));
+  FILE *const f = fopen(fn, "wb");
+  if (!f)
+    return 1;
 
-  h = (size_t)(uint32_t)abs(bmp->header.height);
-  PVN_SYSI_CALL(fwrite("BM", sizeof(uint8_t), 2u, f) < 2u);
-  PVN_SYSI_CALL(fwrite(&(bmp->header), sizeof(pvn_bmp_header_t), 1u, f) < 1u);
-  PVN_SYSI_CALL(bmp->palette && (fwrite(bmp->palette, sizeof(pvn_bmp_palette_entry_t), bmp->header.c_palette, f) < bmp->header.c_palette));
+  const size_t h = (size_t)(uint32_t)abs(bmp->header.height);
+  int ret = 0;
+
+  if (fwrite("BM", sizeof(uint8_t), 2u, f) < 2u) {
+    ret = 2;
+    goto end;
+  }
+  if (fwrite(&(bmp->header), sizeof(pvn_bmp_header_t), 1u, f) < 1u) {
+    ret = 3;
+    goto end;
+  }
+  if (bmp->palette && (fwrite(bmp->palette, sizeof(pvn_bmp_palette_entry_t), bmp->header.c_palette, f) < bmp->header.c_palette)) {
+    ret = 4;
+    goto end;
+  }
   /* mark the bitmap as made by libpvn by writing VN into the gap */
-  PVN_SYSI_CALL(fwrite("VN", sizeof(uint8_t), 2u, f) < 2u);
-  PVN_SYSI_CALL(fwrite(bmp->image, sizeof(uint8_t) * bmp->i_ldaB, h, f) < h);
-  PVN_SYSI_CALL(fclose(f));
+  if (fwrite("VN", sizeof(uint8_t), 2u, f) < 2u) {
+    ret = 5;
+    goto end;
+  }
+  if (fwrite(bmp->image, sizeof(uint8_t) * bmp->i_ldaB, h, f) < h) {
+    ret = 6;
+    goto end;
+  }
+ end:
+  if (fclose(f) && !ret)
+    ret = 7;
 
-  return 0;
+  return ret;
 }
 
 int pvn_bmp_read_cmap(const pvn_bmp_t bmp, const char *const fn)
 {
-  FILE *f = (FILE*)NULL;
-
-  uint32_t ix;
-  double dr, dg, db;
-
   if (!(bmp && bmp->palette))
     return -1;
   if (!(fn && *fn))
     return -2;
 
-  PVN_SYSP_CALL(f = fopen(fn, "r"));
+  FILE *const f = fopen(fn, "r");
+  if (!f)
+    return 1;
 
-  for (ix = 0u; ix < bmp->header.c_palette; ++ix) {
-    PVN_SYSI_CALL(fscanf(f, " %le %le %le", &dr, &dg, &db) < 3);
+  double dr, dg, db;
+  int ret = 0;
+  for (uint32_t ix = 0u; ix < bmp->header.c_palette; ++ix) {
+    if (fscanf(f, " %le %le %le", &dr, &dg, &db) < 3) {
+      ret = 2;
+      break;
+    }
     bmp->palette[ix].chan.r = (uint8_t)lround(dr * 255.0);
     bmp->palette[ix].chan.g = (uint8_t)lround(dg * 255.0);
     bmp->palette[ix].chan.b = (uint8_t)lround(db * 255.0);
     bmp->palette[ix].chan.a = 0u;
   }
 
-  PVN_SYSI_CALL(fclose(f));
+  if (fclose(f) && !ret)
+    ret = 3;
 
-  return 0;
+  return ret;
 }
 #endif /* ?PVN_TEST */

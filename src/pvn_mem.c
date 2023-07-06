@@ -14,8 +14,7 @@ int main(int argc, char *argv[])
 size_t pvn_pagesize_()
 {
   const long ps = sysconf(_SC_PAGESIZE);
-  PVN_SYSI_CALL(ps <= 0L);
-  return (size_t)ps;
+  return (size_t)((ps < 0L) ? 0L : ps);
 }
 
 size_t pvn_alignment_(const size_t a)
