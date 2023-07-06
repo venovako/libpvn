@@ -41,7 +41,7 @@ static inline size_t pvn_zmax(const size_t a, const size_t b)
   return ((a >= b) ? a : b);
 }
 
-PVN_EXTERN_C size_t pvn_pagesize();
-PVN_EXTERN_C size_t pvn_alignment(const size_t a);
+PVN_EXTERN_C size_t pvn_pagesize_();
+PVN_EXTERN_C size_t pvn_alignment_(const size_t a);
 
 #endif /* !PVN_MEM_H */

@@ -132,6 +132,38 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
   return 0;
 }
 
+pvn_rvis_ctx_f *pvn_rvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+{
+  assert(m);
+  assert(n);
+  assert(fop);
+  assert(fnB);
+  pvn_rvis_ctx_f *ret = (pvn_rvis_ctx_f*)NULL;
+  pvn_rop_f op = (pvn_rop_f)NULL;
+  switch (*fop) {
+  case 0u:
+    op = pvn_rop_idf;
+    break;
+  case 1u:
+    op = pvn_rop_absf;
+    break;
+  case 2u:
+    op = pvn_rop_lgabsf;
+    break;
+  case 3u:
+    op = pvn_rop_logabsf;
+    break;
+  default:
+    return ret;
+  }
+  PVN_SYSP_CALL(ret = (pvn_rvis_ctx_f*)malloc(sizeof(pvn_rvis_ctx_f)));
+  if (pvn_rvis_start_f(ret, *m, *n, op, fnB)) {
+    free(ret);
+    ret = (pvn_rvis_ctx_f*)NULL;
+  }
+  return ret;
+}
+
 int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, const pvn_rop op, const char *const fnB)
 {
   if (!ctx)
@@ -162,6 +194,38 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
                            ), (S_IRUSR | S_IWUSR));
   PVN_SYSI_CALL(-1 == ctx->fdB);
   return 0;
+}
+
+pvn_rvis_ctx *pvn_rvis_start_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+{
+  assert(m);
+  assert(n);
+  assert(fop);
+  assert(fnB);
+  pvn_rvis_ctx *ret = (pvn_rvis_ctx*)NULL;
+  pvn_rop op = (pvn_rop)NULL;
+  switch (*fop) {
+  case 0u:
+    op = pvn_rop_id;
+    break;
+  case 1u:
+    op = pvn_rop_abs;
+    break;
+  case 2u:
+    op = pvn_rop_lgabs;
+    break;
+  case 3u:
+    op = pvn_rop_logabs;
+    break;
+  default:
+    return ret;
+  }
+  PVN_SYSP_CALL(ret = (pvn_rvis_ctx*)malloc(sizeof(pvn_rvis_ctx)));
+  if (pvn_rvis_start(ret, *m, *n, op, fnB)) {
+    free(ret);
+    ret = (pvn_rvis_ctx*)NULL;
+  }
+  return ret;
 }
 
 int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned n, const pvn_rop_l op, const char *const fnB)
@@ -196,6 +260,38 @@ int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned
   return 0;
 }
 
+pvn_rvis_ctx_l *pvn_rvis_start_l_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+{
+  assert(m);
+  assert(n);
+  assert(fop);
+  assert(fnB);
+  pvn_rvis_ctx_l *ret = (pvn_rvis_ctx_l*)NULL;
+  pvn_rop_l op = (pvn_rop_l)NULL;
+  switch (*fop) {
+  case 0u:
+    op = pvn_rop_idl;
+    break;
+  case 1u:
+    op = pvn_rop_absl;
+    break;
+  case 2u:
+    op = pvn_rop_lgabsl;
+    break;
+  case 3u:
+    op = pvn_rop_logabsl;
+    break;
+  default:
+    return ret;
+  }
+  PVN_SYSP_CALL(ret = (pvn_rvis_ctx_l*)malloc(sizeof(pvn_rvis_ctx_l)));
+  if (pvn_rvis_start_l(ret, *m, *n, op, fnB)) {
+    free(ret);
+    ret = (pvn_rvis_ctx_l*)NULL;
+  }
+  return ret;
+}
+
 int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, const size_t ldA)
 {
   if (!ctx)
@@ -212,6 +308,14 @@ int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, c
   PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
   ++(ctx->cnt);
   return ret;
+}
+
+int pvn_rvis_frame_f_(pvn_rvis_ctx_f *const *const ctx, const float *const restrict A, const size_t *const ldA)
+{
+  assert(ctx);
+  assert(A);
+  assert(ldA);
+  return pvn_rvis_frame_f(*ctx, A, *ldA);
 }
 
 int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, const size_t ldA)
@@ -232,6 +336,14 @@ int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, cons
   return ret;
 }
 
+int pvn_rvis_frame_(pvn_rvis_ctx *const *const ctx, const double *const restrict A, const size_t *const ldA)
+{
+  assert(ctx);
+  assert(A);
+  assert(ldA);
+  return pvn_rvis_frame(*ctx, A, *ldA);
+}
+
 int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restrict A, const size_t ldA)
 {
   if (!ctx)
@@ -248,6 +360,14 @@ int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restric
   PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdB, ctx->B, sz));
   ++(ctx->cnt);
   return ret;
+}
+
+int pvn_rvis_frame_l_(pvn_rvis_ctx_l *const *const ctx, const long double *const restrict A, const size_t *const ldA)
+{
+  assert(ctx);
+  assert(A);
+  assert(ldA);
+  return pvn_rvis_frame_l(*ctx, A, *ldA);
 }
 
 int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB)
@@ -388,6 +508,19 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return (int)(ctx->cnt);
 }
 
+int pvn_rvis_stop_f_(pvn_rvis_ctx_f **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+{
+  assert(ctx);
+  assert(sx);
+  assert(sy);
+  assert(bppB);
+  assert(bnB);
+  const int r = pvn_rvis_stop_f(*ctx, *sx, *sy, *bppB, bnB);
+  free(*ctx);
+  *ctx = (pvn_rvis_ctx_f*)NULL;
+  return r;
+}
+
 int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB)
 {
   if (!ctx)
@@ -524,6 +657,19 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   PVN_SYSI_CALL(close(ctx->fdB));
   ctx->fdB = -1;
   return (int)(ctx->cnt);
+}
+
+int pvn_rvis_stop_(pvn_rvis_ctx **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+{
+  assert(ctx);
+  assert(sx);
+  assert(sy);
+  assert(bppB);
+  assert(bnB);
+  const int r = pvn_rvis_stop(*ctx, *sx, *sy, *bppB, bnB);
+  free(*ctx);
+  *ctx = (pvn_rvis_ctx*)NULL;
+  return r;
 }
 
 int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB)
@@ -670,6 +816,19 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
   return (int)(ctx->cnt);
 }
 
+int pvn_rvis_stop_l_(pvn_rvis_ctx_l **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+{
+  assert(ctx);
+  assert(sx);
+  assert(sy);
+  assert(bppB);
+  assert(bnB);
+  const int r = pvn_rvis_stop_l(*ctx, *sx, *sy, *bppB, bnB);
+  free(*ctx);
+  *ctx = (pvn_rvis_ctx_l*)NULL;
+  return r;
+}
+
 int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned n, const pvn_cop_f op, const char *const fnB, const char *const fnC)
 {
   if (!ctx)
@@ -713,6 +872,44 @@ int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned
                            ), (S_IRUSR | S_IWUSR));
   PVN_SYSI_CALL(-1 == ctx->fdC);
   return (ctx->err = 0);
+}
+
+pvn_cvis_ctx_f *pvn_cvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+{
+  pvn_cvis_ctx_f *ret = (pvn_cvis_ctx_f*)NULL;
+  if (!m)
+    return ret;
+  if (!n)
+    return ret;
+  if (!fop)
+    return ret;
+  if (!fnB)
+    return ret;
+  if (!fnC)
+    return ret;
+  pvn_cop_f op = (pvn_cop_f)NULL;
+  switch (*fop) {
+  case 0u:
+    op = pvn_cop_idf;
+    break;
+  case 1u:
+    op = pvn_cop_absf;
+    break;
+  case 2u:
+    op = pvn_cop_lgabsf;
+    break;
+  case 3u:
+    op = pvn_cop_logabsf;
+    break;
+  default:
+    return ret;
+  }
+  PVN_SYSP_CALL(ret = (pvn_cvis_ctx_f*)malloc(sizeof(pvn_cvis_ctx_f)));
+  if (pvn_cvis_start_f(ret, *m, *n, op, fnB, fnC)) {
+    free(ret);
+    ret = (pvn_cvis_ctx_f*)NULL;
+  }
+  return ret;
 }
 
 int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, const pvn_cop op, const char *const fnB, const char *const fnC)
@@ -760,6 +957,44 @@ int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, 
   return (ctx->err = 0);
 }
 
+pvn_cvis_ctx *pvn_cvis_start_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+{
+  pvn_cvis_ctx *ret = (pvn_cvis_ctx*)NULL;
+  if (!m)
+    return ret;
+  if (!n)
+    return ret;
+  if (!fop)
+    return ret;
+  if (!fnB)
+    return ret;
+  if (!fnC)
+    return ret;
+  pvn_cop op = (pvn_cop)NULL;
+  switch (*fop) {
+  case 0u:
+    op = pvn_cop_id;
+    break;
+  case 1u:
+    op = pvn_cop_abs;
+    break;
+  case 2u:
+    op = pvn_cop_lgabs;
+    break;
+  case 3u:
+    op = pvn_cop_logabs;
+    break;
+  default:
+    return ret;
+  }
+  PVN_SYSP_CALL(ret = (pvn_cvis_ctx*)malloc(sizeof(pvn_cvis_ctx)));
+  if (pvn_cvis_start(ret, *m, *n, op, fnB, fnC)) {
+    free(ret);
+    ret = (pvn_cvis_ctx*)NULL;
+  }
+  return ret;
+}
+
 int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned n, const pvn_cop_l op, const char *const fnB, const char *const fnC)
 {
   if (!ctx)
@@ -805,6 +1040,44 @@ int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned
   return (ctx->err = 0);
 }
 
+pvn_cvis_ctx_l *pvn_cvis_start_l_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+{
+  pvn_cvis_ctx_l *ret = (pvn_cvis_ctx_l*)NULL;
+  if (!m)
+    return ret;
+  if (!n)
+    return ret;
+  if (!fop)
+    return ret;
+  if (!fnB)
+    return ret;
+  if (!fnC)
+    return ret;
+  pvn_cop_l op = (pvn_cop_l)NULL;
+  switch (*fop) {
+  case 0u:
+    op = pvn_cop_idl;
+    break;
+  case 1u:
+    op = pvn_cop_absl;
+    break;
+  case 2u:
+    op = pvn_cop_lgabsl;
+    break;
+  case 3u:
+    op = pvn_cop_logabsl;
+    break;
+  default:
+    return ret;
+  }
+  PVN_SYSP_CALL(ret = (pvn_cvis_ctx_l*)malloc(sizeof(pvn_cvis_ctx_l)));
+  if (pvn_cvis_start_l(ret, *m, *n, op, fnB, fnC)) {
+    free(ret);
+    ret = (pvn_cvis_ctx_l*)NULL;
+  }
+  return ret;
+}
+
 int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restrict A, const size_t ldA)
 {
   if (!ctx)
@@ -822,6 +1095,14 @@ int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restr
   PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdC, ctx->C, sz));
   ++(ctx->cnt);
   return (ctx->err);
+}
+
+int pvn_cvis_frame_f_(pvn_cvis_ctx_f *const *const ctx, const float complex *const restrict A, const size_t *const ldA)
+{
+  assert(ctx);
+  assert(A);
+  assert(ldA);
+  return pvn_cvis_frame_f(*ctx, A, *ldA);
 }
 
 int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict A, const size_t ldA)
@@ -843,6 +1124,14 @@ int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict
   return (ctx->err);
 }
 
+int pvn_cvis_frame_(pvn_cvis_ctx *const *const ctx, const double complex *const restrict A, const size_t *const ldA)
+{
+  assert(ctx);
+  assert(A);
+  assert(ldA);
+  return pvn_cvis_frame(*ctx, A, *ldA);
+}
+
 int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const restrict A, const size_t ldA)
 {
   if (!ctx)
@@ -860,6 +1149,14 @@ int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const
   PVN_SYSI_CALL((ssize_t)sz != write(ctx->fdC, ctx->C, sz));
   ++(ctx->cnt);
   return (ctx->err);
+}
+
+int pvn_cvis_frame_l_(pvn_cvis_ctx_l *const *const ctx, const long double complex *const restrict A, const size_t *const ldA)
+{
+  assert(ctx);
+  assert(A);
+  assert(ldA);
+  return pvn_cvis_frame_l(*ctx, A, *ldA);
 }
 
 int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB, const unsigned bppC, const char *const bnC)
@@ -900,7 +1197,28 @@ int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned
     return -6;
   ctx->C = (float*)NULL;
   ctx->fdC = -1;
-  return (ctx->err);
+  return (ctx->cnt);
+}
+
+int pvn_cvis_stop_f_(pvn_cvis_ctx_f **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+{
+  assert(ctx);
+  assert(sx);
+  assert(sy);
+  assert(bppB);
+  assert(bnB);
+  assert(bppC);
+  assert(bnC);
+  const int r = pvn_cvis_stop_f(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
+  if ((*ctx)->err) {
+    free(*ctx);
+    *ctx = (pvn_cvis_ctx_f*)(~(intptr_t)0);
+  }
+  else {
+    free(*ctx);
+    *ctx = (pvn_cvis_ctx_f*)NULL;
+  }
+  return r;
 }
 
 int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB, const unsigned bppC, const char *const bnC)
@@ -941,7 +1259,28 @@ int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy,
     return -6;
   ctx->C = (double*)NULL;
   ctx->fdC = -1;
-  return (ctx->err);
+  return (ctx->cnt);
+}
+
+int pvn_cvis_stop_(pvn_cvis_ctx **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+{
+  assert(ctx);
+  assert(sx);
+  assert(sy);
+  assert(bppB);
+  assert(bnB);
+  assert(bppC);
+  assert(bnC);
+  const int r = pvn_cvis_stop(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
+  if ((*ctx)->err) {
+    free(*ctx);
+    *ctx = (pvn_cvis_ctx*)(~(intptr_t)0);
+  }
+  else {
+    free(*ctx);
+    *ctx = (pvn_cvis_ctx*)NULL;
+  }
+  return r;
 }
 
 int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB, const unsigned bppC, const char *const bnC)
@@ -982,7 +1321,28 @@ int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned
     return -6;
   ctx->C = (long double*)NULL;
   ctx->fdC = -1;
-  return (ctx->err);
+  return (ctx->cnt);
+}
+
+int pvn_cvis_stop_l_(pvn_cvis_ctx_l **const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+{
+  assert(ctx);
+  assert(sx);
+  assert(sy);
+  assert(bppB);
+  assert(bnB);
+  assert(bppC);
+  assert(bnC);
+  const int r = pvn_cvis_stop_l(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
+  if ((*ctx)->err) {
+    free(*ctx);
+    *ctx = (pvn_cvis_ctx_l*)(~(intptr_t)0);
+  }
+  else {
+    free(*ctx);
+    *ctx = (pvn_cvis_ctx_l*)NULL;
+  }
+  return r;
 }
 
 int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)

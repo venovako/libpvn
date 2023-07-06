@@ -3,21 +3,32 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  (void)printf("%s resolution: %ld ns.\n", ((PVN_CLOCK_MONOTONIC == CLOCK_MONOTONIC) ? "CLOCK_MONOTONIC" : "CLOCK_MONOTONIC_RAW"), pvn_time_sys_res());
+  (void)printf("%s resolution: %ld ns.\n", ((PVN_CLOCK_MONOTONIC == CLOCK_MONOTONIC) ? "CLOCK_MONOTONIC" : "CLOCK_MONOTONIC_RAW"), pvn_time_mono_res());
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-long pvn_time_thread_res()
+long pvn_time_real_us_()
 {
-  struct timespec t;
-  PVN_SYSI_CALL(clock_getres(CLOCK_THREAD_CPUTIME_ID, &t));
-  return pvn_t2ns(&t);
+  return pvn_time_real_us();
 }
 
-long pvn_time_sys_res()
+long pvn_time_thread_ns_()
 {
-  struct timespec t;
-  PVN_SYSI_CALL(clock_getres(PVN_CLOCK_MONOTONIC, &t));
-  return pvn_t2ns(&t);
+  return pvn_time_thread_ns();
+}
+
+long pvn_time_mono_ns_()
+{
+  return pvn_time_mono_ns();
+}
+
+long pvn_time_thread_res_()
+{
+  return pvn_time_thread_res();
+}
+
+long pvn_time_mono_res_()
+{
+  return pvn_time_mono_res();
 }
 #endif /* ?PVN_TEST */

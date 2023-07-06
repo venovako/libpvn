@@ -15,14 +15,24 @@
 #error PVN_CLOCK_MONOTONIC already defined
 #endif /* ?PVN_CLOCK_MONOTONIC */
 
+static inline long pvn_t2us(const struct timeval *const tp)
+{
+  return (tp ? (tp->tv_sec * 1000000L + tp->tv_usec) : -1L);
+}
+
 static inline long pvn_t2ns(const struct timespec *const tp)
 {
   return (tp ? (tp->tv_sec * 1000000000L + tp->tv_nsec) : -1L);
 }
 
-static inline long pvn_t2us(const struct timeval *const tp)
+static inline ldiv_t pvn_us2s(const long us)
 {
-  return (tp ? (tp->tv_sec * 1000000L + tp->tv_usec) : -1L);
+  return ldiv(us, 1000000L);
+}
+
+static inline ldiv_t pvn_ns2s(const long ns)
+{
+  return ldiv(ns, 1000000000L);
 }
 
 static inline long pvn_ns2us(const long ns)
@@ -31,14 +41,10 @@ static inline long pvn_ns2us(const long ns)
   return ((qr.rem >= 500L) ? (qr.quot + 1L) : qr.quot);
 }
 
-static inline ldiv_t pvn_ns2s(const long ns)
+static inline long pvn_time_real_us()
 {
-  return ldiv(ns, 1000000000L);
-}
-
-static inline ldiv_t pvn_us2s(const long us)
-{
-  return ldiv(us, 1000000L);
+  struct timeval t;
+  return (gettimeofday(&t, NULL) ? -1L : pvn_t2us(&t));
 }
 
 static inline long pvn_time_thread_ns()
@@ -47,21 +53,28 @@ static inline long pvn_time_thread_ns()
   return (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t) ? -1L : pvn_t2ns(&t));
 }
 
-
-static inline long pvn_time_sys_ns()
+static inline long pvn_time_mono_ns()
 {
   struct timespec t;
   return (clock_gettime(PVN_CLOCK_MONOTONIC, &t) ? -1L : pvn_t2ns(&t));
 }
 
-static inline long pvn_time_sys_us()
+static inline long pvn_time_thread_res()
 {
-  struct timeval t;
-  return (gettimeofday(&t, NULL) ? -1L : pvn_t2us(&t));
+  struct timespec t;
+  return (clock_getres(CLOCK_THREAD_CPUTIME_ID, &t) ? -1L : pvn_t2ns(&t));
 }
 
-/* error checking performed and therefore not inlined */
-PVN_EXTERN_C long pvn_time_thread_res();
-PVN_EXTERN_C long pvn_time_sys_res();
+static inline long pvn_time_mono_res()
+{
+  struct timespec t;
+  return (clock_getres(PVN_CLOCK_MONOTONIC, &t) ? -1L : pvn_t2ns(&t));
+}
+
+PVN_EXTERN_C long pvn_time_real_us_();
+PVN_EXTERN_C long pvn_time_thread_ns_();
+PVN_EXTERN_C long pvn_time_mono_ns_();
+PVN_EXTERN_C long pvn_time_thread_res_();
+PVN_EXTERN_C long pvn_time_mono_res_();
 
 #endif /* !PVN_TIMER_H */
