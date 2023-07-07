@@ -17,6 +17,7 @@ endif # VECLEN
 
 SRCS=pvn.c  \
 pvn_bmp.c   \
+pvn_cjs.c   \
 pvn_error.c \
 pvn_fmt.c   \
 pvn_mem.c   \
