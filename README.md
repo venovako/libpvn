@@ -11,8 +11,8 @@ The library has been successfully built using:
 | compiler | `uname` | platform |
 | -------- | ------- | -------- |
 | clang(1) | Darwin  | x86_64   |
-| clang(2) | Linux   | ppc64le  |
-| clang(3) | FreeBSD | amd64    |
+| clang(2) | FreeBSD | amd64    |
+| clang(3) | Linux   | ppc64le  |
 | clang(4) | OpenBSD | amd64    |
 | gcc(5)   | Darwin  | x86_64   |
 | gcc(6)   | Linux   | ppc64le  |
@@ -25,8 +25,8 @@ The library has been successfully built using:
 
 Recent versions of the compilers have been povided by:
 1. Apple,
-2. IBM Open XL C/C++,
-3. FreeBSD,
+2. FreeBSD,
+3. IBM Open XL C/C++,
 4. OpenBSD,
 5. Homebrew,
 6. openSUSE,
