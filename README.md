@@ -63,7 +63,7 @@ Fortran (column-major) array order is assumed for the functions that operate on 
 
 A function with the name ending with an underscore (`_`) should be callable from Fortran directly, even without an explicit interface.
 Just declare it `EXTERNAL`, without the underscore, with a compatible return type, and obey its signature.
-For example, an `unsigned*` argument corresponds to a reference to a non-negative `INT(KIND=c_int)` value.
+For example, an `unsigned*` argument corresponds to a reference to a non-negative `INTEGER(KIND=c_int)` value.
 
 Caveat: the library has never been tested on a big-endian system!
 
