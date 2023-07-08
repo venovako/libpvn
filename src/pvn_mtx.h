@@ -5,6 +5,16 @@
 #error pvn_mtx.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+static inline unsigned pvn_umin(const unsigned a, const unsigned b)
+{
+  return ((a <= b) ? a : b);
+}
+
+static inline unsigned pvn_umax(const unsigned a, const unsigned b)
+{
+  return ((a >= b) ? a : b);
+}
+
 #ifdef __LITTLE_ENDIAN__
 
 typedef int (*pvn_rop_f)(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB);
@@ -62,16 +72,6 @@ typedef struct {
   unsigned m, n, cnt;
   int fdB, fdC, err;
 } pvn_cvis_ctx_l;
-
-static inline unsigned pvn_umin(const unsigned a, const unsigned b)
-{
-  return ((a <= b) ? a : b);
-}
-
-static inline unsigned pvn_umax(const unsigned a, const unsigned b)
-{
-  return ((a >= b) ? a : b);
-}
 
 PVN_EXTERN_C int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned n, const pvn_rop_f op, const char *const fnB);
 PVN_EXTERN_C pvn_rvis_ctx_f *pvn_rvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...);
