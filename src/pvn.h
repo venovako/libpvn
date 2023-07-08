@@ -86,7 +86,6 @@
 #error PVN_EXTERN_C already defined
 #endif /* ?PVN_EXTERN_C */
 
-#ifdef __LITTLE_ENDIAN__
 #include "pvn_bmp.h"
 #include "pvn_cjs.h"
 #include "pvn_error.h"
@@ -95,14 +94,6 @@
 #include "pvn_mtx.h"
 #include "pvn_lock.h"
 #include "pvn_timer.h"
-#else /* !__LITTLE_ENDIAN__ */
-#include "pvn_cjs.h"
-#include "pvn_error.h"
-#include "pvn_fmt.h"
-#include "pvn_mem.h"
-#include "pvn_lock.h"
-#include "pvn_timer.h"
-#endif /* ?__LITTLE_ENDIAN__ */
 
 static inline int pvn_le()
 {
