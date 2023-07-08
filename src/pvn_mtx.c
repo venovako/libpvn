@@ -3,6 +3,7 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
+#ifdef __LITTLE_ENDIAN__
   if (3 != argc) {
     (void)fprintf(stderr, "%s cnt bpp\n", *argv);
     return EXIT_FAILURE;
@@ -96,8 +97,13 @@ int main(int argc, char *argv[])
   else
     return EXIT_FAILURE;
   return EXIT_SUCCESS;
+#else /* !__LITTLE_ENDIAN */
+  (void)fprintf(stderr, "%s not supported on big endian systems\n", *argv);
+  return EXIT_FAILURE;
+#endif /* ?__LITTLE_ENDIAN__ */
 }
 #else /* !PVN_TEST */
+#ifdef __LITTLE_ENDIAN__
 int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned n, const pvn_rop_f op, const char *const fnB)
 {
   if (!ctx)
@@ -2797,4 +2803,5 @@ int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double comple
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
+#endif /* __LITTLE_ENDIAN__ */
 #endif /* ?PVN_TEST */

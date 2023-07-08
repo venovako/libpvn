@@ -67,6 +67,7 @@ Just declare it `EXTERNAL`, without the underscore, with a compatible return typ
 For example, an `unsigned*` argument corresponds to a reference to a non-negative `INTEGER(KIND=c_int)` value.
 
 Caveat: the library has never been tested on a big-endian system!
+Certain modules are known not to work there and empty objects will be built instead.
 
 ## Examples
 
