@@ -5,16 +5,6 @@
 #error pvn_mtx.h not intended for direct inclusion
 #endif /* !PVN_H */
 
-static inline unsigned pvn_umin(const unsigned a, const unsigned b)
-{
-  return ((a <= b) ? a : b);
-}
-
-static inline unsigned pvn_umax(const unsigned a, const unsigned b)
-{
-  return ((a >= b) ? a : b);
-}
-
 #ifdef __LITTLE_ENDIAN__
 
 typedef int (*pvn_rop_f)(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB);

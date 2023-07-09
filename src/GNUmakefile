@@ -16,6 +16,7 @@ CFLAGS += -DPVN_VECLEN=$(VECLEN)u
 endif # VECLEN
 
 SRCS=pvn.c  \
+pvn_aux.c   \
 pvn_bmp.c   \
 pvn_cjs.c   \
 pvn_error.c \

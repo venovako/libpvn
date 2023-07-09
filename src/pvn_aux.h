@@ -1,0 +1,63 @@
+#ifndef PVN_AUX_H
+#define PVN_AUX_H
+
+#ifndef PVN_H
+#error pvn_aux.h not intended for direct inclusion
+#endif /* !PVN_H */
+
+#ifndef PVN_LF64
+#ifdef _LARGEFILE64_SOURCE
+#define PVN_LF64 O_LARGEFILE
+#else /* !_LARGEFILE64_SOURCE */
+#define PVN_LF64 0
+#endif /* ?_LARGEFILE64_SOURCE */
+#else /* PVN_LF64 */
+#error PVN_LF64 already defined
+#endif /* ?PVN_LF64 */
+
+static inline int pvn_imin(const int a, const int b)
+{
+  return ((a <= b) ? a : b);
+}
+
+static inline int pvn_imax(const int a, const int b)
+{
+  return ((a >= b) ? a : b);
+}
+
+static inline long pvn_lmin(const long a, const long b)
+{
+  return ((a <= b) ? a : b);
+}
+
+static inline long pvn_lmax(const long a, const long b)
+{
+  return ((a >= b) ? a : b);
+}
+
+static inline unsigned pvn_umin(const unsigned a, const unsigned b)
+{
+  return ((a <= b) ? a : b);
+}
+
+static inline unsigned pvn_umax(const unsigned a, const unsigned b)
+{
+  return ((a >= b) ? a : b);
+}
+
+static inline size_t pvn_zmin(const size_t a, const size_t b)
+{
+  return ((a <= b) ? a : b);
+}
+
+static inline size_t pvn_zmax(const size_t a, const size_t b)
+{
+  return ((a >= b) ? a : b);
+}
+
+PVN_EXTERN_C int pvn_gcd(const int a, const int b);
+PVN_EXTERN_C int pvn_gcd_(const int *const a, const int *const b);
+PVN_EXTERN_C int pvn_lcm(const int a, const int b);
+PVN_EXTERN_C int pvn_lcm_(const int *const a, const int *const b);
+
+#endif /* !PVN_AUX_H */

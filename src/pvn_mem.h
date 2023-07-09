@@ -31,16 +31,6 @@
 #error PVN_NOT_VECALIGNED already defined
 #endif /* ?PVN_NOT_VECALIGNED */
 
-static inline size_t pvn_zmin(const size_t a, const size_t b)
-{
-  return ((a <= b) ? a : b);
-}
-
-static inline size_t pvn_zmax(const size_t a, const size_t b)
-{
-  return ((a >= b) ? a : b);
-}
-
 PVN_EXTERN_C size_t pvn_pagesize_();
 PVN_EXTERN_C size_t pvn_alignment_(const size_t a);
 

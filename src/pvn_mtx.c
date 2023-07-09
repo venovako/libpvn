@@ -130,11 +130,7 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
 
   ctx->B = (float*)malloc(m * (n * sizeof(float)));
   if (ctx->B) {
-    ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                          | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                          ), (S_IRUSR | S_IWUSR));
+    ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
     if (-1 == ctx->fdB) {
       free(ctx->B);
       ctx->B = (float*)NULL;
@@ -203,11 +199,7 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
 
   ctx->B = (double*)malloc(m * (n * sizeof(double)));
   if (ctx->B) {
-    ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                          | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                          ), (S_IRUSR | S_IWUSR));
+    ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
     if (-1 == ctx->fdB) {
       free(ctx->B);
       ctx->B = (double*)NULL;
@@ -276,11 +268,7 @@ int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned
 
   ctx->B = (long double*)malloc(m * (n * sizeof(long double)));
   if (ctx->B) {
-    ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                          | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                          ), (S_IRUSR | S_IWUSR));
+    ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
     if (-1 == ctx->fdB) {
       free(ctx->B);
       ctx->B = (long double*)NULL;
@@ -984,22 +972,14 @@ int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned
     return 2;
   }
 
-  ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                        | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                        ), (S_IRUSR | S_IWUSR));
+  ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
   if (-1 == ctx->fdB) {
     free(ctx->C);
     free(ctx->B);
     ctx->C = ctx->B = (float*)NULL;
     return 3;
   }
-  ctx->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                        | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                        ), (S_IRUSR | S_IWUSR));
+  ctx->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
   if (-1 == ctx->fdC) {
     ctx->err = close(ctx->fdB);
     ctx->fdB = -1;
@@ -1089,22 +1069,14 @@ int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, 
     return 2;
   }
 
-  ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                        | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                        ), (S_IRUSR | S_IWUSR));
+  ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
   if (-1 == ctx->fdB) {
     free(ctx->C);
     free(ctx->B);
     ctx->C = ctx->B = (double*)NULL;
     return 3;
   }
-  ctx->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                        | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                        ), (S_IRUSR | S_IWUSR));
+  ctx->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
   if (-1 == ctx->fdC) {
     ctx->err = close(ctx->fdB);
     ctx->fdB = -1;
@@ -1194,22 +1166,14 @@ int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned
     return 2;
   }
 
-  ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                        | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                        ), (S_IRUSR | S_IWUSR));
+  ctx->fdB = open(fnB, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
   if (-1 == ctx->fdB) {
     free(ctx->C);
     free(ctx->B);
     ctx->C = ctx->B = (long double*)NULL;
     return 3;
   }
-  ctx->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC
-#ifdef _LARGEFILE64_SOURCE
-                        | O_LARGEFILE
-#endif /* _LARGEFILE64_SOURCE */
-                        ), (S_IRUSR | S_IWUSR));
+  ctx->fdC = open(fnC, (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64), (S_IRUSR | S_IWUSR));
   if (-1 == ctx->fdC) {
     ctx->err = close(ctx->fdB);
     ctx->fdB = -1;

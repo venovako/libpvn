@@ -86,6 +86,7 @@
 #error PVN_EXTERN_C already defined
 #endif /* ?PVN_EXTERN_C */
 
+#include "pvn_aux.h"
 #include "pvn_bmp.h"
 #include "pvn_cjs.h"
 #include "pvn_error.h"
@@ -107,4 +108,15 @@ static inline int pvn_le()
 }
 PVN_EXTERN_C int pvn_le_();
 
+static inline int pvn_omp()
+{
+  return
+#ifdef _OPENMP
+    _OPENMP
+#else /* !_OPENMP */
+    0
+#endif /* ?_OPENMP */
+    ;
+}
+PVN_EXTERN_C int pvn_omp_();
 #endif /* !PVN_H */

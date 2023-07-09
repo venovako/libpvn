@@ -7,8 +7,8 @@
 
 typedef struct {
   pthread_mutex_t mutex;
-  int mutex_type;
   volatile sig_atomic_t count;
+  int mutex_type;
 } pvn_lock_t;
 
 PVN_EXTERN_C void pvn_lock_init(pvn_lock_t *const, const bool);

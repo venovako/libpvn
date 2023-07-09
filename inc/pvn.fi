@@ -2,6 +2,9 @@
       USE, INTRINSIC :: ISO_C_BINDING
 ! pointers are treated as integers, i.e., as handles never to be dereferenced
       INTEGER(KIND=c_int), EXTERNAL :: PVN_LE
+      INTEGER(KIND=c_int), EXTERNAL :: PVN_OMP
+      INTEGER(KIND=c_int), EXTERNAL :: PVN_GCD
+      INTEGER(KIND=c_int), EXTERNAL :: PVN_LCM
       INTEGER(KIND=c_size_t), EXTERNAL :: PVN_PAGESIZE
       INTEGER(KIND=c_size_t), EXTERNAL :: PVN_ALIGNMENT
       INTEGER(KIND=c_long), EXTERNAL :: PVN_TIME_REAL_US
