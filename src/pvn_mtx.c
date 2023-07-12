@@ -451,9 +451,9 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   const size_t bnl = strlen(bnB);
   char fn[bnl + 16u];
   strcpy(fn, bnB)[bnl] = '.';
-  fn[bnl + 1u] = 'p';
-  fn[bnl + 2u] = 'l';
-  fn[bnl + 3u] = 't';
+  fn[bnl + 1u] = 'c';
+  fn[bnl + 2u] = 's';
+  fn[bnl + 3u] = 'v';
   fn[bnl + 4u] = '\0';
 
   pvn_bmp_t bmp = (pvn_bmp_t)NULL;
@@ -628,9 +628,9 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   const size_t bnl = strlen(bnB);
   char fn[bnl + 25u];
   strcpy(fn, bnB)[bnl] = '.';
-  fn[bnl + 1u] = 'p';
-  fn[bnl + 2u] = 'l';
-  fn[bnl + 3u] = 't';
+  fn[bnl + 1u] = 'c';
+  fn[bnl + 2u] = 's';
+  fn[bnl + 3u] = 'v';
   fn[bnl + 4u] = '\0';
 
   pvn_bmp_t bmp = (pvn_bmp_t)NULL;
@@ -811,9 +811,9 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
 #endif /* ?__x86_64__ */
           ];
   strcpy(fn, bnB)[bnl] = '.';
-  fn[bnl + 1u] = 'p';
-  fn[bnl + 2u] = 'l';
-  fn[bnl + 3u] = 't';
+  fn[bnl + 1u] = 'c';
+  fn[bnl + 2u] = 's';
+  fn[bnl + 3u] = 'v';
   fn[bnl + 4u] = '\0';
 
   pvn_bmp_t bmp = (pvn_bmp_t)NULL;

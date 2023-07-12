@@ -357,13 +357,13 @@ int pvn_bmp_read_cmap(const pvn_bmp_t bmp, const char *const fn)
   double dr, dg, db;
   int ret = 0;
   for (uint32_t ix = 0u; ix < bmp->header.c_palette; ++ix) {
-    if (fscanf(f, " %le %le %le", &dr, &dg, &db) < 3) {
+    if (fscanf(f, " %lE, %lE, %lE", &dr, &dg, &db) < 3) {
       ret = 2;
       break;
     }
-    bmp->palette[ix].chan.r = (uint8_t)lround(dr * 255.0);
-    bmp->palette[ix].chan.g = (uint8_t)lround(dg * 255.0);
     bmp->palette[ix].chan.b = (uint8_t)lround(db * 255.0);
+    bmp->palette[ix].chan.g = (uint8_t)lround(dg * 255.0);
+    bmp->palette[ix].chan.r = (uint8_t)lround(dr * 255.0);
     bmp->palette[ix].chan.a = 0u;
   }
 

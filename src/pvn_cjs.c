@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
   default:
     return EXIT_FAILURE;
   }
-  (void)fprintf(((ret <= 0) ? stderr : stdout), "ret = %ld\n", ret);
+  (void)fprintf(((ret <= 0) ? stderr : stdout), "ret = %d\n", ret);
   return ((ret <= 0) ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 #else /* !PVN_TEST */
