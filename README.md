@@ -17,22 +17,24 @@ The library has been successfully built using:
 | gcc(5)   | Darwin  | x86_64   |
 | gcc(6)   | Linux   | ppc64le  |
 | gcc(7)   | Linux   | x86_64   |
-| icc(8)   | Darwin  | x86_64   |
-| icc(8)   | Linux   | x86_64   |
-| icx(8)   | Linux   | x86_64   |
-| nvc(9)   | Linux   | ppc64le  |
-| nvc(9)   | Linux   | x86_64   |
+| gcc(8)   | SunOS   | i86pc    |
+| icc(9)   | Darwin  | x86_64   |
+| icc(9)   | Linux   | x86_64   |
+| icx(9)   | Linux   | x86_64   |
+| nvc(10)  | Linux   | ppc64le  |
+| nvc(10)  | Linux   | x86_64   |
 
 Recent versions of the compilers have been povided by:
-1. Apple,
-2. FreeBSD,
-3. IBM Open XL C/C++,
-4. OpenBSD,
-5. Homebrew,
-6. openSUSE,
-7. Oracle Linux,
-8. Intel oneAPI,
-9. NVIDIA HPC SDK.
+ 1. Apple,
+ 2. FreeBSD,
+ 3. IBM Open XL C/C++,
+ 4. OpenBSD,
+ 5. Homebrew,
+ 6. openSUSE,
+ 7. Oracle Linux,
+ 8. Oracle Solaris,
+ 9. Intel oneAPI,
+10. NVIDIA HPC SDK.
 
 Examples of building the library:
 ```bash

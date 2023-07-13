@@ -5,7 +5,11 @@ ifndef COMPILER
 ifeq ($(OS),Linux)
 COMPILER=gcc
 else # !Linux
+ifeq ($(OS),SunOS)
+COMPILER=gcc
+else # !SunOS
 COMPILER=clang
+endif # ?SunOS
 endif # ?Linux
 endif # !COMPILER
 include $(COMPILER).mk

@@ -7,8 +7,6 @@
 
 #ifndef PVN_BTRACE_BUFSIZ
 #define PVN_BTRACE_BUFSIZ 128
-#else /* PVN_BTRACE_BUFSIZ */
-#error PVN_BTRACE_BUFSIZ already defined
 #endif /* ?PVN_BTRACE_BUFSIZ */
 
 #ifndef PVN_BTRACE
