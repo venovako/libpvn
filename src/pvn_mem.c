@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
   (void)printf("PVN_SAFELEN(float) = %zu\n", PVN_SAFELEN(float));
   (void)printf("PVN_SAFELEN(double) = %zu\n", PVN_SAFELEN(double));
   (void)printf("page size = %zu\n", pvn_pagesize_());
-  (void)printf("pvn_alignment(10) = %zu\n", pvn_alignment_(10u));
+  (void)printf("pvn_alignment(10) = %zu\n", pvn_alignment(10u));
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -17,7 +17,7 @@ size_t pvn_pagesize_()
   return (size_t)((ps < 0L) ? 0L : ps);
 }
 
-size_t pvn_alignment_(const size_t a)
+size_t pvn_alignment(const size_t a)
 {
   const size_t j = pvn_zmax((size_t)PVN_VECLEN, sizeof(void*));
   size_t i = j;
@@ -27,5 +27,11 @@ size_t pvn_alignment_(const size_t a)
   if (!i)
     i = pvn_zmax(pvn_pagesize_(), j);
   return i;
+}
+
+size_t pvn_alignment_(const size_t *const a)
+{
+  assert(a);
+  return pvn_alignment(*a);
 }
 #endif /* ?PVN_TEST */

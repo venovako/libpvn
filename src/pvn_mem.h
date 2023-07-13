@@ -32,6 +32,7 @@
 #endif /* ?PVN_NOT_VECALIGNED */
 
 PVN_EXTERN_C size_t pvn_pagesize_();
-PVN_EXTERN_C size_t pvn_alignment_(const size_t a);
+PVN_EXTERN_C size_t pvn_alignment(const size_t a);
+PVN_EXTERN_C size_t pvn_alignment_(const size_t *const a);
 
 #endif /* !PVN_MEM_H */

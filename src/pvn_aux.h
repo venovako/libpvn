@@ -55,9 +55,9 @@ static inline size_t pvn_zmax(const size_t a, const size_t b)
   return ((a >= b) ? a : b);
 }
 
-PVN_EXTERN_C int pvn_gcd(const int a, const int b);
-PVN_EXTERN_C int pvn_gcd_(const int *const a, const int *const b);
-PVN_EXTERN_C int pvn_lcm(const int a, const int b);
-PVN_EXTERN_C int pvn_lcm_(const int *const a, const int *const b);
+PVN_EXTERN_C size_t pvn_gcd(const size_t a, const size_t b);
+PVN_EXTERN_C size_t pvn_gcd_(const size_t *const a, const size_t *const b);
+PVN_EXTERN_C size_t pvn_lcm(const size_t a, const size_t b);
+PVN_EXTERN_C size_t pvn_lcm_(const size_t *const a, const size_t *const b);
 
 #endif /* !PVN_AUX_H */
