@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-char *pvn_get_error()
+const char *pvn_get_error()
 {
   return strerror(errno);
 }
