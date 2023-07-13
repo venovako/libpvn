@@ -451,7 +451,11 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   fn[bnl + 4u] = '\0';
 
   pvn_bmp_t bmp = (pvn_bmp_t)NULL;
+  pvn_bmp_pixel_setter_t ps = (pvn_bmp_pixel_setter_t)NULL;
+  const size_t ldB = (size_t)(ctx->m);
+  const size_t sz = ldB * ((ctx->n) * sizeof(float));
   int ret = 0;
+
   if (pvn_bmp_create(&bmp, (ctx->n * sx), ((int)(ctx->m) * -(int)sy), bppB)) {
     ret = 2;
     goto end;
@@ -460,13 +464,10 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
     ret = 3;
     goto end;
   }
-  const pvn_bmp_pixel_setter_t ps = pvn_bmp_get_pixel_setter(bmp);
-  if (!ps) {
+  if (!(ps = pvn_bmp_get_pixel_setter(bmp))) {
     ret = 4;
     goto end;
   }
-  const size_t ldB = (size_t)(ctx->m);
-  const size_t sz = ldB * ((ctx->n) * sizeof(float));
   if (lseek(ctx->fdB, 0, SEEK_SET)) {
     ret = 5;
     goto end;
@@ -628,7 +629,11 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   fn[bnl + 4u] = '\0';
 
   pvn_bmp_t bmp = (pvn_bmp_t)NULL;
+  pvn_bmp_pixel_setter_t ps = (pvn_bmp_pixel_setter_t)NULL;
+  const size_t ldB = (size_t)(ctx->m);
+  const size_t sz = ldB * ((ctx->n) * sizeof(double));
   int ret = 0;
+
   if (pvn_bmp_create(&bmp, (ctx->n * sx), ((int)(ctx->m) * -(int)sy), bppB)) {
     ret = 2;
     goto end;
@@ -637,13 +642,10 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
     ret = 3;
     goto end;
   }
-  const pvn_bmp_pixel_setter_t ps = pvn_bmp_get_pixel_setter(bmp);
-  if (!ps) {
+  if (!(ps = pvn_bmp_get_pixel_setter(bmp))) {
     ret = 4;
     goto end;
   }
-  const size_t ldB = (size_t)(ctx->m);
-  const size_t sz = ldB * ((ctx->n) * sizeof(double));
   if (lseek(ctx->fdB, 0, SEEK_SET)) {
     ret = 5;
     goto end;
@@ -811,7 +813,11 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
   fn[bnl + 4u] = '\0';
 
   pvn_bmp_t bmp = (pvn_bmp_t)NULL;
+  pvn_bmp_pixel_setter_t ps = (pvn_bmp_pixel_setter_t)NULL;
+  const size_t ldB = (size_t)(ctx->m);
+  const size_t sz = ldB * ((ctx->n) * sizeof(long double));
   int ret = 0;
+
   if (pvn_bmp_create(&bmp, (ctx->n * sx), ((int)(ctx->m) * -(int)sy), bppB)) {
     ret = 2;
     goto err;
@@ -820,13 +826,10 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
     ret = 3;
     goto err;
   }
-  const pvn_bmp_pixel_setter_t ps = pvn_bmp_get_pixel_setter(bmp);
-  if (!ps) {
+  if (!(ps = pvn_bmp_get_pixel_setter(bmp))) {
     ret = 4;
     goto err;
   }
-  const size_t ldB = (size_t)(ctx->m);
-  const size_t sz = ldB * ((ctx->n) * sizeof(long double));
   if (lseek(ctx->fdB, 0, SEEK_SET)) {
     ret = 5;
     goto err;

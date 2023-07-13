@@ -150,7 +150,7 @@ static int *me_dup(const int n1, const int *const tbl)
   const int s1 = (n1 - 1);
   const int p1 = (n1 >> 1);
   const int n2 = (n1 << 1);
-  const int s2 = (n2 - 1);
+  /* const int s2 = (n2 - 1); */
   const int p2 = (n2 >> 1);
 
   int (*const tbl2)[2] = (int (*)[2])malloc((n2 - 1) * (n2 * sizeof(int)));
