@@ -58,7 +58,7 @@ gmake clean all
 Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.a` static library, as shown in `GNUmakefile`.
 There are no mutable global/static variables present, but some static constant lookup tables are used.
 The functions can safely be called from multiple threads on *unrelated* data without locking.
-You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or not using OpenMP.
+You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or using OpenMP.
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 
@@ -66,7 +66,7 @@ A function with the name ending with an underscore (`_`) should be callable from
 Just declare it `EXTERNAL`, without the underscore, with a compatible return type, and obey its signature.
 For example, an `unsigned*` argument corresponds to a reference to a non-negative `INTEGER(KIND=c_int)` value.
 
-Caveat: the library has never been tested on a big-endian system and certain parts are likely not to work.
+*Caveat*: the library has never been tested on a big-endian system and certain parts are likely not to work.
 
 ## Examples
 
