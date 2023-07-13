@@ -8,7 +8,7 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu18 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -fopenmp -pthread
+CFLAGS += -std=gnu18 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread #-fopenmp
 ifeq ($(ARCH),ppc64le)
 CFLAGS += -mcpu=native -mtraceback=full
 else # !ppc64le
