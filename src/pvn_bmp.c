@@ -3,7 +3,6 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-#ifdef __LITTLE_ENDIAN__
   if (argc != 6) {
     fprintf(stderr, "%s FileName Width Height BitsPerPixel Colormap\n", *argv);
     return EXIT_FAILURE;
@@ -49,13 +48,8 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   pvn_bmp_destroy(bmp);
   return EXIT_SUCCESS;
-#else /* !__LITTLE_ENDIAN__ */
-  (void)fprintf(stderr, "%s not supported on big endian systems\n", *argv);
-  return EXIT_FAILURE;
-#endif /* ?__LITTLE_ENDIAN__ */
 }
 #else /* !PVN_TEST */
-#ifdef __LITTLE_ENDIAN__
 int pvn_bmp_create(pvn_bmp_t *const bmp, const uint32_t width, const int32_t height, const uint16_t bpp)
 {
   void *hdr_end;
@@ -372,5 +366,4 @@ int pvn_bmp_read_cmap(const pvn_bmp_t bmp, const char *const fn)
 
   return ret;
 }
-#endif /* __LITTLE_ENDIAN__ */
 #endif /* ?PVN_TEST */

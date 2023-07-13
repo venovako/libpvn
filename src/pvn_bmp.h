@@ -5,8 +5,6 @@
 #error pvn_bmp.h not intended for direct inclusion
 #endif /* !PVN_H */
 
-#ifdef __LITTLE_ENDIAN__
-
 #ifndef PVN_RGB_24
 #define PVN_RGB_24(r, g, b) (((((r) << 8u) | (g)) << 8u) | (b))
 #else /* PVN_RGB_24 */
@@ -64,7 +62,5 @@ PVN_EXTERN_C pvn_bmp_pixel_getter_t pvn_bmp_get_pixel_getter(const pvn_bmp_t bmp
 
 PVN_EXTERN_C int pvn_bmp_fwrite(const pvn_bmp_t bmp, const char *const fn);
 PVN_EXTERN_C int pvn_bmp_read_cmap(const pvn_bmp_t bmp, const char *const fn);
-
-#endif /* __LITTLE_ENDIAN__ */
 
 #endif /* !PVN_BMP_H */

@@ -96,18 +96,6 @@
 #include "pvn_lock.h"
 #include "pvn_timer.h"
 
-static inline int pvn_le()
-{
-  return
-#ifdef __LITTLE_ENDIAN__
-    __LITTLE_ENDIAN__
-#else /* !__LITTLE_ENDIAN__ */
-    0
-#endif /* ?__LITTLE_ENDIAN__ */
-    ;
-}
-PVN_EXTERN_C int pvn_le_();
-
 static inline int pvn_omp()
 {
   return

@@ -3,18 +3,13 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  (void)printf("libpvn built on %s with %s for %s on %s", __DATE__, PVN_COMPILER, PVN_OS, PVN_ARCH);
-#ifdef __LITTLE_ENDIAN__
-  (void)printf(" (LE) ");
-#else /* !__LITTLE_ENDIAN__ */
-  (void)printf(" (BE) ");
-#endif /* ?__LITTLE_ENDIAN__ */
+  (void)printf("libpvn built on %s with %s for %s on %s ", __DATE__, PVN_COMPILER, PVN_OS, PVN_ARCH);
 #ifdef NDEBUG
-  (void)printf("with optimization level %d", NDEBUG);
+  (void)printf("with optimization level %d ", NDEBUG);
 #else /* !NDEBUG */
-  (void)printf("for debugging");
+  (void)printf("for debugging ");
 #endif /* ?NDEBUG */
-  (void)printf(" and with OpenMP ");
+  (void)printf("and with OpenMP ");
 #ifdef _OPENMP
   (void)printf("%d\n", _OPENMP);
 #else /* !_OPENMP */
@@ -23,11 +18,6 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_le_()
-{
-  return pvn_le();
-}
-
 int pvn_omp_()
 {
   return pvn_omp();

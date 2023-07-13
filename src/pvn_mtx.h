@@ -5,8 +5,6 @@
 #error pvn_mtx.h not intended for direct inclusion
 #endif /* !PVN_H */
 
-#ifdef __LITTLE_ENDIAN__
-
 typedef int (*pvn_rop_f)(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB);
 typedef int (*pvn_rop)(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB);
 typedef int (*pvn_rop_l)(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB);
@@ -136,7 +134,5 @@ PVN_EXTERN_C int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long d
 PVN_EXTERN_C int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC);
 PVN_EXTERN_C int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC);
 PVN_EXTERN_C int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC);
-
-#endif /* __LITTLE_ENDIAN__ */
 
 #endif /* !PVN_MTX_H */
