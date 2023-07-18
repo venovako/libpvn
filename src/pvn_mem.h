@@ -31,6 +31,7 @@
 #error PVN_NOT_VECALIGNED already defined
 #endif /* ?PVN_NOT_VECALIGNED */
 
+PVN_EXTERN_C unsigned pvn_veclen_();
 PVN_EXTERN_C size_t pvn_pagesize_();
 PVN_EXTERN_C size_t pvn_alignment(const size_t a);
 PVN_EXTERN_C size_t pvn_alignment_(const size_t *const a);

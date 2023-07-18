@@ -11,6 +11,11 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+unsigned pvn_veclen_()
+{
+  return (PVN_VECLEN);
+}
+
 size_t pvn_pagesize_()
 {
   const long ps = sysconf(_SC_PAGESIZE);
