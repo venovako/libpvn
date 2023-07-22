@@ -13,7 +13,7 @@ static int test_rolcyc(const int id, const int n)
   for (int stp = 0; stp < ret; ++stp) {
     const int r = pvn_cjs_next(&js, (int*)arr);
     if (r != 1) {
-      ret = -abs(r);
+      ret = -r;
       goto end;
     }
     (void)fprintf(stdout, "{%3d,%3d},", arr[0], arr[1]);
@@ -37,7 +37,7 @@ static int test_maneb2(const int id, const int n)
     for (int stp = 0; stp < ret; ++stp) {
       const int r = pvn_cjs_next(&js, (int*)arr);
       if (r != n_2) {
-        ret = -abs(r);
+        ret = -r;
         goto end;
       }
       (void)fprintf(stdout, "{\n\t\t");
@@ -52,7 +52,7 @@ static int test_maneb2(const int id, const int n)
     for (int stp = 0; stp < ret; ++stp) {
       const int r = pvn_cjs_next(&js, (int*)arr);
       if (r != n_2) {
-        ret = -abs(r);
+        ret = -r;
         goto end;
       }
       (void)fprintf(stdout, "{\n\t\t");
@@ -78,9 +78,9 @@ static int test_modmod(const int id, const int n)
   if (id & 1) { /* comm */
     int arr[n_2][2][2][2];
     for (int stp = 0; stp < ret; ++stp) {
-      const int r = -pvn_cjs_next(&js, (int*)arr);
+      const int r = pvn_cjs_next(&js, (int*)arr);
       if (r != n_2) {
-        ret = -abs(r);
+        ret = -r;
         goto end;
       }
       (void)fprintf(stdout, "{\n\t\t");
@@ -93,9 +93,9 @@ static int test_modmod(const int id, const int n)
   else { /* no comm */
     int arr[n_2][2][2];
     for (int stp = 0; stp < ret; ++stp) {
-      const int r = -pvn_cjs_next(&js, (int*)arr);
+      const int r = pvn_cjs_next(&js, (int*)arr);
       if (r != n_2) {
-        ret = -abs(r);
+        ret = -r;
         goto end;
       }
       (void)fprintf(stdout, "{\n\t\t");
@@ -438,21 +438,20 @@ int pvn_cjs_next(void *const js, int *const arr)
     pvn_cjs_modmod *const mom = (pvn_cjs_modmod*)js;
     int (*const ij)[2][2] = (int (*)[2][2])arr;
 
-    const int _n = mom->n;
-    const int _n_2 = _n >> 1;
-    const int _n1 = _n - 1;
+    const int n_2 = mom->n >> 1;
+    const int n_1 = mom->n - 1;
 
     if (!(mom->stp) && !(mom->swp)) { /* init */
-      for (int r = 0; r < _n_2; ++r) {
+      for (int r = 0; r < n_2; ++r) {
         ij[r][0][1] = ij[r][0][0] = r;
-        ij[r][1][1] = ij[r][1][0] = (_n1 - r);
+        ij[r][1][1] = ij[r][1][0] = (n_1 - r);
       }
     }
     else { /* step */
-      for (int r = 0; r < _n_2; ++r) {
-        if ((ij[r][0][1] + ij[r][1][1]) >= _n1) {
+      for (int r = 0; r < n_2; ++r) {
+        if ((ij[r][0][1] + ij[r][1][1]) >= n_1) {
           if (++(ij[r][0][1]) == ij[r][1][1])
-            ij[r][1][1] = (ij[r][0][1] -= _n_2);
+            ij[r][1][1] = (ij[r][0][1] -= n_2);
           ij[r][0][0] = ij[r][0][1];
         }
         else
@@ -464,28 +463,27 @@ int pvn_cjs_next(void *const js, int *const arr)
       mom->stp = 0;
       ++(mom->swp);
     }
-    info = -_n_2;
+    info = n_2;
   }
   else if (*(const int*)js == 5) { /* modified modulus */
     /* [RANK][0=PAIR,1=COMM][p/q][0=PAIR,1=SHADOW] */
     pvn_cjs_modmod *const mom = (pvn_cjs_modmod*)js;
     int (*const ij)[2][2][2] = (int (*)[2][2][2])arr;
 
-    const int _n = mom->n;
-    const int _n_2 = _n >> 1;
-    const int _n1 = _n - 1;
+    const int n_2 = mom->n >> 1;
+    const int n_1 = mom->n - 1;
 
     if (!(mom->stp) && !(mom->swp)) { /* init */
-      for (int r = 0; r < _n_2; ++r) {
+      for (int r = 0; r < n_2; ++r) {
         ij[r][0][0][1] = ij[r][0][0][0] = r;
-        ij[r][0][1][1] = ij[r][0][1][0] = (_n1 - r);
+        ij[r][0][1][1] = ij[r][0][1][0] = (n_1 - r);
       }
     }
     else { /* step */
-      for (int r = 0; r < _n_2; ++r) {
-        if ((ij[r][0][0][1] + ij[r][0][1][1]) >= _n1) {
+      for (int r = 0; r < n_2; ++r) {
+        if ((ij[r][0][0][1] + ij[r][0][1][1]) >= n_1) {
           if (++(ij[r][0][0][1]) == ij[r][0][1][1])
-            ij[r][0][1][1] = (ij[r][0][0][1] -= _n_2);
+            ij[r][0][1][1] = (ij[r][0][0][1] -= n_2);
           ij[r][0][0][0] = ij[r][0][0][1];
         }
         else
@@ -493,24 +491,24 @@ int pvn_cjs_next(void *const js, int *const arr)
       }
     }
 
-    for (int r = 0; r < _n_2; ++r) {
+    for (int r = 0; r < n_2; ++r) {
       ij[r][1][0][0] = ij[r][0][0][0];
       ij[r][1][0][1] = ij[r][0][0][1];
       ij[r][1][1][0] = ij[r][0][1][0];
       ij[r][1][1][1] = ij[r][0][1][1];
     }
 
-    for (int r = 0; r < _n_2; ++r) {
-      if ((ij[r][1][0][1] + ij[r][1][1][1]) >= _n1) {
+    for (int r = 0; r < n_2; ++r) {
+      if ((ij[r][1][0][1] + ij[r][1][1][1]) >= n_1) {
         if (++(ij[r][1][0][1]) == ij[r][1][1][1])
-          ij[r][1][1][1] = (ij[r][1][0][1] -= _n_2);
+          ij[r][1][1][1] = (ij[r][1][0][1] -= n_2);
         ij[r][1][0][0] = ij[r][1][0][1];
       }
       else
         ij[r][1][1][0] = ++(ij[r][1][1][1]);
     }
 
-    for (int r = 0; r < _n_2; ++r) {
+    for (int r = 0; r < n_2; ++r) {
       ij[r][1][0][1] = ij[r][1][0][0];
       ij[r][1][0][0] = 0;
       ij[r][1][1][1] = ij[r][1][1][0];
@@ -521,11 +519,11 @@ int pvn_cjs_next(void *const js, int *const arr)
       mom->stp = 0;
       ++(mom->swp);
     }
-    info = -_n_2;
+    info = n_2;
 
     /* communication */
-    for (int i = 0; i < _n; ++i) {
-      for (int j = 0; j < _n; ++j) {
+    for (int i = 0; i < mom->n; ++i) {
+      for (int j = 0; j < mom->n; ++j) {
         const int Is1 = i >> 1;
         const int Ia1 = i & 1;
         const int Js1 = j >> 1;
@@ -544,7 +542,7 @@ int pvn_cjs_next(void *const js, int *const arr)
       }
     }
 
-    for (int r = 0; r < _n_2; ++r)
+    for (int r = 0; r < n_2; ++r)
       ij[r][1][1][1] = ij[r][1][0][1] = 0;
   }
   else
