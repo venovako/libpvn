@@ -18,7 +18,11 @@ unsigned pvn_veclen_()
 
 size_t pvn_pagesize_()
 {
+#ifdef _WIN32
+  const long ps = 4096L;
+#else /* !_WIN32 */
   const long ps = sysconf(_SC_PAGESIZE);
+#endif /* ?_WIN32 */
   return (size_t)((ps < 0L) ? 0L : ps);
 }
 

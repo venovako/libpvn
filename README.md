@@ -20,7 +20,9 @@ The library has been successfully built using:
 | gcc(8)   | SunOS   | i86pc    |
 | icc(9)   | Darwin  | x86_64   |
 | icc(9)   | Linux   | x86_64   |
+| icl(9)   | Windows | x64      |
 | icx(9)   | Linux   | x86_64   |
+| icx(9)   | Windows | x64      |
 | nvc(10)  | Linux   | ppc64le  |
 | nvc(10)  | Linux   | x86_64   |
 
@@ -39,20 +41,22 @@ Recent versions of the compilers have been povided by:
 Examples of building the library:
 ```bash
 cd src
-# query the building options (GNU make is necessary)
+# query the building options (GNU make is necessary everywhere except on Windows)
 make help
 # the output should be something like:
 # make [COMPILER=clang|gcc|icc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
-# non-debug build with icx on x86_64
+# a release build with icx on x86_64
 make COMPILER=icx NDEBUG=3 clean all
 #
-# debug build with clang on ppc64le
+# a debug build with clang on ppc64le
 make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
 #
-# debug build with clang on Free/OpenBSD (note the usage of gmake instead of make)
+# a debug build with clang on Free/OpenBSD (note the usage of gmake instead of make)
 gmake clean all
+# a release build on Windows (note the usage of nmake instead of make)
+nmake NDEBUG=3 clean all
 ```
 
 ## Using
@@ -67,6 +71,9 @@ Fortran (column-major) array order is assumed for the functions that operate on 
 A function with the name ending with an underscore (`_`) should be callable from Fortran directly, even without an explicit interface.
 Just declare it `EXTERNAL`, without the underscore, with a compatible return type, and obey its signature.
 For example, an `unsigned*` argument corresponds to a reference to a non-negative `INTEGER(KIND=c_int)` value.
+
+On Windows, the library is called `pvn.lib` and does *not* contain all routines.
+Please consult `Makefile` for more information.
 
 *Caveat*: the library has never been tested on a big-endian system and certain parts are likely not to work.
 

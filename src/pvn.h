@@ -1,22 +1,6 @@
 #ifndef PVN_H
 #define PVN_H
 
-#if (!defined(__STDC__) || (__STDC__ != 1))
-#error NON-CONFORMING C IMPLEMENTATION
-#endif /* ?__STDC__ */
-
-#if (!defined(__STDC_HOSTED__) || (__STDC_HOSTED__ != 1))
-#error NOT A HOSTED IMPLEMENTATION
-#endif /* ?__STDC_HOSTED__ */
-
-#if (defined(__STDC_NO_COMPLEX__) && (__STDC_NO_COMPLEX__ == 1))
-#error COMPLEX TYPES NOT SUPPORTED
-#endif /* ?__STDC_NO_COMPLEX__ */
-
-#if (defined(__STDC_NO_VLA__) && (__STDC_NO_VLA__ == 1))
-#error VLA NOT SUPPORTED
-#endif /* ?__STDC_NO_VLA__ */
-
 #if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #include <mathimf.h>
 #else /* !__ICC */
@@ -63,14 +47,18 @@
 #endif /* ?__cplusplus */
 
 #include <stdalign.h>
-#include <execinfo.h>
 #include <fcntl.h>
-#include <pthread.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
+#ifdef _WIN32
+#include <io.h>
+#else /* !_WIN32 */
 #include <sys/uio.h>
+#include <execinfo.h>
+#include <pthread.h>
+#include <sys/time.h>
 #include <unistd.h>
+#endif /* ?_WIN32 */
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -89,12 +77,14 @@
 #include "pvn_aux.h"
 #include "pvn_bmp.h"
 #include "pvn_cjs.h"
-#include "pvn_error.h"
 #include "pvn_fmt.h"
 #include "pvn_mem.h"
 #include "pvn_mtx.h"
+#ifndef _WIN32
+#include "pvn_error.h"
 #include "pvn_lock.h"
 #include "pvn_timer.h"
+#endif /* !_WIN32 */
 
 static inline int pvn_omp()
 {
