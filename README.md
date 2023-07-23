@@ -68,9 +68,8 @@ You might wish to tune the compiler flags to match yours, especially if you are 
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 
-A function with the name ending with an underscore (`_`) should be callable from Fortran directly, even without an explicit interface.
-Just declare it `EXTERNAL`, without the underscore, with a compatible return type, and obey its signature.
-For example, an `unsigned*` argument corresponds to a reference to a non-negative `INTEGER(KIND=c_int)` value.
+A function with the name ending with an underscore (`_`) should be callable from Fortran.
+Explicit interfaces are not needed, *except on Windows*, but are recommended to be written.
 
 On Windows, the library is called `pvn.lib` and does *not* contain all routines.
 Please consult `Makefile` for more information.
