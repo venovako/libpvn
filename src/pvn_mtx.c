@@ -1,5 +1,59 @@
 #include "pvn.h"
 
+#ifndef _WIN32
+#ifndef _close
+#define _close close
+#else /* _close */
+#error _close already defined
+#endif /* ?_close */
+#ifndef _lseek
+#define _lseek lseek
+#else /* _lseek */
+#error _lseek already defined
+#endif /* ?_lseek */
+#ifndef _open
+#define _open open
+#else /* _open */
+#error _open already defined
+#endif /* ?_open */
+#ifndef _read
+#define _read read
+#else /* _read */
+#error _read already defined
+#endif /* ?_read */
+#ifndef _write
+#define _write write
+#else /* _write */
+#error _write already defined
+#endif /* ?_write */
+#ifndef OPEN_RW
+#define OPEN_RW (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64)
+#else /* OPEN_RW */
+#error OPEN_RW already defined
+#endif /* ?OPEN_RW */
+#ifndef PERM_RW
+#define PERM_RW (S_IRUSR | S_IWUSR)
+#else /* PERM_RW */
+#error PERM_RW already defined
+#endif /* ?PERM_RW */
+#else /* _WIN32 */
+#ifndef ssize_t
+#define ssize_t long
+#else /* ssize_t */
+#error ssize_t already defined
+#endif /* ?ssize_t */
+#ifndef OPEN_RW
+#define OPEN_RW (_O_RDWR | _O_CREAT | _O_TRUNC)
+#else /* OPEN_RW */
+#error OPEN_RW already defined
+#endif /* ?OPEN_RW */
+#ifndef PERM_RW
+#define PERM_RW (_S_IREAD | _S_IWRITE)
+#else /* PERM_RW */
+#error PERM_RW already defined
+#endif /* ?PERM_RW */
+#endif /* ?_WIN32 */
+
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
@@ -71,6 +125,7 @@ int main(int argc, char *argv[])
   (void)fprintf(stderr, "%d\n", r);
   if (r)
     return EXIT_FAILURE;
+#ifndef _WIN32
   (void)fprintf(stderr, "Converting the BMPs to the PNGs with ImageMagick...\n");
   (void)system("for B in ../etc/*.bmp; do convert $B -quality 90 ../etc/`basename $B bmp`png; done");
   (void)fprintf(stderr, "Assembling the APNG animation from the PNGs with apngasm...\n");
@@ -95,62 +150,10 @@ int main(int argc, char *argv[])
     (void)system("apng2gif ../etc/pvn_mtx_r8.png ../etc/pvn_mtx_r8.gif");
   else
     return EXIT_FAILURE;
+#endif /* !_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-#ifndef _WIN32
-#ifndef _close
-#define _close close
-#else /* _close */
-#error _close already defined
-#endif /* ?_close */
-#ifndef _lseek
-#define _lseek lseek
-#else /* _lseek */
-#error _lseek already defined
-#endif /* ?_lseek */
-#ifndef _open
-#define _open open
-#else /* _open */
-#error _open already defined
-#endif /* ?_open */
-#ifndef _read
-#define _read read
-#else /* _read */
-#error _read already defined
-#endif /* ?_read */
-#ifndef _write
-#define _write write
-#else /* _write */
-#error _write already defined
-#endif /* ?_write */
-#ifndef OPEN_RW
-#define OPEN_RW (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64)
-#else /* OPEN_RW */
-#error OPEN_RW already defined
-#endif /* ?OPEN_RW */
-#ifndef PERM_RW
-#define PERM_RW (S_IRUSR | S_IWUSR)
-#else /* PERM_RW */
-#error PERM_RW already defined
-#endif /* ?PERM_RW */
-#else /* _WIN32 */
-#ifndef ssize_t
-#define ssize_t long
-#else /* ssize_t */
-#error ssize_t already defined
-#endif /* ?ssize_t */
-#ifndef OPEN_RW
-#define OPEN_RW (_O_RDWR | _O_CREAT | _O_TRUNC)
-#else /* OPEN_RW */
-#error OPEN_RW already defined
-#endif /* ?OPEN_RW */
-#ifndef PERM_RW
-#define PERM_RW (_S_IREAD | _S_IWRITE)
-#else /* PERM_RW */
-#error PERM_RW already defined
-#endif /* ?PERM_RW */
-#endif /* !_WIN32 */
 int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned n, const pvn_rop_f op, const char *const fnB)
 {
   if (!ctx)

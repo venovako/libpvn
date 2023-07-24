@@ -55,6 +55,7 @@ make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
 #
 # a debug build with clang on Free/OpenBSD (note the usage of gmake instead of make)
 gmake clean all
+#
 # a release build on Windows (note the usage of nmake instead of make)
 nmake NDEBUG=3 clean all
 ```
@@ -74,7 +75,7 @@ Explicit interfaces are not needed, *except on Windows*, but are recommended to 
 On Windows, the library is called `pvn.lib` and does *not* contain all routines.
 Please consult `Makefile` for more information.
 
-*Caveat*: the library has never been tested on a big-endian system and certain parts are likely not to work.
+*Caveat*: the library has never been tested on a big-endian system and certain parts are likely not to work there.
 
 ## Examples
 
