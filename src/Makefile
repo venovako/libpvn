@@ -16,7 +16,7 @@ CFLAGS=$(CFLAGS) /QxHost /fp:precise /Qfma /Qftz- /Qprotect-parens
 !IF "$(COMPILER)"=="icl"
 CFLAGS=$(CFLAGS) /Qsimd-honor-fp-model /Qsimd-serialize-fp-reduction /Qcomplex-limited-range- /Qfast-transcendentals- /Qprec-div /Qprec-sqrt /Qopt-multi-version-aggressive /Qopt-report:5 /Qdiag-disable:10397,10441
 !ELSE # icx
-CFLAGS=$(CFLAGS) /Oy- /Qopt-report:3
+CFLAGS=$(CFLAGS) /Oy- /Qopt-report:3 /Wno-deprecated-declarations
 !ENDIF # ?COMPILER
 !IFDEF NDEBUG
 CFLAGS=$(CFLAGS) /MD

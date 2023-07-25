@@ -1,31 +1,6 @@
 #include "pvn.h"
 
 #ifndef _WIN32
-#ifndef _close
-#define _close close
-#else /* _close */
-#error _close already defined
-#endif /* ?_close */
-#ifndef _lseek
-#define _lseek lseek
-#else /* _lseek */
-#error _lseek already defined
-#endif /* ?_lseek */
-#ifndef _open
-#define _open open
-#else /* _open */
-#error _open already defined
-#endif /* ?_open */
-#ifndef _read
-#define _read read
-#else /* _read */
-#error _read already defined
-#endif /* ?_read */
-#ifndef _write
-#define _write write
-#else /* _write */
-#error _write already defined
-#endif /* ?_write */
 #ifndef OPEN_RW
 #define OPEN_RW (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64)
 #else /* OPEN_RW */
@@ -180,7 +155,7 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
 
   ctx->B = (float*)malloc(m * (n * sizeof(float)));
   if (ctx->B) {
-    ctx->fdB = _open(fnB, OPEN_RW, PERM_RW);
+    ctx->fdB = open(fnB, OPEN_RW, PERM_RW);
     if (-1 == ctx->fdB) {
       free(ctx->B);
       ctx->B = (float*)NULL;
@@ -249,7 +224,7 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
 
   ctx->B = (double*)malloc(m * (n * sizeof(double)));
   if (ctx->B) {
-    ctx->fdB = _open(fnB, OPEN_RW, PERM_RW);
+    ctx->fdB = open(fnB, OPEN_RW, PERM_RW);
     if (-1 == ctx->fdB) {
       free(ctx->B);
       ctx->B = (double*)NULL;
@@ -318,7 +293,7 @@ int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned
 
   ctx->B = (long double*)malloc(m * (n * sizeof(long double)));
   if (ctx->B) {
-    ctx->fdB = _open(fnB, OPEN_RW, PERM_RW);
+    ctx->fdB = open(fnB, OPEN_RW, PERM_RW);
     if (-1 == ctx->fdB) {
       free(ctx->B);
       ctx->B = (long double*)NULL;
@@ -374,7 +349,7 @@ int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, c
   if (ret)
     return ret;
   sz *= ((ctx->n) * sizeof(float));
-  if ((ssize_t)sz != _write(ctx->fdB, ctx->B, sz))
+  if ((ssize_t)sz != write(ctx->fdB, ctx->B, sz))
     ret = 2;
   else
     ++(ctx->cnt);
@@ -402,7 +377,7 @@ int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, cons
   if (ret)
     return ret;
   sz *= ((ctx->n) * sizeof(double));
-  if ((ssize_t)sz != _write(ctx->fdB, ctx->B, sz))
+  if ((ssize_t)sz != write(ctx->fdB, ctx->B, sz))
     ret = 2;
   else
     ++(ctx->cnt);
@@ -430,7 +405,7 @@ int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restric
   if (ret)
     return ret;
   sz *= ((ctx->n) * sizeof(long double));
-  if ((ssize_t)sz != _write(ctx->fdB, ctx->B, sz))
+  if ((ssize_t)sz != write(ctx->fdB, ctx->B, sz))
     ret = 2;
   else
     ++(ctx->cnt);
@@ -524,12 +499,12 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
     ret = 4;
     goto end;
   }
-  if (_lseek(ctx->fdB, 0, SEEK_SET)) {
+  if (lseek(ctx->fdB, 0, SEEK_SET)) {
     ret = 5;
     goto end;
   }
   for (unsigned f = 0u; f < ctx->cnt; ++f) {
-    if ((ssize_t)sz != _read(ctx->fdB, ctx->B, sz)) {
+    if ((ssize_t)sz != read(ctx->fdB, ctx->B, sz)) {
       ret = 6;
       break;
     }
@@ -583,7 +558,7 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
     pvn_bmp_destroy(bmp);
 
   if (-1 != ctx->fdB) {
-    if (_close(ctx->fdB))
+    if (close(ctx->fdB))
       ret = 9;
     ctx->fdB = -1;
   }
@@ -702,12 +677,12 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
     ret = 4;
     goto end;
   }
-  if (_lseek(ctx->fdB, 0, SEEK_SET)) {
+  if (lseek(ctx->fdB, 0, SEEK_SET)) {
     ret = 5;
     goto end;
   }
   for (unsigned f = 0u; f < ctx->cnt; ++f) {
-    if ((ssize_t)sz != _read(ctx->fdB, ctx->B, sz)) {
+    if ((ssize_t)sz != read(ctx->fdB, ctx->B, sz)) {
       ret = 6;
       break;
     }
@@ -761,7 +736,7 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
     pvn_bmp_destroy(bmp);
 
   if (-1 != ctx->fdB) {
-    if (_close(ctx->fdB))
+    if (close(ctx->fdB))
       ret = 9;
     ctx->fdB = -1;
   }
@@ -886,12 +861,12 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
     ret = 4;
     goto err;
   }
-  if (_lseek(ctx->fdB, 0, SEEK_SET)) {
+  if (lseek(ctx->fdB, 0, SEEK_SET)) {
     ret = 5;
     goto err;
   }
   for (unsigned f = 0u; f < ctx->cnt; ++f) {
-    if ((ssize_t)sz != _read(ctx->fdB, ctx->B, sz)) {
+    if ((ssize_t)sz != read(ctx->fdB, ctx->B, sz)) {
       ret = 6;
       break;
     }
@@ -945,7 +920,7 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
     pvn_bmp_destroy(bmp);
 
   if (-1 != ctx->fdB) {
-    if (_close(ctx->fdB))
+    if (close(ctx->fdB))
       ret = 9;
     ctx->fdB = -1;
   }
@@ -1025,16 +1000,16 @@ int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned
     return 2;
   }
 
-  ctx->fdB = _open(fnB, OPEN_RW, PERM_RW);
+  ctx->fdB = open(fnB, OPEN_RW, PERM_RW);
   if (-1 == ctx->fdB) {
     free(ctx->C);
     free(ctx->B);
     ctx->C = ctx->B = (float*)NULL;
     return 3;
   }
-  ctx->fdC = _open(fnC, OPEN_RW, PERM_RW);
+  ctx->fdC = open(fnC, OPEN_RW, PERM_RW);
   if (-1 == ctx->fdC) {
-    ctx->err = _close(ctx->fdB);
+    ctx->err = close(ctx->fdB);
     ctx->fdB = -1;
     free(ctx->C);
     free(ctx->B);
@@ -1122,16 +1097,16 @@ int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, 
     return 2;
   }
 
-  ctx->fdB = _open(fnB, OPEN_RW, PERM_RW);
+  ctx->fdB = open(fnB, OPEN_RW, PERM_RW);
   if (-1 == ctx->fdB) {
     free(ctx->C);
     free(ctx->B);
     ctx->C = ctx->B = (double*)NULL;
     return 3;
   }
-  ctx->fdC = _open(fnC, OPEN_RW, PERM_RW);
+  ctx->fdC = open(fnC, OPEN_RW, PERM_RW);
   if (-1 == ctx->fdC) {
-    ctx->err = _close(ctx->fdB);
+    ctx->err = close(ctx->fdB);
     ctx->fdB = -1;
     free(ctx->C);
     free(ctx->B);
@@ -1219,16 +1194,16 @@ int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned
     return 2;
   }
 
-  ctx->fdB = _open(fnB, OPEN_RW, PERM_RW);
+  ctx->fdB = open(fnB, OPEN_RW, PERM_RW);
   if (-1 == ctx->fdB) {
     free(ctx->C);
     free(ctx->B);
     ctx->C = ctx->B = (long double*)NULL;
     return 3;
   }
-  ctx->fdC = _open(fnC, OPEN_RW, PERM_RW);
+  ctx->fdC = open(fnC, OPEN_RW, PERM_RW);
   if (-1 == ctx->fdC) {
-    ctx->err = _close(ctx->fdB);
+    ctx->err = close(ctx->fdB);
     ctx->fdB = -1;
     free(ctx->C);
     free(ctx->B);
@@ -1289,9 +1264,9 @@ int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restr
   if (ret < 0)
     return ret;
   sz *= ((ctx->n) * sizeof(float));
-  if ((ssize_t)sz != _write(ctx->fdB, ctx->B, sz))
+  if ((ssize_t)sz != write(ctx->fdB, ctx->B, sz))
     ret |= 2;
-  if ((ssize_t)sz != _write(ctx->fdC, ctx->C, sz))
+  if ((ssize_t)sz != write(ctx->fdC, ctx->C, sz))
     ret |= 4;
   if (ret <= 1)
     ++(ctx->cnt);
@@ -1320,9 +1295,9 @@ int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict
   if (ret < 0)
     return ret;
   sz *= ((ctx->n) * sizeof(double));
-  if ((ssize_t)sz != _write(ctx->fdB, ctx->B, sz))
+  if ((ssize_t)sz != write(ctx->fdB, ctx->B, sz))
     ret |= 2;
-  if ((ssize_t)sz != _write(ctx->fdC, ctx->C, sz))
+  if ((ssize_t)sz != write(ctx->fdC, ctx->C, sz))
     ret |= 4;
   if (ret <= 1)
     ++(ctx->cnt);
@@ -1351,9 +1326,9 @@ int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const
   if (ret < 0)
     return ret;
   sz *= ((ctx->n) * sizeof(long double));
-  if ((ssize_t)sz != _write(ctx->fdB, ctx->B, sz))
+  if ((ssize_t)sz != write(ctx->fdB, ctx->B, sz))
     ret |= 2;
-  if ((ssize_t)sz != _write(ctx->fdC, ctx->C, sz))
+  if ((ssize_t)sz != write(ctx->fdC, ctx->C, sz))
     ret |= 4;
   if (ret <= 1)
     ++(ctx->cnt);

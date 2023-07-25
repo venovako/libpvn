@@ -3,6 +3,23 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
+#ifdef _WIN32
+  if (argc != 3) {
+    fprintf(stderr, "%s size_t double\n", argv[0]);
+    return EXIT_FAILURE;
+  }
+
+  (void)printf("size_t=%zu\n", pvn_atoz(argv[1]));
+
+  char *e = (char*)NULL;
+  const double d = strtod(argv[2], &e);
+  if (!e || *e)
+    return EXIT_FAILURE;
+
+  char s[26u];
+  (void)printf("double=%s\n", pvn_dtoa(s, d));
+  (void)printf("float =%s\n", pvn_stoa(s, (float)d));
+#else /* !_WIN32 */
   if (argc != 3) {
     fprintf(stderr, "%s size_t long_double\n", argv[0]);
     return EXIT_FAILURE;
@@ -19,7 +36,7 @@ int main(int argc, char *argv[])
   (void)printf("long double=%s\n", pvn_xtoa(s, ld));
   (void)printf("double     =%s\n", pvn_dtoa(s, (double)ld));
   (void)printf("float      =%s\n", pvn_stoa(s, (float)ld));
-
+#endif /* ?_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
