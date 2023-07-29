@@ -29,14 +29,6 @@ CFLAGS=$(CFLAGS) /DPVN_OS="\"$(OS)\"" /DPVN_ARCH="\"$(ARCH)\"" /DPVN_COMPILER="\
 !IFDEF VECLEN
 CFLAGS=$(CFLAGS) /DPVN_VECLEN=$(VECLEN)u
 !ENDIF # VECLEN
-!IFDEF CR_MATH
-CFLAGS=$(CFLAGS) /DPVN_CR_MATH="\"$(CR_MATH)\""
-!IFDEF NDEBUG
-LDFLAGS=$(CR_MATH)\src\binary32\hypot\hypotf_noerrno.obj $(CR_MATH)\src\binary32\rsqrt\rsqrtf_noerrno.obj $(CR_MATH)\src\binary64\hypot\hypot_noerrno.obj $(CR_MATH)\src\binary64\rsqrt\rsqrt_noerrno.obj $(LDFLAGS)
-!ELSE # !NDEBUG
-LDFLAGS=$(CR_MATH)\src\binary32\hypot\hypotf.obj $(CR_MATH)\src\binary32\rsqrt\rsqrtf.obj $(CR_MATH)\src\binary64\hypot\hypot.obj $(CR_MATH)\src\binary64\rsqrt\rsqrt.obj $(LDFLAGS)
-!ENDIF # ?NDEBUG
-!ENDIF # CR_MATH
 
 SRCS=pvn.c \
 pvn_aux.c  \
@@ -66,7 +58,7 @@ pvn_mtx.exe
 all: pvn.lib $(EXES)
 
 help:
-	@echo "nmake.exe [COMPILER=icx|icl] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [all|clean|help]"
+	@echo "nmake.exe [COMPILER=icx|icl] [NDEBUG=0|1|2|3|...] [VECLEN=...] [all|clean|help]"
 
 pvn.lib: $(OBJS)
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
