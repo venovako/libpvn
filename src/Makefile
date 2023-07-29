@@ -20,20 +20,29 @@ CFLAGS=$(CFLAGS) /Oy- /Qopt-report:3 /Wno-deprecated-declarations
 !ENDIF # ?COMPILER
 !IFDEF NDEBUG
 CFLAGS=$(CFLAGS) /MD
-LDFLAGS=/link /RELEASE
+LDFLAGS=/link /RELEASE pvn.lib
 !ELSE # !NDEBUG
 CFLAGS=$(CFLAGS) /MDd
-LDFLAGS=/link /DEBUG
+LDFLAGS=/link /DEBUG pvn.lib
 !ENDIF # ?NDEBUG
 CFLAGS=$(CFLAGS) /DPVN_OS="\"$(OS)\"" /DPVN_ARCH="\"$(ARCH)\"" /DPVN_COMPILER="\"$(COMPILER)\""
 !IFDEF VECLEN
 CFLAGS=$(CFLAGS) /DPVN_VECLEN=$(VECLEN)u
 !ENDIF # VECLEN
+!IFDEF CR_MATH
+CFLAGS=$(CFLAGS) /DPVN_CR_MATH="\"$(CR_MATH)\""
+!IFDEF NDEBUG
+LDFLAGS=$(CR_MATH)\src\binary32\hypot\hypotf_noerrno.obj $(CR_MATH)\src\binary32\rsqrt\rsqrtf_noerrno.obj $(CR_MATH)\src\binary64\hypot\hypot_noerrno.obj $(CR_MATH)\src\binary64\rsqrt\rsqrt_noerrno.obj $(LDFLAGS)
+!ELSE # !NDEBUG
+LDFLAGS=$(CR_MATH)\src\binary32\hypot\hypotf.obj $(CR_MATH)\src\binary32\rsqrt\rsqrtf.obj $(CR_MATH)\src\binary64\hypot\hypot.obj $(CR_MATH)\src\binary64\rsqrt\rsqrt.obj $(LDFLAGS)
+!ENDIF # ?NDEBUG
+!ENDIF # CR_MATH
 
 SRCS=pvn.c \
 pvn_aux.c  \
 pvn_bmp.c  \
 pvn_cjs.c  \
+pvn_crm.c  \
 pvn_fmt.c  \
 pvn_mem.c  \
 pvn_mtx.c
@@ -41,6 +50,7 @@ OBJS=pvn.obj \
 pvn_aux.obj  \
 pvn_bmp.obj  \
 pvn_cjs.obj  \
+pvn_crm.obj  \
 pvn_fmt.obj  \
 pvn_mem.obj  \
 pvn_mtx.obj
@@ -48,6 +58,7 @@ EXES=pvn.exe \
 pvn_aux.exe  \
 pvn_bmp.exe  \
 pvn_cjs.exe  \
+pvn_crm.exe  \
 pvn_fmt.exe  \
 pvn_mem.exe  \
 pvn_mtx.exe
@@ -55,7 +66,7 @@ pvn_mtx.exe
 all: pvn.lib $(EXES)
 
 help:
-	@echo "nmake.exe [COMPILER=icx|icl] [NDEBUG=0|1|2|3|...] [VECLEN=...] [all|clean|help]"
+	@echo "nmake.exe [COMPILER=icx|icl] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [all|clean|help]"
 
 pvn.lib: $(OBJS)
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
@@ -64,7 +75,7 @@ pvn.lib: $(OBJS)
 	$(CC) $(CFLAGS) /c $<
 
 .c.exe:
-	$(CC) $(CFLAGS) /DPVN_TEST $< $(LDFLAGS) pvn.lib
+	$(CC) $(CFLAGS) /DPVN_TEST $< $(LDFLAGS)
 
 clean:
 	-del /F *.exe

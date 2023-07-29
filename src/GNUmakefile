@@ -18,11 +18,20 @@ CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMP
 ifdef VECLEN
 CFLAGS += -DPVN_VECLEN=$(VECLEN)u
 endif # VECLEN
+ifdef CR_MATH
+CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
+ifdef NDEBUG
+LDFLAGS += $(CR_MATH)/src/binary32/hypot/hypotf_noerrno.o $(CR_MATH)/src/binary32/rsqrt/rsqrtf_noerrno.o $(CR_MATH)/src/binary64/hypot/hypot_noerrno.o $(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o
+else # !NDEBUG
+LDFLAGS += $(CR_MATH)/src/binary32/hypot/hypotf.o $(CR_MATH)/src/binary32/rsqrt/rsqrtf.o $(CR_MATH)/src/binary64/hypot/hypot.o $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
+endif # ?NDEBUG
+endif # CR_MATH
 
 SRCS=pvn.c  \
 pvn_aux.c   \
 pvn_bmp.c   \
 pvn_cjs.c   \
+pvn_crm.c   \
 pvn_error.c \
 pvn_fmt.c   \
 pvn_mem.c   \

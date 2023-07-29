@@ -77,6 +77,7 @@
 #include "pvn_aux.h"
 #include "pvn_bmp.h"
 #include "pvn_cjs.h"
+#include "pvn_crm.h"
 #include "pvn_fmt.h"
 #include "pvn_mem.h"
 #include "pvn_mtx.h"
