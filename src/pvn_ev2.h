@@ -5,6 +5,8 @@
 #error pvn_ev2.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+/* these functions are fail-safe only when rounding to nearest and if the correctly rounded arithmetic is available */
+
 PVN_EXTERN_C int sljev2_(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, float *const l1, float *const l2, int *const es);
 PVN_EXTERN_C int dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es);
 PVN_EXTERN_C int xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es);
