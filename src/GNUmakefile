@@ -32,10 +32,11 @@ pvn_aux.c   \
 pvn_bmp.c   \
 pvn_cjs.c   \
 pvn_crm.c   \
-pvn_error.c \
+pvn_ev2.c   \
 pvn_fmt.c   \
 pvn_mem.c   \
 pvn_mtx.c   \
+pvn_error.c \
 pvn_lock.c  \
 pvn_timer.c
 OBJS=$(SRCS:.c=.o)
