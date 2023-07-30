@@ -29,7 +29,20 @@ PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrt invsqrt
 #define rsqrtl invsqrtl
 #else /* !__MATHIMF_H_INCLUDED */
-/* TODO: define rsqrt* functions if needed */
+static inline float rsqrtf(float x)
+{
+  return (1.0f / sqrtf(x));
+}
+
+static inline double rsqrt(double x)
+{
+  return (1.0 / sqrt(x));
+}
+
+static inline long double rsqrtl(long double x)
+{
+  return (1.0L / sqrtl(x));
+}
 #endif /* ?__MATHIMF_H_INCLUDED */
 #endif /* ?PVN_CR_MATH */
 

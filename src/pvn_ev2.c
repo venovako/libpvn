@@ -2,15 +2,21 @@
 
 #ifdef FLT_BIG_EXP
 #error FLT_BIG_EXP already defined
-#else /* !FLT_BIG_EXP => 125 */
+#else /* !FLT_BIG_EXP */
 #define FLT_BIG_EXP (FLT_MAX_EXP - 3)
 #endif /* ?FLT_BIG_EXP */
 
 #ifdef DBL_BIG_EXP
 #error DBL_BIG_EXP already defined
-#else /* !DBL_BIG_EXP => 1021 */
+#else /* !DBL_BIG_EXP */
 #define DBL_BIG_EXP (DBL_MAX_EXP - 3)
 #endif /* ?DBL_BIG_EXP */
+
+#ifdef LDBL_BIG_EXP
+#error LDBL_BIG_EXP already defined
+#else /* !LDBL_BIG_EXP */
+#define LDBL_BIG_EXP (LDBL_MAX_EXP - 3)
+#endif /* ?LDBL_BIG_EXP */
 
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
@@ -139,6 +145,49 @@ int dljev2_(const double *const a11, const double *const a22, const double *cons
   return 0;
 }
 
+int xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
+{
+  assert(a11);
+  assert(a22);
+  assert(a21);
+  assert(cs);
+  assert(sn);
+  assert(l1);
+  assert(l2);
+  assert(es);
+  if (!isfinite(*a11))
+    return -1;
+  if (!isfinite(*a22))
+    return -2;
+  if (!isfinite(*a21))
+    return -3;
+  int e1, e2, er;
+  (void)frexpl(fmaxl(fabsl(*a11), LDBL_TRUE_MIN), &e1); e1 = LDBL_BIG_EXP - e1;
+  (void)frexpl(fmaxl(fabsl(*a22), LDBL_TRUE_MIN), &e2); e2 = LDBL_BIG_EXP - e2;
+  (void)frexpl(fmaxl(fabsl(*a21), LDBL_TRUE_MIN), &er); er = LDBL_BIG_EXP - er;
+  e1 = ((e1 <= e2) ? e1 : e2);
+  *es = ((e1 <= er) ? e1 : er);
+  const long double
+    a1 = scalbnl(*a11, *es),
+    a2 = scalbnl(*a22, *es),
+    ar = scalbnl(*a21, *es),
+    aa = fabsl(ar),
+    as = copysignl(1.0L, ar),
+    an = (aa * 2.0L),
+    ad = (a1 - a2),
+    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
+    s2 = fmal(t1, t1, 1.0L),
+    c1 = rsqrtl(s2),
+    s1 = (t1 * c1);
+  *cs = c1;
+  *sn = as * s1;
+  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
+  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
+  *es = -*es;
+  return 0;
+}
+
 int cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
 {
   assert(a11);
@@ -253,6 +302,65 @@ int zljev2_(const double *const a11, const double *const a22, const double *cons
   *sni = ai_ * s1;
   *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
+  *es = -*es;
+  return 0;
+}
+
+int wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
+{
+  assert(a11);
+  assert(a22);
+  assert(a21r);
+  assert(a21i);
+  assert(cs);
+  assert(sn);
+  assert(l1);
+  assert(l2);
+  assert(es);
+  if (!isfinite(*a11))
+    return -1;
+  if (!isfinite(*a22))
+    return -2;
+  if (!isfinite(*a21r))
+    return -3;
+  if (!isfinite(*a21i))
+    return -4;
+  int e1, e2, er, ei;
+  (void)frexpl(fmaxl(fabsl(*a11), LDBL_TRUE_MIN), &e1); e1 = LDBL_BIG_EXP - e1;
+  (void)frexpl(fmaxl(fabsl(*a22), LDBL_TRUE_MIN), &e2); e2 = LDBL_BIG_EXP - e2;
+  (void)frexpl(fmaxl(fabsl(*a21r), LDBL_TRUE_MIN), &er); er = LDBL_BIG_EXP - er;
+  (void)frexpl(fmaxl(fabsl(*a21i), LDBL_TRUE_MIN), &ei); ei = LDBL_BIG_EXP - ei;
+  e1 = ((e1 <= e2) ? e1 : e2);
+  e2 = ((er <= ei) ? er : ei);
+  *es = ((e1 <= e2) ? e1 : e2);
+  const long double
+    a1 = scalbnl(*a11, *es),
+    a2 = scalbnl(*a22, *es),
+    ar = scalbnl(*a21r, *es),
+    ai = scalbnl(*a21i, *es);
+  long double
+    ar_ = fabsl(ar),
+    ai_ = fabsl(ai);
+  const long double
+    am = fminl(ar_, ai_),
+    aM = fmaxl(ar_, ai_);
+  long double aa = fmaxl(am / aM, 0.0L);
+  aa = hypotl(aa, 1.0L) * aM;
+  ar_ = copysignl(fminl(ar_ / aa, 1.0L), ar);
+  ai_ = ai / fmaxl(aa, LDBL_TRUE_MIN);
+  const long double
+    an = (aa * 2.0L),
+    ad = (a1 - a2),
+    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
+    s2 = fmal(t1, t1, 1.0L),
+    c1 = rsqrtl(s2),
+    s1 = (t1 * c1);
+  *cs = c1;
+  *snr = ar_ * s1;
+  *sni = ai_ * s1;
+  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
+  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
   *es = -*es;
   return 0;
 }
