@@ -1,0 +1,220 @@
+! LAPACK-compatible routines
+
+SUBROUTINE SJAEV2(A, B, C, RT1, RT2, CS1, SN1)
+  USE, INTRINSIC :: ISO_C_BINDING
+  IMPLICIT NONE
+
+  INTERFACE
+     FUNCTION SLJEV2(A11, A22, A21, CS, SN, L1, L2, ES) BIND(C,NAME='sljev2_')
+       USE, INTRINSIC :: ISO_C_BINDING
+       IMPLICIT NONE
+       REAL(c_float), INTENT(IN), TARGET :: A11, A22, A21
+       REAL(c_float), INTENT(OUT), TARGET :: CS, SN, L1, L2
+       INTEGER(c_int), INTENT(INOUT), TARGET :: ES
+       INTEGER(c_int) :: SLJEV2
+     END FUNCTION SLJEV2
+  END INTERFACE
+
+  REAL(c_float), PARAMETER :: ZERO = 0.0_c_float, ONE = 1.0_c_float
+  REAL(c_float), INTENT(IN), TARGET :: A, B, C
+  REAL(c_float), INTENT(OUT), TARGET :: RT1, RT2, CS1, SN1
+  INTEGER(c_int), TARGET :: ES
+
+  ES = 0_c_int
+  IF (SLJEV2(A, C, B, CS1, SN1, RT1, RT2, ES) .NE. 0_c_int) THEN
+     CS1 = ONE
+     SN1 = ZERO
+     RT1 = ZERO
+     RT2 = ZERO
+  ELSE IF (ES .NE. 0_c_int) THEN
+     RT1 = SCALE(RT1, ES)
+     RT2 = SCALE(RT2, ES)
+  END IF
+END SUBROUTINE SJAEV2
+
+SUBROUTINE DJAEV2(A, B, C, RT1, RT2, CS1, SN1)
+  USE, INTRINSIC :: ISO_C_BINDING
+  IMPLICIT NONE
+
+  INTERFACE
+     FUNCTION DLJEV2(A11, A22, A21, CS, SN, L1, L2, ES) BIND(C,NAME='dljev2_')
+       USE, INTRINSIC :: ISO_C_BINDING
+       IMPLICIT NONE
+       REAL(c_double), INTENT(IN), TARGET :: A11, A22, A21
+       REAL(c_double), INTENT(OUT), TARGET :: CS, SN, L1, L2
+       INTEGER(c_int), INTENT(INOUT), TARGET :: ES
+       INTEGER(c_int) :: DLJEV2
+     END FUNCTION DLJEV2
+  END INTERFACE
+
+  REAL(c_double), PARAMETER :: ZERO = 0.0_c_double, ONE = 1.0_c_double
+  REAL(c_double), INTENT(IN), TARGET :: A, B, C
+  REAL(c_double), INTENT(OUT), TARGET :: RT1, RT2, CS1, SN1
+  INTEGER(c_int), TARGET :: ES
+
+  ES = 0_c_int
+  IF (DLJEV2(A, C, B, CS1, SN1, RT1, RT2, ES) .NE. 0_c_int) THEN
+     CS1 = ONE
+     SN1 = ZERO
+     RT1 = ZERO
+     RT2 = ZERO
+  ELSE IF (ES .NE. 0_c_int) THEN
+     RT1 = SCALE(RT1, ES)
+     RT2 = SCALE(RT2, ES)
+  END IF
+END SUBROUTINE DJAEV2
+
+SUBROUTINE XJAEV2(A, B, C, RT1, RT2, CS1, SN1)
+  USE, INTRINSIC :: ISO_C_BINDING
+  IMPLICIT NONE
+
+  INTERFACE
+     FUNCTION XLJEV2(A11, A22, A21, CS, SN, L1, L2, ES) BIND(C,NAME='xljev2_')
+       USE, INTRINSIC :: ISO_C_BINDING
+       IMPLICIT NONE
+       REAL(c_long_double), INTENT(IN), TARGET :: A11, A22, A21
+       REAL(c_long_double), INTENT(OUT), TARGET :: CS, SN, L1, L2
+       INTEGER(c_int), INTENT(INOUT), TARGET :: ES
+       INTEGER(c_int) :: XLJEV2
+     END FUNCTION XLJEV2
+  END INTERFACE
+
+  REAL(c_long_double), PARAMETER :: ZERO = 0.0_c_long_double, ONE = 1.0_c_long_double
+  REAL(c_long_double), INTENT(IN), TARGET :: A, B, C
+  REAL(c_long_double), INTENT(OUT), TARGET :: RT1, RT2, CS1, SN1
+  INTEGER(c_int), TARGET :: ES
+
+  ES = 0_c_int
+  IF (XLJEV2(A, C, B, CS1, SN1, RT1, RT2, ES) .NE. 0_c_int) THEN
+     CS1 = ONE
+     SN1 = ZERO
+     RT1 = ZERO
+     RT2 = ZERO
+  ELSE IF (ES .NE. 0_c_int) THEN
+     RT1 = SCALE(RT1, ES)
+     RT2 = SCALE(RT2, ES)
+  END IF
+END SUBROUTINE XJAEV2
+
+SUBROUTINE CJAEV2(A, B, C, RT1, RT2, CS1, SN1)
+  USE, INTRINSIC :: ISO_C_BINDING
+  IMPLICIT NONE
+
+  INTERFACE
+     FUNCTION CLJEV2(A11, A22, A21R, A21I, CS, SNR, SNI, L1, L2, ES) BIND(C,NAME='cljev2_')
+       USE, INTRINSIC :: ISO_C_BINDING
+       IMPLICIT NONE
+       REAL(c_float), INTENT(IN), TARGET :: A11, A22, A21R, A21I
+       REAL(c_float), INTENT(OUT), TARGET :: CS, SNR, SNI, L1, L2
+       INTEGER(c_int), INTENT(INOUT), TARGET :: ES
+       INTEGER(c_int) :: CLJEV2
+     END FUNCTION CLJEV2
+  END INTERFACE
+
+  REAL(c_float), PARAMETER :: ZERO = 0.0_c_float, ONE = 1.0_c_float
+  COMPLEX(c_float), INTENT(IN) :: A, B, C
+  REAL(c_float), INTENT(OUT), TARGET :: RT1, RT2, CS1
+  COMPLEX(c_float), INTENT(OUT) :: SN1
+  REAL(c_float), TARGET :: A11, A22, A21R, A21I, SNR, SNI
+  INTEGER(c_int), TARGET :: ES
+
+  A11 = REAL(A)
+  SNR = AIMAG(A)
+  A22 = REAL(C)
+  SNI = AIMAG(C)
+  A21R = REAL(B)
+  A21I = -AIMAG(B)
+  ES = 0_c_int
+
+  IF ((SNR .NE. ZERO) .OR. (SNI .NE. ZERO) .OR. (CLJEV2(A11, A22, A21R, A21I, CS1, SNR, SNI, RT1, RT2, ES) .NE. 0_c_int)) THEN
+     CS1 = ONE
+     SN1 = CMPLX(ZERO, ZERO, c_float)
+     RT1 = ZERO
+     RT2 = ZERO
+  ELSE IF (ES .NE. 0_c_int) THEN
+     RT1 = SCALE(RT1, ES)
+     RT2 = SCALE(RT2, ES)
+  END IF
+END SUBROUTINE CJAEV2
+
+SUBROUTINE ZJAEV2(A, B, C, RT1, RT2, CS1, SN1)
+  USE, INTRINSIC :: ISO_C_BINDING
+  IMPLICIT NONE
+
+  INTERFACE
+     FUNCTION ZLJEV2(A11, A22, A21R, A21I, CS, SNR, SNI, L1, L2, ES) BIND(C,NAME='zljev2_')
+       USE, INTRINSIC :: ISO_C_BINDING
+       IMPLICIT NONE
+       REAL(c_double), INTENT(IN), TARGET :: A11, A22, A21R, A21I
+       REAL(c_double), INTENT(OUT), TARGET :: CS, SNR, SNI, L1, L2
+       INTEGER(c_int), INTENT(INOUT), TARGET :: ES
+       INTEGER(c_int) :: ZLJEV2
+     END FUNCTION ZLJEV2
+  END INTERFACE
+
+  REAL(c_double), PARAMETER :: ZERO = 0.0_c_double, ONE = 1.0_c_double
+  COMPLEX(c_double), INTENT(IN) :: A, B, C
+  REAL(c_double), INTENT(OUT), TARGET :: RT1, RT2, CS1
+  COMPLEX(c_double), INTENT(OUT) :: SN1
+  REAL(c_double), TARGET :: A11, A22, A21R, A21I, SNR, SNI
+  INTEGER(c_int), TARGET :: ES
+
+  A11 = REAL(A)
+  SNR = AIMAG(A)
+  A22 = REAL(C)
+  SNI = AIMAG(C)
+  A21R = REAL(B)
+  A21I = -AIMAG(B)
+  ES = 0_c_int
+
+  IF ((SNR .NE. ZERO) .OR. (SNI .NE. ZERO) .OR. (ZLJEV2(A11, A22, A21R, A21I, CS1, SNR, SNI, RT1, RT2, ES) .NE. 0_c_int)) THEN
+     CS1 = ONE
+     SN1 = CMPLX(ZERO, ZERO, c_double)
+     RT1 = ZERO
+     RT2 = ZERO
+  ELSE IF (ES .NE. 0_c_int) THEN
+     RT1 = SCALE(RT1, ES)
+     RT2 = SCALE(RT2, ES)
+  END IF
+END SUBROUTINE ZJAEV2
+
+SUBROUTINE WJAEV2(A, B, C, RT1, RT2, CS1, SN1)
+  USE, INTRINSIC :: ISO_C_BINDING
+  IMPLICIT NONE
+
+  INTERFACE
+     FUNCTION WLJEV2(A11, A22, A21R, A21I, CS, SNR, SNI, L1, L2, ES) BIND(C,NAME='wljev2_')
+       USE, INTRINSIC :: ISO_C_BINDING
+       IMPLICIT NONE
+       REAL(c_long_double), INTENT(IN), TARGET :: A11, A22, A21R, A21I
+       REAL(c_long_double), INTENT(OUT), TARGET :: CS, SNR, SNI, L1, L2
+       INTEGER(c_int), INTENT(INOUT), TARGET :: ES
+       INTEGER(c_int) :: WLJEV2
+     END FUNCTION WLJEV2
+  END INTERFACE
+
+  REAL(c_long_double), PARAMETER :: ZERO = 0.0_c_long_double, ONE = 1.0_c_long_double
+  COMPLEX(c_long_double), INTENT(IN) :: A, B, C
+  REAL(c_long_double), INTENT(OUT), TARGET :: RT1, RT2, CS1
+  COMPLEX(c_long_double), INTENT(OUT) :: SN1
+  REAL(c_long_double), TARGET :: A11, A22, A21R, A21I, SNR, SNI
+  INTEGER(c_int), TARGET :: ES
+
+  A11 = REAL(A)
+  SNR = AIMAG(A)
+  A22 = REAL(C)
+  SNI = AIMAG(C)
+  A21R = REAL(B)
+  A21I = -AIMAG(B)
+  ES = 0_c_int
+
+  IF ((SNR .NE. ZERO) .OR. (SNI .NE. ZERO) .OR. (WLJEV2(A11, A22, A21R, A21I, CS1, SNR, SNI, RT1, RT2, ES) .NE. 0_c_int)) THEN
+     CS1 = ONE
+     SN1 = CMPLX(ZERO, ZERO, c_long_double)
+     RT1 = ZERO
+     RT2 = ZERO
+  ELSE IF (ES .NE. 0_c_int) THEN
+     RT1 = SCALE(RT1, ES)
+     RT2 = SCALE(RT2, ES)
+  END IF
+END SUBROUTINE WJAEV2
