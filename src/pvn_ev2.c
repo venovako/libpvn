@@ -29,9 +29,9 @@ int main(int argc, char *argv[])
   const double a22 = atof(argv[2]);
   const double a21r = atof(argv[3]);
   const double a21i = ((5 == argc) ? atof(argv[4]) : 0.0);
-  double cs, snr, sni, l1, l2;
-  int es, lc;
-  char s[26u];
+  double cs = 1.0, snr = 0.0, sni = 0.0, l1 = 0.0, l2 = 0.0;
+  int es = 0, lc = 0;
+  char s[26u] = { '\0' };
   if (4 == argc) {
     lc = dljev2_(&a11, &a22, &a21r, &cs, &snr, &l1, &l2, &es);
     (void)printf("dljev2_ = %d, es = %d\n", lc, es);
@@ -75,6 +75,7 @@ int sljev2_(const float *const a11, const float *const a22, const float *const a
     return -2;
   if (!isfinite(*a21))
     return -3;
+  const int wt = *es;
   int e1, e2, er;
   (void)frexpf(fmaxf(fabsf(*a11), FLT_TRUE_MIN), &e1); e1 = FLT_BIG_EXP - e1;
   (void)frexpf(fmaxf(fabsf(*a22), FLT_TRUE_MIN), &e2); e2 = FLT_BIG_EXP - e2;
@@ -95,11 +96,11 @@ int sljev2_(const float *const a11, const float *const a22, const float *const a
     c1 = rsqrtf(s2),
     s1 = (t1 * c1);
   *cs = c1;
-  *sn = as * s1;
+  *sn = as * (wt ? t1 : s1);
   *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
   *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
   *es = -*es;
-  return 0;
+  return (wt ? 1 : 0);
 }
 
 int dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
@@ -118,6 +119,7 @@ int dljev2_(const double *const a11, const double *const a22, const double *cons
     return -2;
   if (!isfinite(*a21))
     return -3;
+  const int wt = *es;
   int e1, e2, er;
   (void)frexp(fmax(fabs(*a11), DBL_TRUE_MIN), &e1); e1 = DBL_BIG_EXP - e1;
   (void)frexp(fmax(fabs(*a22), DBL_TRUE_MIN), &e2); e2 = DBL_BIG_EXP - e2;
@@ -138,11 +140,11 @@ int dljev2_(const double *const a11, const double *const a22, const double *cons
     c1 = rsqrt(s2),
     s1 = (t1 * c1);
   *cs = c1;
-  *sn = as * s1;
+  *sn = as * (wt ? t1 : s1);
   *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
   *es = -*es;
-  return 0;
+  return (wt ? 1 : 0);
 }
 
 int xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
@@ -161,6 +163,7 @@ int xljev2_(const long double *const a11, const long double *const a22, const lo
     return -2;
   if (!isfinite(*a21))
     return -3;
+  const int wt = *es;
   int e1, e2, er;
   (void)frexpl(fmaxl(fabsl(*a11), LDBL_TRUE_MIN), &e1); e1 = LDBL_BIG_EXP - e1;
   (void)frexpl(fmaxl(fabsl(*a22), LDBL_TRUE_MIN), &e2); e2 = LDBL_BIG_EXP - e2;
@@ -181,11 +184,11 @@ int xljev2_(const long double *const a11, const long double *const a22, const lo
     c1 = rsqrtl(s2),
     s1 = (t1 * c1);
   *cs = c1;
-  *sn = as * s1;
+  *sn = as * (wt ? t1 : s1);
   *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
   *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
   *es = -*es;
-  return 0;
+  return (wt ? 1 : 0);
 }
 
 int cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
@@ -207,6 +210,7 @@ int cljev2_(const float *const a11, const float *const a22, const float *const a
     return -3;
   if (!isfinite(*a21i))
     return -4;
+  const int wt = *es;
   int e1, e2, er, ei;
   (void)frexpf(fmaxf(fabsf(*a11), FLT_TRUE_MIN), &e1); e1 = FLT_BIG_EXP - e1;
   (void)frexpf(fmaxf(fabsf(*a22), FLT_TRUE_MIN), &e2); e2 = FLT_BIG_EXP - e2;
@@ -239,12 +243,18 @@ int cljev2_(const float *const a11, const float *const a22, const float *const a
     c1 = rsqrtf(s2),
     s1 = (t1 * c1);
   *cs = c1;
-  *snr = ar_ * s1;
-  *sni = ai_ * s1;
+  if (wt) {
+    *snr = ar_ * t1;
+    *sni = ai_ * t1;
+  }
+  else {
+    *snr = ar_ * s1;
+    *sni = ai_ * s1;
+  }
   *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
   *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
   *es = -*es;
-  return 0;
+  return (wt ? 1 : 0);
 }
 
 int zljev2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
@@ -266,6 +276,7 @@ int zljev2_(const double *const a11, const double *const a22, const double *cons
     return -3;
   if (!isfinite(*a21i))
     return -4;
+  const int wt = *es;
   int e1, e2, er, ei;
   (void)frexp(fmax(fabs(*a11), DBL_TRUE_MIN), &e1); e1 = DBL_BIG_EXP - e1;
   (void)frexp(fmax(fabs(*a22), DBL_TRUE_MIN), &e2); e2 = DBL_BIG_EXP - e2;
@@ -298,12 +309,18 @@ int zljev2_(const double *const a11, const double *const a22, const double *cons
     c1 = rsqrt(s2),
     s1 = (t1 * c1);
   *cs = c1;
-  *snr = ar_ * s1;
-  *sni = ai_ * s1;
+  if (wt) {
+    *snr = ar_ * t1;
+    *sni = ai_ * t1;
+  }
+  else {
+    *snr = ar_ * s1;
+    *sni = ai_ * s1;
+  }
   *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
   *es = -*es;
-  return 0;
+  return (wt ? 1 : 0);
 }
 
 int wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
@@ -325,6 +342,7 @@ int wljev2_(const long double *const a11, const long double *const a22, const lo
     return -3;
   if (!isfinite(*a21i))
     return -4;
+  const int wt = *es;
   int e1, e2, er, ei;
   (void)frexpl(fmaxl(fabsl(*a11), LDBL_TRUE_MIN), &e1); e1 = LDBL_BIG_EXP - e1;
   (void)frexpl(fmaxl(fabsl(*a22), LDBL_TRUE_MIN), &e2); e2 = LDBL_BIG_EXP - e2;
@@ -357,11 +375,17 @@ int wljev2_(const long double *const a11, const long double *const a22, const lo
     c1 = rsqrtl(s2),
     s1 = (t1 * c1);
   *cs = c1;
-  *snr = ar_ * s1;
-  *sni = ai_ * s1;
+  if (wt) {
+    *snr = ar_ * t1;
+    *sni = ai_ * t1;
+  }
+  else {
+    *snr = ar_ * s1;
+    *sni = ai_ * s1;
+  }
   *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
   *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
   *es = -*es;
-  return 0;
+  return (wt ? 1 : 0);
 }
 #endif /* ?PVN_TEST */
