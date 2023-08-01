@@ -21,9 +21,19 @@ endif # VECLEN
 ifdef CR_MATH
 CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
 ifdef NDEBUG
-LDFLAGS += $(CR_MATH)/src/binary32/hypot/hypotf_noerrno.o $(CR_MATH)/src/binary32/rsqrt/rsqrtf_noerrno.o $(CR_MATH)/src/binary64/hypot/hypot_noerrno.o $(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o
+CR_OBJS= \
+$(CR_MATH)/src/binary32/hypot/hypotf_noerrno.o \
+$(CR_MATH)/src/binary32/rsqrt/rsqrtf_noerrno.o \
+$(CR_MATH)/src/binary64/hypot/hypot_noerrno.o  \
+$(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o
+LDFLAGS += $(CR_OBJS)
 else # !NDEBUG
-LDFLAGS += $(CR_MATH)/src/binary32/hypot/hypotf.o $(CR_MATH)/src/binary32/rsqrt/rsqrtf.o $(CR_MATH)/src/binary64/hypot/hypot.o $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
+CR_OBJS= \
+$(CR_MATH)/src/binary32/hypot/hypotf.o \
+$(CR_MATH)/src/binary32/rsqrt/rsqrtf.o \
+$(CR_MATH)/src/binary64/hypot/hypot.o  \
+$(CR_MATH)/src/binary64/rsqrt/rsqrt.o
+LDFLAGS += $(CR_OBJS)
 endif # ?NDEBUG
 endif # CR_MATH
 
