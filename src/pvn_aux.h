@@ -20,11 +20,6 @@ static inline int pvn_imin(const int a, const int b)
   return ((a <= b) ? a : b);
 }
 
-static inline int pvn_imax(const int a, const int b)
-{
-  return ((a >= b) ? a : b);
-}
-
 static inline int pvn_imin3(const int a, const int b, const int c)
 {
   return pvn_imin(pvn_imin(a, b), c);
@@ -33,6 +28,21 @@ static inline int pvn_imin3(const int a, const int b, const int c)
 static inline int pvn_imin4(const int a, const int b, const int c, const int d)
 {
   return pvn_imin(pvn_imin(a, b), pvn_imin(c, d));
+}
+
+static inline int pvn_imax(const int a, const int b)
+{
+  return ((a >= b) ? a : b);
+}
+
+static inline int pvn_imax3(const int a, const int b, const int c)
+{
+  return pvn_imax(pvn_imax(a, b), c);
+}
+
+static inline int pvn_imax4(const int a, const int b, const int c, const int d)
+{
+  return pvn_imax(pvn_imax(a, b), pvn_imax(c, d));
 }
 
 static inline long pvn_lmin(const long a, const long b)
