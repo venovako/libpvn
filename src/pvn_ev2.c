@@ -33,13 +33,13 @@ int main(int argc, char *argv[])
   int es = 0, lc = 0;
   char s[26u] = { '\0' };
   if (4 == argc) {
-    lc = dljev2_(&a11, &a22, &a21r, &cs, &snr, &l1, &l2, &es);
-    (void)printf("dljev2_ = %d, es = %d\n", lc, es);
+    lc = pvn_dljev2_(&a11, &a22, &a21r, &cs, &snr, &l1, &l2, &es);
+    (void)printf("pvn_dljev2_ = %d, es = %d\n", lc, es);
     sni = 0.0;
   }
   else {
-    lc = zljev2_(&a11, &a22, &a21r, &a21i, &cs, &snr, &sni, &l1, &l2, &es);
-    (void)printf("zljev2_ = %d, es = %d\n", lc, es);
+    lc = pvn_zljev2_(&a11, &a22, &a21r, &a21i, &cs, &snr, &sni, &l1, &l2, &es);
+    (void)printf("pvn_zljev2_ = %d, es = %d\n", lc, es);
   }
   (void)printf("a11  = %s\n", pvn_dtoa(s, a11));
   (void)printf("a22  = %s\n", pvn_dtoa(s, a22));
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int sljev2_(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, float *const l1, float *const l2, int *const es)
+int pvn_sljev2_(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, float *const l1, float *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -111,7 +111,7 @@ int sljev2_(const float *const a11, const float *const a22, const float *const a
   return wt;
 }
 
-int dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
+int pvn_dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -163,7 +163,7 @@ int dljev2_(const double *const a11, const double *const a22, const double *cons
   return wt;
 }
 
-int xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
+int pvn_xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -215,7 +215,7 @@ int xljev2_(const long double *const a11, const long double *const a22, const lo
   return wt;
 }
 
-int cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
+int pvn_cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -285,7 +285,7 @@ int cljev2_(const float *const a11, const float *const a22, const float *const a
   return wt;
 }
 
-int zljev2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
+int pvn_zljev2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -355,7 +355,7 @@ int zljev2_(const double *const a11, const double *const a22, const double *cons
   return wt;
 }
 
-int wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
+int pvn_wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
