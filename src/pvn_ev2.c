@@ -222,7 +222,8 @@ int cljev2_(const float *const a11, const float *const a22, const float *const a
   assert(a21r);
   assert(a21i);
   assert(cs);
-  assert(sn);
+  assert(snr);
+  assert(sni);
   assert(l1);
   assert(l2);
   assert(es);
@@ -291,7 +292,8 @@ int zljev2_(const double *const a11, const double *const a22, const double *cons
   assert(a21r);
   assert(a21i);
   assert(cs);
-  assert(sn);
+  assert(snr);
+  assert(sni);
   assert(l1);
   assert(l2);
   assert(es);
@@ -360,7 +362,8 @@ int wljev2_(const long double *const a11, const long double *const a22, const lo
   assert(a21r);
   assert(a21i);
   assert(cs);
-  assert(sn);
+  assert(snr);
+  assert(sni);
   assert(l1);
   assert(l2);
   assert(es);
