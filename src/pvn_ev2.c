@@ -69,23 +69,33 @@ int sljev2_(const float *const a11, const float *const a22, const float *const a
   assert(l1);
   assert(l2);
   assert(es);
-  if (!isfinite(*a11))
+  float a1 = *a11;
+  if (!isfinite(a1))
     return -1;
-  if (!isfinite(*a22))
+  float a2 = *a22;
+  if (!isfinite(a2))
     return -2;
-  if (!isfinite(*a21))
+  float ar = *a21;
+  if (!isfinite(ar))
     return -3;
-  const int wt = *es;
-  int e1, e2, er;
-  (void)frexpf(fmaxf(fabsf(*a11), FLT_TRUE_MIN), &e1); e1 = FLT_BIG_EXP - e1;
-  (void)frexpf(fmaxf(fabsf(*a22), FLT_TRUE_MIN), &e2); e2 = FLT_BIG_EXP - e2;
-  (void)frexpf(fmaxf(fabsf(*a21), FLT_TRUE_MIN), &er); er = FLT_BIG_EXP - er;
-  e1 = ((e1 <= e2) ? e1 : e2);
-  *es = ((e1 <= er) ? e1 : er);
+  const int wt = (*es ? 1 : 0);
+  int e1 = 0;
+  (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
+  e1 = FLT_BIG_EXP - e1;
+  int e2 = 0;
+  (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
+  e2 = FLT_BIG_EXP - e2;
+  int er = 0;
+  (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
+  er = FLT_BIG_EXP - er;
+  *es = pvn_imin3(e1, e2, er);
+  if (*es) {
+    a1 = scalbnf(a1, *es);
+    a2 = scalbnf(a2, *es);
+    ar = scalbnf(ar, *es);
+    *es = -*es;
+  }
   const float
-    a1 = scalbnf(*a11, *es),
-    a2 = scalbnf(*a22, *es),
-    ar = scalbnf(*a21, *es),
     aa = fabsf(ar),
     as = copysignf(1.0f, ar),
     an = (aa * 2.0f),
@@ -93,14 +103,17 @@ int sljev2_(const float *const a11, const float *const a22, const float *const a
     t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
     s2 = fmaf(t1, t1, 1.0f),
-    c1 = rsqrtf(s2),
-    s1 = (t1 * c1);
+    c1 = rsqrtf(s2);
   *cs = c1;
-  *sn = as * (wt ? t1 : s1);
+  if (wt)
+    *sn = as * t1;
+  else {
+    const float s1 = t1 * c1;
+    *sn = as * s1;
+  }
   *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
   *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
-  *es = -*es;
-  return (wt ? 1 : 0);
+  return wt;
 }
 
 int dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
@@ -113,23 +126,33 @@ int dljev2_(const double *const a11, const double *const a22, const double *cons
   assert(l1);
   assert(l2);
   assert(es);
-  if (!isfinite(*a11))
+  double a1 = *a11;
+  if (!isfinite(a1))
     return -1;
-  if (!isfinite(*a22))
+  double a2 = *a22;
+  if (!isfinite(a2))
     return -2;
-  if (!isfinite(*a21))
+  double ar = *a21;
+  if (!isfinite(ar))
     return -3;
-  const int wt = *es;
-  int e1, e2, er;
-  (void)frexp(fmax(fabs(*a11), DBL_TRUE_MIN), &e1); e1 = DBL_BIG_EXP - e1;
-  (void)frexp(fmax(fabs(*a22), DBL_TRUE_MIN), &e2); e2 = DBL_BIG_EXP - e2;
-  (void)frexp(fmax(fabs(*a21), DBL_TRUE_MIN), &er); er = DBL_BIG_EXP - er;
-  e1 = ((e1 <= e2) ? e1 : e2);
-  *es = ((e1 <= er) ? e1 : er);
+  const int wt = (*es ? 1 : 0);
+  int e1 = 0;
+  (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
+  e1 = DBL_BIG_EXP - e1;
+  int e2 = 0;
+  (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
+  e2 = DBL_BIG_EXP - e2;
+  int er = 0;
+  (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
+  er = DBL_BIG_EXP - er;
+  *es = pvn_imin3(e1, e2, er);
+  if (*es) {
+    a1 = scalbn(a1, *es);
+    a2 = scalbn(a2, *es);
+    ar = scalbn(ar, *es);
+    *es = -*es;
+  }
   const double
-    a1 = scalbn(*a11, *es),
-    a2 = scalbn(*a22, *es),
-    ar = scalbn(*a21, *es),
     aa = fabs(ar),
     as = copysign(1.0, ar),
     an = (aa * 2.0),
@@ -137,14 +160,17 @@ int dljev2_(const double *const a11, const double *const a22, const double *cons
     t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
     s2 = fma(t1, t1, 1.0),
-    c1 = rsqrt(s2),
-    s1 = (t1 * c1);
+    c1 = rsqrt(s2);
   *cs = c1;
-  *sn = as * (wt ? t1 : s1);
+  if (wt)
+    *sn = as * t1;
+  else {
+    const double s1 = t1 * c1;
+    *sn = as * s1;
+  }
   *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
-  *es = -*es;
-  return (wt ? 1 : 0);
+  return wt;
 }
 
 int xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
@@ -157,23 +183,33 @@ int xljev2_(const long double *const a11, const long double *const a22, const lo
   assert(l1);
   assert(l2);
   assert(es);
-  if (!isfinite(*a11))
+  long double a1 = *a11;
+  if (!isfinite(a1))
     return -1;
-  if (!isfinite(*a22))
+  long double a2 = *a22;
+  if (!isfinite(a2))
     return -2;
-  if (!isfinite(*a21))
+  long double ar = *a21;
+  if (!isfinite(ar))
     return -3;
-  const int wt = *es;
-  int e1, e2, er;
-  (void)frexpl(fmaxl(fabsl(*a11), LDBL_TRUE_MIN), &e1); e1 = LDBL_BIG_EXP - e1;
-  (void)frexpl(fmaxl(fabsl(*a22), LDBL_TRUE_MIN), &e2); e2 = LDBL_BIG_EXP - e2;
-  (void)frexpl(fmaxl(fabsl(*a21), LDBL_TRUE_MIN), &er); er = LDBL_BIG_EXP - er;
-  e1 = ((e1 <= e2) ? e1 : e2);
-  *es = ((e1 <= er) ? e1 : er);
+  const int wt = (*es ? 1 : 0);
+  int e1 = 0;
+  (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
+  e1 = LDBL_BIG_EXP - e1;
+  int e2 = 0;
+  (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
+  e2 = LDBL_BIG_EXP - e2;
+  int er = 0;
+  (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+  er = LDBL_BIG_EXP - er;
+  *es = pvn_imin3(e1, e2, er);
+  if (*es) {
+    a1 = scalbnl(a1, *es);
+    a2 = scalbnl(a2, *es);
+    ar = scalbnl(ar, *es);
+    *es = -*es;
+  }
   const long double
-    a1 = scalbnl(*a11, *es),
-    a2 = scalbnl(*a22, *es),
-    ar = scalbnl(*a21, *es),
     aa = fabsl(ar),
     as = copysignl(1.0L, ar),
     an = (aa * 2.0L),
@@ -181,14 +217,17 @@ int xljev2_(const long double *const a11, const long double *const a22, const lo
     t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
     s2 = fmal(t1, t1, 1.0L),
-    c1 = rsqrtl(s2),
-    s1 = (t1 * c1);
+    c1 = rsqrtl(s2);
   *cs = c1;
-  *sn = as * (wt ? t1 : s1);
+  if (wt)
+    *sn = as * t1;
+  else {
+    const long double s1 = t1 * c1;
+    *sn = as * s1;
+  }
   *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
   *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
-  *es = -*es;
-  return (wt ? 1 : 0);
+  return wt;
 }
 
 int cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
@@ -202,28 +241,39 @@ int cljev2_(const float *const a11, const float *const a22, const float *const a
   assert(l1);
   assert(l2);
   assert(es);
-  if (!isfinite(*a11))
+  float a1 = *a11;
+  if (!isfinite(a1))
     return -1;
-  if (!isfinite(*a22))
+  float a2 = *a22;
+  if (!isfinite(a2))
     return -2;
-  if (!isfinite(*a21r))
+  float ar = *a21r;
+  if (!isfinite(ar))
     return -3;
-  if (!isfinite(*a21i))
+  float ai = *a21i;
+  if (!isfinite(ai))
     return -4;
-  const int wt = *es;
-  int e1, e2, er, ei;
-  (void)frexpf(fmaxf(fabsf(*a11), FLT_TRUE_MIN), &e1); e1 = FLT_BIG_EXP - e1;
-  (void)frexpf(fmaxf(fabsf(*a22), FLT_TRUE_MIN), &e2); e2 = FLT_BIG_EXP - e2;
-  (void)frexpf(fmaxf(fabsf(*a21r), FLT_TRUE_MIN), &er); er = FLT_BIG_EXP - er;
-  (void)frexpf(fmaxf(fabsf(*a21i), FLT_TRUE_MIN), &ei); ei = FLT_BIG_EXP - ei;
-  e1 = ((e1 <= e2) ? e1 : e2);
-  e2 = ((er <= ei) ? er : ei);
-  *es = ((e1 <= e2) ? e1 : e2);
-  const float
-    a1 = scalbnf(*a11, *es),
-    a2 = scalbnf(*a22, *es),
-    ar = scalbnf(*a21r, *es),
-    ai = scalbnf(*a21i, *es);
+  const int wt = (*es ? 1 : 0);
+  int e1 = 0;
+  (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
+  e1 = FLT_BIG_EXP - e1;
+  int e2 = 0;
+  (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
+  e2 = FLT_BIG_EXP - e2;
+  int er = 0;
+  (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
+  er = FLT_BIG_EXP - er;
+  int ei = 0;
+  (void)frexpf(fmaxf(fabsf(ai), FLT_TRUE_MIN), &ei);
+  ei = FLT_BIG_EXP - ei;
+  *es = pvn_imin4(e1, e2, er, ei);
+  if (*es) {
+    a1 = scalbnf(a1, *es);
+    a2 = scalbnf(a2, *es);
+    ar = scalbnf(ar, *es);
+    ai = scalbnf(ai, *es);
+    *es = -*es;
+  }
   float
     ar_ = fabsf(ar),
     ai_ = fabsf(ai);
@@ -240,21 +290,20 @@ int cljev2_(const float *const a11, const float *const a22, const float *const a
     t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
     s2 = fmaf(t1, t1, 1.0f),
-    c1 = rsqrtf(s2),
-    s1 = (t1 * c1);
+    c1 = rsqrtf(s2);
   *cs = c1;
   if (wt) {
     *snr = ar_ * t1;
     *sni = ai_ * t1;
   }
   else {
+    const float s1 = t1 * c1;
     *snr = ar_ * s1;
     *sni = ai_ * s1;
   }
   *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
   *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
-  *es = -*es;
-  return (wt ? 1 : 0);
+  return wt;
 }
 
 int zljev2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
@@ -268,28 +317,39 @@ int zljev2_(const double *const a11, const double *const a22, const double *cons
   assert(l1);
   assert(l2);
   assert(es);
-  if (!isfinite(*a11))
+  double a1 = *a11;
+  if (!isfinite(a1))
     return -1;
-  if (!isfinite(*a22))
+  double a2 = *a22;
+  if (!isfinite(a2))
     return -2;
-  if (!isfinite(*a21r))
+  double ar = *a21r;
+  if (!isfinite(ar))
     return -3;
-  if (!isfinite(*a21i))
+  double ai = *a21i;
+  if (!isfinite(ai))
     return -4;
-  const int wt = *es;
-  int e1, e2, er, ei;
-  (void)frexp(fmax(fabs(*a11), DBL_TRUE_MIN), &e1); e1 = DBL_BIG_EXP - e1;
-  (void)frexp(fmax(fabs(*a22), DBL_TRUE_MIN), &e2); e2 = DBL_BIG_EXP - e2;
-  (void)frexp(fmax(fabs(*a21r), DBL_TRUE_MIN), &er); er = DBL_BIG_EXP - er;
-  (void)frexp(fmax(fabs(*a21i), DBL_TRUE_MIN), &ei); ei = DBL_BIG_EXP - ei;
-  e1 = ((e1 <= e2) ? e1 : e2);
-  e2 = ((er <= ei) ? er : ei);
-  *es = ((e1 <= e2) ? e1 : e2);
-  const double
-    a1 = scalbn(*a11, *es),
-    a2 = scalbn(*a22, *es),
-    ar = scalbn(*a21r, *es),
-    ai = scalbn(*a21i, *es);
+  const int wt = (*es ? 1 : 0);
+  int e1 = 0;
+  (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
+  e1 = DBL_BIG_EXP - e1;
+  int e2 = 0;
+  (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
+  e2 = DBL_BIG_EXP - e2;
+  int er = 0;
+  (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
+  er = DBL_BIG_EXP - er;
+  int ei = 0;
+  (void)frexp(fmax(fabs(ai), DBL_TRUE_MIN), &ei);
+  ei = DBL_BIG_EXP - ei;
+  *es = pvn_imin4(e1, e2, er, ei);
+  if (*es) {
+    a1 = scalbn(a1, *es);
+    a2 = scalbn(a2, *es);
+    ar = scalbn(ar, *es);
+    ai = scalbn(ai, *es);
+    *es = -*es;
+  }
   double
     ar_ = fabs(ar),
     ai_ = fabs(ai);
@@ -306,21 +366,20 @@ int zljev2_(const double *const a11, const double *const a22, const double *cons
     t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
     s2 = fma(t1, t1, 1.0),
-    c1 = rsqrt(s2),
-    s1 = (t1 * c1);
+    c1 = rsqrt(s2);
   *cs = c1;
   if (wt) {
     *snr = ar_ * t1;
     *sni = ai_ * t1;
   }
   else {
+    const double s1 = t1 * c1;
     *snr = ar_ * s1;
     *sni = ai_ * s1;
   }
   *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
-  *es = -*es;
-  return (wt ? 1 : 0);
+  return wt;
 }
 
 int wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
@@ -334,28 +393,39 @@ int wljev2_(const long double *const a11, const long double *const a22, const lo
   assert(l1);
   assert(l2);
   assert(es);
-  if (!isfinite(*a11))
+  long double a1 = *a11;
+  if (!isfinite(a1))
     return -1;
-  if (!isfinite(*a22))
+  long double a2 = *a22;
+  if (!isfinite(a2))
     return -2;
-  if (!isfinite(*a21r))
+  long double ar = *a21r;
+  if (!isfinite(ar))
     return -3;
-  if (!isfinite(*a21i))
+  long double ai = *a21i;
+  if (!isfinite(ai))
     return -4;
-  const int wt = *es;
-  int e1, e2, er, ei;
-  (void)frexpl(fmaxl(fabsl(*a11), LDBL_TRUE_MIN), &e1); e1 = LDBL_BIG_EXP - e1;
-  (void)frexpl(fmaxl(fabsl(*a22), LDBL_TRUE_MIN), &e2); e2 = LDBL_BIG_EXP - e2;
-  (void)frexpl(fmaxl(fabsl(*a21r), LDBL_TRUE_MIN), &er); er = LDBL_BIG_EXP - er;
-  (void)frexpl(fmaxl(fabsl(*a21i), LDBL_TRUE_MIN), &ei); ei = LDBL_BIG_EXP - ei;
-  e1 = ((e1 <= e2) ? e1 : e2);
-  e2 = ((er <= ei) ? er : ei);
-  *es = ((e1 <= e2) ? e1 : e2);
-  const long double
-    a1 = scalbnl(*a11, *es),
-    a2 = scalbnl(*a22, *es),
-    ar = scalbnl(*a21r, *es),
-    ai = scalbnl(*a21i, *es);
+  const int wt = (*es ? 1 : 0);
+  int e1 = 0;
+  (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
+  e1 = LDBL_BIG_EXP - e1;
+  int e2 = 0;
+  (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
+  e2 = LDBL_BIG_EXP - e2;
+  int er = 0;
+  (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+  er = LDBL_BIG_EXP - er;
+  int ei = 0;
+  (void)frexpl(fmaxl(fabsl(ai), LDBL_TRUE_MIN), &ei);
+  ei = LDBL_BIG_EXP - ei;
+  *es = pvn_imin4(e1, e2, er, ei);
+  if (*es) {
+    a1 = scalbnl(a1, *es);
+    a2 = scalbnl(a2, *es);
+    ar = scalbnl(ar, *es);
+    ai = scalbnl(ai, *es);
+    *es = -*es;
+  }
   long double
     ar_ = fabsl(ar),
     ai_ = fabsl(ai);
@@ -372,20 +442,19 @@ int wljev2_(const long double *const a11, const long double *const a22, const lo
     t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
     s2 = fmal(t1, t1, 1.0L),
-    c1 = rsqrtl(s2),
-    s1 = (t1 * c1);
+    c1 = rsqrtl(s2);
   *cs = c1;
   if (wt) {
     *snr = ar_ * t1;
     *sni = ai_ * t1;
   }
   else {
+    const long double s1 = t1 * c1;
     *snr = ar_ * s1;
     *sni = ai_ * s1;
   }
   *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
   *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
-  *es = -*es;
-  return (wt ? 1 : 0);
+  return wt;
 }
 #endif /* ?PVN_TEST */
