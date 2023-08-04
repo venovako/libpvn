@@ -12,6 +12,7 @@ The library has been successfully built using:
 | -------- | ------- | -------- |
 | clang(1) | Darwin  | x86_64   |
 | clang(2) | FreeBSD | amd64    |
+| clang(2) | FreeBSD | arm64    |
 | clang(3) | Linux   | ppc64le  |
 | gcc(4)   | Darwin  | x86_64   |
 | gcc(5)   | Linux   | ppc64le  |
