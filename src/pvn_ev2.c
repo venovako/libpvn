@@ -256,11 +256,7 @@ int pvn_cljev2_(const float *const a11, const float *const a22, const float *con
   float
     ar_ = fabsf(ar),
     ai_ = fabsf(ai);
-  const float
-    am = fminf(ar_, ai_),
-    aM = fmaxf(ar_, ai_);
-  float aa = fmaxf(am / aM, 0.0f);
-  aa = hypotf(aa, 1.0f) * aM;
+  const float aa = hypotf(ar_, ai_);
   ar_ = copysignf(fminf(ar_ / aa, 1.0f), ar);
   ai_ = ai / fmaxf(aa, FLT_TRUE_MIN);
   const float
@@ -326,11 +322,7 @@ int pvn_zljev2_(const double *const a11, const double *const a22, const double *
   double
     ar_ = fabs(ar),
     ai_ = fabs(ai);
-  const double
-    am = fmin(ar_, ai_),
-    aM = fmax(ar_, ai_);
-  double aa = fmax(am / aM, 0.0);
-  aa = hypot(aa, 1.0) * aM;
+  const double aa = hypot(ar_, ai_);
   ar_ = copysign(fmin(ar_ / aa, 1.0), ar);
   ai_ = ai / fmax(aa, DBL_TRUE_MIN);
   const double
@@ -396,11 +388,7 @@ int pvn_wljev2_(const long double *const a11, const long double *const a22, cons
   long double
     ar_ = fabsl(ar),
     ai_ = fabsl(ai);
-  const long double
-    am = fminl(ar_, ai_),
-    aM = fmaxl(ar_, ai_);
-  long double aa = fmaxl(am / aM, 0.0L);
-  aa = hypotl(aa, 1.0L) * aM;
+  const long double aa = hypotl(ar_, ai_);
   ar_ = copysignl(fminl(ar_ / aa, 1.0L), ar);
   ai_ = ai / fmaxl(aa, LDBL_TRUE_MIN);
   const long double
