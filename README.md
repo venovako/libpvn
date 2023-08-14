@@ -88,3 +88,5 @@ Please consult `Makefile` for more information.
 ## Examples
 
 Several examples and tests are built as `*.exe` executables in the `src` subdirectory and are meant to be run from there.
+
+This work has been supported in part by Croatian Science Foundation under the project IP-2014-09-3670 ([MFBDA](https://web.math.pmf.unizg.hr/mfbda/)).
