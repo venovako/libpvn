@@ -17,7 +17,11 @@ int main(int argc, char *argv[])
 /* not correctly rounded */
 long double cr_rsqrtl(long double x)
 {
+#ifdef __MATHIMF_H_INCLUDED
+  return invsqrtl(x);
+#else /* !__MATHIMF_H_INCLUDED */
   return (1.0L / sqrtl(x));
+#endif /* ?__MATHIMF_H_INCLUDED */
 }
 #endif /* PVN_CR_MATH */
 #endif /* ?PVN_TEST */

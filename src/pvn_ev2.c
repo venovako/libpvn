@@ -79,19 +79,28 @@ int pvn_sljev2_(const float *const a11, const float *const a22, const float *con
   if (!isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
-  int e1, e2, er;
-  (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
-  (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
-  (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
-  *es = FLT_BIG_EXP - pvn_imax3(e1, e2, er);
+  int
+    e1 = (a1 != 0.0f),
+    e2 = (a2 != 0.0f),
+    er = (ar != 0.0f);
+  *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
+    (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
+    (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
+    (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
+    e1 = pvn_imax3(e1, e2, er);
+    er = *es;
+    *es = FLT_BIG_EXP - e1;
     a1 = scalbnf(a1, *es);
     a2 = scalbnf(a2, *es);
     ar = scalbnf(ar, *es);
     *es = -*es;
   }
   const float
-    aa = fabsf(ar),
+    aa = fabsf(ar);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((er & 1) && (fabsf(a1) < FLT_MIN)) || ((er & 2) && (fabsf(a2) < FLT_MIN)) || ((er & 4) && (aa < FLT_MIN))) << 1);
+  const float
     as = copysignf(1.0f, ar),
     an = (aa * 2.0f),
     ad = (a1 - a2),
@@ -106,9 +115,13 @@ int pvn_sljev2_(const float *const a11, const float *const a22, const float *con
     const float s1 = t1 * c1;
     *sn = as * s1;
   }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((aa != 0.0f) && (fabsf(*sn) < FLT_MIN)) << 2);
   *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
   *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
-  return wt;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  er = ((er && (fminf(fabsf(*l1), fabsf(*l2)) < FLT_MIN)) << 3);
+  return (wt | e1 | e2 | er);
 }
 
 int pvn_dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
@@ -131,19 +144,28 @@ int pvn_dljev2_(const double *const a11, const double *const a22, const double *
   if (!isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
-  int e1, e2, er;
-  (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
-  (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
-  (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
-  *es = DBL_BIG_EXP - pvn_imax3(e1, e2, er);
+  int
+    e1 = (a1 != 0.0),
+    e2 = (a2 != 0.0),
+    er = (ar != 0.0);
+  *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
+    (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
+    (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
+    (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
+    e1 = pvn_imax3(e1, e2, er);
+    er = *es;
+    *es = DBL_BIG_EXP - e1;
     a1 = scalbn(a1, *es);
     a2 = scalbn(a2, *es);
     ar = scalbn(ar, *es);
     *es = -*es;
   }
   const double
-    aa = fabs(ar),
+    aa = fabs(ar);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((er & 1) && (fabs(a1) < DBL_MIN)) || ((er & 2) && (fabs(a2) < DBL_MIN)) || ((er & 4) && (aa < DBL_MIN))) << 1);
+  const double
     as = copysign(1.0, ar),
     an = (aa * 2.0),
     ad = (a1 - a2),
@@ -158,9 +180,13 @@ int pvn_dljev2_(const double *const a11, const double *const a22, const double *
     const double s1 = t1 * c1;
     *sn = as * s1;
   }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((aa != 0.0) && (fabs(*sn) < DBL_MIN)) << 2);
   *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
-  return wt;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  er = ((er && (fmin(fabs(*l1), fabs(*l2)) < DBL_MIN)) << 3);
+  return (wt | e1 | e2 | er);
 }
 
 int pvn_xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
