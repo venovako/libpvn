@@ -209,19 +209,28 @@ int pvn_xljev2_(const long double *const a11, const long double *const a22, cons
   if (!isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
-  int e1, e2, er;
-  (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-  (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-  (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
-  *es = LDBL_BIG_EXP - pvn_imax3(e1, e2, er);
+  int
+    e1 = (a1 != 0.0L),
+    e2 = (a2 != 0.0L),
+    er = (ar != 0.0L);
+  *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
+    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+    e1 = pvn_imax3(e1, e2, er);
+    er = *es;
+    *es = LDBL_BIG_EXP - e1;
     a1 = scalbnl(a1, *es);
     a2 = scalbnl(a2, *es);
     ar = scalbnl(ar, *es);
     *es = -*es;
   }
   const long double
-    aa = fabsl(ar),
+    aa = fabsl(ar);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((er & 1) && (fabsl(a1) < LDBL_MIN)) || ((er & 2) && (fabsl(a2) < LDBL_MIN)) || ((er & 4) && (aa < LDBL_MIN))) << 1);
+  const long double
     as = copysignl(1.0L, ar),
     an = (aa * 2.0L),
     ad = (a1 - a2),
@@ -236,9 +245,13 @@ int pvn_xljev2_(const long double *const a11, const long double *const a22, cons
     const long double s1 = t1 * c1;
     *sn = as * s1;
   }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((aa != 0.0L) && (fabsl(*sn) < LDBL_MIN)) << 2);
   *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
   *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
-  return wt;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  er = ((er && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 3);
+  return (wt | e1 | e2 | er);
 }
 
 int pvn_cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
@@ -266,25 +279,34 @@ int pvn_cljev2_(const float *const a11, const float *const a22, const float *con
   if (!isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
-  int e1, e2, er, ei;
-  (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
-  (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
-  (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
-  (void)frexpf(fmaxf(fabsf(ai), FLT_TRUE_MIN), &ei);
-  *es = FLT_BIG_EXP - pvn_imax4(e1, e2, er, ei);
+  int
+    e1 = (a1 != 0.0f),
+    e2 = (a2 != 0.0f),
+    er = (ar != 0.0f),
+    ei = (ai != 0.0f);
+  *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
+    (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
+    (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
+    (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
+    (void)frexpf(fmaxf(fabsf(ai), FLT_TRUE_MIN), &ei);
+    e1 = pvn_imax4(e1, e2, er, ei);
+    ei = *es;
+    *es = FLT_BIG_EXP - e1;
     a1 = scalbnf(a1, *es);
     a2 = scalbnf(a2, *es);
     ar = scalbnf(ar, *es);
     ai = scalbnf(ai, *es);
     *es = -*es;
   }
-  float
+  const float
     ar_ = fabsf(ar),
-    ai_ = fabsf(ai);
-  const float aa = hypotf(ar_, ai_);
-  ar_ = copysignf(fminf(ar_ / aa, 1.0f), ar);
-  ai_ = ai / fmaxf(aa, FLT_TRUE_MIN);
+    ai_ = fabsf(ai),
+    aa = hypotf(ar_, ai_);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((ei & 1) && (fabsf(a1) < FLT_MIN)) || ((ei & 2) && (fabsf(a2) < FLT_MIN)) || ((ei & 4) && (ar_ < FLT_MIN)) || ((ei & 8) && (ai_ < FLT_MIN))) << 1);
+  ar = copysignf(fminf(ar_ / aa, 1.0f), ar);
+  ai = ai / fmaxf(aa, FLT_TRUE_MIN);
   const float
     an = (aa * 2.0f),
     ad = (a1 - a2),
@@ -294,17 +316,22 @@ int pvn_cljev2_(const float *const a11, const float *const a22, const float *con
     c1 = rsqrtf(s2);
   *cs = c1;
   if (wt) {
-    *snr = ar_ * t1;
-    *sni = ai_ * t1;
+    *snr = ar * t1;
+    *sni = ai * t1;
   }
   else {
     const float s1 = t1 * c1;
-    *snr = ar_ * s1;
-    *sni = ai_ * s1;
+    *snr = ar * s1;
+    *sni = ai * s1;
   }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((ar_ != 0.0f) && (fabsf(*snr) < FLT_MIN)) << 2);
+  er = (((ai_ != 0.0f) && (fabsf(*sni) < FLT_MIN)) << 3);
   *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
   *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
-  return wt;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  ei = ((ei && (fminf(fabsf(*l1), fabsf(*l2)) < FLT_MIN)) << 4);
+  return (wt | e1 | e2 | er | ei);
 }
 
 int pvn_zljev2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
@@ -332,25 +359,34 @@ int pvn_zljev2_(const double *const a11, const double *const a22, const double *
   if (!isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
-  int e1, e2, er, ei;
-  (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
-  (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
-  (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
-  (void)frexp(fmax(fabs(ai), DBL_TRUE_MIN), &ei);
-  *es = DBL_BIG_EXP - pvn_imax4(e1, e2, er, ei);
+  int
+    e1 = (a1 != 0.0),
+    e2 = (a2 != 0.0),
+    er = (ar != 0.0),
+    ei = (ai != 0.0);
+  *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
+    (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
+    (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
+    (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
+    (void)frexp(fmax(fabs(ai), DBL_TRUE_MIN), &ei);
+    e1 = pvn_imax4(e1, e2, er, ei);
+    ei = *es;
+    *es = DBL_BIG_EXP - e1;
     a1 = scalbn(a1, *es);
     a2 = scalbn(a2, *es);
     ar = scalbn(ar, *es);
     ai = scalbn(ai, *es);
     *es = -*es;
   }
-  double
+  const double
     ar_ = fabs(ar),
-    ai_ = fabs(ai);
-  const double aa = hypot(ar_, ai_);
-  ar_ = copysign(fmin(ar_ / aa, 1.0), ar);
-  ai_ = ai / fmax(aa, DBL_TRUE_MIN);
+    ai_ = fabs(ai),
+    aa = hypot(ar_, ai_);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((ei & 1) && (fabs(a1) < DBL_MIN)) || ((ei & 2) && (fabs(a2) < DBL_MIN)) || ((ei & 4) && (ar_ < DBL_MIN)) || ((ei & 8) && (ai_ < DBL_MIN))) << 1);
+  ar = copysign(fmin(ar_ / aa, 1.0), ar);
+  ai = ai / fmax(aa, DBL_TRUE_MIN);
   const double
     an = (aa * 2.0),
     ad = (a1 - a2),
@@ -360,17 +396,22 @@ int pvn_zljev2_(const double *const a11, const double *const a22, const double *
     c1 = rsqrt(s2);
   *cs = c1;
   if (wt) {
-    *snr = ar_ * t1;
-    *sni = ai_ * t1;
+    *snr = ar * t1;
+    *sni = ai * t1;
   }
   else {
     const double s1 = t1 * c1;
-    *snr = ar_ * s1;
-    *sni = ai_ * s1;
+    *snr = ar * s1;
+    *sni = ai * s1;
   }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((ar_ != 0.0) && (fabs(*snr) < DBL_MIN)) << 2);
+  er = (((ai_ != 0.0) && (fabs(*sni) < DBL_MIN)) << 3);
   *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
-  return wt;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  ei = ((ei && (fmin(fabs(*l1), fabs(*l2)) < DBL_MIN)) << 4);
+  return (wt | e1 | e2 | er | ei);
 }
 
 int pvn_wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
@@ -398,25 +439,34 @@ int pvn_wljev2_(const long double *const a11, const long double *const a22, cons
   if (!isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
-  int e1, e2, er, ei;
-  (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-  (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-  (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
-  (void)frexpl(fmaxl(fabsl(ai), LDBL_TRUE_MIN), &ei);
-  *es = LDBL_BIG_EXP - pvn_imax4(e1, e2, er, ei);
+  int
+    e1 = (a1 != 0.0L),
+    e2 = (a2 != 0.0L),
+    er = (ar != 0.0L),
+    ei = (ai != 0.0L);
+  *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
+    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+    (void)frexpl(fmaxl(fabsl(ai), LDBL_TRUE_MIN), &ei);
+    e1 = pvn_imax4(e1, e2, er, ei);
+    ei = *es;
+    *es = LDBL_BIG_EXP - e1;
     a1 = scalbnl(a1, *es);
     a2 = scalbnl(a2, *es);
     ar = scalbnl(ar, *es);
     ai = scalbnl(ai, *es);
     *es = -*es;
   }
-  long double
+  const long double
     ar_ = fabsl(ar),
-    ai_ = fabsl(ai);
-  const long double aa = hypotl(ar_, ai_);
-  ar_ = copysignl(fminl(ar_ / aa, 1.0L), ar);
-  ai_ = ai / fmaxl(aa, LDBL_TRUE_MIN);
+    ai_ = fabsl(ai),
+    aa = hypotl(ar_, ai_);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((ei & 1) && (fabsl(a1) < LDBL_MIN)) || ((ei & 2) && (fabsl(a2) < LDBL_MIN)) || ((ei & 4) && (ar_ < LDBL_MIN)) || ((ei & 8) && (ai_ < LDBL_MIN))) << 1);
+  ar = copysignl(fminl(ar_ / aa, 1.0L), ar);
+  ai = ai / fmaxl(aa, LDBL_TRUE_MIN);
   const long double
     an = (aa * 2.0L),
     ad = (a1 - a2),
@@ -434,8 +484,13 @@ int pvn_wljev2_(const long double *const a11, const long double *const a22, cons
     *snr = ar_ * s1;
     *sni = ai_ * s1;
   }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((ar_ != 0.0L) && (fabsl(*snr) < LDBL_MIN)) << 2);
+  er = (((ai_ != 0.0L) && (fabsl(*sni) < LDBL_MIN)) << 3);
   *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
   *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
-  return wt;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  ei = ((ei && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 4);
+  return (wt | e1 | e2 | er | ei);
 }
 #endif /* ?PVN_TEST */
