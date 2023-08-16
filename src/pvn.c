@@ -15,6 +15,12 @@ int main(int argc, char *argv[])
 #else /* !_OPENMP */
   (void)printf("disabled\n");
 #endif /* ?_OPENMP */
+#ifdef PVN_CR_MATH
+  (void)printf("CR_MATH : %s\n", PVN_CR_MATH);
+#endif /* PVN_CR_MATH */
+#ifdef PVN_QUADMATH
+  (void)printf("QUADMATH: %s\n", PVN_QUADMATH);
+#endif /* PVN_QUADMATH */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */

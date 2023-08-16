@@ -1,9 +1,9 @@
 ARFLAGS=rsv
 CC=$(COMPILER_PREFIX)gcc$(COMPILER_SUFFIX)
 ifdef NDEBUG
-CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -fopt-info-optimized-vec -fvect-cost-model=unlimited
+CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -fvect-cost-model=unlimited
 else # DEBUG
-CFLAGS=-Og -ggdb -ftrapv
+CFLAGS=-Og -ggdb3 -ftrapv
 endif # ?NDEBUG
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
@@ -24,4 +24,7 @@ LDFLAGS += -lexecinfo
 else # !BSD
 LDFLAGS += -ldl
 endif # ?BSD
+ifdef QUADMATH
+LDFLAGS += $(QUADMATH)
+endif # QUADMATH
 LDFLAGS += -lm

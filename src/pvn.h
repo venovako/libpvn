@@ -74,6 +74,50 @@
 #error PVN_EXTERN_C already defined
 #endif /* ?PVN_EXTERN_C */
 
+/* the constants have been taken from quadmath.h and modified */
+#ifdef PVN_QUADMATH
+#ifdef __MATHIMF_H_INCLUDED
+#define FLT128_MAX 1.18973149535723176508575932662800702E+4932q
+#define FLT128_MIN 3.36210314311209350626267781732175260E-4932q
+#define FLT128_TRUE_MIN 6.475175119438025110924438958227646552E-4966q
+#define FLT128_MAX_EXP 16384
+PVN_EXTERN_C __float128 __copysignq(__float128, __float128);
+PVN_EXTERN_C __float128 __fabsq(__float128);
+PVN_EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
+PVN_EXTERN_C __float128 __fmaxq(__float128, __float128);
+PVN_EXTERN_C __float128 __fminq(__float128, __float128);
+PVN_EXTERN_C __float128 __frexpq(__float128, int*);
+PVN_EXTERN_C __float128 __hypotq(__float128, __float128);
+PVN_EXTERN_C int __isfiniteq(__float128);
+PVN_EXTERN_C __float128 __scalbnq(__float128, int);
+PVN_EXTERN_C __float128 __sqrtq(__float128);
+PVN_EXTERN_C __float128 __invsqrtq(__float128);
+#define copysignq __copysignq
+#define fabsq __fabsq
+#define fmaq __fmaq
+#define fmaxq __fmaxq
+#define fminq __fminq
+#define frexpq __frexpq
+#define hypotq __hypotq
+#define isfiniteq __isfiniteq
+#define scalbnq __scalbnq
+#define sqrtq __sqrtq
+#define rsqrtq __invsqrtq
+#else /* !__MATHIMF_H_INCLUDED */
+#ifdef __GNUC__
+#include <quadmath.h>
+#define FLT128_TRUE_MIN FLT128_DENORM_MIN
+#define isfiniteq finiteq
+static inline __float128 rsqrtq(__float128 x)
+{
+  return (1.0q / sqrtq(x));
+}
+#else /* !__GNUC__ */
+#error quad-precision math not supported
+#endif /* ?__GNUC__ */
+#endif /* ?__MATHIMF_H_INCLUDED */
+#endif /* PVN_QUADMATH */
+
 #include "pvn_aux.h"
 #include "pvn_bmp.h"
 #include "pvn_cjs.h"

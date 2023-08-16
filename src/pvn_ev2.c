@@ -493,4 +493,157 @@ int pvn_wljev2_(const long double *const a11, const long double *const a22, cons
   ei = ((ei && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
+
+#ifdef PVN_QUADMATH
+#ifdef FLT128_BIG_EXP
+#error FLT128_BIG_EXP already defined
+#else /* !FLT128_BIG_EXP */
+#define FLT128_BIG_EXP (FLT128_MAX_EXP - 3)
+#endif /* ?FLT128_BIG_EXP */
+
+int pvn_qljev2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const l1, __float128 *const l2, int *const es)
+{
+  assert(a11);
+  assert(a22);
+  assert(a21);
+  assert(cs);
+  assert(sn);
+  assert(l1);
+  assert(l2);
+  assert(es);
+  __float128 a1 = *a11;
+  if (!isfiniteq(a1))
+    return -1;
+  __float128 a2 = *a22;
+  if (!isfiniteq(a2))
+    return -2;
+  __float128 ar = *a21;
+  if (!isfiniteq(ar))
+    return -3;
+  const int wt = (*es ? 1 : 0);
+  int
+    e1 = (a1 != 0.0q),
+    e2 = (a2 != 0.0q),
+    er = (ar != 0.0q);
+  *es = (e1 | (e2 << 1) | (er << 2));
+  if (*es) {
+    (void)frexpq(fmaxq(fabsq(a1), FLT128_TRUE_MIN), &e1);
+    (void)frexpq(fmaxq(fabsq(a2), FLT128_TRUE_MIN), &e2);
+    (void)frexpq(fmaxq(fabsq(ar), FLT128_TRUE_MIN), &er);
+    e1 = pvn_imax3(e1, e2, er);
+    er = *es;
+    *es = FLT128_BIG_EXP - e1;
+    a1 = scalbnq(a1, *es);
+    a2 = scalbnq(a2, *es);
+    ar = scalbnq(ar, *es);
+    *es = -*es;
+  }
+  const __float128
+    aa = fabsq(ar);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((er & 1) && (fabsq(a1) < FLT128_MIN)) || ((er & 2) && (fabsq(a2) < FLT128_MIN)) || ((er & 4) && (aa < FLT128_MIN))) << 1);
+  const __float128
+    as = copysignq(1.0q, ar),
+    an = (aa * 2.0q),
+    ad = (a1 - a2),
+    t2 = copysignq(fminq(fmaxq(an / fabsq(ad), 0.0q), FLT128_MAX), ad),
+    t1 = (t2 / (1.0q + hypotq(t2, 1.0q))),
+    s2 = fmaq(t1, t1, 1.0q),
+    c1 = rsqrtq(s2);
+  *cs = c1;
+  if (wt)
+    *sn = as * t1;
+  else {
+    const __float128 s1 = t1 * c1;
+    *sn = as * s1;
+  }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((aa != 0.0q) && (fabsq(*sn) < FLT128_MIN)) << 2);
+  *l1 = fmaq(t1, fmaq(a2, t1,  an), a1) / s2;
+  *l2 = fmaq(t1, fmaq(a1, t1, -an), a2) / s2;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  er = ((er && (fminq(fabsq(*l1), fabsq(*l2)) < FLT128_MIN)) << 3);
+  return (wt | e1 | e2 | er);
+}
+
+int pvn_yljev2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const l1, __float128 *const l2, int *const es)
+{
+  assert(a11);
+  assert(a22);
+  assert(a21r);
+  assert(a21i);
+  assert(cs);
+  assert(snr);
+  assert(sni);
+  assert(l1);
+  assert(l2);
+  assert(es);
+  __float128 a1 = *a11;
+  if (!isfiniteq(a1))
+    return -1;
+  __float128 a2 = *a22;
+  if (!isfiniteq(a2))
+    return -2;
+  __float128 ar = *a21r;
+  if (!isfiniteq(ar))
+    return -3;
+  __float128 ai = *a21i;
+  if (!isfiniteq(ai))
+    return -4;
+  const int wt = (*es ? 1 : 0);
+  int
+    e1 = (a1 != 0.0q),
+    e2 = (a2 != 0.0q),
+    er = (ar != 0.0q),
+    ei = (ai != 0.0q);
+  *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
+  if (*es) {
+    (void)frexpq(fmaxq(fabsq(a1), FLT128_TRUE_MIN), &e1);
+    (void)frexpq(fmaxq(fabsq(a2), FLT128_TRUE_MIN), &e2);
+    (void)frexpq(fmaxq(fabsq(ar), FLT128_TRUE_MIN), &er);
+    (void)frexpq(fmaxq(fabsq(ai), FLT128_TRUE_MIN), &ei);
+    e1 = pvn_imax4(e1, e2, er, ei);
+    ei = *es;
+    *es = FLT128_BIG_EXP - e1;
+    a1 = scalbnq(a1, *es);
+    a2 = scalbnq(a2, *es);
+    ar = scalbnq(ar, *es);
+    ai = scalbnq(ai, *es);
+    *es = -*es;
+  }
+  const __float128
+    ar_ = fabsq(ar),
+    ai_ = fabsq(ai),
+    aa = hypotq(ar_, ai_);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((ei & 1) && (fabsq(a1) < FLT128_MIN)) || ((ei & 2) && (fabsq(a2) < FLT128_MIN)) || ((ei & 4) && (ar_ < FLT128_MIN)) || ((ei & 8) && (ai_ < FLT128_MIN))) << 1);
+  ar = copysignq(fminq(ar_ / aa, 1.0q), ar);
+  ai = ai / fmaxq(aa, FLT128_TRUE_MIN);
+  const __float128
+    an = (aa * 2.0q),
+    ad = (a1 - a2),
+    t2 = copysignq(fminq(fmaxq(an / fabsq(ad), 0.0q), FLT128_MAX), ad),
+    t1 = (t2 / (1.0q + hypotq(t2, 1.0q))),
+    s2 = fmaq(t1, t1, 1.0q),
+    c1 = rsqrtq(s2);
+  *cs = c1;
+  if (wt) {
+    *snr = ar_ * t1;
+    *sni = ai_ * t1;
+  }
+  else {
+    const __float128 s1 = t1 * c1;
+    *snr = ar_ * s1;
+    *sni = ai_ * s1;
+  }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((ar_ != 0.0q) && (fabsq(*snr) < FLT128_MIN)) << 2);
+  er = (((ai_ != 0.0q) && (fabsq(*sni) < FLT128_MIN)) << 3);
+  *l1 = fmaq(t1, fmaq(a2, t1,  an), a1) / s2;
+  *l2 = fmaq(t1, fmaq(a1, t1, -an), a2) / s2;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  ei = ((ei && (fminq(fabsq(*l1), fabsq(*l2)) < FLT128_MIN)) << 4);
+  return (wt | e1 | e2 | er | ei);
+}
+#endif /* PVN_QUADMATH */
 #endif /* ?PVN_TEST */
