@@ -476,13 +476,13 @@ int pvn_wljev2_(const long double *const a11, const long double *const a22, cons
     c1 = rsqrtl(s2);
   *cs = c1;
   if (wt) {
-    *snr = ar_ * t1;
-    *sni = ai_ * t1;
+    *snr = ar * t1;
+    *sni = ai * t1;
   }
   else {
     const long double s1 = t1 * c1;
-    *snr = ar_ * s1;
-    *sni = ai_ * s1;
+    *snr = ar * s1;
+    *sni = ai * s1;
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((ar_ != 0.0L) && (fabsl(*snr) < LDBL_MIN)) << 2);
@@ -628,13 +628,13 @@ int pvn_yljev2_(const __float128 *const a11, const __float128 *const a22, const 
     c1 = rsqrtq(s2);
   *cs = c1;
   if (wt) {
-    *snr = ar_ * t1;
-    *sni = ai_ * t1;
+    *snr = ar * t1;
+    *sni = ai * t1;
   }
   else {
     const __float128 s1 = t1 * c1;
-    *snr = ar_ * s1;
-    *sni = ai_ * s1;
+    *snr = ar * s1;
+    *sni = ai * s1;
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((ar_ != 0.0q) && (fabsq(*snr) < FLT128_MIN)) << 2);
