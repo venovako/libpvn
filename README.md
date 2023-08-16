@@ -80,6 +80,10 @@ Then, ``hypotf*.c`` in ``src/binary32/hypot`` and ``hypot*.c`` in ``src/binary64
 The same holds for ``rsqrt*_noerrno.c`` and ``rsqrt*.c`` files and ``src/binary32/rsqrt`` and ``src/binary64/rsqrt`` subdirectories.
 References to more core-math functions might be added soon, and will follow the same pattern.
 
+The ``QUADMATH`` option should be set to the name of the library implementing quadruple precision arithmetic, if ``long double`` is not the 128-bit floating-point datatype.
+This makes sense on, e.g., the x86_64 platform, where, for ``gcc``, ``QUADMATH=-lquadmath``.
+For ``icc`` and ``icx`` it can be set to anything, sice the ``imf`` library is implicitly linked with.
+
 On Windows, the library is called `pvn.lib` and does *not* contain all routines.
 Please consult `Makefile` for more information.
 
