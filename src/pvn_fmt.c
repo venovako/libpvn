@@ -3,39 +3,26 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-#ifdef _WIN32
-  if (argc != 3) {
-    fprintf(stderr, "%s size_t double\n", argv[0]);
+  if (argc != 2) {
+    fprintf(stderr, "%s size_t\n", argv[0]);
     return EXIT_FAILURE;
   }
-
-  (void)printf("size_t=%zu\n", pvn_atoz(argv[1]));
-
-  char *e = (char*)NULL;
-  const double d = strtod(argv[2], &e);
-  if (!e || *e)
-    return EXIT_FAILURE;
-
-  char s[26u];
-  (void)printf("double=%s\n", pvn_dtoa(s, d));
-  (void)printf("float =%s\n", pvn_stoa(s, (float)d));
-#else /* !_WIN32 */
-  if (argc != 3) {
-    fprintf(stderr, "%s size_t long_double\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-
-  (void)printf("size_t     =%zu\n", pvn_atoz(argv[1]));
-
-  char *e = (char*)NULL;
-  const long double ld = strtold(argv[2], &e);
-  if (!e || *e)
-    return EXIT_FAILURE;
+  (void)printf(" size_t      = %zu\n", pvn_atoz(argv[1]));
 
   char s[46u];
-  (void)printf("long double=%s\n", pvn_xtoa(s, ld));
-  (void)printf("double     =%s\n", pvn_dtoa(s, (double)ld));
-  (void)printf("float      =%s\n", pvn_stoa(s, (float)ld));
+  (void)printf(" FLT_TRUE_MIN=%s\n", pvn_stoa(s, FLT_TRUE_MIN));
+  (void)printf(" FLT_MIN     =%s\n", pvn_stoa(s, FLT_MIN));
+  (void)printf(" FLT_EPSILON =%s\n", pvn_stoa(s, FLT_EPSILON));
+  (void)printf(" FLT_MAX     =%s\n", pvn_stoa(s, FLT_MAX));
+  (void)printf(" DBL_TRUE_MIN=%s\n", pvn_dtoa(s, DBL_TRUE_MIN));
+  (void)printf(" DBL_MIN     =%s\n", pvn_dtoa(s, DBL_MIN));
+  (void)printf(" DBL_EPSILON =%s\n", pvn_dtoa(s, DBL_EPSILON));
+  (void)printf(" DBL_MAX     =%s\n", pvn_dtoa(s, DBL_MAX));
+#ifndef _WIN32
+  (void)printf("LDBL_TRUE_MIN=%s\n", pvn_xtoa(s, LDBL_TRUE_MIN));
+  (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
+  (void)printf("LDBL_EPSILON =%s\n", pvn_xtoa(s, LDBL_EPSILON));
+  (void)printf("LDBL_MAX     =%s\n", pvn_xtoa(s, LDBL_MAX));
 #endif /* ?_WIN32 */
   return EXIT_SUCCESS;
 }
