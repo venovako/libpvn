@@ -3,6 +3,9 @@ A small portable C library with several utility functions.
 
 (... work in progress ...)
 
+This software is a supplementary material for the preprint
+arXiv:[2308.14222](https://arxiv.org/abs/2308.14222 "Accurate complex Jacobi rotations") \[math.NA\].
+
 Some functions have been adapted from those in the repositories [JACSD](https://github.com/venovako/JACSD) and [VecJac](https://github.com/venovako/VecJac).
 
 ## Building
