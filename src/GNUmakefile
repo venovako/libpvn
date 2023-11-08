@@ -26,15 +26,14 @@ $(CR_MATH)/src/binary32/hypot/hypotf_noerrno.o \
 $(CR_MATH)/src/binary32/rsqrt/rsqrtf_noerrno.o \
 $(CR_MATH)/src/binary64/hypot/hypot_noerrno.o  \
 $(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o
-LDFLAGS += $(CR_OBJS)
 else # !NDEBUG
 CR_OBJS= \
 $(CR_MATH)/src/binary32/hypot/hypotf.o \
 $(CR_MATH)/src/binary32/rsqrt/rsqrtf.o \
 $(CR_MATH)/src/binary64/hypot/hypot.o  \
 $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
-LDFLAGS += $(CR_OBJS)
 endif # ?NDEBUG
+LDFLAGS += $(CR_OBJS)
 endif # CR_MATH
 ifdef QUADMATH
 CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
