@@ -129,5 +129,6 @@ PVN_EXTERN_C size_t pvn_lcm(const size_t a, const size_t b);
 PVN_EXTERN_C size_t pvn_lcm_(const size_t *const a, const size_t *const b);
 
 PVN_EXTERN_C char *pvn_hexify(char *const s, const void *const x, const size_t z);
+PVN_EXTERN_C size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...);
 
 #endif /* !PVN_AUX_H */

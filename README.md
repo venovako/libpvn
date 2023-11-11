@@ -93,7 +93,7 @@ For `icc` and `icx` it is not necessary, since the `imf` library is implicitly l
 On Windows, the library is called `pvn.lib` and does *not* contain all routines.
 Please consult `Makefile` for more information.
 
-*Caveat*: the library has never been tested on a big-endian system and certain parts are likely not to work there.
+*Caveat*: certain parts of the library will not work on big-endian systems!
 
 ## Examples
 

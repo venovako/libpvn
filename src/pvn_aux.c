@@ -13,7 +13,8 @@ int main(int argc, char *argv[])
   (void)printf("lcm(%zu, %zu) = %zu\n", a, b, pvn_lcm(a, b));
   char s[33] = { '\0' };
   char *e = (char*)NULL;
-  const long double ld = strtold(argv[3], &e);
+  long double ld = 0.0L;
+  *(long double*)memset(&ld, 0, sizeof(ld)) = strtold(argv[3], &e);
   if (e && *e)
     return EXIT_FAILURE;
   (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &ld, sizeof(ld)));
@@ -81,5 +82,13 @@ char *pvn_hexify(char *const s, const void *const x, const size_t z)
     o += 2;
   } while (e != b);
   return s;
+}
+
+size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...)
+{
+  assert(s);
+  assert(x);
+  assert(z);
+  return strlen(pvn_hexify(s, x, *z));
 }
 #endif /* ?PVN_TEST */
