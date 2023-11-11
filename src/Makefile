@@ -18,6 +18,12 @@ CFLAGS=$(CFLAGS) /Qsimd-honor-fp-model /Qsimd-serialize-fp-reduction /Qcomplex-l
 !ELSE # icx
 CFLAGS=$(CFLAGS) /Oy- /Qopt-report:3 /Wno-deprecated-declarations
 !ENDIF # ?COMPILER
+!IFDEF OPENMP
+CFLAGS=$(CFLAGS) /Qopenmp
+!IF "$(OPENMP)"!="true"
+CFLAGS=$(CFLAGS) $(OPENMP)
+!ENDIF # !true
+!ENDIF # OPENMP
 !IFDEF NDEBUG
 CFLAGS=$(CFLAGS) /MD
 LDFLAGS=/link /RELEASE pvn.lib
@@ -61,7 +67,7 @@ pvn_mtx.exe
 all: pvn.lib $(EXES)
 
 help:
-	@echo "nmake.exe [COMPILER=icx|icl] [NDEBUG=0|1|2|3|...] [VECLEN=...] [all|clean|help]"
+	@echo "nmake.exe [COMPILER=icx|icl] [NDEBUG=0|1|2|3|...] [VECLEN=...] [OPENMP=...] [all|clean|help]"
 
 pvn.lib: $(OBJS)
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)

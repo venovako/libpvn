@@ -35,9 +35,6 @@ $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
 endif # ?NDEBUG
 LDFLAGS += $(CR_OBJS)
 endif # CR_MATH
-ifdef QUADMATH
-CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
-endif # QUADMATH
 
 SRCS=pvn.c  \
 pvn_aux.c   \
@@ -59,7 +56,7 @@ EXES=$(SRCS:.c=.exe)
 all: libpvn.a $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [QUADMATH=-lquadmath] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=-lquadmath] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

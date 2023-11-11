@@ -48,7 +48,7 @@ cd src
 # query the building options (GNU make is necessary everywhere except on Windows)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [QUADMATH=-lquadmath] [all|clean|help]
+# make [COMPILER=clang|gcc|icc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=-lquadmath] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64
@@ -57,7 +57,7 @@ make COMPILER=icx NDEBUG=3 clean all
 # a debug build with clang on ppc64le
 make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
 #
-# a debug build with clang on Free/OpenBSD (note the usage of gmake instead of make)
+# a debug build with clang on FreeBSD (note the usage of gmake instead of make)
 gmake clean all
 #
 # a release build on Windows (note the usage of nmake instead of make)
@@ -83,9 +83,12 @@ Then, `hypotf*.c` in `src/binary32/hypot` and `hypot*.c` in `src/binary64/hypot`
 The same holds for `rsqrt*_noerrno.c` and `rsqrt*.c` files and `src/binary32/rsqrt` and `src/binary64/rsqrt` subdirectories.
 References to more core-math functions might be added soon, and will follow the same pattern.
 
+The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
+Set it to `true` if no additional compiler flags are desired.
+
 The `QUADMATH` option should be set to the name of the library implementing quadruple precision arithmetic, if `long double` is not the 128-bit floating-point datatype.
 This makes sense on, e.g., the x86_64 platform, where, for `gcc`, `QUADMATH=-lquadmath`.
-For `icc` and `icx` it can be set to anything non-empty, sice the `imf` library is implicitly linked with.
+For `icc` and `icx` it is not necessary, since the `imf` library is implicitly linked with.
 
 On Windows, the library is called `pvn.lib` and does *not* contain all routines.
 Please consult `Makefile` for more information.

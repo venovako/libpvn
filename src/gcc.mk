@@ -12,7 +12,13 @@ ifeq ($(OS),SunOS)
 CFLAGS += -D_LARGEFILE64_SOURCE -m64 -Wno-int-to-pointer-cast
 endif # SunOS
 endif # ?Linux
-CFLAGS += -std=gnu18 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread #-fopenmp
+CFLAGS += -std=gnu18 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread
+ifdef OPENMP
+CFLAGS += -fopenmp
+ifneq ($(OPENMP),true)
+CFLAGS += $(OPENMP)
+endif # !true
+endif # OPENMP
 ifeq ($(ARCH),ppc64le)
 CFLAGS += -mcpu=native -mtraceback=full
 else # !ppc64le
@@ -25,6 +31,7 @@ else # !BSD
 LDFLAGS += -ldl
 endif # ?BSD
 ifdef QUADMATH
+CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 LDFLAGS += $(QUADMATH)
 endif # QUADMATH
 LDFLAGS += -lm
