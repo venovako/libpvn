@@ -29,7 +29,7 @@
                     __FILE__, __LINE__,                           \
                     (const void*)pthread_self(), (msg));          \
     else                                                          \
-      (void)dprintf(STDERR_FILENO, "\n%s(%d) in thread (%p):\n",  \
+      (void)dprintf(STDERR_FILENO, "\n%s(%d) in thread %p\n",     \
                     __FILE__, __LINE__,                           \
                     (const void*)pthread_self());                 \
     (void)fsync(STDERR_FILENO);                                   \

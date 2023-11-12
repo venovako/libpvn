@@ -10,6 +10,13 @@ int main(int argc, char *argv[])
                "<undefined>"
 #endif /* ?PVN_CR_MATH */
                );
+#ifdef PVN_CR_MATH
+  /* check the linkage */
+  (void)printf("cr_hypotf=%018p\n", cr_hypotf);
+  (void)printf("cr_rsqrtf=%018p\n", cr_rsqrtf);
+  (void)printf("cr_hypot =%018p\n", cr_hypot);
+  (void)printf("cr_rsqrt =%018p\n", cr_rsqrt);
+#endif /* PVN_CR_MATH */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
