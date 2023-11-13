@@ -9,7 +9,11 @@ int main(int argc, char *argv[])
   }
   (void)printf(" size_t      = %zu\n", pvn_atoz(argv[1]));
 
+#ifdef _WIN32
+  char s[31u];
+#else /* !_WIN32 */
   char s[46u];
+#endif /* ?_WIN32 */
   (void)printf(" FLT_TRUE_MIN=%s\n", pvn_stoa(s, FLT_TRUE_MIN));
   (void)printf(" FLT_MIN     =%s\n", pvn_stoa(s, FLT_MIN));
   (void)printf(" FLT_EPSILON =%s\n", pvn_stoa(s, FLT_EPSILON));
@@ -23,7 +27,7 @@ int main(int argc, char *argv[])
   (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
   (void)printf("LDBL_EPSILON =%s\n", pvn_xtoa(s, LDBL_EPSILON));
   (void)printf("LDBL_MAX     =%s\n", pvn_xtoa(s, LDBL_MAX));
-#endif /* ?_WIN32 */
+#endif /* !_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -92,6 +96,7 @@ char *pvn_dtoa(char *const s, const double x)
   return s;
 }
 
+#ifndef _WIN32
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
@@ -142,4 +147,5 @@ char *pvn_xtoa(char *const s, const long double x)
   }
   return s;
 }
+#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */
