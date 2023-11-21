@@ -78,7 +78,7 @@ Explicit interfaces are not needed, *except on Windows*, but are recommended to 
 
 The correctly-rounded `cr_hypot[f]` and `cr_rsqrt[f]` functions might optionally be used if provided by, e.g., the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project.
 If their implementation is to be linked with, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
-Note, the `hypot*_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot*.c` files by eliminating all references to `errno`.
+Note, the `hypot*_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot*.c` files by eliminating all references to `errno` (see the `inc` subdirectory here for examples).
 Then, `hypotf*.c` in `src/binary32/hypot` and `hypot*.c` in `src/binary64/hypot` subdirectories of the cloned CORE-MATH repository have to be compiled manually.
 The same holds for `rsqrt*_noerrno.c` and `rsqrt*.c` files and `src/binary32/rsqrt` and `src/binary64/rsqrt` subdirectories.
 References to more core-math functions might be added soon, and will follow the same pattern.
