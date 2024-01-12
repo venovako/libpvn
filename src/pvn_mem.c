@@ -1,7 +1,7 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(int argc, char *argv[])
+int main(/* int argc, char *argv[] */)
 {
   (void)printf("PVN_VECLEN = %u\n", PVN_VECLEN);
   (void)printf("PVN_SAFELEN(float) = %zu\n", PVN_SAFELEN(float));

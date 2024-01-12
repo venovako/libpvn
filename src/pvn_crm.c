@@ -1,7 +1,7 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(int argc, char *argv[])
+int main(/* int argc, char *argv[] */)
 {
   (void)printf("PVN_CR_MATH=%s\n",
 #ifdef PVN_CR_MATH

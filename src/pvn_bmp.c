@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
   for (uint32_t c = 0u, x = 0u; c < nc; ++c)
     for (uint32_t i = 0u; i < w; ++i, ++x)
-      for (uint32_t j = 0u; j < h; ++j)
+      for (uint32_t j = 0u; j < (uint32_t)h; ++j)
         ps(bmp, x, j, c);
 
   if (pvn_bmp_fwrite(bmp, fn))

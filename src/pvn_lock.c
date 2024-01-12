@@ -1,7 +1,7 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(int argc, char *argv[])
+int main(/* int argc, char *argv[] */)
 {
   pvn_lock_t lock;
   pvn_lock_init(&lock, true);

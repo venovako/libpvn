@@ -1,7 +1,7 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(int argc, char *argv[])
+int main(/* int argc, char *argv[] */)
 {
   (void)printf("%s\n", pvn_get_error());
   PVN_STOP("PVN_STOP");
