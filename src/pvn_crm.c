@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
                );
 #ifdef PVN_CR_MATH
   /* check the linkage */
-  (void)printf("cr_hypotf=%018p\n", cr_hypotf);
-  (void)printf("cr_rsqrtf=%018p\n", cr_rsqrtf);
-  (void)printf("cr_hypot =%018p\n", cr_hypot);
-  (void)printf("cr_rsqrt =%018p\n", cr_rsqrt);
+  (void)printf("cr_hypotf=%18p\n", cr_hypotf);
+  (void)printf("cr_rsqrtf=%18p\n", cr_rsqrtf);
+  (void)printf("cr_hypot =%18p\n", cr_hypot);
+  (void)printf("cr_rsqrt =%18p\n", cr_rsqrt);
 #endif /* PVN_CR_MATH */
   return EXIT_SUCCESS;
 }
