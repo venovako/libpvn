@@ -14,9 +14,9 @@ CFLAGS=$(CFLAGS) /Od
 !ENDIF # ?NDEBUG
 CFLAGS=$(CFLAGS) /QxHost /fp:precise /Qfma /Qftz- /Qprotect-parens
 !IF "$(COMPILER)"=="icl"
-CFLAGS=$(CFLAGS) /Qsimd-honor-fp-model /Qsimd-serialize-fp-reduction /Qcomplex-limited-range- /Qfast-transcendentals- /Qprec-div /Qprec-sqrt /Qopt-multi-version-aggressive /Qopt-report:5 /Qdiag-disable:10397,10441
+CFLAGS=$(CFLAGS) /Qcomplex-limited-range- /Qfast-transcendentals- /Qprec-div /Qprec-sqrt /Qopt-multi-version-aggressive /Qsimd-honor-fp-model /Qsimd-serialize-fp-reduction /Qopt-report:5 /Qdiag-disable:10397,10441
 !ELSE # icx
-CFLAGS=$(CFLAGS) /Oy- /Qopt-report:3 /Wno-deprecated-declarations
+CFLAGS=$(CFLAGS) /Oy- /Qfp-speculation:safe /Qimf-precision:high /Qopt-report:3 /Wno-deprecated-declarations
 !ENDIF # ?COMPILER
 !IFDEF OPENMP
 CFLAGS=$(CFLAGS) /Qopenmp
@@ -67,7 +67,7 @@ pvn_mtx.exe
 all: pvn.lib $(EXES)
 
 help:
-	@echo "nmake.exe [COMPILER=icx|icl] [NDEBUG=0|1|2|3|...] [VECLEN=...] [OPENMP=...] [all|clean|help]"
+	@echo "nmake.exe [NDEBUG=0|1|2|3|...] [VECLEN=...] [OPENMP=...] [all|clean|help]"
 
 pvn.lib: $(OBJS)
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
