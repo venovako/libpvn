@@ -554,7 +554,13 @@ int pvn_qljev2_(const __float128 *const a11, const __float128 *const a22, const 
   if (wt)
     *sn = as * t1;
   else {
-    const __float128 s1 = t1 * c1;
+    const __float128 s1 =
+#ifdef __MATHIMF_H_INCLUDED
+      t1 * c1
+#else /* !__MATHIMF_H_INCLUDED */
+      t1 / sqrtq(s2)
+#endif /* ?__MATHIMF_H_INCLUDED */
+      ;
     *sn = as * s1;
   }
   /* sine/tangent underflows with a non-zero aa */
@@ -632,7 +638,13 @@ int pvn_yljev2_(const __float128 *const a11, const __float128 *const a22, const 
     *sni = ai * t1;
   }
   else {
-    const __float128 s1 = t1 * c1;
+    const __float128 s1 =
+#ifdef __MATHIMF_H_INCLUDED
+      t1 * c1
+#else /* !__MATHIMF_H_INCLUDED */
+      t1 / sqrtq(s2)
+#endif /* ?__MATHIMF_H_INCLUDED */
+      ;
     *snr = ar * s1;
     *sni = ai * s1;
   }

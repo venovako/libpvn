@@ -108,6 +108,7 @@ PVN_EXTERN_C __float128 __invsqrtq(__float128);
 #include <quadmath.h>
 #define FLT128_TRUE_MIN FLT128_DENORM_MIN
 #define isfiniteq finiteq
+/* the GCC's libquadmath does not have rsqrtq or a similar function */
 static inline __float128 rsqrtq(__float128 x)
 {
   return (1.0q / sqrtq(x));
