@@ -12,12 +12,6 @@
 #define DBL_BIG_EXP (DBL_MAX_EXP - 3)
 #endif /* ?DBL_BIG_EXP */
 
-#ifdef LDBL_BIG_EXP
-#error LDBL_BIG_EXP already defined
-#else /* !LDBL_BIG_EXP */
-#define LDBL_BIG_EXP (LDBL_MAX_EXP - 3)
-#endif /* ?LDBL_BIG_EXP */
-
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
@@ -189,71 +183,6 @@ int pvn_dljev2_(const double *const a11, const double *const a22, const double *
   return (wt | e1 | e2 | er);
 }
 
-int pvn_xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
-{
-  assert(a11);
-  assert(a22);
-  assert(a21);
-  assert(cs);
-  assert(sn);
-  assert(l1);
-  assert(l2);
-  assert(es);
-  long double a1 = *a11;
-  if (!isfinite(a1))
-    return -1;
-  long double a2 = *a22;
-  if (!isfinite(a2))
-    return -2;
-  long double ar = *a21;
-  if (!isfinite(ar))
-    return -3;
-  const int wt = (*es ? 1 : 0);
-  int
-    e1 = (a1 != 0.0L),
-    e2 = (a2 != 0.0L),
-    er = (ar != 0.0L);
-  *es = (e1 | (e2 << 1) | (er << 2));
-  if (*es) {
-    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
-    e1 = pvn_imax3(e1, e2, er);
-    er = *es;
-    *es = LDBL_BIG_EXP - e1;
-    a1 = scalbnl(a1, *es);
-    a2 = scalbnl(a2, *es);
-    ar = scalbnl(ar, *es);
-    *es = -*es;
-  }
-  const long double
-    aa = fabsl(ar);
-  /* a non-zero element underflows due to scaling */
-  e1 = ((((er & 1) && (fabsl(a1) < LDBL_MIN)) || ((er & 2) && (fabsl(a2) < LDBL_MIN)) || ((er & 4) && (aa < LDBL_MIN))) << 1);
-  const long double
-    as = copysignl(1.0L, ar),
-    an = (aa * 2.0L),
-    ad = (a1 - a2),
-    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
-    t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
-    s2 = fmal(t1, t1, 1.0L),
-    c1 = rsqrtl(s2);
-  *cs = c1;
-  if (wt)
-    *sn = as * t1;
-  else {
-    const long double s1 = t1 * c1;
-    *sn = as * s1;
-  }
-  /* sine/tangent underflows with a non-zero aa */
-  e2 = (((aa != 0.0L) && (fabsl(*sn) < LDBL_MIN)) << 2);
-  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
-  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
-  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  er = ((er && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 3);
-  return (wt | e1 | e2 | er);
-}
-
 int pvn_cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
 {
   assert(a11);
@@ -411,86 +340,6 @@ int pvn_zljev2_(const double *const a11, const double *const a22, const double *
   *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   ei = ((ei && (fmin(fabs(*l1), fabs(*l2)) < DBL_MIN)) << 4);
-  return (wt | e1 | e2 | er | ei);
-}
-
-int pvn_wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
-{
-  assert(a11);
-  assert(a22);
-  assert(a21r);
-  assert(a21i);
-  assert(cs);
-  assert(snr);
-  assert(sni);
-  assert(l1);
-  assert(l2);
-  assert(es);
-  long double a1 = *a11;
-  if (!isfinite(a1))
-    return -1;
-  long double a2 = *a22;
-  if (!isfinite(a2))
-    return -2;
-  long double ar = *a21r;
-  if (!isfinite(ar))
-    return -3;
-  long double ai = *a21i;
-  if (!isfinite(ai))
-    return -4;
-  const int wt = (*es ? 1 : 0);
-  int
-    e1 = (a1 != 0.0L),
-    e2 = (a2 != 0.0L),
-    er = (ar != 0.0L),
-    ei = (ai != 0.0L);
-  *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
-  if (*es) {
-    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
-    (void)frexpl(fmaxl(fabsl(ai), LDBL_TRUE_MIN), &ei);
-    e1 = pvn_imax4(e1, e2, er, ei);
-    ei = *es;
-    *es = LDBL_BIG_EXP - e1;
-    a1 = scalbnl(a1, *es);
-    a2 = scalbnl(a2, *es);
-    ar = scalbnl(ar, *es);
-    ai = scalbnl(ai, *es);
-    *es = -*es;
-  }
-  const long double
-    ar_ = fabsl(ar),
-    ai_ = fabsl(ai),
-    aa = hypotl(ar_, ai_);
-  /* a non-zero element underflows due to scaling */
-  e1 = ((((ei & 1) && (fabsl(a1) < LDBL_MIN)) || ((ei & 2) && (fabsl(a2) < LDBL_MIN)) || ((ei & 4) && (ar_ < LDBL_MIN)) || ((ei & 8) && (ai_ < LDBL_MIN))) << 1);
-  ar = copysignl(fminl(ar_ / aa, 1.0L), ar);
-  ai = ai / fmaxl(aa, LDBL_TRUE_MIN);
-  const long double
-    an = (aa * 2.0L),
-    ad = (a1 - a2),
-    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
-    t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
-    s2 = fmal(t1, t1, 1.0L),
-    c1 = rsqrtl(s2);
-  *cs = c1;
-  if (wt) {
-    *snr = ar * t1;
-    *sni = ai * t1;
-  }
-  else {
-    const long double s1 = t1 * c1;
-    *snr = ar * s1;
-    *sni = ai * s1;
-  }
-  /* sine/tangent underflows with a non-zero aa */
-  e2 = (((ar_ != 0.0L) && (fabsl(*snr) < LDBL_MIN)) << 2);
-  er = (((ai_ != 0.0L) && (fabsl(*sni) < LDBL_MIN)) << 3);
-  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
-  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
-  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  ei = ((ei && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 
@@ -657,5 +506,156 @@ int pvn_yljev2_(const __float128 *const a11, const __float128 *const a22, const 
   ei = ((ei && (fminq(fabsq(*l1), fabsq(*l2)) < FLT128_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
-#endif /* PVN_QUADMATH */
+#else /* !PVN_QUADMATH */
+#ifdef LDBL_BIG_EXP
+#error LDBL_BIG_EXP already defined
+#else /* !LDBL_BIG_EXP */
+#define LDBL_BIG_EXP (LDBL_MAX_EXP - 3)
+#endif /* ?LDBL_BIG_EXP */
+
+int pvn_xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
+{
+  assert(a11);
+  assert(a22);
+  assert(a21);
+  assert(cs);
+  assert(sn);
+  assert(l1);
+  assert(l2);
+  assert(es);
+  long double a1 = *a11;
+  if (!isfinite(a1))
+    return -1;
+  long double a2 = *a22;
+  if (!isfinite(a2))
+    return -2;
+  long double ar = *a21;
+  if (!isfinite(ar))
+    return -3;
+  const int wt = (*es ? 1 : 0);
+  int
+    e1 = (a1 != 0.0L),
+    e2 = (a2 != 0.0L),
+    er = (ar != 0.0L);
+  *es = (e1 | (e2 << 1) | (er << 2));
+  if (*es) {
+    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+    e1 = pvn_imax3(e1, e2, er);
+    er = *es;
+    *es = LDBL_BIG_EXP - e1;
+    a1 = scalbnl(a1, *es);
+    a2 = scalbnl(a2, *es);
+    ar = scalbnl(ar, *es);
+    *es = -*es;
+  }
+  const long double
+    aa = fabsl(ar);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((er & 1) && (fabsl(a1) < LDBL_MIN)) || ((er & 2) && (fabsl(a2) < LDBL_MIN)) || ((er & 4) && (aa < LDBL_MIN))) << 1);
+  const long double
+    as = copysignl(1.0L, ar),
+    an = (aa * 2.0L),
+    ad = (a1 - a2),
+    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
+    s2 = fmal(t1, t1, 1.0L),
+    c1 = rsqrtl(s2);
+  *cs = c1;
+  if (wt)
+    *sn = as * t1;
+  else {
+    const long double s1 = t1 * c1;
+    *sn = as * s1;
+  }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((aa != 0.0L) && (fabsl(*sn) < LDBL_MIN)) << 2);
+  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
+  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  er = ((er && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 3);
+  return (wt | e1 | e2 | er);
+}
+
+int pvn_wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
+{
+  assert(a11);
+  assert(a22);
+  assert(a21r);
+  assert(a21i);
+  assert(cs);
+  assert(snr);
+  assert(sni);
+  assert(l1);
+  assert(l2);
+  assert(es);
+  long double a1 = *a11;
+  if (!isfinite(a1))
+    return -1;
+  long double a2 = *a22;
+  if (!isfinite(a2))
+    return -2;
+  long double ar = *a21r;
+  if (!isfinite(ar))
+    return -3;
+  long double ai = *a21i;
+  if (!isfinite(ai))
+    return -4;
+  const int wt = (*es ? 1 : 0);
+  int
+    e1 = (a1 != 0.0L),
+    e2 = (a2 != 0.0L),
+    er = (ar != 0.0L),
+    ei = (ai != 0.0L);
+  *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
+  if (*es) {
+    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+    (void)frexpl(fmaxl(fabsl(ai), LDBL_TRUE_MIN), &ei);
+    e1 = pvn_imax4(e1, e2, er, ei);
+    ei = *es;
+    *es = LDBL_BIG_EXP - e1;
+    a1 = scalbnl(a1, *es);
+    a2 = scalbnl(a2, *es);
+    ar = scalbnl(ar, *es);
+    ai = scalbnl(ai, *es);
+    *es = -*es;
+  }
+  const long double
+    ar_ = fabsl(ar),
+    ai_ = fabsl(ai),
+    aa = hypotl(ar_, ai_);
+  /* a non-zero element underflows due to scaling */
+  e1 = ((((ei & 1) && (fabsl(a1) < LDBL_MIN)) || ((ei & 2) && (fabsl(a2) < LDBL_MIN)) || ((ei & 4) && (ar_ < LDBL_MIN)) || ((ei & 8) && (ai_ < LDBL_MIN))) << 1);
+  ar = copysignl(fminl(ar_ / aa, 1.0L), ar);
+  ai = ai / fmaxl(aa, LDBL_TRUE_MIN);
+  const long double
+    an = (aa * 2.0L),
+    ad = (a1 - a2),
+    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
+    s2 = fmal(t1, t1, 1.0L),
+    c1 = rsqrtl(s2);
+  *cs = c1;
+  if (wt) {
+    *snr = ar * t1;
+    *sni = ai * t1;
+  }
+  else {
+    const long double s1 = t1 * c1;
+    *snr = ar * s1;
+    *sni = ai * s1;
+  }
+  /* sine/tangent underflows with a non-zero aa */
+  e2 = (((ar_ != 0.0L) && (fabsl(*snr) < LDBL_MIN)) << 2);
+  er = (((ai_ != 0.0L) && (fabsl(*sni) < LDBL_MIN)) << 3);
+  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
+  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
+  /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
+  ei = ((ei && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 4);
+  return (wt | e1 | e2 | er | ei);
+}
+#endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */
