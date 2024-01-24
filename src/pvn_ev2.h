@@ -28,6 +28,9 @@ PVN_EXTERN_C int pvn_wljev2_(const long double *const a11, const long double *co
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C int pvn_qljev2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const l1, __float128 *const l2, int *const es);
 PVN_EXTERN_C int pvn_yljev2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const l1, __float128 *const l2, int *const es);
-#endif /* PVN_QUADMATH */
+#else /* !PVN_QUADMATH */
+PVN_EXTERN_C int pvn_qljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es);
+PVN_EXTERN_C int pvn_yljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es);
+#endif /* ?PVN_QUADMATH */
 
 #endif /* !PVN_EV2_H */

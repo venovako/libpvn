@@ -669,5 +669,15 @@ int pvn_yljev2_(const __float128 *const a11, const __float128 *const a22, const 
   ei = ((ei && (fminq(fabsq(*l1), fabsq(*l2)) < FLT128_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
-#endif /* PVN_QUADMATH */
+#else /* !PVN_QUADMATH */
+int pvn_qljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
+{
+  return pvn_xljev2_(a11, a22, a21, cs, sn, l1, l2, es);
+}
+
+int pvn_yljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
+{
+  return pvn_wljev2_(a11, a22, a21r, a21i, cs, snr, sni, l1, l2, es);
+}
+#endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */
