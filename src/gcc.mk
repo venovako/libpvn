@@ -25,7 +25,7 @@ CFLAGS += -mcpu=native -mtraceback=full
 else # !ppc64le
 CFLAGS += -march=native
 endif # ?ppc64le
-LDFLAGS=-rdynamic
+LDFLAGS=-rdynamic -static-libgcc
 ifeq ($(findstring BSD,$(OS)),BSD)
 LDFLAGS += -lexecinfo
 else # !BSD
