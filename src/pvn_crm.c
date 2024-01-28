@@ -21,7 +21,7 @@ int main(/* int argc, char *argv[] */)
 }
 #else /* !PVN_TEST */
 #ifdef PVN_CR_MATH
-/* not correctly rounded */
+/* might not be correctly rounded */
 long double cr_rsqrtl(long double x)
 {
 #ifdef __MATHIMF_H_INCLUDED

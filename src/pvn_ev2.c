@@ -349,6 +349,7 @@ int pvn_zljev2_(const double *const a11, const double *const a22, const double *
   return (wt | e1 | e2 | er | ei);
 }
 
+#ifndef _WIN32
 int pvn_xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
 {
   assert(a11);
@@ -680,4 +681,5 @@ int pvn_yljev2_(const long double *const a11, const long double *const a22, cons
   return pvn_wljev2_(a11, a22, a21r, a21i, cs, snr, sni, l1, l2, es);
 }
 #endif /* ?PVN_QUADMATH */
+#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */
