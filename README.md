@@ -73,7 +73,7 @@ You might wish to tune the compiler flags to match yours, especially if you are 
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 
-A function with the name ending with an underscore (`_`) should be callable from Fortran without an explicit interface.
+A function with the name ending with an underscore (`_`) should be callable from Fortran without an explicit interface, just by declaring it `EXTERNAL` (without the underscore), *except on Windows*.
 
 The correctly-rounded `cr_hypot[f]` and `cr_rsqrt[f]` functions might optionally be used if provided by, e.g., the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project.
 If their implementation is to be linked with, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
@@ -92,7 +92,7 @@ For `icx` and `icc` it is not necessary, since the `imf` library is implicitly l
 On Windows, the library is called `pvn.lib` and does *not* contain all routines.
 Please consult `Makefile` for more information.
 
-*Caveat*: certain parts of the library will not work on big-endian systems!
+*Caveat*: certain parts of the library will *not* work on big-endian systems!
 
 ## Examples
 
