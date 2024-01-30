@@ -31,9 +31,28 @@
 #error PVN_NOT_VECALIGNED already defined
 #endif /* ?PVN_NOT_VECALIGNED */
 
-PVN_EXTERN_C unsigned pvn_veclen_();
-PVN_EXTERN_C size_t pvn_pagesize_();
+PVN_EXTERN_C unsigned
+#ifdef _WIN32
+PVN_VEC_LEN
+#else /* !_WIN32 */
+pvn_vec_len_
+#endif /* ?_WIN32 */
+();
+PVN_EXTERN_C size_t pvn_pagesize();
+PVN_EXTERN_C size_t
+#ifdef _WIN32
+PVN_PAGESIZE
+#else /* !_WIN32 */
+pvn_pagesize_
+#endif /* ?_WIN32 */
+();
 PVN_EXTERN_C size_t pvn_alignment(const size_t a);
-PVN_EXTERN_C size_t pvn_alignment_(const size_t *const a);
+PVN_EXTERN_C size_t
+#ifdef _WIN32
+PVN_ALIGNMENT
+#else /* !_WIN32 */
+pvn_alignment_
+#endif /* ?_WIN32 */
+(const size_t *const a);
 
 #endif /* !PVN_MEM_H */

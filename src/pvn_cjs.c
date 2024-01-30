@@ -302,7 +302,13 @@ int pvn_cjs_init(void *const js, const int id, const int n)
   return info;
 }
 
-void *pvn_cjs_init_(const int *const id, const int *const n)
+void*
+#ifdef _WIN32
+PVN_CJS_INIT
+#else /* !_WIN32 */
+pvn_cjs_init_
+#endif /* ?_WIN32 */
+(const int *const id, const int *const n)
 {
   assert(id);
   assert(n);
@@ -551,7 +557,13 @@ int pvn_cjs_next(void *const js, int *const arr)
   return info;
 }
 
-int pvn_cjs_next_(void *const *const js, int *const arr)
+int
+#ifdef _WIN32
+PVN_CJS_NEXT
+#else /* !_WIN32 */
+pvn_cjs_next_
+#endif /* ?_WIN32 */
+(void *const *const js, int *const arr)
 {
   assert(js);
   assert(arr);
@@ -567,7 +579,13 @@ int pvn_cjs_free(void *const js)
   return 0;
 }
 
-int pvn_cjs_free_(void *const *const js)
+int
+#ifdef _WIN32
+PVN_CJS_FREE
+#else /* !_WIN32 */
+pvn_cjs_free_
+#endif /* ?_WIN32 */
+(void *const *const js)
 {
   assert(js);
   const int ret = pvn_cjs_free(*js);

@@ -143,5 +143,11 @@ static inline int pvn_omp()
 #endif /* ?_OPENMP */
     ;
 }
-PVN_EXTERN_C int pvn_omp_();
+PVN_EXTERN_C int
+#ifdef _WIN32
+PVN_OMP
+#else /* !_WIN32 */
+pvn_omp_
+#endif /* ?_WIN32 */
+();
 #endif /* !PVN_H */

@@ -166,7 +166,13 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
   return 1;
 }
 
-pvn_rvis_ctx_f *pvn_rvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+pvn_rvis_ctx_f*
+#ifdef _WIN32
+PVN_RVIS_START_F
+#else /* !_WIN32 */
+pvn_rvis_start_f_
+#endif /* ?_WIN32 */
+(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
 {
   assert(m);
   assert(n);
@@ -235,7 +241,13 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
   return 1;
 }
 
-pvn_rvis_ctx *pvn_rvis_start_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+pvn_rvis_ctx*
+#ifdef _WIN32
+PVN_RVIS_START
+#else /* !_WIN32 */
+pvn_rvis_start_
+#endif /* ?_WIN32 */
+(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
 {
   assert(m);
   assert(n);
@@ -358,7 +370,13 @@ int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, c
   return ret;
 }
 
-int pvn_rvis_frame_f_(pvn_rvis_ctx_f *const *const ctx, const float *const restrict A, const size_t *const ldA)
+int
+#ifdef _WIN32
+PVN_RVIS_FRAME_F
+#else /* !_WIN32 */
+pvn_rvis_frame_f_
+#endif /* ?_WIN32 */
+(pvn_rvis_ctx_f *const *const ctx, const float *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -386,7 +404,13 @@ int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, cons
   return ret;
 }
 
-int pvn_rvis_frame_(pvn_rvis_ctx *const *const ctx, const double *const restrict A, const size_t *const ldA)
+int
+#ifdef _WIN32
+PVN_RVIS_FRAME
+#else /* !_WIN32 */
+pvn_rvis_frame_
+#endif /* ?_WIN32 */
+(pvn_rvis_ctx *const *const ctx, const double *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -589,7 +613,13 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return ret;
 }
 
-int pvn_rvis_stop_f_(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int
+#ifdef _WIN32
+PVN_RVIS_STOP_F
+#else /* !_WIN32 */
+pvn_rvis_stop_f_
+#endif /* ?_WIN32 */
+(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
   assert(ctx);
   assert(sx);
@@ -767,7 +797,13 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return ret;
 }
 
-int pvn_rvis_stop_(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int
+#ifdef _WIN32
+PVN_RVIS_STOP
+#else /* !_WIN32 */
+pvn_rvis_stop_
+#endif /* ?_WIN32 */
+(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
   assert(ctx);
   assert(sx);
@@ -1025,7 +1061,13 @@ int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned
   return 0;
 }
 
-pvn_cvis_ctx_f *pvn_cvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+pvn_cvis_ctx_f*
+#ifdef _WIN32
+PVN_CVIS_START_F
+#else /* !_WIN32 */
+pvn_cvis_start_f_
+#endif /* ?_WIN32 */
+(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
 {
   pvn_cvis_ctx_f *ret = (pvn_cvis_ctx_f*)NULL;
   if (!m)
@@ -1122,7 +1164,13 @@ int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, 
   return 0;
 }
 
-pvn_cvis_ctx *pvn_cvis_start_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+pvn_cvis_ctx*
+#ifdef _WIN32
+PVN_CVIS_START
+#else /* !_WIN32 */
+pvn_cvis_start_
+#endif /* ?_WIN32 */
+(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
 {
   pvn_cvis_ctx *ret = (pvn_cvis_ctx*)NULL;
   if (!m)
@@ -1282,7 +1330,13 @@ int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restr
   return ret;
 }
 
-int pvn_cvis_frame_f_(pvn_cvis_ctx_f *const *const ctx, const float complex *const restrict A, const size_t *const ldA)
+int
+#ifdef _WIN32
+PVN_CVIS_FRAME_F
+#else /* !_WIN32 */
+pvn_cvis_frame_f_
+#endif /* ?_WIN32 */
+(pvn_cvis_ctx_f *const *const ctx, const float complex *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -1313,7 +1367,13 @@ int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict
   return ret;
 }
 
-int pvn_cvis_frame_(pvn_cvis_ctx *const *const ctx, const double complex *const restrict A, const size_t *const ldA)
+int
+#ifdef _WIN32
+PVN_CVIS_FRAME
+#else /* !_WIN32 */
+pvn_cvis_frame_
+#endif /* ?_WIN32 */
+(pvn_cvis_ctx *const *const ctx, const double complex *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -1396,7 +1456,13 @@ int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return (ret | ctx->err);
 }
 
-int pvn_cvis_stop_f_(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int
+#ifdef _WIN32
+PVN_CVIS_STOP_F
+#else /* !_WIN32 */
+pvn_cvis_stop_f_
+#endif /* ?_WIN32 */
+(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
   assert(ctx);
   assert(sx);
@@ -1453,7 +1519,13 @@ int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return (ret | ctx->err);
 }
 
-int pvn_cvis_stop_(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int
+#ifdef _WIN32
+PVN_CVIS_STOP
+#else /* !_WIN32 */
+pvn_cvis_stop_
+#endif /* ?_WIN32 */
+(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
   assert(ctx);
   assert(sx);

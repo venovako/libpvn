@@ -20,10 +20,28 @@ typedef struct {
 } pvn_cjs_modmod;
 
 PVN_EXTERN_C int pvn_cjs_init(void *const js, const int id, const int n);
-PVN_EXTERN_C void *pvn_cjs_init_(const int *const id, const int *const n);
+PVN_EXTERN_C void*
+#ifdef _WIN32
+PVN_CJS_INIT
+#else /* !_WIN32 */
+pvn_cjs_init_
+#endif /* ?_WIN32 */
+(const int *const id, const int *const n);
 PVN_EXTERN_C int pvn_cjs_next(void *const js, int *const arr);
-PVN_EXTERN_C int pvn_cjs_next_(void *const *const js, int *const arr);
+PVN_EXTERN_C int
+#ifdef _WIN32
+PVN_CJS_NEXT
+#else /* !_WIN32 */
+pvn_cjs_next_
+#endif /* ?_WIN32 */
+(void *const *const js, int *const arr);
 PVN_EXTERN_C int pvn_cjs_free(void *const js);
-PVN_EXTERN_C int pvn_cjs_free_(void *const *const js);
+PVN_EXTERN_C int
+#ifdef _WIN32
+PVN_CJS_FREE
+#else /* !_WIN32 */
+pvn_cjs_free_
+#endif /* ?_WIN32 */
+(void *const *const js);
 
 #endif /* !PVN_CJS_H */

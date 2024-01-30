@@ -52,7 +52,13 @@ size_t pvn_gcd(const size_t a, const size_t b)
   return aa;
 }
 
-size_t pvn_gcd_(const size_t *const a, const size_t *const b)
+size_t
+#ifdef _WIN32
+PVN_GCD
+#else /* !_WIN32 */
+pvn_gcd_
+#endif /* ?_WIN32 */
+(const size_t *const a, const size_t *const b)
 {
   assert(a);
   assert(b);
@@ -65,7 +71,13 @@ size_t pvn_lcm(const size_t a, const size_t b)
   return (g ? ((a / g) * b) : (size_t)0u);
 }
 
-size_t pvn_lcm_(const size_t *const a, const size_t *const b)
+size_t
+#ifdef _WIN32
+PVN_LCM
+#else /* !_WIN32 */
+pvn_lcm_
+#endif /* ?_WIN32 */
+(const size_t *const a, const size_t *const b)
 {
   assert(a);
   assert(b);
@@ -93,7 +105,13 @@ char *pvn_hexify(char *const s, const void *const x, const size_t z)
   return s;
 }
 
-size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...)
+size_t
+#ifdef _WIN32
+PVN_HEXIFY
+#else /* !_WIN32 */
+pvn_hexify_
+#endif /* ?_WIN32 */
+(char *const s, const void *const x, const size_t *const z, ...)
 {
   assert(s);
   assert(x);

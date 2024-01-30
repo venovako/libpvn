@@ -33,13 +33,23 @@ int main(int argc, char *argv[])
   int es = 0, lc = 0;
   char s[26u] = { '\0' };
   if (4 == argc) {
+#ifdef _WIN32
+    lc = PVN_DLJEV2(&a11, &a22, &a21r, &cs, &snr, &l1, &l2, &es);
+    (void)printf("PVN_DLJEV2 = %d, es = %d\n", lc, es);
+#else /* !_WIN32 */
     lc = pvn_dljev2_(&a11, &a22, &a21r, &cs, &snr, &l1, &l2, &es);
     (void)printf("pvn_dljev2_ = %d, es = %d\n", lc, es);
+#endif /* ?_WIN32 */
     sni = 0.0;
   }
   else {
+#ifdef _WIN32
+    lc = PVN_ZLJEV2(&a11, &a22, &a21r, &a21i, &cs, &snr, &sni, &l1, &l2, &es);
+    (void)printf("PVN_ZLJEV2 = %d, es = %d\n", lc, es);
+#else /* !_WIN32 */
     lc = pvn_zljev2_(&a11, &a22, &a21r, &a21i, &cs, &snr, &sni, &l1, &l2, &es);
     (void)printf("pvn_zljev2_ = %d, es = %d\n", lc, es);
+#endif /* ?_WIN32 */
   }
   (void)printf("a11  = %s\n", pvn_dtoa(s, a11));
   (void)printf("a22  = %s\n", pvn_dtoa(s, a22));
@@ -59,7 +69,13 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_sljev2_(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, float *const l1, float *const l2, int *const es)
+int
+#ifdef _WIN32
+PVN_SLJEV2
+#else /* !_WIN32 */
+pvn_sljev2_
+#endif /* ?_WIN32 */
+(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, float *const l1, float *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -124,7 +140,13 @@ int pvn_sljev2_(const float *const a11, const float *const a22, const float *con
   return (wt | e1 | e2 | er);
 }
 
-int pvn_dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
+int
+#ifdef _WIN32
+PVN_DLJEV2
+#else /* !_WIN32 */
+pvn_dljev2_
+#endif /* ?_WIN32 */
+(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -189,7 +211,13 @@ int pvn_dljev2_(const double *const a11, const double *const a22, const double *
   return (wt | e1 | e2 | er);
 }
 
-int pvn_cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
+int
+#ifdef _WIN32
+PVN_CLJEV2
+#else /* !_WIN32 */
+pvn_cljev2_
+#endif /* ?_WIN32 */
+(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
 {
   assert(a11);
   assert(a22);
@@ -269,7 +297,13 @@ int pvn_cljev2_(const float *const a11, const float *const a22, const float *con
   return (wt | e1 | e2 | er | ei);
 }
 
-int pvn_zljev2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
+int
+#ifdef _WIN32
+PVN_ZLJEV2
+#else /* !_WIN32 */
+pvn_zljev2_
+#endif /* ?_WIN32 */
+(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
 {
   assert(a11);
   assert(a22);

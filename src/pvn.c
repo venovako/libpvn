@@ -24,7 +24,13 @@ int main(/* int argc, char *argv[] */)
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_omp_()
+int
+#ifdef _WIN32
+PVN_OMP
+#else /* !_WIN32 */
+pvn_omp_
+#endif /* ?_WIN32 */
+()
 {
   return pvn_omp();
 }
