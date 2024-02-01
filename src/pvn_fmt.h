@@ -10,6 +10,11 @@ PVN_EXTERN_C char *pvn_stoa(char *const s, const float x);
 PVN_EXTERN_C char *pvn_dtoa(char *const s, const double x);
 #ifndef _WIN32
 PVN_EXTERN_C char *pvn_xtoa(char *const s, const long double x);
+#ifdef PVN_QUADMATH
+PVN_EXTERN_C char *pvn_qtoa(char *const s, const __float128 x);
+#else /* !PVN_QUADMATH */
+PVN_EXTERN_C char *pvn_qtoa(char *const s, const long double x);
+#endif /* ?PVN_QUADMATH */
 #endif /* !_WIN32 */
 
 #endif /* !PVN_FMT_H */

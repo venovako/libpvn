@@ -124,6 +124,7 @@ static inline __float128 rsqrtq(__float128 x)
 #include "pvn_cjs.h"
 #include "pvn_crm.h"
 #include "pvn_ev2.h"
+#include "pvn_sv2.h"
 #include "pvn_fmt.h"
 #include "pvn_mem.h"
 #include "pvn_mtx.h"

@@ -147,5 +147,46 @@ char *pvn_xtoa(char *const s, const long double x)
   }
   return s;
 }
+
+#ifdef PVN_QUADMATH
+char *pvn_qtoa(char *const s, const __float128 x)
+{
+#ifdef __MATHIMF_H_INCLUDED
+  /* TODO: how to print out __float128 with Intel compilers? */
+  return pvn_xtoa(s, (long double)x);
+#else /* !__MATHIMF_H_INCLUDED */
+  if (s) {
+    int l = quadmath_snprintf((char*)memset(s, 0, (size_t)46u), (size_t)46u, "%# -45.36QE", x);
+    if (l <= 0)
+      return (char*)NULL;
+    char *d = s + 45;
+    char *e = strrchr(s, 'E');
+    if (e) {
+      for (--d; isblank(*d); --d)
+        *d = '\0';
+      e += 2;
+      l = (int)(strchr(e, '\0') - e);
+      if (l >= 4)
+        return s;
+      d = s + 45;
+      e += l;
+      for (int i = 0; i < l; ++i)
+        *--d = *--e;
+      for (--d; isdigit(*d); --d)
+        *d = '0';
+    }
+    else
+      for (--d; !*d; --d)
+        *d = ' ';
+  }
+  return s;
+#endif /* ?__MATHIMF_H_INCLUDED */
+}
+#else /* !PVN_QUADMATH */
+char *pvn_qtoa(char *const s, const long double x)
+{
+  return pvn_xtoa(s, x);
+}
+#endif /* ?PVN_QUADMATH */
 #endif /* !_WIN32 */
 #endif /* ?PVN_TEST */

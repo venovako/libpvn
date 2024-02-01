@@ -60,3 +60,6 @@ dkms.conf
 *.dat
 *.gif
 *.png
+
+# Other
+var
