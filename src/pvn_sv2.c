@@ -195,10 +195,10 @@ int pvn_qljsv2_
 }
 #else /* !PVN_QUADMATH */
 int pvn_qljsv2_
-(const long double a11, const long double a21, const long double a12, const long double a22,
- long double u11, long double u21, long double u12, long double u22,
- long double v11, long double v21, long double v12, long double v22,
- long double s1, long double s2, int es)
+(const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
+ long double *const u11, long double *const u21, long double *const u12, long double *const u22,
+ long double *const v11, long double *const v21, long double *const v12, long double *const v22,
+ long double *const s1, long double *const s2, int *const es)
 {
   return pvn_xljsv2_(a11, a21, a12, a22, u11, u21, u12, u22, v11, v21, v12, v22, s1, s2, es);
 }
