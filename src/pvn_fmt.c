@@ -27,6 +27,13 @@ int main(int argc, char *argv[])
   (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
   (void)printf("LDBL_EPSILON =%s\n", pvn_xtoa(s, LDBL_EPSILON));
   (void)printf("LDBL_MAX     =%s\n", pvn_xtoa(s, LDBL_MAX));
+#ifdef PVN_QUADMATH
+#ifndef __MATHIMF_H_INCLUDED
+  (void)printf("FLT128_TRUE_MIN=%s\n", pvn_qtoa(s, FLT128_TRUE_MIN));
+  (void)printf("FLT128_MIN     =%s\n", pvn_qtoa(s, FLT128_MIN));
+  (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
+#endif /* !__MATHIMF_H_INCLUDED */
+#endif /* PVN_QUADMATH */
 #endif /* !_WIN32 */
   return EXIT_SUCCESS;
 }
