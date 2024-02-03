@@ -50,7 +50,69 @@ pvn_sljsv2_
   *v22 = 1.0f;
   *s1 = 0.0f;
   *s2 = 0.0f;
-  *es = 0;
+  int knd = 0, mxe = INT_MIN, e = INT_MIN;
+  if (*a11 != 0.0f) {
+    knd |= 1;
+    (void)frexpf(*a11, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a21 != 0.0f) {
+    knd |= 2;
+    (void)frexpf(*a21, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a12 != 0.0f) {
+    knd |= 4;
+    (void)frexpf(*a12, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a22 != 0.0f) {
+    knd |= 8;
+    (void)frexpf(*a22, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = FLT_MAX_EXP - mxe - 1;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = FLT_MAX_EXP - mxe;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  float A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
+  if (*es) {
+    A11 = scalbnf(A11, *es);
+    A21 = scalbnf(A21, *es);
+    A12 = scalbnf(A12, *es);
+    A22 = scalbnf(A22, *es);
+  }
   /* TODO */
   return 0;
 }
@@ -99,7 +161,69 @@ pvn_dljsv2_
   *v22 = 1.0;
   *s1 = 0.0;
   *s2 = 0.0;
-  *es = 0;
+  int knd = 0, mxe = INT_MIN, e = INT_MIN;
+  if (*a11 != 0.0) {
+    knd |= 1;
+    (void)frexp(*a11, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a21 != 0.0) {
+    knd |= 2;
+    (void)frexp(*a21, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a12 != 0.0) {
+    knd |= 4;
+    (void)frexp(*a12, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a22 != 0.0) {
+    knd |= 8;
+    (void)frexp(*a22, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = DBL_MAX_EXP - mxe - 1;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = DBL_MAX_EXP - mxe;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
+  if (*es) {
+    A11 = scalbn(A11, *es);
+    A21 = scalbn(A21, *es);
+    A12 = scalbn(A12, *es);
+    A22 = scalbn(A22, *es);
+  }
   /* TODO */
   return 0;
 }
@@ -176,7 +300,6 @@ pvn_cljsv2_
   *v22i = 0.0f;
   *s1 = 0.0f;
   *s2 = 0.0f;
-  *es = 0;
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0f) {
     kndi |= 1;
@@ -244,6 +367,49 @@ pvn_cljsv2_
       pvn_sljsv2_
 #endif /* ?_WIN32 */
       (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
+  }
+  const int knd = kndr | kndi;
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = FLT_MAX_EXP - mxe - 2;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = FLT_MAX_EXP - mxe - 1;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  float A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
+  if (*es) {
+    A11r = scalbnf(A11r, *es);
+    A11i = scalbnf(A11i, *es);
+    A21r = scalbnf(A21r, *es);
+    A21i = scalbnf(A21i, *es);
+    A12r = scalbnf(A12r, *es);
+    A12i = scalbnf(A12i, *es);
+    A22r = scalbnf(A22r, *es);
+    A22i = scalbnf(A22i, *es);
   }
   /* TODO */
   return 0;
@@ -321,7 +487,6 @@ pvn_zljsv2_
   *v22i = 0.0;
   *s1 = 0.0;
   *s2 = 0.0;
-  *es = 0;
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0) {
     kndi |= 1;
@@ -390,6 +555,49 @@ pvn_zljsv2_
 #endif /* ?_WIN32 */
       (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
+  const int knd = kndr | kndi;
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = DBL_MAX_EXP - mxe - 2;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = DBL_MAX_EXP - mxe - 1;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
+  if (*es) {
+    A11r = scalbn(A11r, *es);
+    A11i = scalbn(A11i, *es);
+    A21r = scalbn(A21r, *es);
+    A21i = scalbn(A21i, *es);
+    A12r = scalbn(A12r, *es);
+    A12i = scalbn(A12i, *es);
+    A22r = scalbn(A22r, *es);
+    A22i = scalbn(A22i, *es);
+  }
   /* TODO */
   return 0;
 }
@@ -434,7 +642,69 @@ int pvn_xljsv2_
   *v22 = 1.0L;
   *s1 = 0.0L;
   *s2 = 0.0L;
-  *es = 0;
+  int knd = 0, mxe = INT_MIN, e = INT_MIN;
+  if (*a11 != 0.0L) {
+    knd |= 1;
+    (void)frexpl(*a11, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a21 != 0.0L) {
+    knd |= 2;
+    (void)frexpl(*a21, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a12 != 0.0L) {
+    knd |= 4;
+    (void)frexpl(*a12, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a22 != 0.0L) {
+    knd |= 8;
+    (void)frexpl(*a22, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = LDBL_MAX_EXP - mxe - 1;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = LDBL_MAX_EXP - mxe;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  long double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
+  if (*es) {
+    A11 = scalbnl(A11, *es);
+    A21 = scalbnl(A21, *es);
+    A12 = scalbnl(A12, *es);
+    A22 = scalbnl(A22, *es);
+  }
   /* TODO */
   return 0;
 }
@@ -506,7 +776,6 @@ int pvn_wljsv2_
   *v22i = 0.0L;
   *s1 = 0.0L;
   *s2 = 0.0L;
-  *es = 0;
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0L) {
     kndi |= 1;
@@ -563,6 +832,49 @@ int pvn_wljsv2_
     *u22r = *u11r = 0.0L;
     return pvn_xljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
+  const int knd = kndr | kndi;
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = LDBL_MAX_EXP - mxe - 2;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = LDBL_MAX_EXP - mxe - 1;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  long double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
+  if (*es) {
+    A11r = scalbnl(A11r, *es);
+    A11i = scalbnl(A11i, *es);
+    A21r = scalbnl(A21r, *es);
+    A21i = scalbnl(A21i, *es);
+    A12r = scalbnl(A12r, *es);
+    A12i = scalbnl(A12i, *es);
+    A22r = scalbnl(A22r, *es);
+    A22i = scalbnl(A22i, *es);
+  }
   /* TODO */
   return 0;
 }
@@ -606,7 +918,69 @@ int pvn_qljsv2_
   *v22 = 1.0q;
   *s1 = 0.0q;
   *s2 = 0.0q;
-  *es = 0;
+  int knd = 0, mxe = INT_MIN, e = INT_MIN;
+  if (*a11 != 0.0q) {
+    knd |= 1;
+    (void)frexpq(*a11, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a21 != 0.0q) {
+    knd |= 2;
+    (void)frexpq(*a21, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a12 != 0.0q) {
+    knd |= 4;
+    (void)frexpq(*a12, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  if (*a22 != 0.0q) {
+    knd |= 8;
+    (void)frexpq(*a22, &e);
+    if (mxe < e)
+      mxe = e;
+  }
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = FLT128_MAX_EXP - mxe - 1;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = FLT128_MAX_EXP - mxe;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  __float128 A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
+  if (*es) {
+    A11 = scalbnq(A11, *es);
+    A21 = scalbnq(A21, *es);
+    A12 = scalbnq(A12, *es);
+    A22 = scalbnq(A22, *es);
+  }
   /* TODO */
   return 0;
 }
@@ -678,7 +1052,6 @@ int pvn_yljsv2_
   *v22i = 0.0q;
   *s1 = 0.0q;
   *s2 = 0.0q;
-  *es = 0;
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0q) {
     kndi |= 1;
@@ -734,6 +1107,49 @@ int pvn_yljsv2_
   if (!kndr) {
     *u22r = *u11r = 0.0q;
     return pvn_qljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
+  }
+  const int knd = kndr | kndi;
+  switch (knd) {
+  case  0:
+  case  1:
+  case  2:
+  case  4:
+  case  6:
+  case  8:
+  case  9:
+    e = 0;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+  case 15:
+    e = FLT128_MAX_EXP - mxe - 2;
+    break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    e = FLT128_MAX_EXP - mxe - 1;
+    break;
+  default:
+    return INT_MIN;
+  }
+  if (!*es)
+    *es = e;
+  else if (*es < 0)
+    ++*es;
+
+  __float128 A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
+  if (*es) {
+    A11r = scalbnq(A11r, *es);
+    A11i = scalbnq(A11i, *es);
+    A21r = scalbnq(A21r, *es);
+    A21i = scalbnq(A21i, *es);
+    A12r = scalbnq(A12r, *es);
+    A12i = scalbnq(A12i, *es);
+    A22r = scalbnq(A22r, *es);
+    A22i = scalbnq(A22i, *es);
   }
   /* TODO */
   return 0;
