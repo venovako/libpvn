@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 #ifndef __MATHIMF_H_INCLUDED
   (void)printf("FLT128_TRUE_MIN=%s\n", pvn_qtoa(s, FLT128_TRUE_MIN));
   (void)printf("FLT128_MIN     =%s\n", pvn_qtoa(s, FLT128_MIN));
+  (void)printf("FLT128_EPSILON =%s\n", pvn_qtoa(s, FLT128_EPSILON));
   (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
 #endif /* !__MATHIMF_H_INCLUDED */
 #endif /* PVN_QUADMATH */

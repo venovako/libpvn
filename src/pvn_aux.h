@@ -15,6 +15,34 @@
 #error PVN_LF64 already defined
 #endif /* ?PVN_LF64 */
 
+#ifndef pvn_Tswp
+#define pvn_Tswp(T,t)                                   \
+static inline void pvn_##t##swp(T *const a, T *const b) \
+{                                                       \
+  assert(a);                                            \
+  assert(b);                                            \
+  const T c = *a;                                       \
+  *a = *b;                                              \
+  *b = c;                                               \
+}
+#else /* pvn_Tswp */
+#error pvn_Tswp already defined
+#endif /* ?pvn_Tswp */
+
+pvn_Tswp(int,i)
+pvn_Tswp(long,l)
+pvn_Tswp(long long,ll)
+pvn_Tswp(unsigned,u)
+pvn_Tswp(unsigned long,ul)
+pvn_Tswp(unsigned long long,ull)
+pvn_Tswp(size_t,z)
+pvn_Tswp(float,f)
+pvn_Tswp(double,d)
+pvn_Tswp(long double,L)
+#ifdef PVN_QUADMATH
+pvn_Tswp(__float128,q)
+#endif /* PVN_QUADMATH */
+
 #ifndef pvn_Tmin
 #define pvn_Tmin(T,t)                              \
 static inline T pvn_##t##min(const T a, const T b) \
