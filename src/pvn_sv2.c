@@ -40,16 +40,7 @@ pvn_sljsv2_
     return -3;
   if (!isfinite(*a22))
     return -4;
-  *u11 = 1.0f;
-  *u21 = 0.0f;
-  *u12 = 0.0f;
-  *u22 = 1.0f;
-  *v11 = 1.0f;
-  *v21 = 0.0f;
-  *v12 = 0.0f;
-  *v22 = 1.0f;
-  *s1 = 0.0f;
-  *s2 = 0.0f;
+  /* should not fail beyond this point */
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0f) {
     knd |= 1;
@@ -113,6 +104,17 @@ pvn_sljsv2_
     A12 = scalbnf(A12, *es);
     A22 = scalbnf(A22, *es);
   }
+
+  *u11 = 1.0f;
+  *u21 = 0.0f;
+  *u12 = 0.0f;
+  *u22 = 1.0f;
+  *v11 = 1.0f;
+  *v21 = 0.0f;
+  *v12 = 0.0f;
+  *v22 = 1.0f;
+  *s1 = 0.0f;
+  *s2 = 0.0f;
   /* TODO */
   return 0;
 }
@@ -151,16 +153,7 @@ pvn_dljsv2_
     return -3;
   if (!isfinite(*a22))
     return -4;
-  *u11 = 1.0;
-  *u21 = 0.0;
-  *u12 = 0.0;
-  *u22 = 1.0;
-  *v11 = 1.0;
-  *v21 = 0.0;
-  *v12 = 0.0;
-  *v22 = 1.0;
-  *s1 = 0.0;
-  *s2 = 0.0;
+  /* should not fail beyond this point */
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0) {
     knd |= 1;
@@ -224,6 +217,17 @@ pvn_dljsv2_
     A12 = scalbn(A12, *es);
     A22 = scalbn(A22, *es);
   }
+
+  *u11 = 1.0;
+  *u21 = 0.0;
+  *u12 = 0.0;
+  *u22 = 1.0;
+  *v11 = 1.0;
+  *v21 = 0.0;
+  *v12 = 0.0;
+  *v22 = 1.0;
+  *s1 = 0.0;
+  *s2 = 0.0;
   /* TODO */
   return 0;
 }
@@ -282,24 +286,7 @@ pvn_cljsv2_
     return -7;
   if (!isfinite(*a22i))
     return -8;
-  *u11r = 1.0f;
-  *u11i = 0.0f;
-  *u21r = 0.0f;
-  *u21i = 0.0f;
-  *u12r = 0.0f;
-  *u12i = 0.0f;
-  *u22r = 1.0f;
-  *u22i = 0.0f;
-  *v11r = 1.0f;
-  *v11i = 0.0f;
-  *v21r = 0.0f;
-  *v21i = 0.0f;
-  *v12r = 0.0f;
-  *v12i = 0.0f;
-  *v22r = 1.0f;
-  *v22i = 0.0f;
-  *s1 = 0.0f;
-  *s2 = 0.0f;
+  /* should not fail beyond this point */
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0f) {
     kndi |= 1;
@@ -325,6 +312,14 @@ pvn_cljsv2_
     if (mxe < e)
       mxe = e;
   }
+  *u11i = 0.0f;
+  *u21i = 0.0f;
+  *u12i = 0.0f;
+  *u22i = 0.0f;
+  *v11i = 0.0f;
+  *v21i = 0.0f;
+  *v12i = 0.0f;
+  *v22i = 0.0f;
   if (!kndi)
     return
 #ifdef _WIN32
@@ -359,7 +354,10 @@ pvn_cljsv2_
       mxe = e;
   }
   if (!kndr) {
-    *u22r = *u11r = 0.0f;
+    *u11r = 0.0f;
+    *u21r = 0.0f;
+    *u12r = 0.0f;
+    *u22r = 0.0f;
     return
 #ifdef _WIN32
       PVN_SLJSV2
@@ -368,6 +366,7 @@ pvn_cljsv2_
 #endif /* ?_WIN32 */
       (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
+
   const int knd = kndr | kndi;
   switch (knd) {
   case  0:
@@ -411,6 +410,17 @@ pvn_cljsv2_
     A22r = scalbnf(A22r, *es);
     A22i = scalbnf(A22i, *es);
   }
+
+  *u11r = 1.0f;
+  *u21r = 0.0f;
+  *u12r = 0.0f;
+  *u22r = 1.0f;
+  *v11r = 1.0f;
+  *v21r = 0.0f;
+  *v12r = 0.0f;
+  *v22r = 1.0f;
+  *s1 = 0.0f;
+  *s2 = 0.0f;
   /* TODO */
   return 0;
 }
@@ -469,24 +479,7 @@ pvn_zljsv2_
     return -7;
   if (!isfinite(*a22i))
     return -8;
-  *u11r = 1.0;
-  *u11i = 0.0;
-  *u21r = 0.0;
-  *u21i = 0.0;
-  *u12r = 0.0;
-  *u12i = 0.0;
-  *u22r = 1.0;
-  *u22i = 0.0;
-  *v11r = 1.0;
-  *v11i = 0.0;
-  *v21r = 0.0;
-  *v21i = 0.0;
-  *v12r = 0.0;
-  *v12i = 0.0;
-  *v22r = 1.0;
-  *v22i = 0.0;
-  *s1 = 0.0;
-  *s2 = 0.0;
+  /* should not fail beyond this point */
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0) {
     kndi |= 1;
@@ -512,6 +505,14 @@ pvn_zljsv2_
     if (mxe < e)
       mxe = e;
   }
+  *u11i = 0.0;
+  *u21i = 0.0;
+  *u12i = 0.0;
+  *u22i = 0.0;
+  *v11i = 0.0;
+  *v21i = 0.0;
+  *v12i = 0.0;
+  *v22i = 0.0;
   if (!kndi)
     return
 #ifdef _WIN32
@@ -546,7 +547,10 @@ pvn_zljsv2_
       mxe = e;
   }
   if (!kndr) {
-    *u22r = *u11r = 0.0;
+    *u11r = 0.0;
+    *u21r = 0.0;
+    *u12r = 0.0;
+    *u22r = 0.0;
     return
 #ifdef _WIN32
       PVN_DLJSV2
@@ -598,6 +602,17 @@ pvn_zljsv2_
     A22r = scalbn(A22r, *es);
     A22i = scalbn(A22i, *es);
   }
+
+  *u11r = 1.0;
+  *u21r = 0.0;
+  *u12r = 0.0;
+  *u22r = 1.0;
+  *v11r = 1.0;
+  *v21r = 0.0;
+  *v12r = 0.0;
+  *v22r = 1.0;
+  *s1 = 0.0;
+  *s2 = 0.0;
   /* TODO */
   return 0;
 }
@@ -632,16 +647,6 @@ int pvn_xljsv2_
     return -3;
   if (!isfinite(*a22))
     return -4;
-  *u11 = 1.0L;
-  *u21 = 0.0L;
-  *u12 = 0.0L;
-  *u22 = 1.0L;
-  *v11 = 1.0L;
-  *v21 = 0.0L;
-  *v12 = 0.0L;
-  *v22 = 1.0L;
-  *s1 = 0.0L;
-  *s2 = 0.0L;
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0L) {
     knd |= 1;
@@ -705,6 +710,17 @@ int pvn_xljsv2_
     A12 = scalbnl(A12, *es);
     A22 = scalbnl(A22, *es);
   }
+
+  *u11 = 1.0L;
+  *u21 = 0.0L;
+  *u12 = 0.0L;
+  *u22 = 1.0L;
+  *v11 = 1.0L;
+  *v21 = 0.0L;
+  *v12 = 0.0L;
+  *v22 = 1.0L;
+  *s1 = 0.0L;
+  *s2 = 0.0L;
   /* TODO */
   return 0;
 }
@@ -758,24 +774,6 @@ int pvn_wljsv2_
     return -7;
   if (!isfinite(*a22i))
     return -8;
-  *u11r = 1.0L;
-  *u11i = 0.0L;
-  *u21r = 0.0L;
-  *u21i = 0.0L;
-  *u12r = 0.0L;
-  *u12i = 0.0L;
-  *u22r = 1.0L;
-  *u22i = 0.0L;
-  *v11r = 1.0L;
-  *v11i = 0.0L;
-  *v21r = 0.0L;
-  *v21i = 0.0L;
-  *v12r = 0.0L;
-  *v12i = 0.0L;
-  *v22r = 1.0L;
-  *v22i = 0.0L;
-  *s1 = 0.0L;
-  *s2 = 0.0L;
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0L) {
     kndi |= 1;
@@ -801,6 +799,14 @@ int pvn_wljsv2_
     if (mxe < e)
       mxe = e;
   }
+  *u11i = 0.0L;
+  *u21i = 0.0L;
+  *u12i = 0.0L;
+  *u22i = 0.0L;
+  *v11i = 0.0L;
+  *v21i = 0.0L;
+  *v12i = 0.0L;
+  *v22i = 0.0L;
   if (!kndi)
     return pvn_xljsv2_(a11r, a21r, a12r, a22r, u11r, u21r, u12r, u22r, v11r, v21r, v12r, v22r, s1, s2, es);
   int kndr = 0;
@@ -829,7 +835,10 @@ int pvn_wljsv2_
       mxe = e;
   }
   if (!kndr) {
-    *u22r = *u11r = 0.0L;
+    *u11r = 0.0L;
+    *u21r = 0.0L;
+    *u12r = 0.0L;
+    *u22r = 0.0L;
     return pvn_xljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
   const int knd = kndr | kndi;
@@ -875,6 +884,17 @@ int pvn_wljsv2_
     A22r = scalbnl(A22r, *es);
     A22i = scalbnl(A22i, *es);
   }
+
+  *u11r = 1.0L;
+  *u21r = 0.0L;
+  *u12r = 0.0L;
+  *u22r = 1.0L;
+  *v11r = 1.0L;
+  *v21r = 0.0L;
+  *v12r = 0.0L;
+  *v22r = 1.0L;
+  *s1 = 0.0L;
+  *s2 = 0.0L;
   /* TODO */
   return 0;
 }
@@ -908,16 +928,6 @@ int pvn_qljsv2_
     return -3;
   if (!isfiniteq(*a22))
     return -4;
-  *u11 = 1.0q;
-  *u21 = 0.0q;
-  *u12 = 0.0q;
-  *u22 = 1.0q;
-  *v11 = 1.0q;
-  *v21 = 0.0q;
-  *v12 = 0.0q;
-  *v22 = 1.0q;
-  *s1 = 0.0q;
-  *s2 = 0.0q;
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0q) {
     knd |= 1;
@@ -981,6 +991,17 @@ int pvn_qljsv2_
     A12 = scalbnq(A12, *es);
     A22 = scalbnq(A22, *es);
   }
+
+  *u11 = 1.0q;
+  *u21 = 0.0q;
+  *u12 = 0.0q;
+  *u22 = 1.0q;
+  *v11 = 1.0q;
+  *v21 = 0.0q;
+  *v12 = 0.0q;
+  *v22 = 1.0q;
+  *s1 = 0.0q;
+  *s2 = 0.0q;
   /* TODO */
   return 0;
 }
@@ -1034,24 +1055,6 @@ int pvn_yljsv2_
     return -7;
   if (!isfiniteq(*a22i))
     return -8;
-  *u11r = 1.0q;
-  *u11i = 0.0q;
-  *u21r = 0.0q;
-  *u21i = 0.0q;
-  *u12r = 0.0q;
-  *u12i = 0.0q;
-  *u22r = 1.0q;
-  *u22i = 0.0q;
-  *v11r = 1.0q;
-  *v11i = 0.0q;
-  *v21r = 0.0q;
-  *v21i = 0.0q;
-  *v12r = 0.0q;
-  *v12i = 0.0q;
-  *v22r = 1.0q;
-  *v22i = 0.0q;
-  *s1 = 0.0q;
-  *s2 = 0.0q;
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0q) {
     kndi |= 1;
@@ -1077,6 +1080,14 @@ int pvn_yljsv2_
     if (mxe < e)
       mxe = e;
   }
+  *u11i = 0.0q;
+  *u21i = 0.0q;
+  *u12i = 0.0q;
+  *u22i = 0.0q;
+  *v11i = 0.0q;
+  *v21i = 0.0q;
+  *v12i = 0.0q;
+  *v22i = 0.0q;
   if (!kndi)
     return pvn_qljsv2_(a11r, a21r, a12r, a22r, u11r, u21r, u12r, u22r, v11r, v21r, v12r, v22r, s1, s2, es);
   int kndr = 0;
@@ -1105,7 +1116,10 @@ int pvn_yljsv2_
       mxe = e;
   }
   if (!kndr) {
-    *u22r = *u11r = 0.0q;
+    *u11r = 0.0q;
+    *u21r = 0.0q;
+    *u12r = 0.0q;
+    *u22r = 0.0q;
     return pvn_qljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
   const int knd = kndr | kndi;
@@ -1151,6 +1165,17 @@ int pvn_yljsv2_
     A22r = scalbnq(A22r, *es);
     A22i = scalbnq(A22i, *es);
   }
+
+  *u11r = 1.0q;
+  *u21r = 0.0q;
+  *u12r = 0.0q;
+  *u22r = 1.0q;
+  *v11r = 1.0q;
+  *v21r = 0.0q;
+  *v12r = 0.0q;
+  *v22r = 1.0q;
+  *s1 = 0.0q;
+  *s2 = 0.0q;
   /* TODO */
   return 0;
 }
