@@ -81,12 +81,14 @@ pvn_sljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = FLT_MAX_EXP - mxe - 1;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = FLT_MAX_EXP - mxe;
     break;
   default:
@@ -115,7 +117,44 @@ pvn_sljsv2_
   *v22 = 1.0f;
   *s1 = 0.0f;
   *s2 = 0.0f;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 
@@ -194,12 +233,14 @@ pvn_dljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = DBL_MAX_EXP - mxe - 1;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = DBL_MAX_EXP - mxe;
     break;
   default:
@@ -228,7 +269,44 @@ pvn_dljsv2_
   *v22 = 1.0;
   *s1 = 0.0;
   *s2 = 0.0;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 
@@ -383,12 +461,14 @@ pvn_cljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = FLT_MAX_EXP - mxe - 2;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = FLT_MAX_EXP - mxe - 1;
     break;
   default:
@@ -421,7 +501,44 @@ pvn_cljsv2_
   *v22r = 1.0f;
   *s1 = 0.0f;
   *s2 = 0.0f;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 
@@ -575,12 +692,14 @@ pvn_zljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = DBL_MAX_EXP - mxe - 2;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = DBL_MAX_EXP - mxe - 1;
     break;
   default:
@@ -613,7 +732,44 @@ pvn_zljsv2_
   *v22r = 1.0;
   *s1 = 0.0;
   *s2 = 0.0;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 
@@ -687,12 +843,14 @@ int pvn_xljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = LDBL_MAX_EXP - mxe - 1;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = LDBL_MAX_EXP - mxe;
     break;
   default:
@@ -721,7 +879,44 @@ int pvn_xljsv2_
   *v22 = 1.0L;
   *s1 = 0.0L;
   *s2 = 0.0L;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 
@@ -857,12 +1052,14 @@ int pvn_wljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = LDBL_MAX_EXP - mxe - 2;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = LDBL_MAX_EXP - mxe - 1;
     break;
   default:
@@ -895,7 +1092,44 @@ int pvn_wljsv2_
   *v22r = 1.0L;
   *s1 = 0.0L;
   *s2 = 0.0L;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 #ifdef PVN_QUADMATH
@@ -968,12 +1202,14 @@ int pvn_qljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = FLT128_MAX_EXP - mxe - 1;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = FLT128_MAX_EXP - mxe;
     break;
   default:
@@ -1002,7 +1238,44 @@ int pvn_qljsv2_
   *v22 = 1.0q;
   *s1 = 0.0q;
   *s2 = 0.0q;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 
@@ -1138,12 +1411,14 @@ int pvn_yljsv2_
   case 10:
   case 12:
   case 15:
+    /* QR needed, extra scaling later */
     e = FLT128_MAX_EXP - mxe - 2;
     break;
   case  7:
   case 11:
   case 13:
   case 14:
+    /* QR not needed, extra scaling later */
     e = FLT128_MAX_EXP - mxe - 1;
     break;
   default:
@@ -1176,7 +1451,44 @@ int pvn_yljsv2_
   *v22r = 1.0q;
   *s1 = 0.0q;
   *s2 = 0.0q;
+
   /* TODO */
+  switch (knd) {
+  case  0:
+    break;
+  case  1:
+    break;
+  case  2:
+    break;
+  case  3:
+    break;
+  case  4:
+    break;
+  case  5:
+    break;
+  case  6:
+    break;
+  case  7:
+    break;
+  case  8:
+    break;
+  case  9:
+    break;
+  case 10:
+    break;
+  case 11:
+    break;
+  case 12:
+    break;
+  case 13:
+    break;
+  case 14:
+    break;
+  case 15:
+    break;
+  default:
+    return INT_MIN;
+  }
   return 0;
 }
 #else /* !PVN_QUADMATH */
