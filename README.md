@@ -77,10 +77,10 @@ A function with the name ending with an underscore (`_`) should be callable from
 
 The correctly-rounded `cr_hypot[f]` and `cr_rsqrt[f]` functions might optionally be used if provided by, e.g., the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project.
 If their implementation is to be linked with, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
-Note, the `hypot*_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot*.c` files by eliminating all references to `errno` (see the `inc` subdirectory here for examples).
-Then, `hypotf*.c` in `src/binary32/hypot` and `hypot*.c` in `src/binary64/hypot` subdirectories of the cloned CORE-MATH repository have to be compiled manually.
-The same holds for `rsqrt*_noerrno.c` and `rsqrt*.c` files and `src/binary32/rsqrt` and `src/binary64/rsqrt` subdirectories.
-References to more core-math functions might be added soon, and will follow the same pattern.
+Note, the `hypot[f]_noerrno.c` and `rsqrt[f]_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot[f].c` and `rsqrt[f].c` files by conditionally eliminating all references to `errno` (see the `inc` subdirectory here for examples).
+Alternatively, the modified implementations provided here will be used if `CR_MATH` is not set and the platform is not Windows.
+If the object files have not been prepared beforehand, the source files will be compiled in either case, but that can be only done with the `clang`, `gcc`, and `icx` compilers for now.
+The object files in the `inc` subdirectory will be *deleted* by `[g]make clean`, so either back them up or edit `GNUmakefile` if that is not desirable.
 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.

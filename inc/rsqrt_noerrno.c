@@ -26,6 +26,9 @@ SOFTWARE.
 
 /* modified by venovako */
 
+#ifndef NDEBUG
+#include <errno.h>
+#endif /* !NDEBUG */
 #include <fenv.h>
 #ifdef __x86_64__
 #include <x86intrin.h>
@@ -115,6 +118,9 @@ double cr_rsqrt(double x){
     if(!(ix.u<<1)) return -__builtin_inf(); // x=-0
     if(ix.u > 0xfff0000000000000ul) return x;
     if(ix.u >> 63){
+#ifndef NDEBUG
+      errno = EDOM;
+#endif /* !NDEBUG */
       feraiseexcept (FE_INVALID);
       return __builtin_nan("<0");
     }
@@ -133,15 +139,3 @@ double cr_rsqrt(double x){
     rf = as_rsqrt_refine(rf, x);
   return rf;
 }
-
-#ifdef __INTEL_CLANG_COMPILER // rsqrt is called invsqrt with icx
-extern double invsqrt (double);
-double rsqrt(double x){
-  return invsqrt(x);
-}
-#else
-/* rsqrt function is not in glibc so define it here just to compile tests */
-double rsqrt(double x){
-  return cr_rsqrt(x);
-}
-#endif

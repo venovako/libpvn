@@ -21,11 +21,27 @@ endif # VECLEN
 ifdef CR_MATH
 CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
 ifdef NDEBUG
-CR_OBJS= \
-$(CR_MATH)/src/binary32/hypot/hypotf_noerrno.o \
-$(CR_MATH)/src/binary32/rsqrt/rsqrtf_noerrno.o \
-$(CR_MATH)/src/binary64/hypot/hypot_noerrno.o  \
-$(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o
+CR_OBJS=
+ifneq ($(strip $(wildcard $(CR_MATH)/src/binary32/hypot/hypotf_noerrno.o)),)
+CR_OBJS += $(CR_MATH)/src/binary32/hypot/hypotf_noerrno.o
+else
+CR_OBJS += $(CR_MATH)/src/binary32/hypot/hypotf.o
+endif
+ifneq ($(strip $(wildcard $(CR_MATH)/src/binary32/rsqrt/rsqrtf_noerrno.o)),)
+CR_OBJS += $(CR_MATH)/src/binary32/rsqrt/rsqrtf_noerrno.o
+else
+CR_OBJS += $(CR_MATH)/src/binary32/rsqrt/rsqrtf.o
+endif
+ifneq ($(strip $(wildcard $(CR_MATH)/src/binary64/hypot/hypot_noerrno.o)),)
+CR_OBJS += $(CR_MATH)/src/binary64/hypot/hypot_noerrno.o
+else
+CR_OBJS += $(CR_MATH)/src/binary64/hypot/hypot.o
+endif
+ifneq ($(strip $(wildcard $(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o)),)
+CR_OBJS += $(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o
+else
+CR_OBJS += $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
+endif
 else # !NDEBUG
 CR_OBJS= \
 $(CR_MATH)/src/binary32/hypot/hypotf.o \
@@ -33,8 +49,19 @@ $(CR_MATH)/src/binary32/rsqrt/rsqrtf.o \
 $(CR_MATH)/src/binary64/hypot/hypot.o  \
 $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
 endif # ?NDEBUG
-LDFLAGS += $(CR_OBJS)
-endif # CR_MATH
+else # !CR_MATH
+ifdef NDEBUG
+CFLAGS += -DPVN_CR_MATH="\"bundled_noerrno\""
+else # !NDEBUG
+CFLAGS += -DPVN_CR_MATH="\"bundled\""
+endif # ?NDEBUG
+CR_SRCS= \
+../inc/hypotf_noerrno.c \
+../inc/rsqrtf_noerrno.c \
+../inc/hypot_noerrno.c  \
+../inc/rsqrt_noerrno.c
+CR_OBJS=$(CR_SRCS:.c=.o)
+endif # ?CR_MATH
 
 SRCS=pvn.c  \
 pvn_aux.c   \
@@ -49,7 +76,8 @@ pvn_mtx.c   \
 pvn_error.c \
 pvn_lock.c  \
 pvn_timer.c
-OBJS=$(SRCS:.c=.o)
+
+OBJS=$(SRCS:.c=.o) $(CR_OBJS)
 EXES=$(SRCS:.c=.exe)
 
 .PHONY: all help clean
@@ -69,9 +97,11 @@ libpvn.a: $(OBJS)
 	$(CC) $(CFLAGS) -DPVN_TEST $< -o $@ -L. -lpvn $(LDFLAGS)
 
 clean:
-	-$(RM) $(EXES)
-	-$(RM) libpvn.a
-	-$(RM) $(OBJS)
+	-$(RM) *.exe
+	-$(RM) *.a
+	-$(RM) *.o
+	-$(RM) ../inc/*.o
 	-$(RM) *.optrpt
 	-$(RM) *.opt.yaml
+	-$(RM) ../inc/*.opt.yaml
 	-$(RM) *.dSYM

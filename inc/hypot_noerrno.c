@@ -27,6 +27,9 @@ SOFTWARE.
 /* modified by venovako */
 
 #include <stdint.h>
+#ifndef NDEBUG
+#include <errno.h>
+#endif /* !NDEBUG */
 
 typedef uint64_t u64;
 typedef int64_t i64;
@@ -136,6 +139,9 @@ static double  __attribute__((noinline)) as_hypot_hard(double x, double y){
 static double __attribute__((noinline)) as_hypot_overflow(){
   volatile double z = 0x1.fffffffffffffp1023;
   double f = z + z;
+#ifndef NDEBUG
+  if(f>z) errno = ERANGE;
+#endif /* !NDEBUG */
   return f;
 }
 

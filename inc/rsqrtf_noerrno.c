@@ -27,6 +27,9 @@ SOFTWARE.
 /* modified by venovako */
 
 #include <stdint.h>
+#ifndef NDEBUG
+#include <errno.h>
+#endif /* !NDEBUG */
 #include <fenv.h>
 
 // Warning: clang also defines __GNUC__
@@ -47,6 +50,9 @@ float cr_rsqrtf(float x){
     if(ix.u >> 31){
       ix.u &= ~0u>>1;
       if(ix.u > 0xff<<23) return x;
+#ifndef NDEBUG
+      errno = EDOM;
+#endif /* !NDEBUG */
       feraiseexcept (FE_INVALID);
       return __builtin_nanf("<0");
     }
@@ -69,16 +75,3 @@ float cr_rsqrtf(float x){
   }
   return (1.0/xd)*__builtin_sqrt(xd);
 }
-
-#ifdef __INTEL_CLANG_COMPILER
-// rsqrt is called invsqrt with icx
-extern float invsqrtf (float);
-float rsqrtf(float x){
-  return invsqrtf (x);
-}
-#else
-/* rsqrt function is not in glibc so define it here just to compile tests */
-float rsqrtf(float x){
-  return cr_rsqrtf(x);
-}
-#endif
