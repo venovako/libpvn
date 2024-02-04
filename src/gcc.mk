@@ -31,8 +31,9 @@ LDFLAGS += -lexecinfo
 else # !BSD
 LDFLAGS += -ldl
 endif # ?BSD
-ifdef QUADMATH
+QUADMATH=$(shell $(CC) -print-file-name=libquadmath.a)
+ifneq ($(QUADMATH),libquadmath.a)
 CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 LDFLAGS += $(QUADMATH)
-endif # QUADMATH
+endif # ?QUADMATH
 LDFLAGS += -lm

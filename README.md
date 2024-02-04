@@ -48,7 +48,7 @@ cd src
 # query the building options (GNU make is necessary everywhere except on Windows)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc|icc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=-lquadmath] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc|icc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64
@@ -85,9 +85,8 @@ References to more core-math functions might be added soon, and will follow the 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.
 
-The `QUADMATH` option should be set to the name of the library implementing quadruple precision arithmetic, if `long double` is not the 128-bit floating-point datatype.
-This makes sense on, e.g., the x86_64 platform, where, for `gcc`, `QUADMATH=-lquadmath`.
-For `icx` and `icc` it is not necessary, since the `imf` library is implicitly linked with.
+If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic
+(e.g., on the x86_64 platform, to `libquadmath.a` for `gcc`, or to `-limf` for the Intel's `icx` and `icc` compilers).
 
 On Windows, the library is called `pvn.lib` and does *not* contain all routines.
 Please consult `Makefile` for more information.

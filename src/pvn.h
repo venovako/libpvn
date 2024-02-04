@@ -74,7 +74,7 @@
 #error PVN_EXTERN_C already defined
 #endif /* ?PVN_EXTERN_C */
 
-/* the constants have been taken from quadmath.h and modified */
+/* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
 #ifdef __MATHIMF_H_INCLUDED
 #define FLT128_MAX 1.18973149535723176508575932662800702E+4932q
@@ -82,7 +82,6 @@
 #define FLT128_EPSILON 1.92592994438723585305597794258492732E-34q
 #define FLT128_TRUE_MIN 6.475175119438025110924438958227646552E-4966q
 #define FLT128_MAX_EXP 16384
-#define FLT128_MIN_EXP (-16381)
 PVN_EXTERN_C __float128 __copysignq(__float128, __float128);
 PVN_EXTERN_C __float128 __fabsq(__float128);
 PVN_EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
