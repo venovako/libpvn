@@ -23,11 +23,7 @@ The library has been successfully built using:
 | gcc(5)   | Linux   | ppc64le  |
 | gcc(6)   | Linux   | x86_64   |
 | gcc(7)   | SunOS   | i86pc    |
-| icc(8)   | Darwin  | x86_64   |
-| icc(8)   | Linux   | x86_64   |
-| icl(8)   | Windows | x64      |
 | icx(8)   | Linux   | x86_64   |
-| icx(8)   | Windows | x64      |
 | nvc(9)   | Linux   | ppc64le  |
 | nvc(9)   | Linux   | x86_64   |
 
@@ -45,10 +41,10 @@ Recent versions of the compilers have been povided by:
 Examples of building the library:
 ```bash
 cd src
-# query the building options (GNU make is necessary everywhere except on Windows)
+# query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc|icc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64
@@ -59,9 +55,6 @@ make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
 #
 # a debug build with clang on FreeBSD (note the usage of gmake instead of make)
 gmake clean all
-#
-# a release build on Windows (note the usage of nmake instead of make)
-nmake NDEBUG=3 clean all
 ```
 
 ## Using
@@ -78,18 +71,15 @@ A function with the name ending with an underscore (`_`) should be callable from
 The correctly-rounded `cr_hypot[f]` and `cr_rsqrt[f]` functions might optionally be used if provided by, e.g., the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project.
 If their implementation is to be linked with, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
 Note, the `hypot[f]_noerrno.c` and `rsqrt[f]_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot[f].c` and `rsqrt[f].c` files by conditionally eliminating all references to `errno` (see the `inc` subdirectory here for examples).
-Alternatively, the modified implementations provided here will be used if `CR_MATH` is not set and the platform is not Windows.
+Alternatively, the modified implementations provided here will be used if `CR_MATH` is not set.
 If the object files have not been prepared beforehand, the source files will be compiled in either case, but that can be only done with the `clang`, `gcc`, and `icx` compilers for now.
 The object files in the `inc` subdirectory will be *deleted* by `[g]make clean`, so either back them up or edit `GNUmakefile` if that is not desirable.
+Either way, the object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.
 
-If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic
-(e.g., on the x86_64 platform, to `libquadmath.a` for `gcc`, or to `-limf` for the Intel's `icx` and `icc` compilers).
-
-On Windows, the library is called `pvn.lib` and does *not* contain all routines.
-Please consult `Makefile` for more information.
+If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic.
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
 

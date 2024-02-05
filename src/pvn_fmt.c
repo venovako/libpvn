@@ -28,12 +28,10 @@ int main(int argc, char *argv[])
   (void)printf("LDBL_EPSILON =%s\n", pvn_xtoa(s, LDBL_EPSILON));
   (void)printf("LDBL_MAX     =%s\n", pvn_xtoa(s, LDBL_MAX));
 #ifdef PVN_QUADMATH
-#ifndef __MATHIMF_H_INCLUDED
   (void)printf("FLT128_TRUE_MIN=%s\n", pvn_qtoa(s, FLT128_TRUE_MIN));
   (void)printf("FLT128_MIN     =%s\n", pvn_qtoa(s, FLT128_MIN));
   (void)printf("FLT128_EPSILON =%s\n", pvn_qtoa(s, FLT128_EPSILON));
   (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
-#endif /* !__MATHIMF_H_INCLUDED */
 #endif /* PVN_QUADMATH */
 #endif /* !_WIN32 */
   return EXIT_SUCCESS;
@@ -159,10 +157,6 @@ char *pvn_xtoa(char *const s, const long double x)
 #ifdef PVN_QUADMATH
 char *pvn_qtoa(char *const s, const __float128 x)
 {
-#ifdef __MATHIMF_H_INCLUDED
-  /* TODO: how to print out __float128 with Intel compilers? */
-  return pvn_xtoa(s, (long double)x);
-#else /* !__MATHIMF_H_INCLUDED */
   if (s) {
     int l = quadmath_snprintf((char*)memset(s, 0, (size_t)46u), (size_t)46u, "%# -45.36QE", x);
     if (l <= 0)
@@ -188,7 +182,6 @@ char *pvn_qtoa(char *const s, const __float128 x)
         *d = ' ';
   }
   return s;
-#endif /* ?__MATHIMF_H_INCLUDED */
 }
 #else /* !PVN_QUADMATH */
 char *pvn_qtoa(char *const s, const long double x)

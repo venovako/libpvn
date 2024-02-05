@@ -104,6 +104,7 @@ PVN_EXTERN_C __float128 __invsqrtq(__float128);
 #define scalbnq __scalbnq
 #define sqrtq __sqrtq
 #define rsqrtq __invsqrtq
+PVN_EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
 #else /* !__MATHIMF_H_INCLUDED */
 #ifdef __GNUC__
 #include <quadmath.h>

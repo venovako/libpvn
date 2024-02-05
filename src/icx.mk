@@ -13,5 +13,12 @@ ifneq ($(OPENMP),true)
 CFLAGS += $(OPENMP)
 endif # !true
 endif # OPENMP
-LDFLAGS=-rdynamic -static-libgcc -ldl -lm
-CFLAGS += -DPVN_QUADMATH="\"-limf\""
+LDFLAGS=-rdynamic -static-libgcc -ldl
+ifndef QUADMATH
+QUADMATH=$(shell gcc -print-file-name=libquadmath.a)
+ifeq ($(QUADMATH),libquadmath.a)
+QUADMATH=-lquadmath
+endif # ?QUADMATH
+endif # !QUADMATH
+CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH) -limf\""
+LDFLAGS += $(QUADMATH) -lm
