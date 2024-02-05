@@ -24,8 +24,6 @@ The library has been successfully built using:
 | gcc(6)   | Linux   | x86_64   |
 | gcc(7)   | SunOS   | i86pc    |
 | icx(8)   | Linux   | x86_64   |
-| nvc(9)   | Linux   | ppc64le  |
-| nvc(9)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been povided by:
 1. Apple,
@@ -35,8 +33,7 @@ Recent versions of the compilers have been povided by:
 5. openSUSE,
 6. Oracle Linux,
 7. Oracle Solaris,
-8. Intel oneAPI,
-9. NVIDIA HPC SDK.
+8. Intel oneAPI.
 
 Examples of building the library:
 ```bash
@@ -44,7 +41,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [all|clean|help]
+# make [COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64
