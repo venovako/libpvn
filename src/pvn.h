@@ -136,6 +136,20 @@ static inline __float128 rsqrtq(__float128 x)
 #include "pvn_timer.h"
 #endif /* !_WIN32 */
 
+static inline int pvn_le()
+{
+  const int one = 1;
+  return (int)*(const char*)&one;
+}
+
+PVN_EXTERN_C int
+#ifdef _WIN32
+PVN_LE
+#else /* !_WIN32 */
+pvn_le_
+#endif /* ?_WIN32 */
+();
+
 static inline int pvn_omp()
 {
   return

@@ -44,7 +44,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64
@@ -80,6 +80,7 @@ The `OPENMP` option enables OpenMP and its content is appended to the compiler's
 Set it to `true` if no additional compiler flags are desired.
 
 If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic.
+If the autodetection fails, the relevant linker options can be set via the `QUADMATH` variable.
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
 

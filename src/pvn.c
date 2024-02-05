@@ -15,15 +15,27 @@ int main(/* int argc, char *argv[] */)
 #else /* !_OPENMP */
   (void)printf("disabled\n");
 #endif /* ?_OPENMP */
+  (void)printf("endianness  : %s\n", (pvn_le() ? "little" : "big"));
 #ifdef PVN_CR_MATH
-  (void)printf("CR_MATH : %s\n", PVN_CR_MATH);
+  (void)printf("PVN_CR_MATH : %s\n", PVN_CR_MATH);
 #endif /* PVN_CR_MATH */
 #ifdef PVN_QUADMATH
-  (void)printf("QUADMATH: %s\n", PVN_QUADMATH);
+  (void)printf("PVN_QUADMATH: %s\n", PVN_QUADMATH);
 #endif /* PVN_QUADMATH */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+int
+#ifdef _WIN32
+PVN_LE
+#else /* !_WIN32 */
+pvn_le_
+#endif /* ?_WIN32 */
+()
+{
+  return pvn_le();
+}
+
 int
 #ifdef _WIN32
 PVN_OMP
