@@ -101,7 +101,6 @@ clean:
 	-$(RM) *.a
 	-$(RM) *.o
 	-$(RM) ../inc/*.o
-	-$(RM) *.optrpt
 	-$(RM) *.opt.yaml
 	-$(RM) ../inc/*.opt.yaml
 	-$(RM) *.dSYM

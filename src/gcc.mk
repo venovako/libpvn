@@ -31,7 +31,7 @@ LDFLAGS += -lexecinfo
 else # !BSD
 LDFLAGS += -ldl
 endif # ?BSD
-ifneq ($(ARCH),arm64)
+ifeq ($(findstring 86,$(ARCH)),86)
 ifndef QUADMATH
 QUADMATH=$(shell $(CC) -print-file-name=libquadmath.a)
 ifeq ($(QUADMATH),libquadmath.a)
@@ -40,5 +40,5 @@ endif # ?QUADMATH
 endif # !QUADMATH
 CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 LDFLAGS += $(QUADMATH)
-endif # !arm64
+endif # ?86
 LDFLAGS += -lm
