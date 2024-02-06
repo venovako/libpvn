@@ -69,7 +69,7 @@ The correctly-rounded `cr_hypot[f]` and `cr_rsqrt[f]` functions might optionally
 If their implementation is to be linked with, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
 Note, the `hypot[f]_noerrno.c` and `rsqrt[f]_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot[f].c` and `rsqrt[f].c` files by conditionally eliminating all references to `errno` (see the `inc` subdirectory here for examples).
 Alternatively, the modified implementations provided here will be used if `CR_MATH` is not set.
-If the object files have not been prepared beforehand, the source files will be compiled in either case, but that can be only done with the `clang`, `gcc`, and `icx` compilers for now.
+If the object files have not been prepared beforehand, the source files will be compiled in either case.
 The object files in the `inc` subdirectory will be *deleted* by `[g]make clean`, so either back them up or edit `GNUmakefile` if that is not desirable.
 Either way, the object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
 
