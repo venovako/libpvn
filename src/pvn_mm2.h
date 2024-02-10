@@ -7,6 +7,7 @@
 
 /* COMPLEX MULTIPLICATION AND FMA OPERATIONS THAT */
 /* !!! DO NOT YET AVOID UNNECESSARY OVERFLOWS !!! */
+/* TO BE USED WHEN ALL PARTIAL RESULTS ARE NORMAL */
 
 /* C = A * B */
 
@@ -45,7 +46,7 @@ static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __
 #endif /* PVN_QUADMATH */
 
 /* D = A * B + C */
-/* similar to the CUDA's complex FMA */
+/* similar to the CUDA's complex FMA from cuComplex.h */
 
 static inline void pvn_cfma(float *const dr, float *const di, const float ar, const float ai, const float br, const float bi, const float cr, const float ci)
 {
@@ -82,6 +83,7 @@ static inline void pvn_yfma(__float128 *const dr, __float128 *const di, const __
 #endif /* PVN_QUADMATH */
 
 /* MULTIPLICATION OF MATRICES OF ORDER TWO */
+/* WITH SIMILAR RANGE LIMITATIONS AS ABOVE */
 
 /* C = A * B */
 

@@ -19,6 +19,9 @@ int main(int argc, char *argv[])
   */
   (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c11r, c11i, c12r, c12i);
   (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c21r, c21i, c22r, c22i);
+  pvn_zmm2(&c11r, &c11i, &c21r, &c21i, &c12r, &c12i, &c22r, &c22i, a11r, a11i, a21r, a21i, a12r, a12i, a22r, a22i, a11r, a11i, a21r, a21i, a12r, a12i, a22r, a22i);
+  (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c11r, c11i, c12r, c12i);
+  (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c21r, c21i, c22r, c22i);
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
