@@ -69,10 +69,11 @@ pvn_bmp.c   \
 pvn_cjs.c   \
 pvn_crm.c   \
 pvn_ev2.c   \
-pvn_sv2.c   \
 pvn_fmt.c   \
 pvn_mem.c   \
+pvn_mm2.c   \
 pvn_mtx.c   \
+pvn_sv2.c   \
 pvn_error.c \
 pvn_lock.c  \
 pvn_timer.c
