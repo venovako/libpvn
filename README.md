@@ -20,6 +20,7 @@ The library has been successfully built using:
 | gcc(4)   | Darwin  | x86_64   |
 | gcc(2)   | FreeBSD | amd64    |
 | gcc(2)   | FreeBSD | arm64    |
+| gcc(5)   | Linux   | aarch64  |
 | gcc(5)   | Linux   | ppc64le  |
 | gcc(6)   | Linux   | x86_64   |
 | gcc(7)   | SunOS   | i86pc    |
@@ -30,7 +31,7 @@ Recent versions of the compilers have been povided by:
 2. FreeBSD,
 3. IBM Open XL C/C++,
 4. Homebrew,
-5. openSUSE,
+5. openSUSE Tumbleweed,
 6. Oracle Linux,
 7. Oracle Solaris,
 8. Intel oneAPI.
