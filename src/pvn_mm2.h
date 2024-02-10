@@ -5,6 +5,9 @@
 #error pvn_mm2.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+/* COMPLEX MULTIPLICATION AND FMA OPERATIONS THAT */
+/* !!! DO NOT YET AVOID UNNECESSARY OVERFLOWS !!! */
+
 /* C = A * B */
 
 static inline void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
@@ -42,6 +45,7 @@ static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __
 #endif /* PVN_QUADMATH */
 
 /* D = A * B + C */
+/* similar to the CUDA's complex FMA */
 
 static inline void pvn_cfma(float *const dr, float *const di, const float ar, const float ai, const float br, const float bi, const float cr, const float ci)
 {
@@ -76,6 +80,8 @@ static inline void pvn_yfma(__float128 *const dr, __float128 *const di, const __
   *di = fmaq(ar, bi, fmaq( ai, br, ci));
 }
 #endif /* PVN_QUADMATH */
+
+/* MULTIPLICATION OF MATRICES OF ORDER TWO */
 
 /* C = A * B */
 
