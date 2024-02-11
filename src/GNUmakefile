@@ -66,6 +66,7 @@ endif # ?CR_MATH
 SRCS=pvn.c  \
 pvn_aux.c   \
 pvn_bmp.c   \
+pvn_cdp.c   \
 pvn_cjs.c   \
 pvn_crm.c   \
 pvn_ev2.c   \
