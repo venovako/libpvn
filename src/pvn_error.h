@@ -33,7 +33,7 @@
                     __FILE__, __LINE__,                           \
                     (const void*)pthread_self());                 \
     (void)fsync(STDERR_FILENO);                                   \
-    PVN_BTRACE;                                                   \
+    PVN_BTRACE                                                    \
     exit(EXIT_FAILURE);                                           \
   }
 #else /* PVN_STOP */
@@ -43,18 +43,22 @@
 PVN_EXTERN_C const char *pvn_get_error();
 
 #ifndef PVN_SYSI_CALL
-#define PVN_SYSI_CALL(call) {    \
-    if (0 != (int)(call))        \
-      PVN_STOP(pvn_get_error()); \
+#define PVN_SYSI_CALL(call) {                  \
+    if (0 != (int)(call)) {                    \
+      const char *const msg = pvn_get_error(); \
+      PVN_STOP(msg)                            \
+    }                                          \
   }
 #else /* PVN_SYSI_CALL */
 #error PVN_SYSI_CALL already defined
 #endif /* ?PVN_SYSI_CALL */
 
 #ifndef PVN_SYSP_CALL
-#define PVN_SYSP_CALL(call) {        \
-    if (NULL == (const void*)(call)) \
-      PVN_STOP(pvn_get_error());     \
+#define PVN_SYSP_CALL(call) {                  \
+    if (NULL == (const void*)(call)) {         \
+      const char *const msg = pvn_get_error(); \
+      PVN_STOP(msg)                            \
+    }                                          \
   }
 #else /* PVN_SYSP_CALL */
 #error PVN_SYSP_CALL already defined
