@@ -43,7 +43,13 @@ static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __
   *cr = fmaq(ar, br, -ai * bi);
   *ci = fmaq(ar, bi,  ai * br);
 }
-#endif /* PVN_QUADMATH */
+#else /* !PVN_QUADMATH */
+#ifdef pvn_ymul
+#error pvn_ymul already defined
+#else /* !pvn_ymul */
+#define pvn_ymul pvn_wmul
+#endif /* ?pvn_ymul */
+#endif /* ?PVN_QUADMATH */
 
 /* D = A * B + C */
 /* similar to the CUDA's complex FMA from cuComplex.h */
@@ -80,7 +86,13 @@ static inline void pvn_yfma(__float128 *const dr, __float128 *const di, const __
   *dr = fmaq(ar, br, fmaq(-ai, bi, cr));
   *di = fmaq(ar, bi, fmaq( ai, br, ci));
 }
-#endif /* PVN_QUADMATH */
+#else /* !PVN_QUADMATH */
+#ifdef pvn_yfma
+#error pvn_yfma already defined
+#else /* !pvn_yfma */
+#define pvn_yfma pvn_wfma
+#endif /* ?pvn_yfma */
+#endif /* ?PVN_QUADMATH */
 
 /* MULTIPLICATION OF MATRICES OF ORDER TWO */
 /* WITH SIMILAR RANGE LIMITATIONS AS ABOVE */
@@ -215,7 +227,18 @@ static inline void pvn_ymm2(__float128 *const c11r, __float128 *const c11i, __fl
   pvn_ymul(c22r, c22i, a22r, a22i, b22r, b22i);
   pvn_yfma(c22r, c22i, a21r, a21i, b12r, b12i, *c22r, *c22i);
 }
-#endif /* PVN_QUADMATH */
+#else /* !PVN_QUADMATH */
+#ifdef pvn_qmm2
+#error pvn_qmm2 already defined
+#else /* !pvn_qmm2 */
+#define pvn_qmm2 pvn_xmm2
+#endif /* ?pvn_qmm2 */
+#ifdef pvn_ymm2
+#error pvn_ymm2 already defined
+#else /* !pvn_ymm2 */
+#define pvn_ymm2 pvn_wmm2
+#endif /* ?pvn_ymm2 */
+#endif /* ?PVN_QUADMATH */
 
 /* C += A * B */
 
@@ -347,5 +370,16 @@ static inline void pvn_ymma2(__float128 *const c11r, __float128 *const c11i, __f
   pvn_yfma(c22r, c22i, a22r, a22i, b22r, b22i, *c22r, *c22i);
   pvn_yfma(c22r, c22i, a21r, a21i, b12r, b12i, *c22r, *c22i);
 }
-#endif /* PVN_QUADMATH */
+#else /* !PVN_QUADMATH */
+#ifdef pvn_qmma2
+#error pvn_qmma2 already defined
+#else /* !pvn_qmma2 */
+#define pvn_qmma2 pvn_xmma2
+#endif /* ?pvn_qmma2 */
+#ifdef pvn_ymma2
+#error pvn_ymma2 already defined
+#else /* !pvn_ymma2 */
+#define pvn_ymma2 pvn_wmma2
+#endif /* ?pvn_ymma2 */
+#endif /* ?PVN_QUADMATH */
 #endif /* !PVN_MM2_H */
