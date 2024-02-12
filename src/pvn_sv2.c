@@ -1,9 +1,41 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
-  /* TODO */
+  if (argc != 5) {
+    (void)fprintf(stderr, "%s a11 a21 a12 a22\n", *argv);
+    return EXIT_FAILURE;
+  }
+  const float a11 = (float)atof(argv[1]);
+  const float a21 = (float)atof(argv[2]);
+  const float a12 = (float)atof(argv[3]);
+  const float a22 = (float)atof(argv[4]);
+  float u11 = 0.0f, u21 = 0.0f, u12 = 0.0f, u22 = 0.0f, v11 = 0.0f, v21 = 0.0f, v12 = 0.0f, v22 = 0.0f, s1 = 0.0f, s2 = 0.0f;
+  int es = 0;
+  const int knd =
+#ifdef _WIN32
+PVN_SLJSV2
+#else /* !_WIN32 */
+pvn_sljsv2_
+#endif /* ?_WIN32 */
+    (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, &es);
+  (void)printf("knd=%3d, es=%3d\n\ta =\n", knd, es);
+  char s[17] = { '\0' };
+  (void)printf("%s ", pvn_stoa(s, a11));
+  (void)printf("%s\n", pvn_stoa(s, a12));
+  (void)printf("%s ", pvn_stoa(s, a21));
+  (void)printf("%s\n\tu =\n", pvn_stoa(s, a22));
+  (void)printf("%s ", pvn_stoa(s, u11));
+  (void)printf("%s\n", pvn_stoa(s, u12));
+  (void)printf("%s ", pvn_stoa(s, u21));
+  (void)printf("%s\n\tv =\n", pvn_stoa(s, u22));
+  (void)printf("%s ", pvn_stoa(s, v11));
+  (void)printf("%s\n", pvn_stoa(s, v12));
+  (void)printf("%s ", pvn_stoa(s, v21));
+  (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
+  (void)printf("%s ", pvn_stoa(s, s1));
+  (void)printf("%s\n", pvn_stoa(s, s2));
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -119,43 +151,342 @@ pvn_sljsv2_
   *s1 = 0.0f;
   *s2 = 0.0f;
 
-  /* TODO */
+  /* simplify the form of A */
   switch (knd) {
   case  0:
+    *u11 = copysignf(1.0f, A11);
+    *u22 = copysignf(1.0f, A22);
+    A22 = A12 = A21 = A11 = 0.0f;
     break;
   case  1:
+    if (A11 < 0.0f) {
+      *u11 = -1.0f;
+      A11 = -A11;
+    }
+    *u22 = copysignf(1.0f, A22);
+    A22 = A12 = A21 = 0.0f;
+    *s1 = A11;
     break;
   case  2:
+    *u11 = 0.0f;
+    *u22 = 0.0f;
+    A11 = A21;
+    A12 = A22;
+    A21 = 0.0f;
+    A22 = 0.0f;
+    if (A11 < 0.0f) {
+      *u12 = -1.0f;
+      A11 = -A11;
+    }
+    else
+      *u12 = 1.0f;
+    *u21 = copysignf(1.0f, A22);
+    *s1 = A11;
     break;
   case  3:
+    A12 = fabsf(A11);
+    A22 = fabsf(A21);
+    if (A12 < A22) {
+      *u11 = 0.0f;
+      *u21 = copysignf(1.0f, A11);
+      *u12 = copysignf(1.0f, A21);
+      *u22 = 0.0f;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysignf(1.0f, A11);
+      *u22 = copysignf(1.0f, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0f;
+    *s1 = hypotf(A11, A21);
+    e = 3;
     break;
   case  4:
+    *u11 = copysignf(1.0f, A12);
+    *u22 = copysignf(1.0f, A21);
+    A11 = fabsf(A12);
+    A22 = A12 = A21 = 0.0f;
+    *v11 = 0.0f;
+    *v21 = 1.0f;
+    *v12 = 1.0f;
+    *v22 = 0.0f;
+    *s1 = A11;
     break;
   case  5:
+    A21 = fabsf(A11);
+    A22 = fabsf(A12);
+    if (A21 < A22) {
+      *v11 = 0.0f;
+      *v21 = copysignf(1.0f, A12);
+      *v12 = copysignf(1.0f, A11);
+      *v22 = 0.0f;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysignf(1.0f, A11);
+      *v22 = copysignf(1.0f, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0f;
+    *s1 = hypotf(A11, A12);
+    e = 5;
     break;
   case  6:
+    *u11 = copysignf(1.0f, A12);
+    *u22 = copysignf(1.0f, A21);
+    A11 = fabsf(A12);
+    A22 = fabsf(A21);
+    A12 = A21 = 0.0f;
+    *v11 = 0.0f;
+    *v21 = 1.0f;
+    *v12 = 1.0f;
+    *v22 = 0.0f;
+    *s1 = A11;
+    *s2 = A22;
     break;
   case  7:
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0f;
+    *v11 = 0.0f;
+    *v21 = 1.0f;
+    *v12 = 1.0f;
+    *v22 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v21 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u22 = -1.0f;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case  8:
+    *u11 = 0.0f;
+    *u21 = copysignf(1.0f, A11);
+    *u12 = copysignf(1.0f, A22);
+    *u22 = 0.0f;
+    A11 = fabsf(A22);
+    A22 = A12 = A21 = 0.0f;
+    *v11 = 0.0f;
+    *v21 = 1.0f;
+    *v12 = 1.0f;
+    *v22 = 0.0f;
+    *s1 = A11;
     break;
   case  9:
+    if (A11 < 0.0f) {
+      *u11 = -1.0f;
+      A11 = -A11;
+    }
+    if (A22 < 0.0f) {
+      *u22 = -1.0f;
+      A22 = -A22;
+    }
+    A12 = A21 = 0.0f;
+    *s1 = A11;
+    *s2 = A22;
     break;
   case 10:
+    *u11 = 0.0f;
+    *u21 = 1.0f;
+    *u12 = 1.0f;
+    *u22 = 0.0f;
+    A11 = A21;
+    A12 = A22;
+    A21 = fabsf(A11);
+    A22 = fabsf(A12);
+    if (A21 < A22) {
+      *v11 = 0.0f;
+      *v21 = copysignf(1.0f, A12);
+      *v12 = copysignf(1.0f, A11);
+      *v22 = 0.0f;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysignf(1.0f, A11);
+      *v22 = copysignf(1.0f, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0f;
+    *s1 = hypotf(A11, A12);
+    e = 5;
     break;
   case 11:
+    *u11 = 0.0f;
+    *u21 = 1.0f;
+    *u12 = 1.0f;
+    *u22 = 0.0f;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0f;
+    *v11 = 0.0f;
+    *v21 = 1.0f;
+    *v12 = 1.0f;
+    *v22 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v21 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u21 = -1.0f;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case 12:
+    A11 = A12;
+    A21 = A22;
+    *v11 = 0.0f;
+    *v21 = 1.0f;
+    *v12 = 1.0f;
+    *v22 = 0.0f;
+    A12 = fabsf(A11);
+    A22 = fabsf(A21);
+    if (A12 < A22) {
+      *u11 = 0.0f;
+      *u21 = copysignf(1.0f, A11);
+      *u12 = copysignf(1.0f, A21);
+      *u22 = 0.0f;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysignf(1.0f, A11);
+      *u22 = copysignf(1.0f, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0f;
+    *s1 = hypotf(A11, A21);
+    e = 3;
     break;
   case 13:
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v11 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u22 = -1.0f;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case 14:
+    *u11 = 0.0f;
+    *u21 = 1.0f;
+    *u12 = 1.0f;
+    *u22 = 0.0f;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v11 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u21 = -1.0f;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case 15:
+    *s1 = hypotf(A11, A21);
+    *s2 = hypotf(A12, A22);
+    if (*s1 < *s2) {
+      pvn_fswp(&A11, &A12);
+      pvn_fswp(&A21, &A22);
+      *v11 = 0.0f;
+      *v21 = 1.0f;
+      *v12 = 1.0f;
+      *v22 = 0.0f;
+      pvn_fswp(s1, s2);
+    }
+    if (A11 < 0.0f) {
+      *u11 = -1.0f;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (A21 < 0.0f) {
+      *u22 = -1.0f;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_fswp(u11, u21);
+      pvn_fswp(u12, u22);
+      pvn_fswp(&A11, &A21);
+      pvn_fswp(&A12, &A22);
+    }
+    e = 15;
     break;
   default:
     return INT_MIN;
   }
+
+  (void)printf("kind=%2u, class=%2u\n", knd, e);
+  char s[17] = { '\0' };
+  (void)printf("%s ", pvn_stoa(s, A11));
+  (void)printf("%s\n", pvn_stoa(s, A12));
+  (void)printf("%s ", pvn_stoa(s, A21));
+  (void)printf("%s\n", pvn_stoa(s, A22));
+
+  /* TODO */
+  switch (e) {
+  case  0:
+  case 13:
+    break;
+  case  3:
+    e = 0;
+    break;
+  case  5:
+    e = 0;
+    break;
+  case 15:
+    e = 13;
+    break;
+  default:
+    return INT_MIN;
+  }
+
+  if (e == 13) {
+  }
+  else if (e)
+    return INT_MIN;
 
   if (*s1 < *s2) {
     pvn_fswp(u11, u21);
@@ -466,7 +797,6 @@ pvn_cljsv2_
 
   const int knd = kndr | kndi;
   switch (knd) {
-  case  0:
   case  1:
   case  2:
   case  4:
@@ -523,8 +853,6 @@ pvn_cljsv2_
 
   /* TODO */
   switch (knd) {
-  case  0:
-    break;
   case  1:
     break;
   case  2:
@@ -715,7 +1043,6 @@ pvn_zljsv2_
   }
   const int knd = kndr | kndi;
   switch (knd) {
-  case  0:
   case  1:
   case  2:
   case  4:
@@ -772,8 +1099,6 @@ pvn_zljsv2_
 
   /* TODO */
   switch (knd) {
-  case  0:
-    break;
   case  1:
     break;
   case  2:
@@ -1102,7 +1427,6 @@ int pvn_wljsv2_
   }
   const int knd = kndr | kndi;
   switch (knd) {
-  case  0:
   case  1:
   case  2:
   case  4:
@@ -1159,8 +1483,6 @@ int pvn_wljsv2_
 
   /* TODO */
   switch (knd) {
-  case  0:
-    break;
   case  1:
     break;
   case  2:
@@ -1214,6 +1536,7 @@ int pvn_wljsv2_
   *u22i = -*u22i;
   return knd;
 }
+
 #ifdef PVN_QUADMATH
 int pvn_qljsv2_
 (const __float128 *const a11, const __float128 *const a21, const __float128 *const a12, const __float128 *const a22,
@@ -1488,7 +1811,6 @@ int pvn_yljsv2_
   }
   const int knd = kndr | kndi;
   switch (knd) {
-  case  0:
   case  1:
   case  2:
   case  4:
@@ -1545,8 +1867,6 @@ int pvn_yljsv2_
 
   /* TODO */
   switch (knd) {
-  case  0:
-    break;
   case  1:
     break;
   case  2:
