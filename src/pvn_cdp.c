@@ -3,6 +3,13 @@
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
+  const double x[4][2] = {{-1.0, 1.0}, { 1.0,-1.0}, { 2.0, 2.0}, {-2.0,-2.0}};
+  double zr = 0.0, zi = 0.0;
+  const int m = 4;
+  const unsigned i = 2u;
+  pvn_zdp_(&zr, &zi, &m, &(x[0][0]), &i, &(x[0][1]), &i, &(x[0][0]), &i, &(x[0][1]), &i);
+  /* expected output: ( 20.0,  0.0) */
+  (void)printf("(%# 5.1F,%# 5.1F)\n", zr, zi);
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
