@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
   const float a21 = (float)atof(argv[2]);
   const float a12 = (float)atof(argv[3]);
   const float a22 = (float)atof(argv[4]);
-  float u11 = 0.0f, u21 = 0.0f, u12 = 0.0f, u22 = 0.0f, v11 = 0.0f, v21 = 0.0f, v12 = 0.0f, v22 = 0.0f, s1 = 0.0f, s2 = 0.0f;
+  float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
   int es = 0;
   const int knd =
 #ifdef _WIN32
@@ -20,7 +20,7 @@ PVN_SLJSV2
 pvn_sljsv2_
 #endif /* ?_WIN32 */
     (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, &es);
-  (void)printf("knd=%3d, es=%3d\n\ta =\n", knd, es);
+  (void)printf("knd=%d, es=%d\n\ta =\n", knd, es);
   char s[17] = { '\0' };
   (void)printf("%s ", pvn_stoa(s, a11));
   (void)printf("%s\n", pvn_stoa(s, a12));
@@ -154,11 +154,15 @@ pvn_sljsv2_
   /* simplify the form of A */
   switch (knd) {
   case  0:
+    /* [ 0 0 ] */
+    /* [ 0 0 ] */
     *u11 = copysignf(1.0f, A11);
     *u22 = copysignf(1.0f, A22);
     A22 = A12 = A21 = A11 = 0.0f;
     break;
   case  1:
+    /* [ * 0 ] */
+    /* [ 0 0 ] */
     if (A11 < 0.0f) {
       *u11 = -1.0f;
       A11 = -A11;
@@ -168,22 +172,25 @@ pvn_sljsv2_
     *s1 = A11;
     break;
   case  2:
+    /* [ 0 0 ] */
+    /* [ * 0 ] */
     *u11 = 0.0f;
     *u22 = 0.0f;
     A11 = A21;
-    A12 = A22;
-    A21 = 0.0f;
-    A22 = 0.0f;
+    A22 = A12;
     if (A11 < 0.0f) {
       *u12 = -1.0f;
       A11 = -A11;
     }
     else
       *u12 = 1.0f;
-    *u21 = copysignf(1.0f, A22);
+    *u21 = copysignf(1.0f, A12);
+    A22 = A12 = A21 = 0.0f;
     *s1 = A11;
     break;
   case  3:
+    /* [ * 0 ] */
+    /* [ * 0 ] */
     A12 = fabsf(A11);
     A22 = fabsf(A21);
     if (A12 < A22) {
@@ -205,6 +212,8 @@ pvn_sljsv2_
     e = 3;
     break;
   case  4:
+    /* [ 0 * ] */
+    /* [ 0 0 ] */
     *u11 = copysignf(1.0f, A12);
     *u22 = copysignf(1.0f, A21);
     A11 = fabsf(A12);
@@ -216,6 +225,8 @@ pvn_sljsv2_
     *s1 = A11;
     break;
   case  5:
+    /* [ * * ] */
+    /* [ 0 0 ] */
     A21 = fabsf(A11);
     A22 = fabsf(A12);
     if (A21 < A22) {
@@ -237,6 +248,8 @@ pvn_sljsv2_
     e = 5;
     break;
   case  6:
+    /* [ 0 * ] */
+    /* [ * 0 ] */
     *u11 = copysignf(1.0f, A12);
     *u22 = copysignf(1.0f, A21);
     A11 = fabsf(A12);
@@ -250,6 +263,8 @@ pvn_sljsv2_
     *s2 = A22;
     break;
   case  7:
+    /* [ * * ] */
+    /* [ * 0 ] */
     A22 = A11;
     A11 = A12;
     A12 = A22;
@@ -275,6 +290,8 @@ pvn_sljsv2_
     e = 13;
     break;
   case  8:
+    /* [ 0 0 ] */
+    /* [ 0 * ] */
     *u11 = 0.0f;
     *u21 = copysignf(1.0f, A11);
     *u12 = copysignf(1.0f, A22);
@@ -288,6 +305,8 @@ pvn_sljsv2_
     *s1 = A11;
     break;
   case  9:
+    /* [ * 0 ] */
+    /* [ 0 * ] */
     if (A11 < 0.0f) {
       *u11 = -1.0f;
       A11 = -A11;
@@ -301,6 +320,8 @@ pvn_sljsv2_
     *s2 = A22;
     break;
   case 10:
+    /* [ 0 0 ] */
+    /* [ * * ] */
     *u11 = 0.0f;
     *u21 = 1.0f;
     *u12 = 1.0f;
@@ -328,6 +349,8 @@ pvn_sljsv2_
     e = 5;
     break;
   case 11:
+    /* [ * 0 ] */
+    /* [ * * ] */
     *u11 = 0.0f;
     *u21 = 1.0f;
     *u12 = 1.0f;
@@ -357,6 +380,8 @@ pvn_sljsv2_
     e = 13;
     break;
   case 12:
+    /* [ 0 * ] */
+    /* [ 0 * ] */
     A11 = A12;
     A21 = A22;
     *v11 = 0.0f;
@@ -384,6 +409,8 @@ pvn_sljsv2_
     e = 3;
     break;
   case 13:
+    /* [ * * ] */
+    /* [ 0 * ] */
     if (A11 < 0.0f) {
       A11 = -A11;
       *v11 = -1.0f;
@@ -400,6 +427,8 @@ pvn_sljsv2_
     e = 13;
     break;
   case 14:
+    /* [ 0 * ] */
+    /* [ * * ] */
     *u11 = 0.0f;
     *u21 = 1.0f;
     *u12 = 1.0f;
@@ -425,6 +454,8 @@ pvn_sljsv2_
     e = 13;
     break;
   case 15:
+    /* [ * * ] */
+    /* [ * * ] */
     *s1 = hypotf(A11, A21);
     *s2 = hypotf(A12, A22);
     if (*s1 < *s2) {
@@ -458,7 +489,7 @@ pvn_sljsv2_
     return INT_MIN;
   }
 
-  (void)printf("kind=%2u, class=%2u\n", knd, e);
+  (void)printf("knd=%d, e=%d\n\tA =\n", knd, e);
   char s[17] = { '\0' };
   (void)printf("%s ", pvn_stoa(s, A11));
   (void)printf("%s\n", pvn_stoa(s, A12));
