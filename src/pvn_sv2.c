@@ -271,18 +271,20 @@ pvn_sljsv2_
     A22 = A21;
     A21 = 0.0f;
     *v11 = 0.0f;
-    *v21 = 1.0f;
-    *v12 = 1.0f;
     *v22 = 0.0f;
     if (A11 < 0.0f) {
       A11 = -A11;
       *v21 = -1.0f;
     }
+    else
+      *v21 = 1.0f;
     if (A12 < 0.0f) {
       A12 = -A12;
       A22 = -A22;
       *v12 = -1.0f;
     }
+    else
+      *v12 = 1.0f;
     if (A22 < 0.0f) {
       *u22 = -1.0f;
       A22 = -A22;
@@ -352,7 +354,6 @@ pvn_sljsv2_
     /* [ * 0 ] */
     /* [ * * ] */
     *u11 = 0.0f;
-    *u21 = 1.0f;
     *u12 = 1.0f;
     *u22 = 0.0f;
     A12 = A11;
@@ -361,22 +362,26 @@ pvn_sljsv2_
     A12 = A21;
     A21 = 0.0f;
     *v11 = 0.0f;
-    *v21 = 1.0f;
-    *v12 = 1.0f;
     *v22 = 0.0f;
     if (A11 < 0.0f) {
       A11 = -A11;
       *v21 = -1.0f;
     }
+    else
+      *v21 = 1.0f;
     if (A12 < 0.0f) {
       A12 = -A12;
       A22 = -A22;
       *v12 = -1.0f;
     }
+    else
+      *v12 = 1.0f;
     if (A22 < 0.0f) {
       *u21 = -1.0f;
       A22 = -A22;
     }
+    else
+      *u21 = 1.0f;
     e = 13;
     break;
   case 12:
@@ -424,13 +429,13 @@ pvn_sljsv2_
       *u22 = -1.0f;
       A22 = -A22;
     }
+    A21 = 0.0f;
     e = 13;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
     *u11 = 0.0f;
-    *u21 = 1.0f;
     *u12 = 1.0f;
     *u22 = 0.0f;
     A11 = A12;
@@ -451,6 +456,8 @@ pvn_sljsv2_
       *u21 = -1.0f;
       A22 = -A22;
     }
+    else
+      *u21 = 1.0f;
     e = 13;
     break;
   case 15:
@@ -489,8 +496,8 @@ pvn_sljsv2_
     return INT_MIN;
   }
 
-  (void)printf("knd=%d, e=%d\n\tA =\n", knd, e);
   char s[17] = { '\0' };
+  (void)printf("knd=%d, e=%d\n\tA =\n", knd, e);
   (void)printf("%s ", pvn_stoa(s, A11));
   (void)printf("%s\n", pvn_stoa(s, A12));
   (void)printf("%s ", pvn_stoa(s, A21));
