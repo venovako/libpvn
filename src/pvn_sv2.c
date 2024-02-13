@@ -35,6 +35,13 @@ pvn_sljsv2_
   (void)printf("%s ", pvn_stoa(s, v21));
   (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
   (void)printf("%s ", pvn_stoa(s, s1));
+  (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
+  if (es) {
+    es = -es;
+    s1 = scalbnf(s1, es);
+    s2 = scalbnf(s2, es);
+  }
+  (void)printf("%s ", pvn_stoa(s, s1));
   (void)printf("%s\n", pvn_stoa(s, s2));
   return EXIT_SUCCESS;
 }
@@ -496,31 +503,126 @@ pvn_sljsv2_
     return INT_MIN;
   }
 
-  char s[17] = { '\0' };
   (void)printf("knd=%d, e=%d\n\tA =\n", knd, e);
+  
+  char s[17] = { '\0' };
   (void)printf("%s ", pvn_stoa(s, A11));
   (void)printf("%s\n", pvn_stoa(s, A12));
   (void)printf("%s ", pvn_stoa(s, A21));
   (void)printf("%s\n", pvn_stoa(s, A22));
 
-  /* TODO */
+  float tt = 0.0f, ct = 0.0f, st = 0.0f;
   switch (e) {
   case  0:
   case 13:
     break;
   case  3:
+    /* [ X 0 ] */
+    /* [ x 0 ] */
+    tt = A21 / A11;
+    st = fmaf(tt, tt, 1.0f);
+    ct = rsqrtf(st);
+    /* apply the left Givens rotation */
+    st = -tt;
+    A21 = *u11;
+    if (ct == 1.0f) {
+      *u11 = fmaf(tt, *u21, *u11);
+      *u21 = fmaf(st,  A21, *u21);
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12);
+      *u22 = fmaf(st,  A21, *u22);
+      st = tt;
+    }
+    else {
+      *u11 = fmaf(tt, *u21, *u11) * ct;
+      *u21 = fmaf(st,  A21, *u21) * ct;
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12) * ct;
+      *u22 = fmaf(st,  A21, *u22) * ct;
+      st = tt * ct;
+    }
+    A11 = *s1;
+    A21 = 0.0f;
     e = 0;
     break;
   case  5:
+    /* [ X x ] */
+    /* [ 0 0 ] */
+    tt = A12 / A11;
+    st = fmaf(tt, tt, 1.0f);
+    ct = rsqrtf(st);
+    /* apply the right Givens rotation */
+    st = -tt;
+    A12 = *v11;
+    if (ct == 1.0f) {
+      *v11 = fmaf(tt, *v12, *v11);
+      *v12 = fmaf(st,  A12, *v12);
+      A12 = *v21;
+      *v21 = fmaf(tt, *v22, *v21);
+      *v22 = fmaf(st,  A12, *v22);
+      st = tt;
+    }
+    else {
+      *v11 = fmaf(tt, *v12, *v11) * ct;
+      *v12 = fmaf(st,  A12, *v12) * ct;
+      A12 = *v21;
+      *v21 = fmaf(tt, *v22, *v21) * ct;
+      *v22 = fmaf(st,  A12, *v22) * ct;
+      st = tt * ct;
+    }
+    A11 = *s1;
+    A12 = 0.0f;
     e = 0;
     break;
   case 15:
+    /* [ X y ] */
+    /* [ x z ] */
+    tt = A21 / A11;
+    st = fmaf(tt, tt, 1.0f);
+    ct = rsqrtf(st);
+    /* apply the left Givens rotation to A only (later to u) */
+    st = -tt;
+    A21 = A12;
+    if (ct == 1.0f) {
+      A12 = fmaf(tt, A22, A12);
+      A22 = fmaf(st, A21, A22);
+      st = tt;
+    }
+    else {
+      A12 = fmaf(tt, A22, A12) * ct;
+      A22 = fmaf(st, A21, A22) * ct;
+      st = tt * ct;
+    }
+    A11 = *s1;
+    A21 = 0.0f;
+    if (copysignf(1.0f, A12) != 1.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      if (*v12 != 0.0f)
+        *v12 = -*v12;
+      else
+        *v22 = -*v22;
+    }
+    if (copysignf(1.0f, A22) != 1.0f) {
+      A22 = -A22;
+      /* sin always non-negative by construction, just an extra bit of info for later */
+      st = -st;
+    }
     e = 13;
     break;
   default:
     return INT_MIN;
   }
 
+  (void)printf("tan(θ)=%s, ", pvn_stoa(s, tt));
+  (void)printf("cos(θ)=%s, ", pvn_stoa(s, ct));
+  (void)printf("sin(θ)=%s\n\tA =\n", pvn_stoa(s, st));
+  (void)printf("%s ", pvn_stoa(s, A11));
+  (void)printf("%s\n", pvn_stoa(s, A12));
+  (void)printf("%s ", pvn_stoa(s, A21));
+  (void)printf("%s\n", pvn_stoa(s, A22));
+
+  /* TODO */
   if (e == 13) {
   }
   else if (e)
