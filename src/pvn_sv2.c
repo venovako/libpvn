@@ -116,20 +116,23 @@ pvn_sljsv2_
   case  9:
     e = 0;
     break;
-  case  3:
-  case  5:
-  case 10:
-  case 12:
-  case 15:
-    /* QR needed, extra scaling later */
-    e = FLT_MAX_EXP - mxe - 1;
-    break;
   case  7:
   case 11:
   case 13:
   case 14:
     /* QR not needed, extra scaling later */
     e = FLT_MAX_EXP - mxe;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+    /* QR needed, extra scaling later */
+    e = FLT_MAX_EXP - mxe - 1;
+    break;
+  case 15:
+    /* at least one QR needed, extra scaling later */
+    e = FLT_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
@@ -511,14 +514,10 @@ pvn_sljsv2_
   (void)printf("%s ", pvn_stoa(s, A21));
   (void)printf("%s\n", pvn_stoa(s, A22));
 
-  float tt = 0.0f, ct = 0.0f, st = 0.0f;
-  switch (e) {
-  case  0:
-  case 13:
-    break;
-  case  3:
-    /* [ X 0 ] */
-    /* [ x 0 ] */
+  float tt = 0.0f, ct = 1.0f, st = 0.0f;
+  if (e == 15) {
+    /* [ X y ] */
+    /* [ x z ] */
     tt = A21 / A11;
 #ifdef PVN_SV2_NO_HYPOT
     st = fmaf(tt, tt, 1.0f);
@@ -527,40 +526,104 @@ pvn_sljsv2_
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
 #endif /* ?PVN_SV2_NO_HYPOT */
-    /* apply the left Givens rotation */
+    /* apply the left Givens rotation to A (and maybe to u) */
     st = -tt;
-    A21 = *u11;
+    A21 = A12;
     if (ct == 1.0f) {
-      *u11 = fmaf(tt, *u21, *u11);
-      *u21 = fmaf(st,  A21, *u21);
-      A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12);
-      *u22 = fmaf(st,  A21, *u22);
+      A12 = fmaf(tt, A22, A12);
+      A22 = fmaf(st, A21, A22);
+      if ((A12 == 0.0f) || (A22 == 0.0f)) {
+        A21 = *u11;
+        *u11 = fmaf(tt, *u21, *u11);
+        *u21 = fmaf(st,  A21, *u21);
+        A21 = *u12;
+        *u12 = fmaf(tt, *u22, *u12);
+        *u22 = fmaf(st,  A21, *u22);
+        A12 = 0.0f;
+      }
       st = tt;
     }
     else {
 #ifdef PVN_SV2_NO_HYPOT
-      *u11 = fmaf(tt, *u21, *u11) * ct;
-      *u21 = fmaf(st,  A21, *u21) * ct;
-      A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12) * ct;
-      *u22 = fmaf(st,  A21, *u22) * ct;
+      A12 = fmaf(tt, A22, A12) * ct;
+      A22 = fmaf(st, A21, A22) * ct;
+      if ((A12 == 0.0f) || (A22 == 0.0f)) {
+        A21 = *u11;
+        *u11 = fmaf(tt, *u21, *u11) * ct;
+        *u21 = fmaf(st,  A21, *u21) * ct;
+        A21 = *u12;
+        *u12 = fmaf(tt, *u22, *u12) * ct;
+        *u22 = fmaf(st,  A21, *u22) * ct;
+        A12 = 0.0f;
+      }
       st = tt * ct;
 #else /* !PVN_SV2_NO_HYPOT */
-      *u11 = fmaf(tt, *u21, *u11) / ct;
-      *u21 = fmaf(st,  A21, *u21) / ct;
-      A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12) / ct;
-      *u22 = fmaf(st,  A21, *u22) / ct;
+      A12 = fmaf(tt, A22, A12) / ct;
+      A22 = fmaf(st, A21, A22) / ct;
+      if ((A12 == 0.0f) || (A22 == 0.0f)) {
+        A21 = *u11;
+        *u11 = fmaf(tt, *u21, *u11) / ct;
+        *u21 = fmaf(st,  A21, *u21) / ct;
+        A21 = *u12;
+        *u12 = fmaf(tt, *u22, *u12) / ct;
+        *u22 = fmaf(st,  A21, *u22) / ct;
+      }
       st = tt / ct;
       ct = 1.0f / ct;
 #endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A21 = 0.0f;
-    e = 0;
-    break;
-  case  5:
+    if (A12 == 0.0f) {
+      A12 = 0.0f;
+      if (copysignf(1.0f, A22) != 1.0f) {
+        if (*u21 != 0.0f)
+          *u21 = -*u21;
+        if (*u22 != 0.0f)
+          *u22 = -*u22;
+        A22 = -A22;
+      }
+      *s2 = A22;
+      e = 0;
+    }
+    else if (A22 == 0.0f) {
+      if (A12 < 0.0f) {
+        A12 = -A12;
+        A22 = -A22;
+        if (*v12 != 0.0f)
+          *v12 = -*v12;
+        else
+          *v22 = -*v22;
+      }
+      if (copysignf(1.0f, A22) != 1.0f) {
+        if (*u21 != 0.0f)
+          *u21 = -*u21;
+        if (*u22 != 0.0f)
+          *u22 = -*u22;
+        A22 = 0.0f;
+      }
+      *s1 = hypotf(*s1, *s2);
+      *s2 = 0.0f;
+      e = 5;
+    }
+    else
+      e = 13;
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      if (*v12 != 0.0f)
+        *v12 = -*v12;
+      else
+        *v22 = -*v22;
+    }
+    if (A22 < 0.0f) {
+      A22 = -A22;
+      /* sin(θ) is always non-negative by construction */
+      /* this is just an extra bit of info, used later */
+      st = -st;
+    }
+  }
+  if (e == 5) {
     /* [ X x ] */
     /* [ 0 0 ] */
     tt = A12 / A11;
@@ -603,10 +666,10 @@ pvn_sljsv2_
     A11 = *s1;
     A12 = 0.0f;
     e = 0;
-    break;
-  case 15:
-    /* [ X y ] */
-    /* [ x z ] */
+  }
+  if (e == 3) {
+    /* [ X 0 ] */
+    /* [ x 0 ] */
     tt = A21 / A11;
 #ifdef PVN_SV2_NO_HYPOT
     st = fmaf(tt, tt, 1.0f);
@@ -615,45 +678,38 @@ pvn_sljsv2_
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
 #endif /* ?PVN_SV2_NO_HYPOT */
-    /* apply the left Givens rotation to A only (later to u) */
+    /* apply the left Givens rotation */
     st = -tt;
-    A21 = A12;
+    A21 = *u11;
     if (ct == 1.0f) {
-      A12 = fmaf(tt, A22, A12);
-      A22 = fmaf(st, A21, A22);
+      *u11 = fmaf(tt, *u21, *u11);
+      *u21 = fmaf(st,  A21, *u21);
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12);
+      *u22 = fmaf(st,  A21, *u22);
       st = tt;
     }
     else {
 #ifdef PVN_SV2_NO_HYPOT
-      A12 = fmaf(tt, A22, A12) * ct;
-      A22 = fmaf(st, A21, A22) * ct;
+      *u11 = fmaf(tt, *u21, *u11) * ct;
+      *u21 = fmaf(st,  A21, *u21) * ct;
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12) * ct;
+      *u22 = fmaf(st,  A21, *u22) * ct;
       st = tt * ct;
 #else /* !PVN_SV2_NO_HYPOT */
-      A12 = fmaf(tt, A22, A12) / ct;
-      A22 = fmaf(st, A21, A22) / ct;
+      *u11 = fmaf(tt, *u21, *u11) / ct;
+      *u21 = fmaf(st,  A21, *u21) / ct;
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12) / ct;
+      *u22 = fmaf(st,  A21, *u22) / ct;
       st = tt / ct;
       ct = 1.0f / ct;
 #endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A21 = 0.0f;
-    if (copysignf(1.0f, A12) != 1.0f) {
-      A12 = -A12;
-      A22 = -A22;
-      if (*v12 != 0.0f)
-        *v12 = -*v12;
-      else
-        *v22 = -*v22;
-    }
-    if (copysignf(1.0f, A22) != 1.0f) {
-      A22 = -A22;
-      /* sin always non-negative by construction, just an extra bit of info for later */
-      st = -st;
-    }
-    e = 13;
-    break;
-  default:
-    return INT_MIN;
+    e = 0;
   }
 
   (void)printf("tan(θ)=%s, ", pvn_stoa(s, tt));
@@ -664,11 +720,12 @@ pvn_sljsv2_
   (void)printf("%s ", pvn_stoa(s, A21));
   (void)printf("%s\n", pvn_stoa(s, A22));
 
-  /* TODO */
+  float tf = 0.0f, cf = 1.0f, sf = 0.0f;
   if (e == 13) {
+    /* [ x y ] */
+    /* [ 0 z ] */
+    /* TODO */
   }
-  else if (e)
-    return INT_MIN;
 
   if (*s1 < *s2) {
     pvn_fswp(u11, u21);
@@ -751,20 +808,23 @@ pvn_dljsv2_
   case  9:
     e = 0;
     break;
-  case  3:
-  case  5:
-  case 10:
-  case 12:
-  case 15:
-    /* QR needed, extra scaling later */
-    e = DBL_MAX_EXP - mxe - 1;
-    break;
   case  7:
   case 11:
   case 13:
   case 14:
     /* QR not needed, extra scaling later */
     e = DBL_MAX_EXP - mxe;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+    /* QR needed, extra scaling later */
+    e = DBL_MAX_EXP - mxe - 1;
+    break;
+  case 15:
+    /* at least one QR needed, extra scaling later */
+    e = DBL_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
@@ -987,6 +1047,13 @@ pvn_cljsv2_
   case  9:
     e = 0;
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    /* QR not needed, extra scaling later */
+    e = FLT_MAX_EXP - mxe - 1;
+    break;
   case  3:
   case  5:
   case 10:
@@ -994,13 +1061,6 @@ pvn_cljsv2_
   case 15:
     /* QR needed, extra scaling later */
     e = FLT_MAX_EXP - mxe - 2;
-    break;
-  case  7:
-  case 11:
-  case 13:
-  case 14:
-    /* QR not needed, extra scaling later */
-    e = FLT_MAX_EXP - mxe - 1;
     break;
   default:
     return INT_MIN;
@@ -1233,6 +1293,13 @@ pvn_zljsv2_
   case  9:
     e = 0;
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    /* QR not needed, extra scaling later */
+    e = DBL_MAX_EXP - mxe - 1;
+    break;
   case  3:
   case  5:
   case 10:
@@ -1240,13 +1307,6 @@ pvn_zljsv2_
   case 15:
     /* QR needed, extra scaling later */
     e = DBL_MAX_EXP - mxe - 2;
-    break;
-  case  7:
-  case 11:
-  case 13:
-  case 14:
-    /* QR not needed, extra scaling later */
-    e = DBL_MAX_EXP - mxe - 1;
     break;
   default:
     return INT_MIN;
@@ -1400,20 +1460,23 @@ int pvn_xljsv2_
   case  9:
     e = 0;
     break;
-  case  3:
-  case  5:
-  case 10:
-  case 12:
-  case 15:
-    /* QR needed, extra scaling later */
-    e = LDBL_MAX_EXP - mxe - 1;
-    break;
   case  7:
   case 11:
   case 13:
   case 14:
     /* QR not needed, extra scaling later */
     e = LDBL_MAX_EXP - mxe;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+    /* QR needed, extra scaling later */
+    e = LDBL_MAX_EXP - mxe - 1;
+    break;
+  case 15:
+    /* at least one QR needed, extra scaling later */
+    e = LDBL_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
@@ -1617,6 +1680,13 @@ int pvn_wljsv2_
   case  9:
     e = 0;
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    /* QR not needed, extra scaling later */
+    e = LDBL_MAX_EXP - mxe - 1;
+    break;
   case  3:
   case  5:
   case 10:
@@ -1624,13 +1694,6 @@ int pvn_wljsv2_
   case 15:
     /* QR needed, extra scaling later */
     e = LDBL_MAX_EXP - mxe - 2;
-    break;
-  case  7:
-  case 11:
-  case 13:
-  case 14:
-    /* QR not needed, extra scaling later */
-    e = LDBL_MAX_EXP - mxe - 1;
     break;
   default:
     return INT_MIN;
@@ -1784,20 +1847,23 @@ int pvn_qljsv2_
   case  9:
     e = 0;
     break;
-  case  3:
-  case  5:
-  case 10:
-  case 12:
-  case 15:
-    /* QR needed, extra scaling later */
-    e = FLT128_MAX_EXP - mxe - 1;
-    break;
   case  7:
   case 11:
   case 13:
   case 14:
     /* QR not needed, extra scaling later */
     e = FLT128_MAX_EXP - mxe;
+    break;
+  case  3:
+  case  5:
+  case 10:
+  case 12:
+    /* QR needed, extra scaling later */
+    e = FLT128_MAX_EXP - mxe - 1;
+    break;
+  case 15:
+    /* at least one QR needed, extra scaling later */
+    e = FLT128_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
@@ -2001,6 +2067,13 @@ int pvn_yljsv2_
   case  9:
     e = 0;
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
+    /* QR not needed, extra scaling later */
+    e = FLT128_MAX_EXP - mxe - 1;
+    break;
   case  3:
   case  5:
   case 10:
@@ -2008,13 +2081,6 @@ int pvn_yljsv2_
   case 15:
     /* QR needed, extra scaling later */
     e = FLT128_MAX_EXP - mxe - 2;
-    break;
-  case  7:
-  case 11:
-  case 13:
-  case 14:
-    /* QR not needed, extra scaling later */
-    e = FLT128_MAX_EXP - mxe - 1;
     break;
   default:
     return INT_MIN;
