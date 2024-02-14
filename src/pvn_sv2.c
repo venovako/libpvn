@@ -720,11 +720,24 @@ pvn_sljsv2_
   (void)printf("%s ", pvn_stoa(s, A21));
   (void)printf("%s\n", pvn_stoa(s, A22));
 
-  float tf = 0.0f, cf = 1.0f, sf = 0.0f;
   if (e == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
+    float tf = 0.0f, cf = 1.0f, sf = 0.0f;
+
+    int xe = 0, ye = 0, ze = 0;
+    const float xf = frexpf(A11, &xe);
+    const float yf = frexpf(A12, &ye);
+    const float zf = frexpf(A22, &ze);
+
     /* TODO */
+    if (copysignf(1.0f, st) != 1.0f) {
+      st = -st;
+      /* TODO */
+    }
+    else {
+      /* TODO */
+    }
   }
 
   if (*s1 < *s2) {
