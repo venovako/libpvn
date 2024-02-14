@@ -520,8 +520,13 @@ pvn_sljsv2_
     /* [ X 0 ] */
     /* [ x 0 ] */
     tt = A21 / A11;
+#ifdef PVN_SV2_NO_HYPOT
     st = fmaf(tt, tt, 1.0f);
     ct = rsqrtf(st);
+#else /* !PVN_SV2_NO_HYPOT */
+    /* 1 / cos */
+    ct = hypotf(tt, 1.0f);
+#endif /* ?PVN_SV2_NO_HYPOT */
     /* apply the left Givens rotation */
     st = -tt;
     A21 = *u11;
@@ -534,12 +539,22 @@ pvn_sljsv2_
       st = tt;
     }
     else {
+#ifdef PVN_SV2_NO_HYPOT
       *u11 = fmaf(tt, *u21, *u11) * ct;
       *u21 = fmaf(st,  A21, *u21) * ct;
       A21 = *u12;
       *u12 = fmaf(tt, *u22, *u12) * ct;
       *u22 = fmaf(st,  A21, *u22) * ct;
       st = tt * ct;
+#else /* !PVN_SV2_NO_HYPOT */
+      *u11 = fmaf(tt, *u21, *u11) / ct;
+      *u21 = fmaf(st,  A21, *u21) / ct;
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12) / ct;
+      *u22 = fmaf(st,  A21, *u22) / ct;
+      st = tt / ct;
+      ct = 1.0f / ct;
+#endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A21 = 0.0f;
@@ -549,8 +564,13 @@ pvn_sljsv2_
     /* [ X x ] */
     /* [ 0 0 ] */
     tt = A12 / A11;
+#ifdef PVN_SV2_NO_HYPOT
     st = fmaf(tt, tt, 1.0f);
     ct = rsqrtf(st);
+#else /* !PVN_SV2_NO_HYPOT */
+    /* 1 / cos */
+    ct = hypotf(tt, 1.0f);
+#endif /* ?PVN_SV2_NO_HYPOT */
     /* apply the right Givens rotation */
     st = -tt;
     A12 = *v11;
@@ -563,12 +583,22 @@ pvn_sljsv2_
       st = tt;
     }
     else {
+#ifdef PVN_SV2_NO_HYPOT
       *v11 = fmaf(tt, *v12, *v11) * ct;
       *v12 = fmaf(st,  A12, *v12) * ct;
       A12 = *v21;
       *v21 = fmaf(tt, *v22, *v21) * ct;
       *v22 = fmaf(st,  A12, *v22) * ct;
       st = tt * ct;
+#else /* !PVN_SV2_NO_HYPOT */
+      *v11 = fmaf(tt, *v12, *v11) / ct;
+      *v12 = fmaf(st,  A12, *v12) / ct;
+      A12 = *v21;
+      *v21 = fmaf(tt, *v22, *v21) / ct;
+      *v22 = fmaf(st,  A12, *v22) / ct;
+      st = tt / ct;
+      ct = 1.0f / ct;
+#endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A12 = 0.0f;
@@ -578,8 +608,13 @@ pvn_sljsv2_
     /* [ X y ] */
     /* [ x z ] */
     tt = A21 / A11;
+#ifdef PVN_SV2_NO_HYPOT
     st = fmaf(tt, tt, 1.0f);
     ct = rsqrtf(st);
+#else /* !PVN_SV2_NO_HYPOT */
+    /* 1 / cos */
+    ct = hypotf(tt, 1.0f);
+#endif /* ?PVN_SV2_NO_HYPOT */
     /* apply the left Givens rotation to A only (later to u) */
     st = -tt;
     A21 = A12;
@@ -589,9 +624,16 @@ pvn_sljsv2_
       st = tt;
     }
     else {
+#ifdef PVN_SV2_NO_HYPOT
       A12 = fmaf(tt, A22, A12) * ct;
       A22 = fmaf(st, A21, A22) * ct;
       st = tt * ct;
+#else /* !PVN_SV2_NO_HYPOT */
+      A12 = fmaf(tt, A22, A12) / ct;
+      A22 = fmaf(st, A21, A22) / ct;
+      st = tt / ct;
+      ct = 1.0f / ct;
+#endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A21 = 0.0f;
