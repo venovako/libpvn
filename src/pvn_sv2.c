@@ -539,7 +539,6 @@ pvn_sljsv2_
         A21 = *u12;
         *u12 = fmaf(tt, *u22, *u12);
         *u22 = fmaf(st,  A21, *u22);
-        A12 = 0.0f;
       }
       st = tt;
     }
@@ -554,7 +553,6 @@ pvn_sljsv2_
         A21 = *u12;
         *u12 = fmaf(tt, *u22, *u12) * ct;
         *u22 = fmaf(st,  A21, *u22) * ct;
-        A12 = 0.0f;
       }
       st = tt * ct;
 #else /* !PVN_SV2_NO_HYPOT */
