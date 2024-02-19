@@ -519,13 +519,8 @@ pvn_sljsv2_
     /* [ X y ] */
     /* [ x z ] */
     tt = A21 / A11;
-#ifdef PVN_SV2_NO_HYPOT
-    st = fmaf(tt, tt, 1.0f);
-    ct = rsqrtf(st);
-#else /* !PVN_SV2_NO_HYPOT */
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
-#endif /* ?PVN_SV2_NO_HYPOT */
     /* apply the left Givens rotation to A (and maybe to u) */
     st = -tt;
     A21 = A12;
@@ -543,19 +538,6 @@ pvn_sljsv2_
       st = tt;
     }
     else {
-#ifdef PVN_SV2_NO_HYPOT
-      A12 = fmaf(tt, A22, A12) * ct;
-      A22 = fmaf(st, A21, A22) * ct;
-      if ((A12 == 0.0f) || (A22 == 0.0f)) {
-        A21 = *u11;
-        *u11 = fmaf(tt, *u21, *u11) * ct;
-        *u21 = fmaf(st,  A21, *u21) * ct;
-        A21 = *u12;
-        *u12 = fmaf(tt, *u22, *u12) * ct;
-        *u22 = fmaf(st,  A21, *u22) * ct;
-      }
-      st = tt * ct;
-#else /* !PVN_SV2_NO_HYPOT */
       A12 = fmaf(tt, A22, A12) / ct;
       A22 = fmaf(st, A21, A22) / ct;
       if ((A12 == 0.0f) || (A22 == 0.0f)) {
@@ -568,7 +550,6 @@ pvn_sljsv2_
       }
       st = tt / ct;
       ct = 1.0f / ct;
-#endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A21 = 0.0f;
@@ -625,13 +606,8 @@ pvn_sljsv2_
     /* [ X x ] */
     /* [ 0 0 ] */
     tt = A12 / A11;
-#ifdef PVN_SV2_NO_HYPOT
-    st = fmaf(tt, tt, 1.0f);
-    ct = rsqrtf(st);
-#else /* !PVN_SV2_NO_HYPOT */
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
-#endif /* ?PVN_SV2_NO_HYPOT */
     /* apply the right Givens rotation */
     st = -tt;
     A12 = *v11;
@@ -644,14 +620,6 @@ pvn_sljsv2_
       st = tt;
     }
     else {
-#ifdef PVN_SV2_NO_HYPOT
-      *v11 = fmaf(tt, *v12, *v11) * ct;
-      *v12 = fmaf(st,  A12, *v12) * ct;
-      A12 = *v21;
-      *v21 = fmaf(tt, *v22, *v21) * ct;
-      *v22 = fmaf(st,  A12, *v22) * ct;
-      st = tt * ct;
-#else /* !PVN_SV2_NO_HYPOT */
       *v11 = fmaf(tt, *v12, *v11) / ct;
       *v12 = fmaf(st,  A12, *v12) / ct;
       A12 = *v21;
@@ -659,7 +627,6 @@ pvn_sljsv2_
       *v22 = fmaf(st,  A12, *v22) / ct;
       st = tt / ct;
       ct = 1.0f / ct;
-#endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A12 = 0.0f;
@@ -669,13 +636,8 @@ pvn_sljsv2_
     /* [ X 0 ] */
     /* [ x 0 ] */
     tt = A21 / A11;
-#ifdef PVN_SV2_NO_HYPOT
-    st = fmaf(tt, tt, 1.0f);
-    ct = rsqrtf(st);
-#else /* !PVN_SV2_NO_HYPOT */
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
-#endif /* ?PVN_SV2_NO_HYPOT */
     /* apply the left Givens rotation */
     st = -tt;
     A21 = *u11;
@@ -688,14 +650,6 @@ pvn_sljsv2_
       st = tt;
     }
     else {
-#ifdef PVN_SV2_NO_HYPOT
-      *u11 = fmaf(tt, *u21, *u11) * ct;
-      *u21 = fmaf(st,  A21, *u21) * ct;
-      A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12) * ct;
-      *u22 = fmaf(st,  A21, *u22) * ct;
-      st = tt * ct;
-#else /* !PVN_SV2_NO_HYPOT */
       *u11 = fmaf(tt, *u21, *u11) / ct;
       *u21 = fmaf(st,  A21, *u21) / ct;
       A21 = *u12;
@@ -703,7 +657,6 @@ pvn_sljsv2_
       *u22 = fmaf(st,  A21, *u22) / ct;
       st = tt / ct;
       ct = 1.0f / ct;
-#endif /* ?PVN_SV2_NO_HYPOT */
     }
     A11 = *s1;
     A21 = 0.0f;
@@ -721,7 +674,9 @@ pvn_sljsv2_
   if (e == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
-    float tf = 0.0f, cf = 1.0f, sf = 0.0f;
+    float /* cf, cp = 1 / cos */
+      tf = 0.0f, cf = 1.0f, sf = 0.0f,
+      tp = 0.0f, cp = 1.0f, sp = 0.0f;
 
     int xe = 0, ye = 0, ze = 0;
     const float xf = frexpf(A11, &xe);
@@ -729,12 +684,93 @@ pvn_sljsv2_
     const float zf = frexpf(A22, &ze);
 
     /* TODO */
-    if (copysignf(1.0f, st) != 1.0f) {
-      st = -st;
-      /* TODO */
+
+    /* update V */
+    sp = -tp;
+    if (cp == 1.0f) {
+      A21 = *v11;
+      *v11 = fmaf(tp, *v12, *v11);
+      *v12 = fmaf(sp,  A21, *v12);
+      A21 = *v21;
+      *v21 = fmaf(tp, *v22, *v21);
+      *v22 = fmaf(sp,  A21, *v22);
     }
     else {
-      /* TODO */
+      A21 = *v11;
+      *v11 = fmaf(tp, *v12, *v11) / cp;
+      *v12 = fmaf(sp,  A21, *v12) / cp;
+      A21 = *v21;
+      *v21 = fmaf(tp, *v22, *v21) / cp;
+      *v22 = fmaf(sp,  A21, *v22) / cp;
+    }
+    A21 = 0.0f;
+
+    /* TODO: update S, scaling back A if necessary, such that all scaled singular values are finite */
+
+    sf = (tf / cf);
+    cf = (1.0f / cf);
+    sp = (tp / cp);
+    cp = (1.0f / cp);
+
+    /* update U */
+    if (copysignf(1.0f, st) != 1.0f) {
+      st = -st;
+      float tf_t = (tf - tt), cf_t = fmaf(tf, tt, 1.0f), sf_t = 0.0f;
+      if (tf_t == 0.0f)
+        tf_t *= copysignf(1.0f, cf_t);
+      else
+        tf_t /= cf_t;
+      if (isfinite(tf_t)) {
+        /* 1 / cos */
+        cf_t = hypotf(tf_t, 1.0f);
+        sf_t = (tf_t / cf_t);
+        cf_t = (1.0f / cf_t);
+      }
+      else {
+        cf_t = 0.0f;
+        sf_t = copysignf(1.0f, tf_t);
+      }
+      const float _sf_t = -sf_t;
+      A21 = *u11;
+      *u11 = _sf_t * *u21 + cf_t * *u11;
+      *u21 = _sf_t *  A21 - cf_t * *u21;
+      A21 = *u12;
+      *u12 = _sf_t * *u22 + cf_t * *u12;
+      *u22 = _sf_t *  A21 - cf_t * *u22;
+      A21 = tf_t;
+    }
+    else if (tt != 0.0f) {
+      float tft = (tf + tt), cft = fmaf(-tf, tt, 1.0f), sft = 0.0f;
+      if (tft == 0.0f)
+        tft *= copysignf(1.0f, cft);
+      else
+        tft /= cft;
+      if (isfinite(tft)) {
+        /* 1 / cos */
+        cft = hypotf(tft, 1.0f);
+        sft = (tft / cft);
+        cft = (1.0f / cft);
+      }
+      else {
+        cft = 0.0f;
+        sft = copysignf(1.0f, tft);
+      }
+      A21 = *u11;
+      *u11 = cft * *u11 + sft * *u21;
+      *u21 = cft * *u21 - sft *  A21;
+      A21 = *u12;
+      *u12 = cft * *u12 + sft * *u22;
+      *u22 = cft * *u22 - sft *  A21;
+      A21 = tft;
+    }
+    else {
+      A21 = *u11;
+      *u11 = cf * *u11 + sf * *u21;
+      *u21 = cf * *u21 - sf *  A21;
+      A21 = *u12;
+      *u12 = cf * *u12 + sf * *u22;
+      *u22 = cf * *u22 - sf *  A21;
+      A21 = 0.0f;
     }
   }
 
