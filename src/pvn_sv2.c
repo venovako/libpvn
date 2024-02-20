@@ -671,13 +671,12 @@ pvn_sljsv2_
   (void)printf("%s ", pvn_stoa(s, A21));
   (void)printf("%s\n", pvn_stoa(s, A22));
 
+  float
+    tf = 0.0f, cf = 1.0f, sf = 0.0f,
+    tp = 0.0f, cp = 1.0f, sp = 0.0f;
   if (e == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
-    float /* cf, cp = 1 / cos */
-      tf = 0.0f, cf = 1.0f, sf = 0.0f,
-      tp = 0.0f, cp = 1.0f, sp = 0.0f;
-
     int xe = 0, ye = 0, ze = 0;
     const float xf = frexpf(A11, &xe);
     const float yf = frexpf(A12, &ye);
@@ -685,34 +684,17 @@ pvn_sljsv2_
 
     /* TODO */
 
-    /* update V */
-    sp = -tp;
-    if (cp == 1.0f) {
-      A21 = *v11;
-      *v11 = fmaf(tp, *v12, *v11);
-      *v12 = fmaf(sp,  A21, *v12);
-      A21 = *v21;
-      *v21 = fmaf(tp, *v22, *v21);
-      *v22 = fmaf(sp,  A21, *v22);
-    }
-    else {
-      A21 = *v11;
-      *v11 = fmaf(tp, *v12, *v11) / cp;
-      *v12 = fmaf(sp,  A21, *v12) / cp;
-      A21 = *v21;
-      *v21 = fmaf(tp, *v22, *v21) / cp;
-      *v22 = fmaf(sp,  A21, *v22) / cp;
-    }
-    A21 = 0.0f;
-
     /* TODO: update S, scaling back A if necessary, such that all scaled singular values are finite */
 
-    sf = (tf / cf);
-    cf = (1.0f / cf);
-    sp = (tp / cp);
-    cp = (1.0f / cp);
-
     /* update U */
+    if (isfinite(tf)) {
+      sf = (tf / cf);
+      cf = (1.0f / cf);
+    }
+    else {
+      sf = copysignf(1.0f, tf);
+      cf = 0.0f;
+    }
     if (copysignf(1.0f, st) != 1.0f) {
       st = -st;
       float tf_t = (tf - tt), cf_t = fmaf(tf, tt, 1.0f), sf_t = 0.0f;
@@ -727,8 +709,8 @@ pvn_sljsv2_
         cf_t = (1.0f / cf_t);
       }
       else {
-        cf_t = 0.0f;
         sf_t = copysignf(1.0f, tf_t);
+        cf_t = 0.0f;
       }
       const float _sf_t = -sf_t;
       A21 = *u11;
@@ -737,7 +719,7 @@ pvn_sljsv2_
       A21 = *u12;
       *u12 = _sf_t * *u22 + cf_t * *u12;
       *u22 = _sf_t *  A21 - cf_t * *u22;
-      A21 = tf_t;
+      A21 = -1.0f;
     }
     else if (tt != 0.0f) {
       float tft = (tf + tt), cft = fmaf(-tf, tt, 1.0f), sft = 0.0f;
@@ -752,8 +734,8 @@ pvn_sljsv2_
         cft = (1.0f / cft);
       }
       else {
-        cft = 0.0f;
         sft = copysignf(1.0f, tft);
+        cft = 0.0f;
       }
       A21 = *u11;
       *u11 = cft * *u11 + sft * *u21;
@@ -761,7 +743,7 @@ pvn_sljsv2_
       A21 = *u12;
       *u12 = cft * *u12 + sft * *u22;
       *u22 = cft * *u22 - sft *  A21;
-      A21 = tft;
+      A21 = 1.0f;
     }
     else {
       A21 = *u11;
@@ -773,6 +755,23 @@ pvn_sljsv2_
       A21 = 0.0f;
     }
   }
+
+  /* update V */
+  if (isfinite(tp)) {
+    sp = (tp / cp);
+    cp = (1.0f / cp);
+  }
+  else {
+    sp = copysignf(1.0f, tp);
+    cp = 0.0f;
+  }
+  A21 = *v11;
+  *v11 = *v11 * cp + *v12 * sp;
+  *v12 = *v12 * cp -  A21 * sp;
+  A21 = *v21;
+  *v21 = *v21 * cp + *v22 * sp;
+  *v22 = *v22 * cp -  A21 * sp;
+  A21 = 0.0f;
 
   if (*s1 < *s2) {
     pvn_fswp(u11, u21);
