@@ -682,7 +682,7 @@ pvn_sljsv2_
     const float yf = frexpf(A12, &ye);
     const float zf = frexpf(A22, &ze);
 
-    /* TODO */
+    /* TODO: compute tf and tp */
 
     /* TODO: update S, scaling back A if necessary, such that all scaled singular values are finite */
 
@@ -698,6 +698,8 @@ pvn_sljsv2_
       sf = copysignf(1.0f, tf);
       cf = 0.0f;
     }
+    (void)printf("cos(φ)=%s, ", pvn_stoa(s, cf));
+    (void)printf("sin(φ)=%s\n", pvn_stoa(s, sf));
     if (copysignf(1.0f, st) != 1.0f) {
       st = -st;
       float tf_t = (tf - tt), cf_t = fmaf(tf, tt, 1.0f), sf_t = 0.0f;
@@ -748,7 +750,7 @@ pvn_sljsv2_
       *u22 = cft * *u22 - sft *  A21;
       A21 = 1.0f;
     }
-    else if ((tf != 0.0f) || (copysignf(1.0f, tf) == -1.0f)) {
+    else if (tf != 0.0f) {
       A21 = *u11;
       *u11 = cf * *u11 + sf * *u21;
       *u21 = cf * *u21 - sf *  A21;
@@ -770,7 +772,9 @@ pvn_sljsv2_
       sp = copysignf(1.0f, tp);
       cp = 0.0f;
     }
-    if ((tp != 0.0f) || (copysignf(1.0f, tp) == -1.0f)) {
+    (void)printf("cos(ψ)=%s, ", pvn_stoa(s, cf));
+    (void)printf("sin(ψ)=%s\n", pvn_stoa(s, sf));
+    if (tp != 0.0f) {
       A21 = *v11;
       *v11 = *v11 * cp + *v12 * sp;
       *v12 = *v12 * cp -  A21 * sp;
