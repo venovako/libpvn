@@ -754,24 +754,24 @@ pvn_sljsv2_
       *u22 = cf * *u22 - sf *  A21;
       A21 = 0.0f;
     }
-  }
 
-  /* update V */
-  if (isfinite(tp)) {
-    sp = (tp / cp);
-    cp = (1.0f / cp);
+    /* update V */
+    if (isfinite(tp)) {
+      sp = (tp / cp);
+      cp = (1.0f / cp);
+    }
+    else {
+      sp = copysignf(1.0f, tp);
+      cp = 0.0f;
+    }
+    A21 = *v11;
+    *v11 = *v11 * cp + *v12 * sp;
+    *v12 = *v12 * cp -  A21 * sp;
+    A21 = *v21;
+    *v21 = *v21 * cp + *v22 * sp;
+    *v22 = *v22 * cp -  A21 * sp;
+    A21 = 0.0f;
   }
-  else {
-    sp = copysignf(1.0f, tp);
-    cp = 0.0f;
-  }
-  A21 = *v11;
-  *v11 = *v11 * cp + *v12 * sp;
-  *v12 = *v12 * cp -  A21 * sp;
-  A21 = *v21;
-  *v21 = *v21 * cp + *v22 * sp;
-  *v22 = *v22 * cp -  A21 * sp;
-  A21 = 0.0f;
 
   if (*s1 < *s2) {
     pvn_fswp(u11, u21);
