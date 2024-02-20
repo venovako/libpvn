@@ -686,6 +686,9 @@ pvn_sljsv2_
 
     /* TODO: update S, scaling back A if necessary, such that all scaled singular values are finite */
 
+    (void)printf("tan(φ)=%s, ", pvn_stoa(s, tf));
+    (void)printf("tan(ψ)=%s\n", pvn_stoa(s, tp));
+
     /* update U */
     if (isfinite(tf)) {
       sf = (tf / cf);
@@ -745,15 +748,18 @@ pvn_sljsv2_
       *u22 = cft * *u22 - sft *  A21;
       A21 = 1.0f;
     }
-    else {
+    else if ((tf != 0.0f) || (copysignf(1.0f, tf) == -1.0f)) {
       A21 = *u11;
       *u11 = cf * *u11 + sf * *u21;
       *u21 = cf * *u21 - sf *  A21;
       A21 = *u12;
       *u12 = cf * *u12 + sf * *u22;
       *u22 = cf * *u22 - sf *  A21;
-      A21 = 0.0f;
+      A21 = -0.0f;
     }
+    else
+      A21 = 0.0f;
+    (void)printf("U operation=%s\n", pvn_stoa(s, A21));
 
     /* update V */
     if (isfinite(tp)) {
@@ -764,13 +770,18 @@ pvn_sljsv2_
       sp = copysignf(1.0f, tp);
       cp = 0.0f;
     }
-    A21 = *v11;
-    *v11 = *v11 * cp + *v12 * sp;
-    *v12 = *v12 * cp -  A21 * sp;
-    A21 = *v21;
-    *v21 = *v21 * cp + *v22 * sp;
-    *v22 = *v22 * cp -  A21 * sp;
-    A21 = 0.0f;
+    if ((tp != 0.0f) || (copysignf(1.0f, tp) == -1.0f)) {
+      A21 = *v11;
+      *v11 = *v11 * cp + *v12 * sp;
+      *v12 = *v12 * cp -  A21 * sp;
+      A21 = *v21;
+      *v21 = *v21 * cp + *v22 * sp;
+      *v22 = *v22 * cp -  A21 * sp;
+      A21 = -0.0f;
+    }
+    else
+      A21 = 0.0f;
+    (void)printf("V operation=%s\n", pvn_stoa(s, A21));
   }
 
   if (*s1 < *s2) {
