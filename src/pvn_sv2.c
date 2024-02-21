@@ -515,13 +515,18 @@ pvn_sljsv2_
   (void)printf("%s\n", pvn_stoa(s, A22));
 
   float tt = 0.0f, ct = 1.0f, st = 0.0f;
+
   if (e == 15) {
     /* [ X y ] */
     /* [ x z ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
     tt = A21 / A11;
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
-    /* apply the left Givens rotation to A (and maybe to u) */
+    /* apply the left Givens rotation to A (and maybe to U) */
     st = -tt;
     A21 = A12;
     if (ct == 1.0f) {
@@ -552,7 +557,7 @@ pvn_sljsv2_
       ct = 1.0f / ct;
     }
     A11 = *s1;
-    A21 = 0.0f;
+    A21 = -0.0f;
     if (A12 == 0.0f) {
       A12 = 0.0f;
       if (copysignf(1.0f, A22) != 1.0f) {
@@ -597,18 +602,65 @@ pvn_sljsv2_
     }
     if (A22 < 0.0f) {
       A22 = -A22;
-      /* sin(θ) is always non-negative by construction */
+      /* sin(ϑ) is always non-negative by construction */
       /* this is just an extra bit of info, used later */
       st = -st;
     }
   }
+
+  if (e == 3) {
+    /* [ X 0 ] */
+    /* [ x 0 ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
+    tt = A21 / A11;
+    /* 1 / cos */
+    ct = hypotf(tt, 1.0f);
+    /* apply the left Givens rotation to U */
+    st = -tt;
+    A21 = *u11;
+    if (ct == 1.0f) {
+      *u11 = fmaf(tt, *u21, *u11);
+      *u21 = fmaf(st,  A21, *u21);
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12);
+      *u22 = fmaf(st,  A21, *u22);
+      st = tt;
+    }
+    else {
+      *u11 = fmaf(tt, *u21, *u11) / ct;
+      *u21 = fmaf(st,  A21, *u21) / ct;
+      A21 = *u12;
+      *u12 = fmaf(tt, *u22, *u12) / ct;
+      *u22 = fmaf(st,  A21, *u22) / ct;
+      st = tt / ct;
+      ct = 1.0f / ct;
+    }
+    A11 = *s1;
+    A21 = -0.0f;
+    e = 0;
+  }
+
+  if (copysignf(1.0f, A21) == -1.0f) {
+    (void)printf("tan(ϑ)=%s, ", pvn_stoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_stoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_stoa(s, st));
+    A21 = 0.0f;
+  }
+
   if (e == 5) {
     /* [ X x ] */
     /* [ 0 0 ] */
+    /* V(θ):
+       cos(θ) -sin(θ)
+       sin(θ)  cos(θ)
+    */
     tt = A12 / A11;
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
-    /* apply the right Givens rotation */
+    /* apply the right Givens rotation to V */
     st = -tt;
     A12 = *v11;
     if (ct == 1.0f) {
@@ -631,49 +683,17 @@ pvn_sljsv2_
     A11 = *s1;
     A12 = 0.0f;
     e = 0;
-  }
-  if (e == 3) {
-    /* [ X 0 ] */
-    /* [ x 0 ] */
-    tt = A21 / A11;
-    /* 1 / cos */
-    ct = hypotf(tt, 1.0f);
-    /* apply the left Givens rotation */
-    st = -tt;
-    A21 = *u11;
-    if (ct == 1.0f) {
-      *u11 = fmaf(tt, *u21, *u11);
-      *u21 = fmaf(st,  A21, *u21);
-      A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12);
-      *u22 = fmaf(st,  A21, *u22);
-      st = tt;
-    }
-    else {
-      *u11 = fmaf(tt, *u21, *u11) / ct;
-      *u21 = fmaf(st,  A21, *u21) / ct;
-      A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12) / ct;
-      *u22 = fmaf(st,  A21, *u22) / ct;
-      st = tt / ct;
-      ct = 1.0f / ct;
-    }
-    A11 = *s1;
-    A21 = 0.0f;
-    e = 0;
+    (void)printf("tan(θ)=%s, ", pvn_stoa(s, tt));
+    (void)printf("cos(θ)=%s, ", pvn_stoa(s, ct));
+    (void)printf("sin(θ)=%s\n", pvn_stoa(s, st));
   }
 
-  (void)printf("tan(θ)=%s, ", pvn_stoa(s, tt));
-  (void)printf("cos(θ)=%s, ", pvn_stoa(s, ct));
-  (void)printf("sin(θ)=%s\n\tA =\n", pvn_stoa(s, st));
+  (void)printf("\tA =\n");
   (void)printf("%s ", pvn_stoa(s, A11));
   (void)printf("%s\n", pvn_stoa(s, A12));
   (void)printf("%s ", pvn_stoa(s, A21));
   (void)printf("%s\n", pvn_stoa(s, A22));
 
-  float
-    tf = 0.0f, cf = 1.0f, sf = 0.0f,
-    tp = 0.0f, cp = 1.0f, sp = 0.0f;
   if (e == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
@@ -683,6 +703,8 @@ pvn_sljsv2_
     const float zf = frexpf(A22, &ze);
 
     /* TODO: compute tf and tp */
+    float tf = 0.0f, cf = 1.0f, sf = 0.0f;
+    float tp = 0.0f, cp = 1.0f, sp = 0.0f;
 
     /* TODO: update S, scaling back A if necessary, such that all scaled singular values are finite */
 
@@ -701,6 +723,10 @@ pvn_sljsv2_
     (void)printf("cos(φ)=%s, ", pvn_stoa(s, cf));
     (void)printf("sin(φ)=%s\n", pvn_stoa(s, sf));
     if (copysignf(1.0f, st) != 1.0f) {
+      /* U^T(φ) * diag(1, -1) * U^T(ϑ):
+          cos(φ - ϑ) -sin(φ - ϑ)
+         -sin(φ - ϑ) -cos(φ - ϑ)
+      */
       st = -st;
       float tf_t = (tf - tt), cf_t = fmaf(tf, tt, 1.0f), sf_t = 0.0f;
       if (tf_t == 0.0f)
@@ -727,6 +753,10 @@ pvn_sljsv2_
       A21 = -1.0f;
     }
     else if (tt != 0.0f) {
+      /* U^T(φ) * U^T(ϑ) = U^T(φ + ϑ):
+          cos(φ + ϑ)  sin(φ + ϑ)
+         -sin(φ + ϑ)  cos(φ + ϑ)
+      */
       float tft = (tf + tt), cft = fmaf(-tf, tt, 1.0f), sft = 0.0f;
       if (tft == 0.0f)
         tft *= copysignf(1.0f, cft);
@@ -751,6 +781,10 @@ pvn_sljsv2_
       A21 = 1.0f;
     }
     else if (tf != 0.0f) {
+      /* U^T(φ):
+          cos(φ)  sin(φ)
+         -sin(φ)  cos(φ)
+       */
       A21 = *u11;
       *u11 = cf * *u11 + sf * *u21;
       *u21 = cf * *u21 - sf *  A21;
@@ -759,7 +793,7 @@ pvn_sljsv2_
       *u22 = cf * *u22 - sf *  A21;
       A21 = -0.0f;
     }
-    else
+    else /* U^T(φ) = I */
       A21 = 0.0f;
     (void)printf("U operation=%s\n", pvn_stoa(s, A21));
 
@@ -775,6 +809,10 @@ pvn_sljsv2_
     (void)printf("cos(ψ)=%s, ", pvn_stoa(s, cf));
     (void)printf("sin(ψ)=%s\n", pvn_stoa(s, sf));
     if (tp != 0.0f) {
+      /* V(ψ):
+         cos(ψ) -sin(ψ)
+         sin(ψ)  cos(ψ)
+      */
       A21 = *v11;
       *v11 = *v11 * cp + *v12 * sp;
       *v12 = *v12 * cp -  A21 * sp;
@@ -783,9 +821,12 @@ pvn_sljsv2_
       *v22 = *v22 * cp -  A21 * sp;
       A21 = -0.0f;
     }
-    else
+    else /* V(ψ) = I */
       A21 = 0.0f;
     (void)printf("V operation=%s\n", pvn_stoa(s, A21));
+
+    A21 = 0.0f;
+    e = 0;
   }
 
   if (*s1 < *s2) {
