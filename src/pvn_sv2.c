@@ -80,7 +80,7 @@ pvn_sljsv2_
     return -3;
   if (!isfinite(*a22))
     return -4;
-  /* should not fail beyond this point */
+  /* should not fail beyond this point when *es == 0 */
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0f) {
     knd |= 1;
@@ -127,27 +127,34 @@ pvn_sljsv2_
   case  5:
   case 10:
   case 12:
+  case 15:
     /* QR needed, extra scaling later */
     e = FLT_MAX_EXP - mxe - 1;
-    break;
-  case 15:
-    /* at least one QR needed, extra scaling later */
-    e = FLT_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   float A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
   if (*es) {
     A11 = scalbnf(A11, *es);
+    if (!isfinite(A11))
+      return -5;
     A21 = scalbnf(A21, *es);
+    if (!isfinite(A21))
+      return -6;
     A12 = scalbnf(A12, *es);
+    if (!isfinite(A12))
+      return -7;
     A22 = scalbnf(A22, *es);
+    if (!isfinite(A22))
+      return -8;
   }
 
   *u11 = 1.0f;
@@ -506,7 +513,7 @@ pvn_sljsv2_
     return INT_MIN;
   }
 
-  (void)printf("knd=%d, e=%d\n\tA =\n", knd, e);
+  (void)printf("knd=%d, e=%d\n\tA * 2^(*es) =\n", knd, e);
   
   char s[17] = { '\0' };
   (void)printf("%s ", pvn_stoa(s, A11));
@@ -557,7 +564,6 @@ pvn_sljsv2_
       ct = 1.0f / ct;
     }
     A11 = *s1;
-    A21 = -0.0f;
     if (A12 == 0.0f) {
       A12 = 0.0f;
       if (copysignf(1.0f, A22) != 1.0f) {
@@ -586,12 +592,26 @@ pvn_sljsv2_
           *u22 = -*u22;
         A22 = 0.0f;
       }
-      *s1 = hypotf(*s1, *s2);
+      A21 = hypotf(*s1, *s2);
+      /* backscale in the extreme case */
+      if (!isfinite(A21)) {
+        if (mxe)
+          return -9;
+        *s1 *= 0.5f;
+        *s2 *= 0.5f;
+        --*es;
+        A21 = hypotf(*s1, *s2);
+        /* should never happen */
+        if (!isfinite(A21))
+          return -9;
+      }
+      *s1 = A21;
       *s2 = 0.0f;
       e = 5;
     }
     else
       e = 13;
+    A21 = 0.0f;
     if (A12 < 0.0f) {
       A12 = -A12;
       A22 = -A22;
@@ -606,6 +626,10 @@ pvn_sljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+
+    (void)printf("tan(ϑ)=%s, ", pvn_stoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_stoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_stoa(s, st));
   }
 
   if (e == 3) {
@@ -639,15 +663,12 @@ pvn_sljsv2_
       ct = 1.0f / ct;
     }
     A11 = *s1;
-    A21 = -0.0f;
+    A21 = 0.0f;
     e = 0;
-  }
 
-  if (copysignf(1.0f, A21) == -1.0f) {
     (void)printf("tan(ϑ)=%s, ", pvn_stoa(s, tt));
     (void)printf("cos(ϑ)=%s, ", pvn_stoa(s, ct));
     (void)printf("sin(ϑ)=%s\n", pvn_stoa(s, st));
-    A21 = 0.0f;
   }
 
   if (e == 5) {
@@ -683,12 +704,13 @@ pvn_sljsv2_
     A11 = *s1;
     A12 = 0.0f;
     e = 0;
+
     (void)printf("tan(θ)=%s, ", pvn_stoa(s, tt));
     (void)printf("cos(θ)=%s, ", pvn_stoa(s, ct));
     (void)printf("sin(θ)=%s\n", pvn_stoa(s, st));
   }
 
-  (void)printf("\tA =\n");
+  (void)printf("\tA * 2^(*es) =\n");
   (void)printf("%s ", pvn_stoa(s, A11));
   (void)printf("%s\n", pvn_stoa(s, A12));
   (void)printf("%s ", pvn_stoa(s, A21));
@@ -874,7 +896,7 @@ pvn_dljsv2_
     return -3;
   if (!isfinite(*a22))
     return -4;
-  /* should not fail beyond this point */
+  /* should not fail beyond this point when *es == 0 */
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0) {
     knd |= 1;
@@ -921,27 +943,34 @@ pvn_dljsv2_
   case  5:
   case 10:
   case 12:
+  case 15:
     /* QR needed, extra scaling later */
     e = DBL_MAX_EXP - mxe - 1;
-    break;
-  case 15:
-    /* at least one QR needed, extra scaling later */
-    e = DBL_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
   if (*es) {
     A11 = scalbn(A11, *es);
+    if (!isfinite(A11))
+      return -5;
     A21 = scalbn(A21, *es);
+    if (!isfinite(A21))
+      return -6;
     A12 = scalbn(A12, *es);
+    if (!isfinite(A12))
+      return -7;
     A22 = scalbn(A22, *es);
+    if (!isfinite(A22))
+      return -8;
   }
 
   *u11 = 1.0;
@@ -1058,7 +1087,7 @@ pvn_cljsv2_
     return -7;
   if (!isfinite(*a22i))
     return -8;
-  /* should not fail beyond this point */
+  /* should not fail beyond this point when *es == 0 */
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0f) {
     kndi |= 1;
@@ -1167,21 +1196,39 @@ pvn_cljsv2_
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   float A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
   if (*es) {
     A11r = scalbnf(A11r, *es);
+    if (!isfinite(A11r))
+      return -9;
     A11i = scalbnf(A11i, *es);
+    if (!isfinite(A11i))
+      return -10;
     A21r = scalbnf(A21r, *es);
+    if (!isfinite(A21r))
+      return -11;
     A21i = scalbnf(A21i, *es);
+    if (!isfinite(A21i))
+      return -12;
     A12r = scalbnf(A12r, *es);
+    if (!isfinite(A12r))
+      return -13;
     A12i = scalbnf(A12i, *es);
+    if (!isfinite(A12i))
+      return -14;
     A22r = scalbnf(A22r, *es);
+    if (!isfinite(A22r))
+      return -15;
     A22i = scalbnf(A22i, *es);
+    if (!isfinite(A22i))
+      return -16;
   }
 
   *u11r = 1.0f;
@@ -1305,7 +1352,7 @@ pvn_zljsv2_
     return -7;
   if (!isfinite(*a22i))
     return -8;
-  /* should not fail beyond this point */
+  /* should not fail beyond this point when *es == 0 */
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0) {
     kndi |= 1;
@@ -1413,21 +1460,39 @@ pvn_zljsv2_
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
   if (*es) {
     A11r = scalbn(A11r, *es);
+    if (!isfinite(A11r))
+      return -9;
     A11i = scalbn(A11i, *es);
+    if (!isfinite(A11i))
+      return -10;
     A21r = scalbn(A21r, *es);
+    if (!isfinite(A21r))
+      return -11;
     A21i = scalbn(A21i, *es);
+    if (!isfinite(A21i))
+      return -12;
     A12r = scalbn(A12r, *es);
+    if (!isfinite(A12r))
+      return -13;
     A12i = scalbn(A12i, *es);
+    if (!isfinite(A12i))
+      return -14;
     A22r = scalbn(A22r, *es);
+    if (!isfinite(A22r))
+      return -15;
     A22i = scalbn(A22i, *es);
+    if (!isfinite(A22i))
+      return -16;
   }
 
   *u11r = 1.0;
@@ -1573,27 +1638,34 @@ int pvn_xljsv2_
   case  5:
   case 10:
   case 12:
+  case 15:
     /* QR needed, extra scaling later */
     e = LDBL_MAX_EXP - mxe - 1;
-    break;
-  case 15:
-    /* at least one QR needed, extra scaling later */
-    e = LDBL_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   long double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
   if (*es) {
     A11 = scalbnl(A11, *es);
+    if (!isfinite(A11))
+      return -5;
     A21 = scalbnl(A21, *es);
+    if (!isfinite(A21))
+      return -6;
     A12 = scalbnl(A12, *es);
+    if (!isfinite(A12))
+      return -7;
     A22 = scalbnl(A22, *es);
+    if (!isfinite(A22))
+      return -8;
   }
 
   *u11 = 1.0L;
@@ -1800,21 +1872,39 @@ int pvn_wljsv2_
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   long double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
   if (*es) {
     A11r = scalbnl(A11r, *es);
+    if (!isfinite(A11r))
+      return -9;
     A11i = scalbnl(A11i, *es);
+    if (!isfinite(A11i))
+      return -10;
     A21r = scalbnl(A21r, *es);
+    if (!isfinite(A21r))
+      return -11;
     A21i = scalbnl(A21i, *es);
+    if (!isfinite(A21i))
+      return -12;
     A12r = scalbnl(A12r, *es);
+    if (!isfinite(A12r))
+      return -13;
     A12i = scalbnl(A12i, *es);
+    if (!isfinite(A12i))
+      return -14;
     A22r = scalbnl(A22r, *es);
+    if (!isfinite(A22r))
+      return -15;
     A22i = scalbnl(A22i, *es);
+    if (!isfinite(A22i))
+      return -16;
   }
 
   *u11r = 1.0L;
@@ -1960,27 +2050,34 @@ int pvn_qljsv2_
   case  5:
   case 10:
   case 12:
+  case 15:
     /* QR needed, extra scaling later */
     e = FLT128_MAX_EXP - mxe - 1;
-    break;
-  case 15:
-    /* at least one QR needed, extra scaling later */
-    e = FLT128_MAX_EXP - mxe - 2;
     break;
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   __float128 A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
   if (*es) {
     A11 = scalbnq(A11, *es);
+    if (!isfiniteq(A11))
+      return -5;
     A21 = scalbnq(A21, *es);
+    if (!isfiniteq(A21))
+      return -6;
     A12 = scalbnq(A12, *es);
+    if (!isfiniteq(A12))
+      return -7;
     A22 = scalbnq(A22, *es);
+    if (!isfiniteq(A22))
+      return -8;
   }
 
   *u11 = 1.0q;
@@ -2187,21 +2284,39 @@ int pvn_yljsv2_
   default:
     return INT_MIN;
   }
+  mxe = *es;
   if (!*es)
     *es = e;
   else if (*es < 0)
     ++*es;
 
+  /* scaling by 2^(*es), can only fail when mxe != 0 */
   __float128 A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
   if (*es) {
     A11r = scalbnq(A11r, *es);
+    if (!isfiniteq(A11r))
+      return -9;
     A11i = scalbnq(A11i, *es);
+    if (!isfiniteq(A11i))
+      return -10;
     A21r = scalbnq(A21r, *es);
+    if (!isfiniteq(A21r))
+      return -11;
     A21i = scalbnq(A21i, *es);
+    if (!isfiniteq(A21i))
+      return -12;
     A12r = scalbnq(A12r, *es);
+    if (!isfiniteq(A12r))
+      return -13;
     A12i = scalbnq(A12i, *es);
+    if (!isfiniteq(A12i))
+      return -14;
     A22r = scalbnq(A22r, *es);
+    if (!isfiniteq(A22r))
+      return -15;
     A22i = scalbnq(A22i, *es);
+    if (!isfiniteq(A22i))
+      return -16;
   }
 
   *u11r = 1.0q;
