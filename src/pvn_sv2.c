@@ -75,7 +75,7 @@ pvn_sljsv2_
  float *const v11, float *const v21, float *const v12, float *const v22,
  float *const s1, float *const s2, int *const es)
 {
-  /* TODO: TEST THE ROUTINE */
+  /* TODO: TEST THE ROUTINE EXHAUSTIVELY */
   assert(a11);
   assert(a21);
   assert(a12);
@@ -143,10 +143,10 @@ pvn_sljsv2_
   case 12:
   case 13:
   case 14:
-    e = FLT_MAX_EXP - mxe - 1;
+    e = (FLT_MAX_EXP - mxe - 1);
     break;
   case 15:
-    e = FLT_MAX_EXP - mxe - 2;
+    e = (FLT_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
@@ -549,7 +549,7 @@ pvn_sljsv2_
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
     */
-    tt = A21 / A11;
+    tt = (A21 / A11);
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
     /* apply the left Givens rotation to A (and maybe to U) */
@@ -569,18 +569,18 @@ pvn_sljsv2_
       st = tt;
     }
     else {
-      A12 = fmaf(tt, A22, A12) / ct;
-      A22 = fmaf(st, A21, A22) / ct;
+      A12 = (fmaf(tt, A22, A12) / ct);
+      A22 = (fmaf(st, A21, A22) / ct);
       if ((A12 == 0.0f) || (A22 == 0.0f)) {
         A21 = *u11;
-        *u11 = fmaf(tt, *u21, *u11) / ct;
-        *u21 = fmaf(st,  A21, *u21) / ct;
+        *u11 = (fmaf(tt, *u21, *u11) / ct);
+        *u21 = (fmaf(st,  A21, *u21) / ct);
         A21 = *u12;
-        *u12 = fmaf(tt, *u22, *u12) / ct;
-        *u22 = fmaf(st,  A21, *u22) / ct;
+        *u12 = (fmaf(tt, *u22, *u12) / ct);
+        *u22 = (fmaf(st,  A21, *u22) / ct);
       }
-      st = tt / ct;
-      ct = 1.0f / ct;
+      st = (tt / ct);
+      ct = (1.0f / ct);
     }
     A11 = *s1;
     A21 = 0.0f;
@@ -645,7 +645,7 @@ pvn_sljsv2_
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
     */
-    tt = A21 / A11;
+    tt = (A21 / A11);
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
     /* apply the left Givens rotation to U */
@@ -660,13 +660,13 @@ pvn_sljsv2_
       st = tt;
     }
     else {
-      *u11 = fmaf(tt, *u21, *u11) / ct;
-      *u21 = fmaf(st,  A21, *u21) / ct;
+      *u11 = (fmaf(tt, *u21, *u11) / ct);
+      *u21 = (fmaf(st,  A21, *u21) / ct);
       A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12) / ct;
-      *u22 = fmaf(st,  A21, *u22) / ct;
-      st = tt / ct;
-      ct = 1.0f / ct;
+      *u12 = (fmaf(tt, *u22, *u12) / ct);
+      *u22 = (fmaf(st,  A21, *u22) / ct);
+      st = (tt / ct);
+      ct = (1.0f / ct);
     }
     A11 = *s1;
     A21 = 0.0f;
@@ -684,7 +684,7 @@ pvn_sljsv2_
        cos(θ) -sin(θ)
        sin(θ)  cos(θ)
     */
-    tt = A12 / A11;
+    tt = (A12 / A11);
     /* 1 / cos */
     ct = hypotf(tt, 1.0f);
     /* apply the right Givens rotation to V */
@@ -699,13 +699,13 @@ pvn_sljsv2_
       st = tt;
     }
     else {
-      *v11 = fmaf(tt, *v12, *v11) / ct;
-      *v12 = fmaf(st,  A12, *v12) / ct;
+      *v11 = (fmaf(tt, *v12, *v11) / ct);
+      *v12 = (fmaf(st,  A12, *v12) / ct);
       A12 = *v21;
-      *v21 = fmaf(tt, *v22, *v21) / ct;
-      *v22 = fmaf(st,  A12, *v22) / ct;
-      st = tt / ct;
-      ct = 1.0f / ct;
+      *v21 = (fmaf(tt, *v22, *v21) / ct);
+      *v22 = (fmaf(st,  A12, *v22) / ct);
+      st = (tt / ct);
+      ct = (1.0f / ct);
     }
     A11 = *s1;
     A12 = 0.0f;
@@ -820,7 +820,7 @@ pvn_sljsv2_
     }
     else {
       *s1 = (fmaf(tf, A22, A12) / cf);
-      *s2 = ((A11 * tf) / cf);
+      *s2 = (A11 * sf);
       cp = 0.0f;
       sp = 1.0f;
     }
@@ -845,11 +845,11 @@ pvn_sljsv2_
       }
       const float _sf_t = -sf_t;
       A21 = *u11;
-      *u11 = _sf_t * *u21 + cf_t * *u11;
-      *u21 = _sf_t *  A21 - cf_t * *u21;
+      *u11 = (_sf_t * *u21 + cf_t * *u11);
+      *u21 = (_sf_t *  A21 - cf_t * *u21);
       A21 = *u12;
-      *u12 = _sf_t * *u22 + cf_t * *u12;
-      *u22 = _sf_t *  A21 - cf_t * *u22;
+      *u12 = (_sf_t * *u22 + cf_t * *u12);
+      *u22 = (_sf_t *  A21 - cf_t * *u22);
       A21 = -1.0f;
     }
     else if (tt != 0.0f) {
@@ -872,11 +872,11 @@ pvn_sljsv2_
         }
       }
       A21 = *u11;
-      *u11 = cft * *u11 + sft * *u21;
-      *u21 = cft * *u21 - sft *  A21;
+      *u11 = (cft * *u11 + sft * *u21);
+      *u21 = (cft * *u21 - sft *  A21);
       A21 = *u12;
-      *u12 = cft * *u12 + sft * *u22;
-      *u22 = cft * *u22 - sft *  A21;
+      *u12 = (cft * *u12 + sft * *u22);
+      *u22 = (cft * *u22 - sft *  A21);
       A21 = 1.0f;
     }
     else if (tf != 0.0f) {
@@ -885,11 +885,11 @@ pvn_sljsv2_
          -sin(φ)  cos(φ)
        */
       A21 = *u11;
-      *u11 = cf * *u11 + sf * *u21;
-      *u21 = cf * *u21 - sf *  A21;
+      *u11 = (cf * *u11 + sf * *u21);
+      *u21 = (cf * *u21 - sf *  A21);
       A21 = *u12;
-      *u12 = cf * *u12 + sf * *u22;
-      *u22 = cf * *u22 - sf *  A21;
+      *u12 = (cf * *u12 + sf * *u22);
+      *u22 = (cf * *u22 - sf *  A21);
       A21 = -0.0f;
     }
     else /* U^T(φ) = I */
@@ -905,11 +905,11 @@ pvn_sljsv2_
          sin(ψ)  cos(ψ)
       */
       A21 = *v11;
-      *v11 = *v11 * cp + *v12 * sp;
-      *v12 = *v12 * cp -  A21 * sp;
+      *v11 = (*v11 * cp + *v12 * sp);
+      *v12 = (*v12 * cp -  A21 * sp);
       A21 = *v21;
-      *v21 = *v21 * cp + *v22 * sp;
-      *v22 = *v22 * cp -  A21 * sp;
+      *v21 = (*v21 * cp + *v22 * sp);
+      *v22 = (*v22 * cp -  A21 * sp);
       A21 = -0.0f;
     }
     else /* V(ψ) = I */
@@ -1009,10 +1009,10 @@ pvn_dljsv2_
   case 12:
   case 13:
   case 14:
-    e = DBL_MAX_EXP - mxe - 1;
+    e = (DBL_MAX_EXP - mxe - 1);
     break;
   case 15:
-    e = DBL_MAX_EXP - mxe - 2;
+    e = (DBL_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
@@ -1237,7 +1237,7 @@ pvn_cljsv2_
       (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
 
-  const int knd = kndr | kndi;
+  const int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -1256,7 +1256,7 @@ pvn_cljsv2_
   case 13:
   case 14:
   case 15:
-    e = FLT_MAX_EXP - mxe - 2;
+    e = (FLT_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
@@ -1499,7 +1499,7 @@ pvn_zljsv2_
 #endif /* ?_WIN32 */
       (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
-  const int knd = kndr | kndi;
+  const int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -1518,7 +1518,7 @@ pvn_zljsv2_
   case 13:
   case 14:
   case 15:
-    e = DBL_MAX_EXP - mxe - 2;
+    e = (DBL_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
@@ -1700,10 +1700,10 @@ int pvn_xljsv2_
   case 12:
   case 13:
   case 14:
-    e = LDBL_MAX_EXP - mxe - 1;
+    e = (LDBL_MAX_EXP - mxe - 1);
     break;
   case 15:
-    e = LDBL_MAX_EXP - mxe - 2;
+    e = (LDBL_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
@@ -1909,7 +1909,7 @@ int pvn_wljsv2_
     *u22r = 0.0L;
     return pvn_xljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
-  const int knd = kndr | kndi;
+  const int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -1928,7 +1928,7 @@ int pvn_wljsv2_
   case 13:
   case 14:
   case 15:
-    e = LDBL_MAX_EXP - mxe - 2;
+    e = (LDBL_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
@@ -2110,10 +2110,10 @@ int pvn_qljsv2_
   case 12:
   case 13:
   case 14:
-    e = FLT128_MAX_EXP - mxe - 1;
+    e = (FLT128_MAX_EXP - mxe - 1);
     break;
   case 15:
-    e = FLT128_MAX_EXP - mxe - 2;
+    e = (FLT128_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
@@ -2319,7 +2319,7 @@ int pvn_yljsv2_
     *u22r = 0.0q;
     return pvn_qljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
-  const int knd = kndr | kndi;
+  const int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -2338,7 +2338,7 @@ int pvn_yljsv2_
   case 13:
   case 14:
   case 15:
-    e = FLT128_MAX_EXP - mxe - 2;
+    e = (FLT128_MAX_EXP - mxe - 2);
     break;
   default:
     return INT_MIN;
