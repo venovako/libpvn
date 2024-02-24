@@ -46,8 +46,6 @@ pvn_sljsv2_
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-/* TODO: TEST THE ROUTINES EXHAUSTIVELY */
-
 static inline void ef_mulf(int *const e, float *const f, const int e1, const float f1, const int e2, const float f2)
 {
   assert(e);
@@ -817,14 +815,15 @@ pvn_sljsv2_
       nf = frexpf(sp, &ne);
       df = frexpf(A11, &de);
       ef_divf(&t2e, &t2f, ne, nf, de, df);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabsf(t2f);
       nf = frexpf(cf, &ne);
-      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
       ef_divf(&ae, &af, ne, nf, t2e, t2f);
       /* s2 = z * (cf / cp) */
       ef_mulf(&abe, &abf, be, bf, ae, af);
       /* s1 = x * (cp / cf) */
       ef_divf(&a_be, &a_bf, de, df, ae, af);
-      sp = 1.0f;
+      sp = copysignf(1.0f, tp);
       ef_divf(&ae, &af, 1, 0.5f, t2e, t2f);
       cp = scalbnf(af, ae);
     }
@@ -872,11 +871,19 @@ pvn_sljsv2_
       float tf_t = (tf - tt), cf_t = 1.0f, sf_t = 0.0f;
       if (tf_t != 0.0f) {
         tf_t /= fmaf(tf, tt, 1.0f);
-        /* 1 / cos */
-        cf_t = hypotf(tf_t, 1.0f);
-        sf_t = (tf_t / cf_t);
-        cf_t = (1.0f / cf_t);
+        if (isfinite(tf_t)) {
+          /* 1 / cos */
+          cf_t = hypotf(tf_t, 1.0f);
+          sf_t = (tf_t / cf_t);
+          cf_t = (1.0f / cf_t);
+        }
+        else {
+          sf_t = copysignf(1.0f, tf_t);
+          cf_t = 0.0f;
+        }
       }
+      else
+        sf_t = tf_t;
       const float _sf_t = -sf_t;
       A21 = *u11;
       *u11 = (_sf_t * *u21 + cf_t * *u11);
@@ -901,10 +908,12 @@ pvn_sljsv2_
           cft = (1.0f / cft);
         }
         else {
-          sft = 1.0f;
+          sft = copysignf(1.0f, tft);
           cft = 0.0f;
         }
       }
+      else
+        sft = tft;
       A21 = *u11;
       *u11 = (cft * *u11 + sft * *u21);
       *u21 = (cft * *u21 - sft *  A21);
@@ -1702,14 +1711,15 @@ pvn_dljsv2_
       nf = frexp(sp, &ne);
       df = frexp(A11, &de);
       ef_div(&t2e, &t2f, ne, nf, de, df);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabs(t2f);
       nf = frexp(cf, &ne);
-      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
       ef_div(&ae, &af, ne, nf, t2e, t2f);
       /* s2 = z * (cf / cp) */
       ef_mul(&abe, &abf, be, bf, ae, af);
       /* s1 = x * (cp / cf) */
       ef_div(&a_be, &a_bf, de, df, ae, af);
-      sp = 1.0;
+      sp = copysign(1.0, tp);
       ef_div(&ae, &af, 1, 0.5, t2e, t2f);
       cp = scalbn(af, ae);
     }
@@ -1753,11 +1763,19 @@ pvn_dljsv2_
       double tf_t = (tf - tt), cf_t = 1.0, sf_t = 0.0;
       if (tf_t != 0.0) {
         tf_t /= fma(tf, tt, 1.0);
-        /* 1 / cos */
-        cf_t = hypot(tf_t, 1.0);
-        sf_t = (tf_t / cf_t);
-        cf_t = (1.0 / cf_t);
+        if (isfinite(tf_t)) {
+          /* 1 / cos */
+          cf_t = hypot(tf_t, 1.0);
+          sf_t = (tf_t / cf_t);
+          cf_t = (1.0 / cf_t);
+        }
+        else {
+          sf_t = copysign(1.0, tf_t);
+          cf_t = 0.0;
+        }
       }
+      else
+        sf_t = tf_t;
       const double _sf_t = -sf_t;
       A21 = *u11;
       *u11 = (_sf_t * *u21 + cf_t * *u11);
@@ -1782,10 +1800,12 @@ pvn_dljsv2_
           cft = (1.0 / cft);
         }
         else {
-          sft = 1.0;
+          sft = copysign(1.0, tft);
           cft = 0.0;
         }
       }
+      else
+        sft = tft;
       A21 = *u11;
       *u11 = (cft * *u11 + sft * *u21);
       *u21 = (cft * *u21 - sft *  A21);
@@ -3025,14 +3045,15 @@ int pvn_xljsv2_
       nf = frexpl(sp, &ne);
       df = frexpl(A11, &de);
       ef_divl(&t2e, &t2f, ne, nf, de, df);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabsl(t2f);
       nf = frexpl(cf, &ne);
-      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
       ef_divl(&ae, &af, ne, nf, t2e, t2f);
       /* s2 = z * (cf / cp) */
       ef_mull(&abe, &abf, be, bf, ae, af);
       /* s1 = x * (cp / cf) */
       ef_divl(&a_be, &a_bf, de, df, ae, af);
-      sp = 1.0L;
+      sp = copysignl(1.0L, tp);
       ef_divl(&ae, &af, 1, 0.5L, t2e, t2f);
       cp = scalbnl(af, ae);
     }
@@ -3076,11 +3097,19 @@ int pvn_xljsv2_
       long double tf_t = (tf - tt), cf_t = 1.0L, sf_t = 0.0L;
       if (tf_t != 0.0L) {
         tf_t /= fmal(tf, tt, 1.0L);
-        /* 1 / cos */
-        cf_t = hypotl(tf_t, 1.0L);
-        sf_t = (tf_t / cf_t);
-        cf_t = (1.0L / cf_t);
+        if (isfinite(tf_t)) {
+          /* 1 / cos */
+          cf_t = hypotl(tf_t, 1.0L);
+          sf_t = (tf_t / cf_t);
+          cf_t = (1.0L / cf_t);
+        }
+        else {
+          sf_t = copysignl(1.0L, tf_t);
+          cf_t = 0.0L;
+        }
       }
+      else
+        sf_t = tf_t;
       const long double _sf_t = -sf_t;
       A21 = *u11;
       *u11 = (_sf_t * *u21 + cf_t * *u11);
@@ -3105,10 +3134,12 @@ int pvn_xljsv2_
           cft = (1.0L / cft);
         }
         else {
-          sft = 1.0L;
+          sft = copysignl(1.0L, tft);
           cft = 0.0L;
         }
       }
+      else
+        sft = tft;
       A21 = *u11;
       *u11 = (cft * *u11 + sft * *u21);
       *u21 = (cft * *u21 - sft *  A21);
@@ -4101,14 +4132,15 @@ int pvn_qljsv2_
       nf = frexpq(sp, &ne);
       df = frexpq(A11, &de);
       ef_divq(&t2e, &t2f, ne, nf, de, df);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabsq(t2f);
       nf = frexpq(cf, &ne);
-      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
       ef_divq(&ae, &af, ne, nf, t2e, t2f);
       /* s2 = z * (cf / cp) */
       ef_mulq(&abe, &abf, be, bf, ae, af);
       /* s1 = x * (cp / cf) */
       ef_divq(&a_be, &a_bf, de, df, ae, af);
-      sp = 1.0q;
+      sp = copysignq(1.0q, tp);
       ef_divq(&ae, &af, 1, 0.5q, t2e, t2f);
       cp = scalbnq(af, ae);
     }
@@ -4152,11 +4184,19 @@ int pvn_qljsv2_
       __float128 tf_t = (tf - tt), cf_t = 1.0q, sf_t = 0.0q;
       if (tf_t != 0.0q) {
         tf_t /= fmaq(tf, tt, 1.0q);
-        /* 1 / cos */
-        cf_t = hypotq(tf_t, 1.0q);
-        sf_t = (tf_t / cf_t);
-        cf_t = (1.0q / cf_t);
+        if (isfiniteq(tf_t)) {
+          /* 1 / cos */
+          cf_t = hypotq(tf_t, 1.0q);
+          sf_t = (tf_t / cf_t);
+          cf_t = (1.0q / cf_t);
+        }
+        else {
+          sf_t = copysignq(1.0q, tf_t);
+          cf_t = 0.0q;
+        }
       }
+      else
+        sf_t = tf_t;
       const __float128 _sf_t = -sf_t;
       A21 = *u11;
       *u11 = (_sf_t * *u21 + cf_t * *u11);
@@ -4181,10 +4221,12 @@ int pvn_qljsv2_
           cft = (1.0q / cft);
         }
         else {
-          sft = 1.0q;
+          sft = copysignq(1.0q, tft);
           cft = 0.0q;
         }
       }
+      else
+        sft = tft;
       A21 = *u11;
       *u11 = (cft * *u11 + sft * *u21);
       *u21 = (cft * *u21 - sft *  A21);
