@@ -46,6 +46,8 @@ pvn_sljsv2_
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+/* TODO: TEST THE ROUTINES EXHAUSTIVELY */
+
 static inline void ef_mulf(int *const e, float *const f, const int e1, const float f1, const int e2, const float f2)
 {
   assert(e);
@@ -75,7 +77,6 @@ pvn_sljsv2_
  float *const v11, float *const v21, float *const v12, float *const v22,
  float *const s1, float *const s2, int *const es)
 {
-  /* TODO: TEST THE ROUTINE EXHAUSTIVELY */
   assert(a11);
   assert(a21);
   assert(a12);
@@ -2007,40 +2008,6 @@ pvn_cljsv2_
   *s2 = 0.0f;
 
   /* TODO */
-  switch (knd) {
-  case  1:
-    break;
-  case  2:
-    break;
-  case  3:
-    break;
-  case  4:
-    break;
-  case  5:
-    break;
-  case  6:
-    break;
-  case  7:
-    break;
-  case  8:
-    break;
-  case  9:
-    break;
-  case 10:
-    break;
-  case 11:
-    break;
-  case 12:
-    break;
-  case 13:
-    break;
-  case 14:
-    break;
-  case 15:
-    break;
-  default:
-    return INT_MIN;
-  }
 
   if (*s1 < *s2) {
     pvn_fswp(u11r, u21r);
@@ -2269,40 +2236,6 @@ pvn_zljsv2_
   *s2 = 0.0;
 
   /* TODO */
-  switch (knd) {
-  case  1:
-    break;
-  case  2:
-    break;
-  case  3:
-    break;
-  case  4:
-    break;
-  case  5:
-    break;
-  case  6:
-    break;
-  case  7:
-    break;
-  case  8:
-    break;
-  case  9:
-    break;
-  case 10:
-    break;
-  case 11:
-    break;
-  case 12:
-    break;
-  case 13:
-    break;
-  case 14:
-    break;
-  case 15:
-    break;
-  default:
-    return INT_MIN;
-  }
 
   if (*s1 < *s2) {
     pvn_dswp(u11r, u21r);
@@ -2459,42 +2392,703 @@ int pvn_xljsv2_
   *s1 = 0.0L;
   *s2 = 0.0L;
 
-  /* TODO */
+  /* simplify the form of A */
   switch (knd) {
   case  0:
+    /* [ 0 0 ] */
+    /* [ 0 0 ] */
+    *u11 = copysignl(1.0L, A11);
+    *u22 = copysignl(1.0L, A22);
+    A22 = A12 = A21 = A11 = 0.0L;
     break;
   case  1:
+    /* [ * 0 ] */
+    /* [ 0 0 ] */
+    if (A11 < 0.0L) {
+      *u11 = -1.0L;
+      A11 = -A11;
+    }
+    *u22 = copysignl(1.0L, A22);
+    A22 = A12 = A21 = 0.0L;
+    *s1 = A11;
     break;
   case  2:
+    /* [ 0 0 ] */
+    /* [ * 0 ] */
+    *u11 = 0.0L;
+    *u22 = 0.0L;
+    A11 = A21;
+    A22 = A12;
+    if (A11 < 0.0L) {
+      *u12 = -1.0L;
+      A11 = -A11;
+    }
+    else
+      *u12 = 1.0L;
+    *u21 = copysignl(1.0L, A12);
+    A22 = A12 = A21 = 0.0L;
+    *s1 = A11;
     break;
   case  3:
+    /* [ * 0 ] */
+    /* [ * 0 ] */
+    A12 = fabsl(A11);
+    A22 = fabsl(A21);
+    if (A12 < A22) {
+      *u11 = 0.0L;
+      *u21 = copysignl(1.0L, A11);
+      *u12 = copysignl(1.0L, A21);
+      *u22 = 0.0L;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysignl(1.0L, A11);
+      *u22 = copysignl(1.0L, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0L;
+    *s1 = hypotl(A11, A21);
+    e = 3;
     break;
   case  4:
+    /* [ 0 * ] */
+    /* [ 0 0 ] */
+    *u11 = copysignl(1.0L, A12);
+    *u22 = copysignl(1.0L, A21);
+    A11 = fabsl(A12);
+    A22 = A12 = A21 = 0.0L;
+    *v11 = 0.0L;
+    *v21 = 1.0L;
+    *v12 = 1.0L;
+    *v22 = 0.0L;
+    *s1 = A11;
     break;
   case  5:
+    /* [ * * ] */
+    /* [ 0 0 ] */
+    A21 = fabsl(A11);
+    A22 = fabsl(A12);
+    if (A21 < A22) {
+      *v11 = 0.0L;
+      *v21 = copysignl(1.0L, A12);
+      *v12 = copysignl(1.0L, A11);
+      *v22 = 0.0L;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysignl(1.0L, A11);
+      *v22 = copysignl(1.0L, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0L;
+    *s1 = hypotl(A11, A12);
+    e = 5;
     break;
   case  6:
+    /* [ 0 * ] */
+    /* [ * 0 ] */
+    *u11 = copysignl(1.0L, A12);
+    *u22 = copysignl(1.0L, A21);
+    A11 = fabsl(A12);
+    A22 = fabsl(A21);
+    A12 = A21 = 0.0L;
+    *v11 = 0.0L;
+    *v21 = 1.0L;
+    *v12 = 1.0L;
+    *v22 = 0.0L;
+    *s1 = A11;
+    *s2 = A22;
     break;
   case  7:
+    /* [ * * ] */
+    /* [ * 0 ] */
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0L;
+    *v11 = 0.0L;
+    *v22 = 0.0L;
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v21 = -1.0L;
+    }
+    else
+      *v21 = 1.0L;
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0L;
+    }
+    else
+      *v12 = 1.0L;
+    if (A22 < 0.0L) {
+      *u22 = -1.0L;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case  8:
+    /* [ 0 0 ] */
+    /* [ 0 * ] */
+    *u11 = 0.0L;
+    *u21 = copysignl(1.0L, A11);
+    *u12 = copysignl(1.0L, A22);
+    *u22 = 0.0L;
+    A11 = fabsl(A22);
+    A22 = A12 = A21 = 0.0L;
+    *v11 = 0.0L;
+    *v21 = 1.0L;
+    *v12 = 1.0L;
+    *v22 = 0.0L;
+    *s1 = A11;
     break;
   case  9:
+    /* [ * 0 ] */
+    /* [ 0 * ] */
+    if (A11 < 0.0L) {
+      *u11 = -1.0L;
+      A11 = -A11;
+    }
+    if (A22 < 0.0L) {
+      *u22 = -1.0L;
+      A22 = -A22;
+    }
+    A12 = A21 = 0.0L;
+    *s1 = A11;
+    *s2 = A22;
     break;
   case 10:
+    /* [ 0 0 ] */
+    /* [ * * ] */
+    *u11 = 0.0L;
+    *u21 = 1.0L;
+    *u12 = 1.0L;
+    *u22 = 0.0L;
+    A11 = A21;
+    A12 = A22;
+    A21 = fabsl(A11);
+    A22 = fabsl(A12);
+    if (A21 < A22) {
+      *v11 = 0.0L;
+      *v21 = copysignl(1.0L, A12);
+      *v12 = copysignl(1.0L, A11);
+      *v22 = 0.0L;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysignl(1.0L, A11);
+      *v22 = copysignl(1.0L, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0L;
+    *s1 = hypotl(A11, A12);
+    e = 5;
     break;
   case 11:
+    /* [ * 0 ] */
+    /* [ * * ] */
+    *u11 = 0.0L;
+    *u12 = 1.0L;
+    *u22 = 0.0L;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0L;
+    *v11 = 0.0L;
+    *v22 = 0.0L;
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v21 = -1.0L;
+    }
+    else
+      *v21 = 1.0L;
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0L;
+    }
+    else
+      *v12 = 1.0L;
+    if (A22 < 0.0L) {
+      *u21 = -1.0L;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0L;
+    e = 13;
     break;
   case 12:
+    /* [ 0 * ] */
+    /* [ 0 * ] */
+    A11 = A12;
+    A21 = A22;
+    *v11 = 0.0L;
+    *v21 = 1.0L;
+    *v12 = 1.0L;
+    *v22 = 0.0L;
+    A12 = fabsl(A11);
+    A22 = fabsl(A21);
+    if (A12 < A22) {
+      *u11 = 0.0L;
+      *u21 = copysignl(1.0L, A11);
+      *u12 = copysignl(1.0L, A21);
+      *u22 = 0.0L;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysignl(1.0L, A11);
+      *u22 = copysignl(1.0L, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0L;
+    *s1 = hypotl(A11, A21);
+    e = 3;
     break;
   case 13:
+    /* [ * * ] */
+    /* [ 0 * ] */
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v11 = -1.0L;
+    }
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0L;
+    }
+    if (A22 < 0.0L) {
+      *u22 = -1.0L;
+      A22 = -A22;
+    }
+    A21 = 0.0L;
+    e = 13;
     break;
   case 14:
+    /* [ 0 * ] */
+    /* [ * * ] */
+    *u11 = 0.0L;
+    *u12 = 1.0L;
+    *u22 = 0.0L;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0L;
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v11 = -1.0L;
+    }
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0L;
+    }
+    if (A22 < 0.0L) {
+      *u21 = -1.0L;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0L;
+    e = 13;
     break;
   case 15:
+    /* [ * * ] */
+    /* [ * * ] */
+    *s1 = hypotl(A11, A21);
+    *s2 = hypotl(A12, A22);
+    if (*s1 < *s2) {
+      pvn_Lswp(&A11, &A12);
+      pvn_Lswp(&A21, &A22);
+      *v11 = 0.0L;
+      *v21 = 1.0L;
+      *v12 = 1.0L;
+      *v22 = 0.0L;
+      pvn_Lswp(s1, s2);
+    }
+    if (A11 < 0.0L) {
+      *u11 = -1.0L;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (A21 < 0.0L) {
+      *u22 = -1.0L;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_Lswp(u11, u21);
+      pvn_Lswp(u12, u22);
+      pvn_Lswp(&A11, &A21);
+      pvn_Lswp(&A12, &A22);
+    }
+    e = 15;
     break;
   default:
     return INT_MIN;
+  }
+
+  long double tt = 0.0L, ct = 1.0L, st = 0.0L;
+
+  if (e == 15) {
+    /* [ X y ] */
+    /* [ x z ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
+    tt = (A21 / A11);
+    /* 1 / cos */
+    ct = hypotl(tt, 1.0L);
+    /* apply the left Givens rotation to A (and maybe to U) */
+    st = -tt;
+    A21 = A12;
+    if (ct == 1.0L) {
+      A12 = fmal(tt, A22, A12);
+      A22 = fmal(st, A21, A22);
+      if ((A12 == 0.0L) || (A22 == 0.0L)) {
+        A21 = *u11;
+        *u11 = fmal(tt, *u21, *u11);
+        *u21 = fmal(st,  A21, *u21);
+        A21 = *u12;
+        *u12 = fmal(tt, *u22, *u12);
+        *u22 = fmal(st,  A21, *u22);
+      }
+      st = tt;
+    }
+    else {
+      A12 = (fmal(tt, A22, A12) / ct);
+      A22 = (fmal(st, A21, A22) / ct);
+      if ((A12 == 0.0L) || (A22 == 0.0L)) {
+        A21 = *u11;
+        *u11 = (fmal(tt, *u21, *u11) / ct);
+        *u21 = (fmal(st,  A21, *u21) / ct);
+        A21 = *u12;
+        *u12 = (fmal(tt, *u22, *u12) / ct);
+        *u22 = (fmal(st,  A21, *u22) / ct);
+      }
+      st = (tt / ct);
+      ct = (1.0L / ct);
+    }
+    A11 = *s1;
+    A21 = 0.0L;
+    if (A12 == 0.0L) {
+      A12 = 0.0L;
+      if (copysignl(1.0L, A22) != 1.0L) {
+        if (*u21 != 0.0L)
+          *u21 = -*u21;
+        if (*u22 != 0.0L)
+          *u22 = -*u22;
+        A22 = -A22;
+      }
+      *s2 = A22;
+      e = 0;
+    }
+    else if (A22 == 0.0L) {
+      if (A12 < 0.0L) {
+        A12 = -A12;
+        A22 = -A22;
+        if (*v12 != 0.0L)
+          *v12 = -*v12;
+        else
+          *v22 = -*v22;
+      }
+      if (copysignl(1.0L, A22) != 1.0L) {
+        if (*u21 != 0.0L)
+          *u21 = -*u21;
+        if (*u22 != 0.0L)
+          *u22 = -*u22;
+        A22 = 0.0L;
+      }
+      *s1 = hypotl(*s1, *s2);
+      *s2 = 0.0L;
+      e = 5;
+    }
+    else
+      e = 13;
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      if (*v12 != 0.0L)
+        *v12 = -*v12;
+      else
+        *v22 = -*v22;
+    }
+    if (A22 < 0.0L) {
+      A22 = -A22;
+      /* sin(ϑ) is always non-negative by construction */
+      /* this is just an extra bit of info, used later */
+      st = -st;
+    }
+  }
+
+  if (e == 3) {
+    /* [ X 0 ] */
+    /* [ x 0 ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
+    tt = (A21 / A11);
+    /* 1 / cos */
+    ct = hypotl(tt, 1.0L);
+    /* apply the left Givens rotation to U */
+    st = -tt;
+    A21 = *u11;
+    if (ct == 1.0L) {
+      *u11 = fmal(tt, *u21, *u11);
+      *u21 = fmal(st,  A21, *u21);
+      A21 = *u12;
+      *u12 = fmal(tt, *u22, *u12);
+      *u22 = fmal(st,  A21, *u22);
+      st = tt;
+    }
+    else {
+      *u11 = (fmal(tt, *u21, *u11) / ct);
+      *u21 = (fmal(st,  A21, *u21) / ct);
+      A21 = *u12;
+      *u12 = (fmal(tt, *u22, *u12) / ct);
+      *u22 = (fmal(st,  A21, *u22) / ct);
+      st = (tt / ct);
+      ct = (1.0L / ct);
+    }
+    A11 = *s1;
+    A21 = 0.0L;
+    e = 0;
+  }
+
+  if (e == 5) {
+    /* [ X x ] */
+    /* [ 0 0 ] */
+    /* V(θ):
+       cos(θ) -sin(θ)
+       sin(θ)  cos(θ)
+    */
+    tt = (A12 / A11);
+    /* 1 / cos */
+    ct = hypotl(tt, 1.0L);
+    /* apply the right Givens rotation to V */
+    st = -tt;
+    A12 = *v11;
+    if (ct == 1.0L) {
+      *v11 = fmal(tt, *v12, *v11);
+      *v12 = fmal(st,  A12, *v12);
+      A12 = *v21;
+      *v21 = fmal(tt, *v22, *v21);
+      *v22 = fmal(st,  A12, *v22);
+      st = tt;
+    }
+    else {
+      *v11 = (fmal(tt, *v12, *v11) / ct);
+      *v12 = (fmal(st,  A12, *v12) / ct);
+      A12 = *v21;
+      *v21 = (fmal(tt, *v22, *v21) / ct);
+      *v22 = (fmal(st,  A12, *v22) / ct);
+      st = (tt / ct);
+      ct = (1.0L / ct);
+    }
+    A11 = *s1;
+    A12 = 0.0L;
+    e = 0;
+  }
+
+  if (e == 13) {
+    /* [ x y ] */
+    /* [ 0 z ] */
+
+    /* should never overflow */
+    const long double a = hypotl(A11, A12);
+    const long double b = A22;
+
+    int ae = 0, be = 0;
+    long double af = frexpl(a, &ae);
+    long double bf = frexpl(b, &be);
+
+    long double abf = (a + b);
+    int abe = 0, de = 0;
+    if (!isfinite(abf)) {
+      abf = ((0.5L * a) + (0.5L * b));
+      de = 1;
+    }
+    abf = frexpl(abf, &abe);
+    abe += de;
+
+    int a_be = 0;
+    long double a_bf = (a - b), df = 0.0L;
+    if (a == b)
+      de = 0;
+    else if (isnormal(a_bf)) {
+      de = -1;
+      a_bf = frexpl(a_bf, &a_be);
+    }
+    else {
+      de = ((LDBL_MIN_EXP + LDBL_MANT_DIG) - pvn_imin(ae, be));
+      a_bf = (scalbnl(af, (ae + de)) - scalbnl(bf, (be + de)));
+      a_bf = frexpl(a_bf, &a_be);
+      a_be -= de;
+    }
+
+    if (de)
+      ef_mull(&de, &df, a_be, a_bf, abe, abf);
+
+    af = frexpl(A12, &ae);
+    int ne = 0;
+    long double nf = 0.0L;
+    ef_mull(&ne, &nf, ae, af, be, bf);
+    ++ne;
+
+    int t2e = 0;
+    long double t2f = 0.0L;
+    ef_divl(&t2e, &t2f, ne, nf, de, df);
+    const long double t2 = (isfinite(t2f) ? scalbnl(t2f, t2e) : t2f);
+
+    long double tf = 0.0L, cf = 1.0L, sf = 0.0L;    
+    if (isfinite(t2))
+      tf = (t2 / (1.0L + hypotl(t2, 1.0L)));
+    else
+      tf = copysignl(1.0L, t2);
+    cf = hypotl(tf, 1.0L);
+    sf = (tf / cf);
+
+    long double tp = 0.0L, cp = 1.0L, sp = 0.0L;
+    /* this should never overflow... */
+    tp = fmal(tf, A22, A12);
+    /* ...but this might */
+    tp /= A11;
+
+    if (isfinite(tp)) {
+      /* 1 / cos */
+      cp = hypotl(tp, 1.0L);
+      sp = (tp / cp);
+      nf = frexpl(cf, &ne);
+      df = frexpl(cp, &de);
+      ef_divl(&ae, &af, ne, nf, de, df);
+      /* s2 = z * (cf / cp) */
+      ef_mull(&abe, &abf, be, bf, ae, af);
+      bf = frexpl(A11, &be);
+      /* s1 = x * (cp / cf) */
+      ef_divl(&a_be, &a_bf, be, bf, ae, af);
+      if (!mxe) {
+        if (abe > LDBL_MAX_EXP) {
+          ne = (LDBL_MAX_EXP - abe);
+          abe += ne;
+          a_be += ne;
+          *es += ne;
+        }
+        if (a_be > LDBL_MAX_EXP) {
+          de = (LDBL_MAX_EXP - a_be);
+          abe += de;
+          a_be += de;
+          *es += de;
+        }
+      }
+      *s1 = scalbnl(a_bf, a_be);
+      *s2 = scalbnl(abf, abe);
+      cp = (1.0L / cp);
+    }
+    else {
+      *s1 = (fmal(tf, A22, A12) / cf);
+      *s2 = (A11 * sf);
+      cp = 0.0L;
+      sp = 1.0L;
+    }
+    cf = (1.0L / cf);
+
+    /* update U */
+    if (copysignl(1.0L, st) != 1.0L) {
+      /* U^T(φ) * diag(1, -1) * U^T(ϑ):
+          cos(φ - ϑ) -sin(φ - ϑ)
+         -sin(φ - ϑ) -cos(φ - ϑ)
+      */
+      st = -st;
+      long double tf_t = (tf - tt), cf_t = 1.0L, sf_t = 0.0L;
+      if (tf_t != 0.0L) {
+        tf_t /= fmal(tf, tt, 1.0L);
+        /* 1 / cos */
+        cf_t = hypotl(tf_t, 1.0L);
+        sf_t = (tf_t / cf_t);
+        cf_t = (1.0L / cf_t);
+      }
+      const long double _sf_t = -sf_t;
+      A21 = *u11;
+      *u11 = (_sf_t * *u21 + cf_t * *u11);
+      *u21 = (_sf_t *  A21 - cf_t * *u21);
+      A21 = *u12;
+      *u12 = (_sf_t * *u22 + cf_t * *u12);
+      *u22 = (_sf_t *  A21 - cf_t * *u22);
+      A21 = -1.0L;
+    }
+    else if (tt != 0.0L) {
+      /* U^T(φ) * U^T(ϑ) = U^T(φ + ϑ):
+          cos(φ + ϑ)  sin(φ + ϑ)
+         -sin(φ + ϑ)  cos(φ + ϑ)
+      */
+      long double tft = (tf + tt), cft = 1.0L, sft = 0.0L;
+      if (tft != 0.0L) {
+        tft /= fmal(-tf, tt, 1.0L);
+        if (isfinite(tft)) {
+          /* 1 / cos */
+          cft = hypotl(tft, 1.0L);
+          sft = (tft / cft);
+          cft = (1.0L / cft);
+        }
+        else {
+          sft = 1.0L;
+          cft = 0.0L;
+        }
+      }
+      A21 = *u11;
+      *u11 = (cft * *u11 + sft * *u21);
+      *u21 = (cft * *u21 - sft *  A21);
+      A21 = *u12;
+      *u12 = (cft * *u12 + sft * *u22);
+      *u22 = (cft * *u22 - sft *  A21);
+      A21 = 1.0L;
+    }
+    else if (tf != 0.0L) {
+      /* U^T(φ):
+          cos(φ)  sin(φ)
+         -sin(φ)  cos(φ)
+       */
+      A21 = *u11;
+      *u11 = (cf * *u11 + sf * *u21);
+      *u21 = (cf * *u21 - sf *  A21);
+      A21 = *u12;
+      *u12 = (cf * *u12 + sf * *u22);
+      *u22 = (cf * *u22 - sf *  A21);
+      A21 = -0.0L;
+    }
+    else /* U^T(φ) = I */
+      A21 = 0.0L;
+
+    /* update V */
+    if (tp != 0.0L) {
+      /* V(ψ):
+         cos(ψ) -sin(ψ)
+         sin(ψ)  cos(ψ)
+      */
+      A21 = *v11;
+      *v11 = (*v11 * cp + *v12 * sp);
+      *v12 = (*v12 * cp -  A21 * sp);
+      A21 = *v21;
+      *v21 = (*v21 * cp + *v22 * sp);
+      *v22 = (*v22 * cp -  A21 * sp);
+      A21 = -0.0L;
+    }
+    else /* V(ψ) = I */
+      A21 = 0.0L;
+
+    A21 = 0.0L;
+    e = 0;
   }
 
   if (*s1 < *s2) {
@@ -2697,40 +3291,6 @@ int pvn_wljsv2_
   *s2 = 0.0L;
 
   /* TODO */
-  switch (knd) {
-  case  1:
-    break;
-  case  2:
-    break;
-  case  3:
-    break;
-  case  4:
-    break;
-  case  5:
-    break;
-  case  6:
-    break;
-  case  7:
-    break;
-  case  8:
-    break;
-  case  9:
-    break;
-  case 10:
-    break;
-  case 11:
-    break;
-  case 12:
-    break;
-  case 13:
-    break;
-  case 14:
-    break;
-  case 15:
-    break;
-  default:
-    return INT_MIN;
-  }
 
   if (*s1 < *s2) {
     pvn_Lswp(u11r, u21r);
@@ -2888,42 +3448,6 @@ int pvn_qljsv2_
   *s2 = 0.0q;
 
   /* TODO */
-  switch (knd) {
-  case  0:
-    break;
-  case  1:
-    break;
-  case  2:
-    break;
-  case  3:
-    break;
-  case  4:
-    break;
-  case  5:
-    break;
-  case  6:
-    break;
-  case  7:
-    break;
-  case  8:
-    break;
-  case  9:
-    break;
-  case 10:
-    break;
-  case 11:
-    break;
-  case 12:
-    break;
-  case 13:
-    break;
-  case 14:
-    break;
-  case 15:
-    break;
-  default:
-    return INT_MIN;
-  }
 
   if (*s1 < *s2) {
     pvn_qswp(u11, u21);
@@ -3125,40 +3649,6 @@ int pvn_yljsv2_
   *s2 = 0.0q;
 
   /* TODO */
-  switch (knd) {
-  case  1:
-    break;
-  case  2:
-    break;
-  case  3:
-    break;
-  case  4:
-    break;
-  case  5:
-    break;
-  case  6:
-    break;
-  case  7:
-    break;
-  case  8:
-    break;
-  case  9:
-    break;
-  case 10:
-    break;
-  case 11:
-    break;
-  case 12:
-    break;
-  case 13:
-    break;
-  case 14:
-    break;
-  case 15:
-    break;
-  default:
-    return INT_MIN;
-  }
 
   if (*s1 < *s2) {
     pvn_qswp(u11r, u21r);
