@@ -754,7 +754,7 @@ pvn_sljsv2_
     float a_bf = (a - b), df = 0.0f;
     if (a == b)
       de = 0;
-    else if (isnormal(a_bf)) {
+    else if (fabsf(a_bf) >= FLT_MIN) {
       de = -1;
       a_bf = frexpf(a_bf, &a_be);
     }
@@ -1645,7 +1645,7 @@ pvn_dljsv2_
     double a_bf = (a - b), df = 0.0;
     if (a == b)
       de = 0;
-    else if (isnormal(a_bf)) {
+    else if (fabs(a_bf) >= DBL_MIN) {
       de = -1;
       a_bf = frexp(a_bf, &a_be);
     }
@@ -2968,7 +2968,7 @@ int pvn_xljsv2_
     long double a_bf = (a - b), df = 0.0L;
     if (a == b)
       de = 0;
-    else if (isnormal(a_bf)) {
+    else if (fabsl(a_bf) >= LDBL_MIN) {
       de = -1;
       a_bf = frexpl(a_bf, &a_be);
     }
@@ -3510,7 +3510,725 @@ int pvn_qljsv2_
   *s1 = 0.0q;
   *s2 = 0.0q;
 
-  /* TODO */
+  /* simplify the form of A */
+  switch (knd) {
+  case  0:
+    /* [ 0 0 ] */
+    /* [ 0 0 ] */
+    *u11 = copysignq(1.0q, A11);
+    *u22 = copysignq(1.0q, A22);
+    A22 = A12 = A21 = A11 = 0.0q;
+    break;
+  case  1:
+    /* [ * 0 ] */
+    /* [ 0 0 ] */
+    if (A11 < 0.0q) {
+      *u11 = -1.0q;
+      A11 = -A11;
+    }
+    *u22 = copysignq(1.0q, A22);
+    A22 = A12 = A21 = 0.0q;
+    *s1 = A11;
+    break;
+  case  2:
+    /* [ 0 0 ] */
+    /* [ * 0 ] */
+    *u11 = 0.0q;
+    *u22 = 0.0q;
+    A11 = A21;
+    A22 = A12;
+    if (A11 < 0.0q) {
+      *u12 = -1.0q;
+      A11 = -A11;
+    }
+    else
+      *u12 = 1.0q;
+    *u21 = copysignq(1.0q, A12);
+    A22 = A12 = A21 = 0.0q;
+    *s1 = A11;
+    break;
+  case  3:
+    /* [ * 0 ] */
+    /* [ * 0 ] */
+    A12 = fabsq(A11);
+    A22 = fabsq(A21);
+    if (A12 < A22) {
+      *u11 = 0.0q;
+      *u21 = copysignq(1.0q, A11);
+      *u12 = copysignq(1.0q, A21);
+      *u22 = 0.0q;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysignq(1.0q, A11);
+      *u22 = copysignq(1.0q, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0q;
+    *s1 = hypotq(A11, A21);
+    e = 3;
+    break;
+  case  4:
+    /* [ 0 * ] */
+    /* [ 0 0 ] */
+    *u11 = copysignq(1.0q, A12);
+    *u22 = copysignq(1.0q, A21);
+    A11 = fabsq(A12);
+    A22 = A12 = A21 = 0.0q;
+    *v11 = 0.0q;
+    *v21 = 1.0q;
+    *v12 = 1.0q;
+    *v22 = 0.0q;
+    *s1 = A11;
+    break;
+  case  5:
+    /* [ * * ] */
+    /* [ 0 0 ] */
+    A21 = fabsq(A11);
+    A22 = fabsq(A12);
+    if (A21 < A22) {
+      *v11 = 0.0q;
+      *v21 = copysignq(1.0q, A12);
+      *v12 = copysignq(1.0q, A11);
+      *v22 = 0.0q;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysignq(1.0q, A11);
+      *v22 = copysignq(1.0q, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0q;
+    *s1 = hypotq(A11, A12);
+    e = 5;
+    break;
+  case  6:
+    /* [ 0 * ] */
+    /* [ * 0 ] */
+    *u11 = copysignq(1.0q, A12);
+    *u22 = copysignq(1.0q, A21);
+    A11 = fabsq(A12);
+    A22 = fabsq(A21);
+    A12 = A21 = 0.0q;
+    *v11 = 0.0q;
+    *v21 = 1.0q;
+    *v12 = 1.0q;
+    *v22 = 0.0q;
+    *s1 = A11;
+    *s2 = A22;
+    break;
+  case  7:
+    /* [ * * ] */
+    /* [ * 0 ] */
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0q;
+    *v11 = 0.0q;
+    *v22 = 0.0q;
+    if (A11 < 0.0q) {
+      A11 = -A11;
+      *v21 = -1.0q;
+    }
+    else
+      *v21 = 1.0q;
+    if (A12 < 0.0q) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0q;
+    }
+    else
+      *v12 = 1.0q;
+    if (A22 < 0.0q) {
+      *u22 = -1.0q;
+      A22 = -A22;
+    }
+    e = 13;
+    break;
+  case  8:
+    /* [ 0 0 ] */
+    /* [ 0 * ] */
+    *u11 = 0.0q;
+    *u21 = copysignq(1.0q, A11);
+    *u12 = copysignq(1.0q, A22);
+    *u22 = 0.0q;
+    A11 = fabsq(A22);
+    A22 = A12 = A21 = 0.0q;
+    *v11 = 0.0q;
+    *v21 = 1.0q;
+    *v12 = 1.0q;
+    *v22 = 0.0q;
+    *s1 = A11;
+    break;
+  case  9:
+    /* [ * 0 ] */
+    /* [ 0 * ] */
+    if (A11 < 0.0q) {
+      *u11 = -1.0q;
+      A11 = -A11;
+    }
+    if (A22 < 0.0q) {
+      *u22 = -1.0q;
+      A22 = -A22;
+    }
+    A12 = A21 = 0.0q;
+    *s1 = A11;
+    *s2 = A22;
+    break;
+  case 10:
+    /* [ 0 0 ] */
+    /* [ * * ] */
+    *u11 = 0.0q;
+    *u21 = 1.0q;
+    *u12 = 1.0q;
+    *u22 = 0.0q;
+    A11 = A21;
+    A12 = A22;
+    A21 = fabsq(A11);
+    A22 = fabsq(A12);
+    if (A21 < A22) {
+      *v11 = 0.0q;
+      *v21 = copysignq(1.0q, A12);
+      *v12 = copysignq(1.0q, A11);
+      *v22 = 0.0q;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysignq(1.0q, A11);
+      *v22 = copysignq(1.0q, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0q;
+    *s1 = hypotq(A11, A12);
+    e = 5;
+    break;
+  case 11:
+    /* [ * 0 ] */
+    /* [ * * ] */
+    *u11 = 0.0q;
+    *u12 = 1.0q;
+    *u22 = 0.0q;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0q;
+    *v11 = 0.0q;
+    *v22 = 0.0q;
+    if (A11 < 0.0q) {
+      A11 = -A11;
+      *v21 = -1.0q;
+    }
+    else
+      *v21 = 1.0q;
+    if (A12 < 0.0q) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0q;
+    }
+    else
+      *v12 = 1.0q;
+    if (A22 < 0.0q) {
+      *u21 = -1.0q;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0q;
+    e = 13;
+    break;
+  case 12:
+    /* [ 0 * ] */
+    /* [ 0 * ] */
+    A11 = A12;
+    A21 = A22;
+    *v11 = 0.0q;
+    *v21 = 1.0q;
+    *v12 = 1.0q;
+    *v22 = 0.0q;
+    A12 = fabsq(A11);
+    A22 = fabsq(A21);
+    if (A12 < A22) {
+      *u11 = 0.0q;
+      *u21 = copysignq(1.0q, A11);
+      *u12 = copysignq(1.0q, A21);
+      *u22 = 0.0q;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysignq(1.0q, A11);
+      *u22 = copysignq(1.0q, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0q;
+    *s1 = hypotq(A11, A21);
+    e = 3;
+    break;
+  case 13:
+    /* [ * * ] */
+    /* [ 0 * ] */
+    if (A11 < 0.0q) {
+      A11 = -A11;
+      *v11 = -1.0q;
+    }
+    if (A12 < 0.0q) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0q;
+    }
+    if (A22 < 0.0q) {
+      *u22 = -1.0q;
+      A22 = -A22;
+    }
+    A21 = 0.0q;
+    e = 13;
+    break;
+  case 14:
+    /* [ 0 * ] */
+    /* [ * * ] */
+    *u11 = 0.0q;
+    *u12 = 1.0q;
+    *u22 = 0.0q;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0q;
+    if (A11 < 0.0q) {
+      A11 = -A11;
+      *v11 = -1.0q;
+    }
+    if (A12 < 0.0q) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0q;
+    }
+    if (A22 < 0.0q) {
+      *u21 = -1.0q;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0q;
+    e = 13;
+    break;
+  case 15:
+    /* [ * * ] */
+    /* [ * * ] */
+    *s1 = hypotq(A11, A21);
+    *s2 = hypotq(A12, A22);
+    if (*s1 < *s2) {
+      pvn_qswp(&A11, &A12);
+      pvn_qswp(&A21, &A22);
+      *v11 = 0.0q;
+      *v21 = 1.0q;
+      *v12 = 1.0q;
+      *v22 = 0.0q;
+      pvn_qswp(s1, s2);
+    }
+    if (A11 < 0.0q) {
+      *u11 = -1.0q;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (A21 < 0.0q) {
+      *u22 = -1.0q;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_qswp(u11, u21);
+      pvn_qswp(u12, u22);
+      pvn_qswp(&A11, &A21);
+      pvn_qswp(&A12, &A22);
+    }
+    e = 15;
+    break;
+  default:
+    return INT_MIN;
+  }
+
+  __float128 tt = 0.0q, ct = 1.0q, st = 0.0q;
+
+  if (e == 15) {
+    /* [ X y ] */
+    /* [ x z ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
+    tt = (A21 / A11);
+    /* 1 / cos */
+    ct = hypotq(tt, 1.0q);
+    /* apply the left Givens rotation to A (and maybe to U) */
+    st = -tt;
+    A21 = A12;
+    if (ct == 1.0q) {
+      A12 = fmaq(tt, A22, A12);
+      A22 = fmaq(st, A21, A22);
+      if ((A12 == 0.0q) || (A22 == 0.0q)) {
+        A21 = *u11;
+        *u11 = fmaq(tt, *u21, *u11);
+        *u21 = fmaq(st,  A21, *u21);
+        A21 = *u12;
+        *u12 = fmaq(tt, *u22, *u12);
+        *u22 = fmaq(st,  A21, *u22);
+      }
+      st = tt;
+    }
+    else {
+      A12 = (fmaq(tt, A22, A12) / ct);
+      A22 = (fmaq(st, A21, A22) / ct);
+      if ((A12 == 0.0q) || (A22 == 0.0q)) {
+        A21 = *u11;
+        *u11 = (fmaq(tt, *u21, *u11) / ct);
+        *u21 = (fmaq(st,  A21, *u21) / ct);
+        A21 = *u12;
+        *u12 = (fmaq(tt, *u22, *u12) / ct);
+        *u22 = (fmaq(st,  A21, *u22) / ct);
+      }
+      st = (tt / ct);
+      ct = (1.0q / ct);
+    }
+    A11 = *s1;
+    A21 = 0.0q;
+    if (A12 == 0.0q) {
+      A12 = 0.0q;
+      if (copysignq(1.0q, A22) != 1.0q) {
+        if (*u21 != 0.0q)
+          *u21 = -*u21;
+        if (*u22 != 0.0q)
+          *u22 = -*u22;
+        A22 = -A22;
+      }
+      *s2 = A22;
+      e = 0;
+    }
+    else if (A22 == 0.0q) {
+      if (A12 < 0.0q) {
+        A12 = -A12;
+        A22 = -A22;
+        if (*v12 != 0.0q)
+          *v12 = -*v12;
+        else
+          *v22 = -*v22;
+      }
+      if (copysignq(1.0q, A22) != 1.0q) {
+        if (*u21 != 0.0q)
+          *u21 = -*u21;
+        if (*u22 != 0.0q)
+          *u22 = -*u22;
+        A22 = 0.0q;
+      }
+      *s1 = hypotq(*s1, *s2);
+      *s2 = 0.0q;
+      e = 5;
+    }
+    else
+      e = 13;
+    if (A12 < 0.0q) {
+      A12 = -A12;
+      A22 = -A22;
+      if (*v12 != 0.0q)
+        *v12 = -*v12;
+      else
+        *v22 = -*v22;
+    }
+    if (A22 < 0.0q) {
+      A22 = -A22;
+      /* sin(ϑ) is always non-negative by construction */
+      /* this is just an extra bit of info, used later */
+      st = -st;
+    }
+  }
+
+  if (e == 3) {
+    /* [ X 0 ] */
+    /* [ x 0 ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
+    tt = (A21 / A11);
+    /* 1 / cos */
+    ct = hypotq(tt, 1.0q);
+    /* apply the left Givens rotation to U */
+    st = -tt;
+    A21 = *u11;
+    if (ct == 1.0q) {
+      *u11 = fmaq(tt, *u21, *u11);
+      *u21 = fmaq(st,  A21, *u21);
+      A21 = *u12;
+      *u12 = fmaq(tt, *u22, *u12);
+      *u22 = fmaq(st,  A21, *u22);
+      st = tt;
+    }
+    else {
+      *u11 = (fmaq(tt, *u21, *u11) / ct);
+      *u21 = (fmaq(st,  A21, *u21) / ct);
+      A21 = *u12;
+      *u12 = (fmaq(tt, *u22, *u12) / ct);
+      *u22 = (fmaq(st,  A21, *u22) / ct);
+      st = (tt / ct);
+      ct = (1.0q / ct);
+    }
+    A11 = *s1;
+    A21 = 0.0q;
+    e = 0;
+  }
+
+  if (e == 5) {
+    /* [ X x ] */
+    /* [ 0 0 ] */
+    /* V(θ):
+       cos(θ) -sin(θ)
+       sin(θ)  cos(θ)
+    */
+    tt = (A12 / A11);
+    /* 1 / cos */
+    ct = hypotq(tt, 1.0q);
+    /* apply the right Givens rotation to V */
+    st = -tt;
+    A12 = *v11;
+    if (ct == 1.0q) {
+      *v11 = fmaq(tt, *v12, *v11);
+      *v12 = fmaq(st,  A12, *v12);
+      A12 = *v21;
+      *v21 = fmaq(tt, *v22, *v21);
+      *v22 = fmaq(st,  A12, *v22);
+      st = tt;
+    }
+    else {
+      *v11 = (fmaq(tt, *v12, *v11) / ct);
+      *v12 = (fmaq(st,  A12, *v12) / ct);
+      A12 = *v21;
+      *v21 = (fmaq(tt, *v22, *v21) / ct);
+      *v22 = (fmaq(st,  A12, *v22) / ct);
+      st = (tt / ct);
+      ct = (1.0q / ct);
+    }
+    A11 = *s1;
+    A12 = 0.0q;
+    e = 0;
+  }
+
+  if (e == 13) {
+    /* [ x y ] */
+    /* [ 0 z ] */
+
+    /* should never overflow */
+    const __float128 a = hypotq(A11, A12);
+    const __float128 b = A22;
+
+    int ae = 0, be = 0;
+    __float128 af = frexpq(a, &ae);
+    __float128 bf = frexpq(b, &be);
+
+    __float128 abf = (a + b);
+    int abe = 0, de = 0;
+    if (!isfiniteq(abf)) {
+      abf = ((0.5q * a) + (0.5q * b));
+      de = 1;
+    }
+    abf = frexpq(abf, &abe);
+    abe += de;
+
+    int a_be = 0;
+    __float128 a_bf = (a - b), df = 0.0q;
+    if (a == b)
+      de = 0;
+    else if (fabsq(a_bf) >= FLT128_MIN) {
+      de = -1;
+      a_bf = frexpq(a_bf, &a_be);
+    }
+    else {
+      de = ((FLT128_MIN_EXP + FLT128_MANT_DIG) - pvn_imin(ae, be));
+      a_bf = (scalbnq(af, (ae + de)) - scalbnq(bf, (be + de)));
+      a_bf = frexpq(a_bf, &a_be);
+      a_be -= de;
+    }
+
+    if (de)
+      ef_mulq(&de, &df, a_be, a_bf, abe, abf);
+
+    af = frexpq(A12, &ae);
+    int ne = 0;
+    __float128 nf = 0.0q;
+    ef_mulq(&ne, &nf, ae, af, be, bf);
+    ++ne;
+
+    int t2e = 0;
+    __float128 t2f = 0.0q;
+    ef_divq(&t2e, &t2f, ne, nf, de, df);
+    const __float128 t2 = (isfiniteq(t2f) ? scalbnq(t2f, t2e) : t2f);
+
+    __float128 tf = 0.0q, cf = 1.0q, sf = 0.0q;    
+    if (isfiniteq(t2))
+      tf = (t2 / (1.0q + hypotq(t2, 1.0q)));
+    else
+      tf = copysignq(1.0q, t2);
+    cf = hypotq(tf, 1.0q);
+    sf = (tf / cf);
+
+    __float128 tp = 0.0q, cp = 1.0q, sp = 0.0q;
+    /* this should never overflow... */
+    sp = fmaq(tf, A22, A12);
+    /* ...but this might */
+    tp = (sp / A11);
+
+    if (isfiniteq(tp)) {
+      /* 1 / cos */
+      cp = hypotq(tp, 1.0q);
+      nf = frexpq(cf, &ne);
+      df = frexpq(cp, &de);
+      ef_divq(&ae, &af, ne, nf, de, df);
+      /* s2 = z * (cf / cp) */
+      ef_mulq(&abe, &abf, be, bf, ae, af);
+      bf = frexpq(A11, &be);
+      /* s1 = x * (cp / cf) */
+      ef_divq(&a_be, &a_bf, be, bf, ae, af);
+      sp = (tp / cp);
+      cp = (1.0q / cp);
+    }
+    else {
+      nf = frexpq(sp, &ne);
+      df = frexpq(A11, &de);
+      ef_divq(&t2e, &t2f, ne, nf, de, df);
+      nf = frexpq(cf, &ne);
+      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
+      ef_divq(&ae, &af, ne, nf, t2e, t2f);
+      /* s2 = z * (cf / cp) */
+      ef_mulq(&abe, &abf, be, bf, ae, af);
+      /* s1 = x * (cp / cf) */
+      ef_divq(&a_be, &a_bf, de, df, ae, af);
+      sp = 1.0q;
+      ef_divq(&ae, &af, 1, 0.5q, t2e, t2f);
+      cp = scalbnq(af, ae);
+    }
+    cf = (1.0q / cf);
+    if (!mxe) {
+      if (abe < FLT128_MIN_EXP) {
+        ne = (FLT128_MIN_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be < FLT128_MIN_EXP) {
+        de = (FLT128_MIN_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+      if (abe > FLT128_MAX_EXP) {
+        ne = (FLT128_MAX_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be > FLT128_MAX_EXP) {
+        de = (FLT128_MAX_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+    }
+    *s1 = scalbnq(a_bf, a_be);
+    *s2 = scalbnq(abf, abe);
+
+    /* update U */
+    if (copysignq(1.0q, st) != 1.0q) {
+      /* U^T(φ) * diag(1, -1) * U^T(ϑ):
+          cos(φ - ϑ) -sin(φ - ϑ)
+         -sin(φ - ϑ) -cos(φ - ϑ)
+      */
+      st = -st;
+      __float128 tf_t = (tf - tt), cf_t = 1.0q, sf_t = 0.0q;
+      if (tf_t != 0.0q) {
+        tf_t /= fmaq(tf, tt, 1.0q);
+        /* 1 / cos */
+        cf_t = hypotq(tf_t, 1.0q);
+        sf_t = (tf_t / cf_t);
+        cf_t = (1.0q / cf_t);
+      }
+      const __float128 _sf_t = -sf_t;
+      A21 = *u11;
+      *u11 = (_sf_t * *u21 + cf_t * *u11);
+      *u21 = (_sf_t *  A21 - cf_t * *u21);
+      A21 = *u12;
+      *u12 = (_sf_t * *u22 + cf_t * *u12);
+      *u22 = (_sf_t *  A21 - cf_t * *u22);
+      A21 = -1.0q;
+    }
+    else if (tt != 0.0q) {
+      /* U^T(φ) * U^T(ϑ) = U^T(φ + ϑ):
+          cos(φ + ϑ)  sin(φ + ϑ)
+         -sin(φ + ϑ)  cos(φ + ϑ)
+      */
+      __float128 tft = (tf + tt), cft = 1.0q, sft = 0.0q;
+      if (tft != 0.0q) {
+        tft /= fmaq(-tf, tt, 1.0q);
+        if (isfiniteq(tft)) {
+          /* 1 / cos */
+          cft = hypotq(tft, 1.0q);
+          sft = (tft / cft);
+          cft = (1.0q / cft);
+        }
+        else {
+          sft = 1.0q;
+          cft = 0.0q;
+        }
+      }
+      A21 = *u11;
+      *u11 = (cft * *u11 + sft * *u21);
+      *u21 = (cft * *u21 - sft *  A21);
+      A21 = *u12;
+      *u12 = (cft * *u12 + sft * *u22);
+      *u22 = (cft * *u22 - sft *  A21);
+      A21 = 1.0q;
+    }
+    else if (tf != 0.0q) {
+      /* U^T(φ):
+          cos(φ)  sin(φ)
+         -sin(φ)  cos(φ)
+       */
+      A21 = *u11;
+      *u11 = (cf * *u11 + sf * *u21);
+      *u21 = (cf * *u21 - sf *  A21);
+      A21 = *u12;
+      *u12 = (cf * *u12 + sf * *u22);
+      *u22 = (cf * *u22 - sf *  A21);
+      A21 = -0.0q;
+    }
+    else /* U^T(φ) = I */
+      A21 = 0.0q;
+
+    /* update V */
+    if (tp != 0.0q) {
+      /* V(ψ):
+         cos(ψ) -sin(ψ)
+         sin(ψ)  cos(ψ)
+      */
+      A21 = *v11;
+      *v11 = (*v11 * cp + *v12 * sp);
+      *v12 = (*v12 * cp -  A21 * sp);
+      A21 = *v21;
+      *v21 = (*v21 * cp + *v22 * sp);
+      *v22 = (*v22 * cp -  A21 * sp);
+      A21 = -0.0q;
+    }
+    else /* V(ψ) = I */
+      A21 = 0.0q;
+
+    A21 = 0.0q;
+    e = 0;
+  }
 
   if (*s1 < *s2) {
     pvn_qswp(u11, u21);
