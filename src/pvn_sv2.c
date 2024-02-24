@@ -949,6 +949,24 @@ pvn_sljsv2_
   return knd;
 }
 
+static inline void ef_mul(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 * f2);
+  *f = frexp(*f, e);
+  *e += (e1 + e2);
+}
+
+static inline void ef_div(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 / f2);
+  *f = frexp(*f, e);
+  *e += (e1 - e2);
+}
+
 int
 #ifdef _WIN32
 PVN_DLJSV2
@@ -1071,42 +1089,703 @@ pvn_dljsv2_
   *s1 = 0.0;
   *s2 = 0.0;
 
-  /* TODO */
+  /* simplify the form of A */
   switch (knd) {
   case  0:
+    /* [ 0 0 ] */
+    /* [ 0 0 ] */
+    *u11 = copysign(1.0, A11);
+    *u22 = copysign(1.0, A22);
+    A22 = A12 = A21 = A11 = 0.0;
     break;
   case  1:
+    /* [ * 0 ] */
+    /* [ 0 0 ] */
+    if (A11 < 0.0) {
+      *u11 = -1.0;
+      A11 = -A11;
+    }
+    *u22 = copysign(1.0, A22);
+    A22 = A12 = A21 = 0.0;
+    *s1 = A11;
     break;
   case  2:
+    /* [ 0 0 ] */
+    /* [ * 0 ] */
+    *u11 = 0.0;
+    *u22 = 0.0;
+    A11 = A21;
+    A22 = A12;
+    if (A11 < 0.0) {
+      *u12 = -1.0;
+      A11 = -A11;
+    }
+    else
+      *u12 = 1.0;
+    *u21 = copysign(1.0, A12);
+    A22 = A12 = A21 = 0.0;
+    *s1 = A11;
     break;
   case  3:
+    /* [ * 0 ] */
+    /* [ * 0 ] */
+    A12 = fabs(A11);
+    A22 = fabs(A21);
+    if (A12 < A22) {
+      *u11 = 0.0;
+      *u21 = copysign(1.0, A11);
+      *u12 = copysign(1.0, A21);
+      *u22 = 0.0;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysign(1.0, A11);
+      *u22 = copysign(1.0, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0;
+    *s1 = hypot(A11, A21);
+    e = 3;
     break;
   case  4:
+    /* [ 0 * ] */
+    /* [ 0 0 ] */
+    *u11 = copysign(1.0, A12);
+    *u22 = copysign(1.0, A21);
+    A11 = fabs(A12);
+    A22 = A12 = A21 = 0.0;
+    *v11 = 0.0;
+    *v21 = 1.0;
+    *v12 = 1.0;
+    *v22 = 0.0;
+    *s1 = A11;
     break;
   case  5:
+    /* [ * * ] */
+    /* [ 0 0 ] */
+    A21 = fabs(A11);
+    A22 = fabs(A12);
+    if (A21 < A22) {
+      *v11 = 0.0;
+      *v21 = copysign(1.0, A12);
+      *v12 = copysign(1.0, A11);
+      *v22 = 0.0;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysign(1.0, A11);
+      *v22 = copysign(1.0, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0;
+    *s1 = hypot(A11, A12);
+    e = 5;
     break;
   case  6:
+    /* [ 0 * ] */
+    /* [ * 0 ] */
+    *u11 = copysign(1.0, A12);
+    *u22 = copysign(1.0, A21);
+    A11 = fabs(A12);
+    A22 = fabs(A21);
+    A12 = A21 = 0.0;
+    *v11 = 0.0;
+    *v21 = 1.0;
+    *v12 = 1.0;
+    *v22 = 0.0;
+    *s1 = A11;
+    *s2 = A22;
     break;
   case  7:
+    /* [ * * ] */
+    /* [ * 0 ] */
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0;
+    *v11 = 0.0;
+    *v22 = 0.0;
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v21 = -1.0;
+    }
+    else
+      *v21 = 1.0;
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0;
+    }
+    else
+      *v12 = 1.0;
+    if (A22 < 0.0) {
+      *u22 = -1.0;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case  8:
+    /* [ 0 0 ] */
+    /* [ 0 * ] */
+    *u11 = 0.0;
+    *u21 = copysign(1.0, A11);
+    *u12 = copysign(1.0, A22);
+    *u22 = 0.0;
+    A11 = fabs(A22);
+    A22 = A12 = A21 = 0.0;
+    *v11 = 0.0;
+    *v21 = 1.0;
+    *v12 = 1.0;
+    *v22 = 0.0;
+    *s1 = A11;
     break;
   case  9:
+    /* [ * 0 ] */
+    /* [ 0 * ] */
+    if (A11 < 0.0) {
+      *u11 = -1.0;
+      A11 = -A11;
+    }
+    if (A22 < 0.0) {
+      *u22 = -1.0;
+      A22 = -A22;
+    }
+    A12 = A21 = 0.0;
+    *s1 = A11;
+    *s2 = A22;
     break;
   case 10:
+    /* [ 0 0 ] */
+    /* [ * * ] */
+    *u11 = 0.0;
+    *u21 = 1.0;
+    *u12 = 1.0;
+    *u22 = 0.0;
+    A11 = A21;
+    A12 = A22;
+    A21 = fabs(A11);
+    A22 = fabs(A12);
+    if (A21 < A22) {
+      *v11 = 0.0;
+      *v21 = copysign(1.0, A12);
+      *v12 = copysign(1.0, A11);
+      *v22 = 0.0;
+      A11 = A22;
+      A12 = A21;
+    }
+    else {
+      *v11 = copysign(1.0, A11);
+      *v22 = copysign(1.0, A12);
+      A11 = A21;
+      A12 = A22;
+    }
+    A22 = A21 = 0.0;
+    *s1 = hypot(A11, A12);
+    e = 5;
     break;
   case 11:
+    /* [ * 0 ] */
+    /* [ * * ] */
+    *u11 = 0.0;
+    *u12 = 1.0;
+    *u22 = 0.0;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0;
+    *v11 = 0.0;
+    *v22 = 0.0;
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v21 = -1.0;
+    }
+    else
+      *v21 = 1.0;
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0;
+    }
+    else
+      *v12 = 1.0;
+    if (A22 < 0.0) {
+      *u21 = -1.0;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0;
+    e = 13;
     break;
   case 12:
+    /* [ 0 * ] */
+    /* [ 0 * ] */
+    A11 = A12;
+    A21 = A22;
+    *v11 = 0.0;
+    *v21 = 1.0;
+    *v12 = 1.0;
+    *v22 = 0.0;
+    A12 = fabs(A11);
+    A22 = fabs(A21);
+    if (A12 < A22) {
+      *u11 = 0.0;
+      *u21 = copysign(1.0, A11);
+      *u12 = copysign(1.0, A21);
+      *u22 = 0.0;
+      A11 = A22;
+      A21 = A12;
+    }
+    else {
+      *u11 = copysign(1.0, A11);
+      *u22 = copysign(1.0, A21);
+      A11 = A12;
+      A21 = A22;
+    }
+    A22 = A12 = 0.0;
+    *s1 = hypot(A11, A21);
+    e = 3;
     break;
   case 13:
+    /* [ * * ] */
+    /* [ 0 * ] */
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v11 = -1.0;
+    }
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0;
+    }
+    if (A22 < 0.0) {
+      *u22 = -1.0;
+      A22 = -A22;
+    }
+    A21 = 0.0;
+    e = 13;
     break;
   case 14:
+    /* [ 0 * ] */
+    /* [ * * ] */
+    *u11 = 0.0;
+    *u12 = 1.0;
+    *u22 = 0.0;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0;
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v11 = -1.0;
+    }
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0;
+    }
+    if (A22 < 0.0) {
+      *u21 = -1.0;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0;
+    e = 13;
     break;
   case 15:
+    /* [ * * ] */
+    /* [ * * ] */
+    *s1 = hypot(A11, A21);
+    *s2 = hypot(A12, A22);
+    if (*s1 < *s2) {
+      pvn_dswp(&A11, &A12);
+      pvn_dswp(&A21, &A22);
+      *v11 = 0.0;
+      *v21 = 1.0;
+      *v12 = 1.0;
+      *v22 = 0.0;
+      pvn_dswp(s1, s2);
+    }
+    if (A11 < 0.0) {
+      *u11 = -1.0;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (A21 < 0.0) {
+      *u22 = -1.0;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_dswp(u11, u21);
+      pvn_dswp(u12, u22);
+      pvn_dswp(&A11, &A21);
+      pvn_dswp(&A12, &A22);
+    }
+    e = 15;
     break;
   default:
     return INT_MIN;
+  }
+
+  double tt = 0.0, ct = 1.0, st = 0.0;
+
+  if (e == 15) {
+    /* [ X y ] */
+    /* [ x z ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
+    tt = (A21 / A11);
+    /* 1 / cos */
+    ct = hypot(tt, 1.0);
+    /* apply the left Givens rotation to A (and maybe to U) */
+    st = -tt;
+    A21 = A12;
+    if (ct == 1.0) {
+      A12 = fma(tt, A22, A12);
+      A22 = fma(st, A21, A22);
+      if ((A12 == 0.0) || (A22 == 0.0)) {
+        A21 = *u11;
+        *u11 = fma(tt, *u21, *u11);
+        *u21 = fma(st,  A21, *u21);
+        A21 = *u12;
+        *u12 = fma(tt, *u22, *u12);
+        *u22 = fma(st,  A21, *u22);
+      }
+      st = tt;
+    }
+    else {
+      A12 = (fma(tt, A22, A12) / ct);
+      A22 = (fma(st, A21, A22) / ct);
+      if ((A12 == 0.0) || (A22 == 0.0)) {
+        A21 = *u11;
+        *u11 = (fma(tt, *u21, *u11) / ct);
+        *u21 = (fma(st,  A21, *u21) / ct);
+        A21 = *u12;
+        *u12 = (fma(tt, *u22, *u12) / ct);
+        *u22 = (fma(st,  A21, *u22) / ct);
+      }
+      st = (tt / ct);
+      ct = (1.0 / ct);
+    }
+    A11 = *s1;
+    A21 = 0.0;
+    if (A12 == 0.0) {
+      A12 = 0.0;
+      if (copysign(1.0, A22) != 1.0) {
+        if (*u21 != 0.0)
+          *u21 = -*u21;
+        if (*u22 != 0.0)
+          *u22 = -*u22;
+        A22 = -A22;
+      }
+      *s2 = A22;
+      e = 0;
+    }
+    else if (A22 == 0.0) {
+      if (A12 < 0.0) {
+        A12 = -A12;
+        A22 = -A22;
+        if (*v12 != 0.0)
+          *v12 = -*v12;
+        else
+          *v22 = -*v22;
+      }
+      if (copysign(1.0, A22) != 1.0) {
+        if (*u21 != 0.0)
+          *u21 = -*u21;
+        if (*u22 != 0.0)
+          *u22 = -*u22;
+        A22 = 0.0;
+      }
+      *s1 = hypot(*s1, *s2);
+      *s2 = 0.0;
+      e = 5;
+    }
+    else
+      e = 13;
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      if (*v12 != 0.0)
+        *v12 = -*v12;
+      else
+        *v22 = -*v22;
+    }
+    if (A22 < 0.0) {
+      A22 = -A22;
+      /* sin(ϑ) is always non-negative by construction */
+      /* this is just an extra bit of info, used later */
+      st = -st;
+    }
+  }
+
+  if (e == 3) {
+    /* [ X 0 ] */
+    /* [ x 0 ] */
+    /* U^T(ϑ):
+        cos(ϑ)  sin(ϑ)
+       -sin(ϑ)  cos(ϑ)
+    */
+    tt = (A21 / A11);
+    /* 1 / cos */
+    ct = hypot(tt, 1.0);
+    /* apply the left Givens rotation to U */
+    st = -tt;
+    A21 = *u11;
+    if (ct == 1.0) {
+      *u11 = fma(tt, *u21, *u11);
+      *u21 = fma(st,  A21, *u21);
+      A21 = *u12;
+      *u12 = fma(tt, *u22, *u12);
+      *u22 = fma(st,  A21, *u22);
+      st = tt;
+    }
+    else {
+      *u11 = (fma(tt, *u21, *u11) / ct);
+      *u21 = (fma(st,  A21, *u21) / ct);
+      A21 = *u12;
+      *u12 = (fma(tt, *u22, *u12) / ct);
+      *u22 = (fma(st,  A21, *u22) / ct);
+      st = (tt / ct);
+      ct = (1.0 / ct);
+    }
+    A11 = *s1;
+    A21 = 0.0;
+    e = 0;
+  }
+
+  if (e == 5) {
+    /* [ X x ] */
+    /* [ 0 0 ] */
+    /* V(θ):
+       cos(θ) -sin(θ)
+       sin(θ)  cos(θ)
+    */
+    tt = (A12 / A11);
+    /* 1 / cos */
+    ct = hypot(tt, 1.0);
+    /* apply the right Givens rotation to V */
+    st = -tt;
+    A12 = *v11;
+    if (ct == 1.0) {
+      *v11 = fma(tt, *v12, *v11);
+      *v12 = fma(st,  A12, *v12);
+      A12 = *v21;
+      *v21 = fma(tt, *v22, *v21);
+      *v22 = fma(st,  A12, *v22);
+      st = tt;
+    }
+    else {
+      *v11 = (fma(tt, *v12, *v11) / ct);
+      *v12 = (fma(st,  A12, *v12) / ct);
+      A12 = *v21;
+      *v21 = (fma(tt, *v22, *v21) / ct);
+      *v22 = (fma(st,  A12, *v22) / ct);
+      st = (tt / ct);
+      ct = (1.0 / ct);
+    }
+    A11 = *s1;
+    A12 = 0.0;
+    e = 0;
+  }
+
+  if (e == 13) {
+    /* [ x y ] */
+    /* [ 0 z ] */
+
+    /* should never overflow */
+    const double a = hypot(A11, A12);
+    const double b = A22;
+
+    int ae = 0, be = 0;
+    double af = frexp(a, &ae);
+    double bf = frexp(b, &be);
+
+    double abf = (a + b);
+    int abe = 0, de = 0;
+    if (!isfinite(abf)) {
+      abf = ((0.5 * a) + (0.5 * b));
+      de = 1;
+    }
+    abf = frexp(abf, &abe);
+    abe += de;
+
+    int a_be = 0;
+    double a_bf = (a - b), df = 0.0;
+    if (a == b)
+      de = 0;
+    else if (isnormal(a_bf)) {
+      de = -1;
+      a_bf = frexp(a_bf, &a_be);
+    }
+    else {
+      de = ((DBL_MIN_EXP + DBL_MANT_DIG) - pvn_imin(ae, be));
+      a_bf = (scalbn(af, (ae + de)) - scalbn(bf, (be + de)));
+      a_bf = frexp(a_bf, &a_be);
+      a_be -= de;
+    }
+
+    if (de)
+      ef_mul(&de, &df, a_be, a_bf, abe, abf);
+
+    af = frexp(A12, &ae);
+    int ne = 0;
+    double nf = 0.0;
+    ef_mul(&ne, &nf, ae, af, be, bf);
+    ++ne;
+
+    int t2e = 0;
+    double t2f = 0.0;
+    ef_div(&t2e, &t2f, ne, nf, de, df);
+    const double t2 = (isfinite(t2f) ? scalbn(t2f, t2e) : t2f);
+
+    double tf = 0.0, cf = 1.0, sf = 0.0;    
+    if (isfinite(t2))
+      tf = (t2 / (1.0 + hypot(t2, 1.0)));
+    else
+      tf = copysign(1.0, t2);
+    cf = hypot(tf, 1.0);
+    sf = (tf / cf);
+
+    double tp = 0.0, cp = 1.0, sp = 0.0;
+    /* this should never overflow... */
+    tp = fma(tf, A22, A12);
+    /* ...but this might */
+    tp /= A11;
+
+    if (isfinite(tp)) {
+      /* 1 / cos */
+      cp = hypot(tp, 1.0);
+      sp = (tp / cp);
+      nf = frexp(cf, &ne);
+      df = frexp(cp, &de);
+      ef_div(&ae, &af, ne, nf, de, df);
+      /* s2 = z * (cf / cp) */
+      ef_mul(&abe, &abf, be, bf, ae, af);
+      bf = frexp(A11, &be);
+      /* s1 = x * (cp / cf) */
+      ef_div(&a_be, &a_bf, be, bf, ae, af);
+      if (!mxe) {
+        if (abe > DBL_MAX_EXP) {
+          ne = (DBL_MAX_EXP - abe);
+          abe += ne;
+          a_be += ne;
+          *es += ne;
+        }
+        if (a_be > DBL_MAX_EXP) {
+          de = (DBL_MAX_EXP - a_be);
+          abe += de;
+          a_be += de;
+          *es += de;
+        }
+      }
+      *s1 = scalbn(a_bf, a_be);
+      *s2 = scalbn(abf, abe);
+      cp = (1.0 / cp);
+    }
+    else {
+      *s1 = (fma(tf, A22, A12) / cf);
+      *s2 = (A11 * sf);
+      cp = 0.0;
+      sp = 1.0;
+    }
+    cf = (1.0 / cf);
+
+    /* update U */
+    if (copysign(1.0, st) != 1.0) {
+      /* U^T(φ) * diag(1, -1) * U^T(ϑ):
+          cos(φ - ϑ) -sin(φ - ϑ)
+         -sin(φ - ϑ) -cos(φ - ϑ)
+      */
+      st = -st;
+      double tf_t = (tf - tt), cf_t = 1.0, sf_t = 0.0;
+      if (tf_t != 0.0) {
+        tf_t /= fma(tf, tt, 1.0);
+        /* 1 / cos */
+        cf_t = hypot(tf_t, 1.0);
+        sf_t = (tf_t / cf_t);
+        cf_t = (1.0 / cf_t);
+      }
+      const double _sf_t = -sf_t;
+      A21 = *u11;
+      *u11 = (_sf_t * *u21 + cf_t * *u11);
+      *u21 = (_sf_t *  A21 - cf_t * *u21);
+      A21 = *u12;
+      *u12 = (_sf_t * *u22 + cf_t * *u12);
+      *u22 = (_sf_t *  A21 - cf_t * *u22);
+      A21 = -1.0;
+    }
+    else if (tt != 0.0) {
+      /* U^T(φ) * U^T(ϑ) = U^T(φ + ϑ):
+          cos(φ + ϑ)  sin(φ + ϑ)
+         -sin(φ + ϑ)  cos(φ + ϑ)
+      */
+      double tft = (tf + tt), cft = 1.0, sft = 0.0;
+      if (tft != 0.0) {
+        tft /= fma(-tf, tt, 1.0);
+        if (isfinite(tft)) {
+          /* 1 / cos */
+          cft = hypot(tft, 1.0);
+          sft = (tft / cft);
+          cft = (1.0 / cft);
+        }
+        else {
+          sft = 1.0;
+          cft = 0.0;
+        }
+      }
+      A21 = *u11;
+      *u11 = (cft * *u11 + sft * *u21);
+      *u21 = (cft * *u21 - sft *  A21);
+      A21 = *u12;
+      *u12 = (cft * *u12 + sft * *u22);
+      *u22 = (cft * *u22 - sft *  A21);
+      A21 = 1.0;
+    }
+    else if (tf != 0.0) {
+      /* U^T(φ):
+          cos(φ)  sin(φ)
+         -sin(φ)  cos(φ)
+       */
+      A21 = *u11;
+      *u11 = (cf * *u11 + sf * *u21);
+      *u21 = (cf * *u21 - sf *  A21);
+      A21 = *u12;
+      *u12 = (cf * *u12 + sf * *u22);
+      *u22 = (cf * *u22 - sf *  A21);
+      A21 = -0.0;
+    }
+    else /* U^T(φ) = I */
+      A21 = 0.0;
+
+    /* update V */
+    if (tp != 0.0) {
+      /* V(ψ):
+         cos(ψ) -sin(ψ)
+         sin(ψ)  cos(ψ)
+      */
+      A21 = *v11;
+      *v11 = (*v11 * cp + *v12 * sp);
+      *v12 = (*v12 * cp -  A21 * sp);
+      A21 = *v21;
+      *v21 = (*v21 * cp + *v22 * sp);
+      *v22 = (*v22 * cp -  A21 * sp);
+      A21 = -0.0;
+    }
+    else /* V(ψ) = I */
+      A21 = 0.0;
+
+    A21 = 0.0;
+    e = 0;
   }
 
   if (*s1 < *s2) {
@@ -1645,6 +2324,24 @@ pvn_zljsv2_
   return knd;
 }
 
+static inline void ef_mull(int *const e, long double *const f, const int e1, const long double f1, const int e2, const long double f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 * f2);
+  *f = frexpl(*f, e);
+  *e += (e1 + e2);
+}
+
+static inline void ef_divl(int *const e, long double *const f, const int e1, const long double f1, const int e2, const long double f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 / f2);
+  *f = frexpl(*f, e);
+  *e += (e1 - e2);
+}
+
 #ifndef _WIN32
 int pvn_xljsv2_
 (const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
@@ -2056,6 +2753,24 @@ int pvn_wljsv2_
 }
 
 #ifdef PVN_QUADMATH
+static inline void ef_mulq(int *const e, __float128 *const f, const int e1, const __float128 f1, const int e2, const __float128 f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 * f2);
+  *f = frexpq(*f, e);
+  *e += (e1 + e2);
+}
+
+static inline void ef_divq(int *const e, __float128 *const f, const int e1, const __float128 f1, const int e2, const __float128 f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 / f2);
+  *f = frexpq(*f, e);
+  *e += (e1 - e2);
+}
+
 int pvn_qljsv2_
 (const __float128 *const a11, const __float128 *const a21, const __float128 *const a12, const __float128 *const a22,
  __float128 *const u11, __float128 *const u21, __float128 *const u12, __float128 *const u22,
