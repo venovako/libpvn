@@ -46,6 +46,8 @@ pvn_sljsv2_
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+#pragma message "DO NOT USE pvn_sv2 ROUTINES -- NOT COMPLETED YET!!!"
+
 static inline void ef_mulf(int *const e, float *const f, const int e1, const float f1, const int e2, const float f2)
 {
   assert(e);
