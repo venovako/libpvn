@@ -792,9 +792,9 @@ pvn_sljsv2_
 
     float tp = 0.0f, cp = 1.0f, sp = 0.0f;
     /* this should never overflow... */
-    tp = fmaf(tf, A22, A12);
+    sp = fmaf(tf, A22, A12);
     /* ...but this might */
-    tp /= A11;
+    tp = (sp / A11);
 #ifndef NDEBUG
     (void)printf("tan(ψ)=%s\n", pvn_stoa(s, tp));
 #endif /* !NDEBUG */
@@ -802,7 +802,6 @@ pvn_sljsv2_
     if (isfinite(tp)) {
       /* 1 / cos */
       cp = hypotf(tp, 1.0f);
-      sp = (tp / cp);
       nf = frexpf(cf, &ne);
       df = frexpf(cp, &de);
       ef_divf(&ae, &af, ne, nf, de, df);
@@ -811,31 +810,53 @@ pvn_sljsv2_
       bf = frexpf(A11, &be);
       /* s1 = x * (cp / cf) */
       ef_divf(&a_be, &a_bf, be, bf, ae, af);
-      if (!mxe) {
-        if (abe > FLT_MAX_EXP) {
-          ne = (FLT_MAX_EXP - abe);
-          abe += ne;
-          a_be += ne;
-          *es += ne;
-        }
-        if (a_be > FLT_MAX_EXP) {
-          de = (FLT_MAX_EXP - a_be);
-          abe += de;
-          a_be += de;
-          *es += de;
-        }
-      }
-      *s1 = scalbnf(a_bf, a_be);
-      *s2 = scalbnf(abf, abe);
+      sp = (tp / cp);
       cp = (1.0f / cp);
     }
     else {
-      *s1 = (fmaf(tf, A22, A12) / cf);
-      *s2 = (A11 * sf);
-      cp = 0.0f;
+      nf = frexpf(sp, &ne);
+      df = frexpf(A11, &de);
+      ef_divf(&t2e, &t2f, ne, nf, de, df);
+      nf = frexpf(cf, &ne);
+      /* tan(φ) so large that sec(φ) ≈ tan(φ) */
+      ef_divf(&ae, &af, ne, nf, t2e, t2f);
+      /* s2 = z * (cf / cp) */
+      ef_mulf(&abe, &abf, be, bf, ae, af);
+      /* s1 = x * (cp / cf) */
+      ef_divf(&a_be, &a_bf, de, df, ae, af);
       sp = 1.0f;
+      ef_divf(&ae, &af, 1, 0.5f, t2e, t2f);
+      cp = scalbnf(af, ae);
     }
     cf = (1.0f / cf);
+    if (!mxe) {
+      if (abe < FLT_MIN_EXP) {
+        ne = (FLT_MIN_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be < FLT_MIN_EXP) {
+        de = (FLT_MIN_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+      if (abe > FLT_MAX_EXP) {
+        ne = (FLT_MAX_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be > FLT_MAX_EXP) {
+        de = (FLT_MAX_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+    }
+    *s1 = scalbnf(a_bf, a_be);
+    *s2 = scalbnf(abf, abe);
 
     /* update U */
 #ifndef NDEBUG
@@ -1659,14 +1680,13 @@ pvn_dljsv2_
 
     double tp = 0.0, cp = 1.0, sp = 0.0;
     /* this should never overflow... */
-    tp = fma(tf, A22, A12);
+    sp = fma(tf, A22, A12);
     /* ...but this might */
-    tp /= A11;
+    tp = (sp / A11);
 
     if (isfinite(tp)) {
       /* 1 / cos */
       cp = hypot(tp, 1.0);
-      sp = (tp / cp);
       nf = frexp(cf, &ne);
       df = frexp(cp, &de);
       ef_div(&ae, &af, ne, nf, de, df);
@@ -1675,31 +1695,53 @@ pvn_dljsv2_
       bf = frexp(A11, &be);
       /* s1 = x * (cp / cf) */
       ef_div(&a_be, &a_bf, be, bf, ae, af);
-      if (!mxe) {
-        if (abe > DBL_MAX_EXP) {
-          ne = (DBL_MAX_EXP - abe);
-          abe += ne;
-          a_be += ne;
-          *es += ne;
-        }
-        if (a_be > DBL_MAX_EXP) {
-          de = (DBL_MAX_EXP - a_be);
-          abe += de;
-          a_be += de;
-          *es += de;
-        }
-      }
-      *s1 = scalbn(a_bf, a_be);
-      *s2 = scalbn(abf, abe);
+      sp = (tp / cp);
       cp = (1.0 / cp);
     }
     else {
-      *s1 = (fma(tf, A22, A12) / cf);
-      *s2 = (A11 * sf);
-      cp = 0.0;
+      nf = frexp(sp, &ne);
+      df = frexp(A11, &de);
+      ef_div(&t2e, &t2f, ne, nf, de, df);
+      nf = frexp(cf, &ne);
+      /* tan(φ) so large that sec(φ) ≈ tan(φ) */
+      ef_div(&ae, &af, ne, nf, t2e, t2f);
+      /* s2 = z * (cf / cp) */
+      ef_mul(&abe, &abf, be, bf, ae, af);
+      /* s1 = x * (cp / cf) */
+      ef_div(&a_be, &a_bf, de, df, ae, af);
       sp = 1.0;
+      ef_div(&ae, &af, 1, 0.5f, t2e, t2f);
+      cp = scalbn(af, ae);
     }
     cf = (1.0 / cf);
+    if (!mxe) {
+      if (abe < DBL_MIN_EXP) {
+        ne = (DBL_MIN_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be < DBL_MIN_EXP) {
+        de = (DBL_MIN_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+      if (abe > DBL_MAX_EXP) {
+        ne = (DBL_MAX_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be > DBL_MAX_EXP) {
+        de = (DBL_MAX_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+    }
+    *s1 = scalbn(a_bf, a_be);
+    *s2 = scalbn(abf, abe);
 
     /* update U */
     if (copysign(1.0, st) != 1.0) {
@@ -2961,14 +3003,13 @@ int pvn_xljsv2_
 
     long double tp = 0.0L, cp = 1.0L, sp = 0.0L;
     /* this should never overflow... */
-    tp = fmal(tf, A22, A12);
+    sp = fmal(tf, A22, A12);
     /* ...but this might */
-    tp /= A11;
+    tp = (sp / A11);
 
     if (isfinite(tp)) {
       /* 1 / cos */
       cp = hypotl(tp, 1.0L);
-      sp = (tp / cp);
       nf = frexpl(cf, &ne);
       df = frexpl(cp, &de);
       ef_divl(&ae, &af, ne, nf, de, df);
@@ -2977,31 +3018,53 @@ int pvn_xljsv2_
       bf = frexpl(A11, &be);
       /* s1 = x * (cp / cf) */
       ef_divl(&a_be, &a_bf, be, bf, ae, af);
-      if (!mxe) {
-        if (abe > LDBL_MAX_EXP) {
-          ne = (LDBL_MAX_EXP - abe);
-          abe += ne;
-          a_be += ne;
-          *es += ne;
-        }
-        if (a_be > LDBL_MAX_EXP) {
-          de = (LDBL_MAX_EXP - a_be);
-          abe += de;
-          a_be += de;
-          *es += de;
-        }
-      }
-      *s1 = scalbnl(a_bf, a_be);
-      *s2 = scalbnl(abf, abe);
+      sp = (tp / cp);
       cp = (1.0L / cp);
     }
     else {
-      *s1 = (fmal(tf, A22, A12) / cf);
-      *s2 = (A11 * sf);
-      cp = 0.0L;
+      nf = frexpl(sp, &ne);
+      df = frexpl(A11, &de);
+      ef_divl(&t2e, &t2f, ne, nf, de, df);
+      nf = frexpl(cf, &ne);
+      /* tan(φ) so large that sec(φ) ≈ tan(φ) */
+      ef_divl(&ae, &af, ne, nf, t2e, t2f);
+      /* s2 = z * (cf / cp) */
+      ef_mull(&abe, &abf, be, bf, ae, af);
+      /* s1 = x * (cp / cf) */
+      ef_divl(&a_be, &a_bf, de, df, ae, af);
       sp = 1.0L;
+      ef_divl(&ae, &af, 1, 0.5f, t2e, t2f);
+      cp = scalbnl(af, ae);
     }
     cf = (1.0L / cf);
+    if (!mxe) {
+      if (abe < LDBL_MIN_EXP) {
+        ne = (LDBL_MIN_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be < LDBL_MIN_EXP) {
+        de = (LDBL_MIN_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+      if (abe > LDBL_MAX_EXP) {
+        ne = (LDBL_MAX_EXP - abe);
+        abe += ne;
+        a_be += ne;
+        *es += ne;
+      }
+      if (a_be > LDBL_MAX_EXP) {
+        de = (LDBL_MAX_EXP - a_be);
+        abe += de;
+        a_be += de;
+        *es += de;
+      }
+    }
+    *s1 = scalbnl(a_bf, a_be);
+    *s2 = scalbnl(abf, abe);
 
     /* update U */
     if (copysignl(1.0L, st) != 1.0L) {
