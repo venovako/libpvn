@@ -818,7 +818,7 @@ pvn_sljsv2_
       df = frexpf(A11, &de);
       ef_divf(&t2e, &t2f, ne, nf, de, df);
       nf = frexpf(cf, &ne);
-      /* tan(φ) so large that sec(φ) ≈ tan(φ) */
+      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
       ef_divf(&ae, &af, ne, nf, t2e, t2f);
       /* s2 = z * (cf / cp) */
       ef_mulf(&abe, &abf, be, bf, ae, af);
@@ -1703,14 +1703,14 @@ pvn_dljsv2_
       df = frexp(A11, &de);
       ef_div(&t2e, &t2f, ne, nf, de, df);
       nf = frexp(cf, &ne);
-      /* tan(φ) so large that sec(φ) ≈ tan(φ) */
+      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
       ef_div(&ae, &af, ne, nf, t2e, t2f);
       /* s2 = z * (cf / cp) */
       ef_mul(&abe, &abf, be, bf, ae, af);
       /* s1 = x * (cp / cf) */
       ef_div(&a_be, &a_bf, de, df, ae, af);
       sp = 1.0;
-      ef_div(&ae, &af, 1, 0.5f, t2e, t2f);
+      ef_div(&ae, &af, 1, 0.5, t2e, t2f);
       cp = scalbn(af, ae);
     }
     cf = (1.0 / cf);
@@ -3026,14 +3026,14 @@ int pvn_xljsv2_
       df = frexpl(A11, &de);
       ef_divl(&t2e, &t2f, ne, nf, de, df);
       nf = frexpl(cf, &ne);
-      /* tan(φ) so large that sec(φ) ≈ tan(φ) */
+      /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
       ef_divl(&ae, &af, ne, nf, t2e, t2f);
       /* s2 = z * (cf / cp) */
       ef_mull(&abe, &abf, be, bf, ae, af);
       /* s1 = x * (cp / cf) */
       ef_divl(&a_be, &a_bf, de, df, ae, af);
       sp = 1.0L;
-      ef_divl(&ae, &af, 1, 0.5f, t2e, t2f);
+      ef_divl(&ae, &af, 1, 0.5L, t2e, t2f);
       cp = scalbnl(af, ae);
     }
     cf = (1.0L / cf);
