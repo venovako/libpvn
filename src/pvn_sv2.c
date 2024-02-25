@@ -417,8 +417,8 @@ pvn_sljsv2_
   }
 
 #ifndef NDEBUG
-  (void)printf("knd=%d, e=%d\n\tA * 2^(*es) =\n", knd, e);
   char s[17] = { '\0' };
+  (void)printf("\tA[knd=%d,e=%d] * 2^%d =\n", knd, e, *es);
   (void)printf("%s ", pvn_stoa(s, A11));
   (void)printf("%s\n", pvn_stoa(s, A12));
   (void)printf("%s ", pvn_stoa(s, A21));
@@ -761,11 +761,14 @@ pvn_sljsv2_
     *s1 = scalbnf(a_bf, a_be);
     *s2 = scalbnf(abf, abe);
 
-    /* update U */
 #ifndef NDEBUG
     (void)printf("cos(φ)=%s, ", pvn_stoa(s, cf));
     (void)printf("sin(φ)=%s\n", pvn_stoa(s, sf));
+    (void)printf("cos(ψ)=%s, ", pvn_stoa(s, cf));
+    (void)printf("sin(ψ)=%s\n", pvn_stoa(s, sf));
 #endif /* !NDEBUG */
+
+    /* update U */
     if (copysignf(1.0f, st) != 1.0f) {
       /* U^T(φ) * diag(1, -1) * U^T(ϑ):
           cos(φ - ϑ) -sin(φ - ϑ)
@@ -846,10 +849,6 @@ pvn_sljsv2_
 #endif /* !NDEBUG */
 
     /* update V */
-#ifndef NDEBUG
-    (void)printf("cos(ψ)=%s, ", pvn_stoa(s, cf));
-    (void)printf("sin(ψ)=%s\n", pvn_stoa(s, sf));
-#endif /* !NDEBUG */
     if (tp != 0.0f) {
       /* V(ψ):
          cos(ψ) -sin(ψ)
@@ -1249,6 +1248,15 @@ pvn_dljsv2_
     return INT_MIN;
   }
 
+#ifndef NDEBUG
+  char s[26] = { '\0' };
+  (void)printf("\tA[knd=%d,e=%d] * 2^%d =\n", knd, e, *es);
+  (void)printf("%s ", pvn_dtoa(s, A11));
+  (void)printf("%s\n", pvn_dtoa(s, A12));
+  (void)printf("%s ", pvn_dtoa(s, A21));
+  (void)printf("%s\n", pvn_dtoa(s, A22));
+#endif /* !NDEBUG */
+
   double tt = 0.0, ct = 1.0, st = 0.0;
 
   if (e == 15) {
@@ -1360,6 +1368,11 @@ pvn_dljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_dtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_dtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_dtoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 3) {
@@ -1395,6 +1408,11 @@ pvn_dljsv2_
     A11 = *s1;
     A21 = 0.0;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_dtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_dtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_dtoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 5) {
@@ -1430,7 +1448,20 @@ pvn_dljsv2_
     A11 = *s1;
     A12 = 0.0;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(θ)=%s, ", pvn_dtoa(s, tt));
+    (void)printf("cos(θ)=%s, ", pvn_dtoa(s, ct));
+    (void)printf("sin(θ)=%s\n", pvn_dtoa(s, st));
+#endif /* !NDEBUG */
   }
+
+#ifndef NDEBUG
+  (void)printf("\tA =\n");
+  (void)printf("%s ", pvn_dtoa(s, scalbn(A11, -*es)));
+  (void)printf("%s\n", pvn_dtoa(s, scalbn(A12, -*es)));
+  (void)printf("%s ", pvn_dtoa(s, scalbn(A21, -*es)));
+  (void)printf("%s\n", pvn_dtoa(s, scalbn(A22, -*es)));
+#endif /* !NDEBUG */
 
   if (e == 13) {
     /* [ x y ] */
@@ -1488,12 +1519,18 @@ pvn_dljsv2_
       tf = (t2 / (1.0 + hypot(t2, 1.0)));
     else
       tf = copysign(1.0, t2);
+#ifndef NDEBUG
+    (void)printf("tan(φ)=%s, ", pvn_dtoa(s, tf));
+#endif /* !NDEBUG */
     cf = hypot(tf, 1.0);
     sf = (tf / cf);
 
     double tp = 0.0, cp = 1.0, sp = 0.0;
     sp = fma(tf, A22, A12);
     tp = (sp / A11);
+#ifndef NDEBUG
+    (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, tp));
+#endif /* !NDEBUG */
 
     if (isfinite(tp)) {
       /* 1 / cos */
@@ -1555,6 +1592,13 @@ pvn_dljsv2_
     }
     *s1 = scalbn(a_bf, a_be);
     *s2 = scalbn(abf, abe);
+
+#ifndef NDEBUG
+    (void)printf("cos(φ)=%s, ", pvn_dtoa(s, cf));
+    (void)printf("sin(φ)=%s\n", pvn_dtoa(s, sf));
+    (void)printf("cos(ψ)=%s, ", pvn_dtoa(s, cf));
+    (void)printf("sin(ψ)=%s\n", pvn_dtoa(s, sf));
+#endif /* !NDEBUG */
 
     /* update U */
     if (copysign(1.0, st) != 1.0) {
@@ -1632,6 +1676,9 @@ pvn_dljsv2_
     }
     else /* U^T(φ) = I */
       A21 = 0.0;
+#ifndef NDEBUG
+    (void)printf("U operation=%s\n", pvn_dtoa(s, A21));
+#endif /* !NDEBUG */
 
     /* update V */
     if (tp != 0.0) {
@@ -1649,6 +1696,9 @@ pvn_dljsv2_
     }
     else /* V(ψ) = I */
       A21 = 0.0;
+#ifndef NDEBUG
+    (void)printf("V operation=%s\n", pvn_dtoa(s, A21));
+#endif /* !NDEBUG */
   }
 
   if (*s1 < *s2) {
@@ -2482,6 +2532,19 @@ int pvn_xljsv2_
     return INT_MIN;
   }
 
+#ifndef NDEBUG
+#ifdef __x86_64__
+  char s[31] = { '\0' };
+#else /* !__x86_64__ */
+  char s[46] = { '\0' };
+#endif /* ?__x86_64__ */
+  (void)printf("\tA[knd=%d,e=%d] * 2^%d =\n", knd, e, *es);
+  (void)printf("%s ", pvn_xtoa(s, A11));
+  (void)printf("%s\n", pvn_xtoa(s, A12));
+  (void)printf("%s ", pvn_xtoa(s, A21));
+  (void)printf("%s\n", pvn_xtoa(s, A22));
+#endif /* !NDEBUG */
+
   long double tt = 0.0L, ct = 1.0L, st = 0.0L;
 
   if (e == 15) {
@@ -2593,6 +2656,11 @@ int pvn_xljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_xtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_xtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_xtoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 3) {
@@ -2628,6 +2696,11 @@ int pvn_xljsv2_
     A11 = *s1;
     A21 = 0.0L;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_xtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_xtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_xtoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 5) {
@@ -2663,7 +2736,20 @@ int pvn_xljsv2_
     A11 = *s1;
     A12 = 0.0L;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(θ)=%s, ", pvn_xtoa(s, tt));
+    (void)printf("cos(θ)=%s, ", pvn_xtoa(s, ct));
+    (void)printf("sin(θ)=%s\n", pvn_xtoa(s, st));
+#endif /* !NDEBUG */
   }
+
+#ifndef NDEBUG
+  (void)printf("\tA =\n");
+  (void)printf("%s ", pvn_xtoa(s, scalbnl(A11, -*es)));
+  (void)printf("%s\n", pvn_xtoa(s, scalbnl(A12, -*es)));
+  (void)printf("%s ", pvn_xtoa(s, scalbnl(A21, -*es)));
+  (void)printf("%s\n", pvn_xtoa(s, scalbnl(A22, -*es)));
+#endif /* !NDEBUG */
 
   if (e == 13) {
     /* [ x y ] */
@@ -2721,12 +2807,18 @@ int pvn_xljsv2_
       tf = (t2 / (1.0L + hypotl(t2, 1.0L)));
     else
       tf = copysignl(1.0L, t2);
+#ifndef NDEBUG
+    (void)printf("tan(φ)=%s, ", pvn_xtoa(s, tf));
+#endif /* !NDEBUG */
     cf = hypotl(tf, 1.0L);
     sf = (tf / cf);
 
     long double tp = 0.0L, cp = 1.0L, sp = 0.0L;
     sp = fmal(tf, A22, A12);
     tp = (sp / A11);
+#ifndef NDEBUG
+    (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, tp));
+#endif /* !NDEBUG */
 
     if (isfinite(tp)) {
       /* 1 / cos */
@@ -2788,6 +2880,13 @@ int pvn_xljsv2_
     }
     *s1 = scalbnl(a_bf, a_be);
     *s2 = scalbnl(abf, abe);
+
+#ifndef NDEBUG
+    (void)printf("cos(φ)=%s, ", pvn_xtoa(s, cf));
+    (void)printf("sin(φ)=%s\n", pvn_xtoa(s, sf));
+    (void)printf("cos(ψ)=%s, ", pvn_xtoa(s, cf));
+    (void)printf("sin(ψ)=%s\n", pvn_xtoa(s, sf));
+#endif /* !NDEBUG */
 
     /* update U */
     if (copysignl(1.0L, st) != 1.0L) {
@@ -2865,6 +2964,9 @@ int pvn_xljsv2_
     }
     else /* U^T(φ) = I */
       A21 = 0.0L;
+#ifndef NDEBUG
+    (void)printf("U operation=%s\n", pvn_xtoa(s, A21));
+#endif /* !NDEBUG */
 
     /* update V */
     if (tp != 0.0L) {
@@ -2882,6 +2984,9 @@ int pvn_xljsv2_
     }
     else /* V(ψ) = I */
       A21 = 0.0L;
+#ifndef NDEBUG
+    (void)printf("V operation=%s\n", pvn_xtoa(s, A21));
+#endif /* !NDEBUG */
   }
 
   if (*s1 < *s2) {
@@ -3468,6 +3573,15 @@ int pvn_qljsv2_
     return INT_MIN;
   }
 
+#ifndef NDEBUG
+  char s[46] = { '\0' };
+  (void)printf("\tA[knd=%d,e=%d] * 2^%d =\n", knd, e, *es);
+  (void)printf("%s ", pvn_qtoa(s, A11));
+  (void)printf("%s\n", pvn_qtoa(s, A12));
+  (void)printf("%s ", pvn_qtoa(s, A21));
+  (void)printf("%s\n", pvn_qtoa(s, A22));
+#endif /* !NDEBUG */
+
   __float128 tt = 0.0q, ct = 1.0q, st = 0.0q;
 
   if (e == 15) {
@@ -3579,6 +3693,11 @@ int pvn_qljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_qtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_qtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_qtoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 3) {
@@ -3614,6 +3733,11 @@ int pvn_qljsv2_
     A11 = *s1;
     A21 = 0.0q;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_qtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_qtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_qtoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 5) {
@@ -3649,7 +3773,20 @@ int pvn_qljsv2_
     A11 = *s1;
     A12 = 0.0q;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(θ)=%s, ", pvn_qtoa(s, tt));
+    (void)printf("cos(θ)=%s, ", pvn_qtoa(s, ct));
+    (void)printf("sin(θ)=%s\n", pvn_qtoa(s, st));
+#endif /* !NDEBUG */
   }
+
+#ifndef NDEBUG
+  (void)printf("\tA =\n");
+  (void)printf("%s ", pvn_qtoa(s, scalbnq(A11, -*es)));
+  (void)printf("%s\n", pvn_qtoa(s, scalbnq(A12, -*es)));
+  (void)printf("%s ", pvn_qtoa(s, scalbnq(A21, -*es)));
+  (void)printf("%s\n", pvn_qtoa(s, scalbnq(A22, -*es)));
+#endif /* !NDEBUG */
 
   if (e == 13) {
     /* [ x y ] */
@@ -3707,12 +3844,18 @@ int pvn_qljsv2_
       tf = (t2 / (1.0q + hypotq(t2, 1.0q)));
     else
       tf = copysignq(1.0q, t2);
+#ifndef NDEBUG
+    (void)printf("tan(φ)=%s, ", pvn_qtoa(s, tf));
+#endif /* !NDEBUG */
     cf = hypotq(tf, 1.0q);
     sf = (tf / cf);
 
     __float128 tp = 0.0q, cp = 1.0q, sp = 0.0q;
     sp = fmaq(tf, A22, A12);
     tp = (sp / A11);
+#ifndef NDEBUG
+    (void)printf("tan(ψ)=%s\n", pvn_qtoa(s, tp));
+#endif /* !NDEBUG */
 
     if (isfiniteq(tp)) {
       /* 1 / cos */
@@ -3774,6 +3917,13 @@ int pvn_qljsv2_
     }
     *s1 = scalbnq(a_bf, a_be);
     *s2 = scalbnq(abf, abe);
+
+#ifndef NDEBUG
+    (void)printf("cos(φ)=%s, ", pvn_qtoa(s, cf));
+    (void)printf("sin(φ)=%s\n", pvn_qtoa(s, sf));
+    (void)printf("cos(ψ)=%s, ", pvn_qtoa(s, cf));
+    (void)printf("sin(ψ)=%s\n", pvn_qtoa(s, sf));
+#endif /* !NDEBUG */
 
     /* update U */
     if (copysignq(1.0q, st) != 1.0q) {
@@ -3851,6 +4001,9 @@ int pvn_qljsv2_
     }
     else /* U^T(φ) = I */
       A21 = 0.0q;
+#ifndef NDEBUG
+    (void)printf("U operation=%s\n", pvn_qtoa(s, A21));
+#endif /* !NDEBUG */
 
     /* update V */
     if (tp != 0.0q) {
@@ -3868,6 +4021,9 @@ int pvn_qljsv2_
     }
     else /* V(ψ) = I */
       A21 = 0.0q;
+#ifndef NDEBUG
+    (void)printf("V operation=%s\n", pvn_qtoa(s, A21));
+#endif /* !NDEBUG */
   }
 
   if (*s1 < *s2) {
