@@ -657,14 +657,15 @@ pvn_sljsv2_
     if (a == b)
       de = 0;
     else if (fabsf(a_bf) >= FLT_MIN) {
-      de = -1;
       a_bf = frexpf(a_bf, &a_be);
+      de = 1;
     }
     else {
       de = ((FLT_MIN_EXP + FLT_MANT_DIG) - pvn_imin(ae, be));
       a_bf = (scalbnf(af, (ae + de)) - scalbnf(bf, (be + de)));
       a_bf = frexpf(a_bf, &a_be);
       a_be -= de;
+      de = -1;
     }
 
     if (de)
@@ -1457,14 +1458,15 @@ pvn_dljsv2_
     if (a == b)
       de = 0;
     else if (fabs(a_bf) >= DBL_MIN) {
-      de = -1;
       a_bf = frexp(a_bf, &a_be);
+      de = 1;
     }
     else {
       de = ((DBL_MIN_EXP + DBL_MANT_DIG) - pvn_imin(ae, be));
       a_bf = (scalbn(af, (ae + de)) - scalbn(bf, (be + de)));
       a_bf = frexp(a_bf, &a_be);
       a_be -= de;
+      de = -1;
     }
 
     if (de)
@@ -2689,14 +2691,15 @@ int pvn_xljsv2_
     if (a == b)
       de = 0;
     else if (fabsl(a_bf) >= LDBL_MIN) {
-      de = -1;
       a_bf = frexpl(a_bf, &a_be);
+      de = 1;
     }
     else {
       de = ((LDBL_MIN_EXP + LDBL_MANT_DIG) - pvn_imin(ae, be));
       a_bf = (scalbnl(af, (ae + de)) - scalbnl(bf, (be + de)));
       a_bf = frexpl(a_bf, &a_be);
       a_be -= de;
+      de = -1;
     }
 
     if (de)
@@ -3674,14 +3677,15 @@ int pvn_qljsv2_
     if (a == b)
       de = 0;
     else if (fabsq(a_bf) >= FLT128_MIN) {
-      de = -1;
       a_bf = frexpq(a_bf, &a_be);
+      de = 1;
     }
     else {
       de = ((FLT128_MIN_EXP + FLT128_MANT_DIG) - pvn_imin(ae, be));
       a_bf = (scalbnq(af, (ae + de)) - scalbnq(bf, (be + de)));
       a_bf = frexpq(a_bf, &a_be);
       a_be -= de;
+      de = -1;
     }
 
     if (de)
