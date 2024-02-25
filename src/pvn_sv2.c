@@ -138,14 +138,14 @@ pvn_sljsv2_
     break;
   case  3:
   case  5:
-  case  7:
   case 10:
-  case 11:
   case 12:
-  case 13:
-  case 14:
     e = (FLT_MAX_EXP - mxe - 1);
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
   case 15:
     e = (FLT_MAX_EXP - mxe - 2);
     break;
@@ -302,31 +302,7 @@ pvn_sljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    A22 = A11;
-    A11 = A12;
-    A12 = A22;
-    A22 = A21;
-    A21 = 0.0f;
-    *v11 = 0.0f;
-    *v22 = 0.0f;
-    if (A11 < 0.0f) {
-      A11 = -A11;
-      *v21 = -1.0f;
-    }
-    else
-      *v21 = 1.0f;
-    if (A12 < 0.0f) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0f;
-    }
-    else
-      *v12 = 1.0f;
-    if (A22 < 0.0f) {
-      *u22 = -1.0f;
-      A22 = -A22;
-    }
-    e = 13;
+    e = 15;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -390,36 +366,7 @@ pvn_sljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    *u11 = 0.0f;
-    *u12 = 1.0f;
-    *u22 = 0.0f;
-    A12 = A11;
-    A11 = A22;
-    A22 = A12;
-    A12 = A21;
-    A21 = 0.0f;
-    *v11 = 0.0f;
-    *v22 = 0.0f;
-    if (A11 < 0.0f) {
-      A11 = -A11;
-      *v21 = -1.0f;
-    }
-    else
-      *v21 = 1.0f;
-    if (A12 < 0.0f) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0f;
-    }
-    else
-      *v12 = 1.0f;
-    if (A22 < 0.0f) {
-      *u21 = -1.0f;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0f;
-    e = 13;
+    e = 15;
     break;
   case 12:
     /* [ 0 * ] */
@@ -453,80 +400,16 @@ pvn_sljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    if (A11 < 0.0f) {
-      A11 = -A11;
-      *v11 = -1.0f;
-    }
-    if (A12 < 0.0f) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0f;
-    }
-    if (A22 < 0.0f) {
-      *u22 = -1.0f;
-      A22 = -A22;
-    }
-    A21 = 0.0f;
-    e = 13;
+    e = 15;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    *u11 = 0.0f;
-    *u12 = 1.0f;
-    *u22 = 0.0f;
-    A11 = A12;
-    A12 = A22;
-    A22 = A11;
-    A11 = A21;
-    A21 = 0.0f;
-    if (A11 < 0.0f) {
-      A11 = -A11;
-      *v11 = -1.0f;
-    }
-    if (A12 < 0.0f) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0f;
-    }
-    if (A22 < 0.0f) {
-      *u21 = -1.0f;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0f;
-    e = 13;
+    e = 15;
     break;
   case 15:
     /* [ * * ] */
     /* [ * * ] */
-    *s1 = hypotf(A11, A21);
-    *s2 = hypotf(A12, A22);
-    if (*s1 < *s2) {
-      pvn_fswp(&A11, &A12);
-      pvn_fswp(&A21, &A22);
-      *v11 = 0.0f;
-      *v21 = 1.0f;
-      *v12 = 1.0f;
-      *v22 = 0.0f;
-      pvn_fswp(s1, s2);
-    }
-    if (A11 < 0.0f) {
-      *u11 = -1.0f;
-      A11 = -A11;
-      A12 = -A12;
-    }
-    if (A21 < 0.0f) {
-      *u22 = -1.0f;
-      A21 = -A21;
-      A22 = -A22;
-    }
-    if (A11 < A21) {
-      pvn_fswp(u11, u21);
-      pvn_fswp(u12, u22);
-      pvn_fswp(&A11, &A21);
-      pvn_fswp(&A12, &A22);
-    }
     e = 15;
     break;
   default:
@@ -545,8 +428,35 @@ pvn_sljsv2_
   float tt = 0.0f, ct = 1.0f, st = 0.0f;
 
   if (e == 15) {
-    /* [ X y ] */
-    /* [ x z ] */
+    /* [ * * ] */
+    /* [ * * ] */
+    *s1 = hypotf(A11, A21);
+    *s2 = hypotf(A12, A22);
+    if (*s1 < *s2) {
+      pvn_fswp(&A11, &A12);
+      pvn_fswp(&A21, &A22);
+      pvn_fswp(v11, v12);
+      pvn_fswp(v21, v22);
+      pvn_fswp(s1, s2);
+    }
+    if (copysignf(1.0f, A11) != 1.0f) {
+      *u11 = -*u11;
+      *u12 = -*u12;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (copysignf(1.0f, A21) != 1.0f) {
+      *u21 = -*u21;
+      *u22 = -*u22;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_fswp(u11, u21);
+      pvn_fswp(u12, u22);
+      pvn_fswp(&A11, &A21);
+      pvn_fswp(&A12, &A22);
+    }
     /* U^T(ϑ):
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
@@ -589,29 +499,23 @@ pvn_sljsv2_
     if (A12 == 0.0f) {
       A12 = 0.0f;
       if (copysignf(1.0f, A22) != 1.0f) {
-        if (*u21 != 0.0f)
-          *u21 = -*u21;
-        if (*u22 != 0.0f)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = -A22;
       }
       *s2 = A22;
       e = 0;
     }
     else if (A22 == 0.0f) {
-      if (A12 < 0.0f) {
+      if (copysignf(1.0f, A12) != 1.0f) {
         A12 = -A12;
         A22 = -A22;
-        if (*v12 != 0.0f)
-          *v12 = -*v12;
-        else
-          *v22 = -*v22;
+        *v12 = -*v12;
+        *v22 = -*v22;
       }
       if (copysignf(1.0f, A22) != 1.0f) {
-        if (*u21 != 0.0f)
-          *u21 = -*u21;
-        if (*u22 != 0.0f)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = 0.0f;
       }
       *s1 = hypotf(*s1, *s2);
@@ -623,10 +527,8 @@ pvn_sljsv2_
     if (A12 < 0.0f) {
       A12 = -A12;
       A22 = -A22;
-      if (*v12 != 0.0f)
-        *v12 = -*v12;
-      else
-        *v22 = -*v22;
+      *v12 = -*v12;
+      *v22 = -*v22;
     }
     if (A22 < 0.0f) {
       A22 = -A22;
@@ -791,9 +693,7 @@ pvn_sljsv2_
     sf = (tf / cf);
 
     float tp = 0.0f, cp = 1.0f, sp = 0.0f;
-    /* this should never overflow... */
     sp = fmaf(tf, A22, A12);
-    /* ...but this might */
     tp = (sp / A11);
 #ifndef NDEBUG
     (void)printf("tan(ψ)=%s\n", pvn_stoa(s, tp));
@@ -814,6 +714,7 @@ pvn_sljsv2_
       cp = (1.0f / cp);
     }
     else {
+      /* should never happen */
       nf = frexpf(sp, &ne);
       df = frexpf(A11, &de);
       ef_divf(&t2e, &t2f, ne, nf, de, df);
@@ -966,9 +867,6 @@ pvn_sljsv2_
 #ifndef NDEBUG
     (void)printf("V operation=%s\n", pvn_stoa(s, A21));
 #endif /* !NDEBUG */
-
-    A21 = 0.0f;
-    e = 0;
   }
 
   if (*s1 < *s2) {
@@ -1072,14 +970,14 @@ pvn_dljsv2_
     break;
   case  3:
   case  5:
-  case  7:
   case 10:
-  case 11:
   case 12:
-  case 13:
-  case 14:
     e = (DBL_MAX_EXP - mxe - 1);
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
   case 15:
     e = (DBL_MAX_EXP - mxe - 2);
     break;
@@ -1236,31 +1134,7 @@ pvn_dljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    A22 = A11;
-    A11 = A12;
-    A12 = A22;
-    A22 = A21;
-    A21 = 0.0;
-    *v11 = 0.0;
-    *v22 = 0.0;
-    if (A11 < 0.0) {
-      A11 = -A11;
-      *v21 = -1.0;
-    }
-    else
-      *v21 = 1.0;
-    if (A12 < 0.0) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0;
-    }
-    else
-      *v12 = 1.0;
-    if (A22 < 0.0) {
-      *u22 = -1.0;
-      A22 = -A22;
-    }
-    e = 13;
+    e = 15;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -1324,36 +1198,7 @@ pvn_dljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    *u11 = 0.0;
-    *u12 = 1.0;
-    *u22 = 0.0;
-    A12 = A11;
-    A11 = A22;
-    A22 = A12;
-    A12 = A21;
-    A21 = 0.0;
-    *v11 = 0.0;
-    *v22 = 0.0;
-    if (A11 < 0.0) {
-      A11 = -A11;
-      *v21 = -1.0;
-    }
-    else
-      *v21 = 1.0;
-    if (A12 < 0.0) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0;
-    }
-    else
-      *v12 = 1.0;
-    if (A22 < 0.0) {
-      *u21 = -1.0;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0;
-    e = 13;
+    e = 15;
     break;
   case 12:
     /* [ 0 * ] */
@@ -1387,80 +1232,16 @@ pvn_dljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    if (A11 < 0.0) {
-      A11 = -A11;
-      *v11 = -1.0;
-    }
-    if (A12 < 0.0) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0;
-    }
-    if (A22 < 0.0) {
-      *u22 = -1.0;
-      A22 = -A22;
-    }
-    A21 = 0.0;
-    e = 13;
+    e = 15;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    *u11 = 0.0;
-    *u12 = 1.0;
-    *u22 = 0.0;
-    A11 = A12;
-    A12 = A22;
-    A22 = A11;
-    A11 = A21;
-    A21 = 0.0;
-    if (A11 < 0.0) {
-      A11 = -A11;
-      *v11 = -1.0;
-    }
-    if (A12 < 0.0) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0;
-    }
-    if (A22 < 0.0) {
-      *u21 = -1.0;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0;
-    e = 13;
+    e = 15;
     break;
   case 15:
     /* [ * * ] */
     /* [ * * ] */
-    *s1 = hypot(A11, A21);
-    *s2 = hypot(A12, A22);
-    if (*s1 < *s2) {
-      pvn_dswp(&A11, &A12);
-      pvn_dswp(&A21, &A22);
-      *v11 = 0.0;
-      *v21 = 1.0;
-      *v12 = 1.0;
-      *v22 = 0.0;
-      pvn_dswp(s1, s2);
-    }
-    if (A11 < 0.0) {
-      *u11 = -1.0;
-      A11 = -A11;
-      A12 = -A12;
-    }
-    if (A21 < 0.0) {
-      *u22 = -1.0;
-      A21 = -A21;
-      A22 = -A22;
-    }
-    if (A11 < A21) {
-      pvn_dswp(u11, u21);
-      pvn_dswp(u12, u22);
-      pvn_dswp(&A11, &A21);
-      pvn_dswp(&A12, &A22);
-    }
     e = 15;
     break;
   default:
@@ -1470,8 +1251,35 @@ pvn_dljsv2_
   double tt = 0.0, ct = 1.0, st = 0.0;
 
   if (e == 15) {
-    /* [ X y ] */
-    /* [ x z ] */
+    /* [ * * ] */
+    /* [ * * ] */
+    *s1 = hypot(A11, A21);
+    *s2 = hypot(A12, A22);
+    if (*s1 < *s2) {
+      pvn_dswp(&A11, &A12);
+      pvn_dswp(&A21, &A22);
+      pvn_dswp(v11, v12);
+      pvn_dswp(v21, v22);
+      pvn_dswp(s1, s2);
+    }
+    if (copysign(1.0, A11) != 1.0) {
+      *u11 = -*u11;
+      *u12 = -*u12;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (copysign(1.0, A21) != 1.0) {
+      *u21 = -*u21;
+      *u22 = -*u22;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_dswp(u11, u21);
+      pvn_dswp(u12, u22);
+      pvn_dswp(&A11, &A21);
+      pvn_dswp(&A12, &A22);
+    }
     /* U^T(ϑ):
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
@@ -1514,29 +1322,23 @@ pvn_dljsv2_
     if (A12 == 0.0) {
       A12 = 0.0;
       if (copysign(1.0, A22) != 1.0) {
-        if (*u21 != 0.0)
-          *u21 = -*u21;
-        if (*u22 != 0.0)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = -A22;
       }
       *s2 = A22;
       e = 0;
     }
     else if (A22 == 0.0) {
-      if (A12 < 0.0) {
+      if (copysign(1.0, A12) != 1.0) {
         A12 = -A12;
         A22 = -A22;
-        if (*v12 != 0.0)
-          *v12 = -*v12;
-        else
-          *v22 = -*v22;
+        *v12 = -*v12;
+        *v22 = -*v22;
       }
       if (copysign(1.0, A22) != 1.0) {
-        if (*u21 != 0.0)
-          *u21 = -*u21;
-        if (*u22 != 0.0)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = 0.0;
       }
       *s1 = hypot(*s1, *s2);
@@ -1548,10 +1350,8 @@ pvn_dljsv2_
     if (A12 < 0.0) {
       A12 = -A12;
       A22 = -A22;
-      if (*v12 != 0.0)
-        *v12 = -*v12;
-      else
-        *v22 = -*v22;
+      *v12 = -*v12;
+      *v22 = -*v22;
     }
     if (A22 < 0.0) {
       A22 = -A22;
@@ -1690,9 +1490,7 @@ pvn_dljsv2_
     sf = (tf / cf);
 
     double tp = 0.0, cp = 1.0, sp = 0.0;
-    /* this should never overflow... */
     sp = fma(tf, A22, A12);
-    /* ...but this might */
     tp = (sp / A11);
 
     if (isfinite(tp)) {
@@ -1710,6 +1508,7 @@ pvn_dljsv2_
       cp = (1.0 / cp);
     }
     else {
+      /* should never happen */
       nf = frexp(sp, &ne);
       df = frexp(A11, &de);
       ef_div(&t2e, &t2f, ne, nf, de, df);
@@ -1848,9 +1647,6 @@ pvn_dljsv2_
     }
     else /* V(ψ) = I */
       A21 = 0.0;
-
-    A21 = 0.0;
-    e = 0;
   }
 
   if (*s1 < *s2) {
@@ -2406,14 +2202,14 @@ int pvn_xljsv2_
     break;
   case  3:
   case  5:
-  case  7:
   case 10:
-  case 11:
   case 12:
-  case 13:
-  case 14:
     e = (LDBL_MAX_EXP - mxe - 1);
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
   case 15:
     e = (LDBL_MAX_EXP - mxe - 2);
     break;
@@ -2570,31 +2366,7 @@ int pvn_xljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    A22 = A11;
-    A11 = A12;
-    A12 = A22;
-    A22 = A21;
-    A21 = 0.0L;
-    *v11 = 0.0L;
-    *v22 = 0.0L;
-    if (A11 < 0.0L) {
-      A11 = -A11;
-      *v21 = -1.0L;
-    }
-    else
-      *v21 = 1.0L;
-    if (A12 < 0.0L) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0L;
-    }
-    else
-      *v12 = 1.0L;
-    if (A22 < 0.0L) {
-      *u22 = -1.0L;
-      A22 = -A22;
-    }
-    e = 13;
+    e = 15;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -2658,36 +2430,7 @@ int pvn_xljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    *u11 = 0.0L;
-    *u12 = 1.0L;
-    *u22 = 0.0L;
-    A12 = A11;
-    A11 = A22;
-    A22 = A12;
-    A12 = A21;
-    A21 = 0.0L;
-    *v11 = 0.0L;
-    *v22 = 0.0L;
-    if (A11 < 0.0L) {
-      A11 = -A11;
-      *v21 = -1.0L;
-    }
-    else
-      *v21 = 1.0L;
-    if (A12 < 0.0L) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0L;
-    }
-    else
-      *v12 = 1.0L;
-    if (A22 < 0.0L) {
-      *u21 = -1.0L;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0L;
-    e = 13;
+    e = 15;
     break;
   case 12:
     /* [ 0 * ] */
@@ -2721,80 +2464,16 @@ int pvn_xljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    if (A11 < 0.0L) {
-      A11 = -A11;
-      *v11 = -1.0L;
-    }
-    if (A12 < 0.0L) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0L;
-    }
-    if (A22 < 0.0L) {
-      *u22 = -1.0L;
-      A22 = -A22;
-    }
-    A21 = 0.0L;
-    e = 13;
+    e = 15;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    *u11 = 0.0L;
-    *u12 = 1.0L;
-    *u22 = 0.0L;
-    A11 = A12;
-    A12 = A22;
-    A22 = A11;
-    A11 = A21;
-    A21 = 0.0L;
-    if (A11 < 0.0L) {
-      A11 = -A11;
-      *v11 = -1.0L;
-    }
-    if (A12 < 0.0L) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0L;
-    }
-    if (A22 < 0.0L) {
-      *u21 = -1.0L;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0L;
-    e = 13;
+    e = 15;
     break;
   case 15:
     /* [ * * ] */
     /* [ * * ] */
-    *s1 = hypotl(A11, A21);
-    *s2 = hypotl(A12, A22);
-    if (*s1 < *s2) {
-      pvn_Lswp(&A11, &A12);
-      pvn_Lswp(&A21, &A22);
-      *v11 = 0.0L;
-      *v21 = 1.0L;
-      *v12 = 1.0L;
-      *v22 = 0.0L;
-      pvn_Lswp(s1, s2);
-    }
-    if (A11 < 0.0L) {
-      *u11 = -1.0L;
-      A11 = -A11;
-      A12 = -A12;
-    }
-    if (A21 < 0.0L) {
-      *u22 = -1.0L;
-      A21 = -A21;
-      A22 = -A22;
-    }
-    if (A11 < A21) {
-      pvn_Lswp(u11, u21);
-      pvn_Lswp(u12, u22);
-      pvn_Lswp(&A11, &A21);
-      pvn_Lswp(&A12, &A22);
-    }
     e = 15;
     break;
   default:
@@ -2804,8 +2483,35 @@ int pvn_xljsv2_
   long double tt = 0.0L, ct = 1.0L, st = 0.0L;
 
   if (e == 15) {
-    /* [ X y ] */
-    /* [ x z ] */
+    /* [ * * ] */
+    /* [ * * ] */
+    *s1 = hypotl(A11, A21);
+    *s2 = hypotl(A12, A22);
+    if (*s1 < *s2) {
+      pvn_Lswp(&A11, &A12);
+      pvn_Lswp(&A21, &A22);
+      pvn_Lswp(v11, v12);
+      pvn_Lswp(v21, v22);
+      pvn_Lswp(s1, s2);
+    }
+    if (copysignl(1.0L, A11) != 1.0L) {
+      *u11 = -*u11;
+      *u12 = -*u12;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (copysignl(1.0L, A21) != 1.0L) {
+      *u21 = -*u21;
+      *u22 = -*u22;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_Lswp(u11, u21);
+      pvn_Lswp(u12, u22);
+      pvn_Lswp(&A11, &A21);
+      pvn_Lswp(&A12, &A22);
+    }
     /* U^T(ϑ):
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
@@ -2848,29 +2554,23 @@ int pvn_xljsv2_
     if (A12 == 0.0L) {
       A12 = 0.0L;
       if (copysignl(1.0L, A22) != 1.0L) {
-        if (*u21 != 0.0L)
-          *u21 = -*u21;
-        if (*u22 != 0.0L)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = -A22;
       }
       *s2 = A22;
       e = 0;
     }
     else if (A22 == 0.0L) {
-      if (A12 < 0.0L) {
+      if (copysignl(1.0L, A12) != 1.0L) {
         A12 = -A12;
         A22 = -A22;
-        if (*v12 != 0.0L)
-          *v12 = -*v12;
-        else
-          *v22 = -*v22;
+        *v12 = -*v12;
+        *v22 = -*v22;
       }
       if (copysignl(1.0L, A22) != 1.0L) {
-        if (*u21 != 0.0L)
-          *u21 = -*u21;
-        if (*u22 != 0.0L)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = 0.0L;
       }
       *s1 = hypotl(*s1, *s2);
@@ -2882,10 +2582,8 @@ int pvn_xljsv2_
     if (A12 < 0.0L) {
       A12 = -A12;
       A22 = -A22;
-      if (*v12 != 0.0L)
-        *v12 = -*v12;
-      else
-        *v22 = -*v22;
+      *v12 = -*v12;
+      *v22 = -*v22;
     }
     if (A22 < 0.0L) {
       A22 = -A22;
@@ -3024,9 +2722,7 @@ int pvn_xljsv2_
     sf = (tf / cf);
 
     long double tp = 0.0L, cp = 1.0L, sp = 0.0L;
-    /* this should never overflow... */
     sp = fmal(tf, A22, A12);
-    /* ...but this might */
     tp = (sp / A11);
 
     if (isfinite(tp)) {
@@ -3044,6 +2740,7 @@ int pvn_xljsv2_
       cp = (1.0L / cp);
     }
     else {
+      /* should never happen */
       nf = frexpl(sp, &ne);
       df = frexpl(A11, &de);
       ef_divl(&t2e, &t2f, ne, nf, de, df);
@@ -3182,9 +2879,6 @@ int pvn_xljsv2_
     }
     else /* V(ψ) = I */
       A21 = 0.0L;
-
-    A21 = 0.0L;
-    e = 0;
   }
 
   if (*s1 < *s2) {
@@ -3493,14 +3187,14 @@ int pvn_qljsv2_
     break;
   case  3:
   case  5:
-  case  7:
   case 10:
-  case 11:
   case 12:
-  case 13:
-  case 14:
     e = (FLT128_MAX_EXP - mxe - 1);
     break;
+  case  7:
+  case 11:
+  case 13:
+  case 14:
   case 15:
     e = (FLT128_MAX_EXP - mxe - 2);
     break;
@@ -3657,31 +3351,7 @@ int pvn_qljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    A22 = A11;
-    A11 = A12;
-    A12 = A22;
-    A22 = A21;
-    A21 = 0.0q;
-    *v11 = 0.0q;
-    *v22 = 0.0q;
-    if (A11 < 0.0q) {
-      A11 = -A11;
-      *v21 = -1.0q;
-    }
-    else
-      *v21 = 1.0q;
-    if (A12 < 0.0q) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0q;
-    }
-    else
-      *v12 = 1.0q;
-    if (A22 < 0.0q) {
-      *u22 = -1.0q;
-      A22 = -A22;
-    }
-    e = 13;
+    e = 15;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -3745,36 +3415,7 @@ int pvn_qljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    *u11 = 0.0q;
-    *u12 = 1.0q;
-    *u22 = 0.0q;
-    A12 = A11;
-    A11 = A22;
-    A22 = A12;
-    A12 = A21;
-    A21 = 0.0q;
-    *v11 = 0.0q;
-    *v22 = 0.0q;
-    if (A11 < 0.0q) {
-      A11 = -A11;
-      *v21 = -1.0q;
-    }
-    else
-      *v21 = 1.0q;
-    if (A12 < 0.0q) {
-      A12 = -A12;
-      A22 = -A22;
-      *v12 = -1.0q;
-    }
-    else
-      *v12 = 1.0q;
-    if (A22 < 0.0q) {
-      *u21 = -1.0q;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0q;
-    e = 13;
+    e = 15;
     break;
   case 12:
     /* [ 0 * ] */
@@ -3808,80 +3449,16 @@ int pvn_qljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    if (A11 < 0.0q) {
-      A11 = -A11;
-      *v11 = -1.0q;
-    }
-    if (A12 < 0.0q) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0q;
-    }
-    if (A22 < 0.0q) {
-      *u22 = -1.0q;
-      A22 = -A22;
-    }
-    A21 = 0.0q;
-    e = 13;
+    e = 15;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    *u11 = 0.0q;
-    *u12 = 1.0q;
-    *u22 = 0.0q;
-    A11 = A12;
-    A12 = A22;
-    A22 = A11;
-    A11 = A21;
-    A21 = 0.0q;
-    if (A11 < 0.0q) {
-      A11 = -A11;
-      *v11 = -1.0q;
-    }
-    if (A12 < 0.0q) {
-      A12 = -A12;
-      A22 = -A22;
-      *v22 = -1.0q;
-    }
-    if (A22 < 0.0q) {
-      *u21 = -1.0q;
-      A22 = -A22;
-    }
-    else
-      *u21 = 1.0q;
-    e = 13;
+    e = 15;
     break;
   case 15:
     /* [ * * ] */
     /* [ * * ] */
-    *s1 = hypotq(A11, A21);
-    *s2 = hypotq(A12, A22);
-    if (*s1 < *s2) {
-      pvn_qswp(&A11, &A12);
-      pvn_qswp(&A21, &A22);
-      *v11 = 0.0q;
-      *v21 = 1.0q;
-      *v12 = 1.0q;
-      *v22 = 0.0q;
-      pvn_qswp(s1, s2);
-    }
-    if (A11 < 0.0q) {
-      *u11 = -1.0q;
-      A11 = -A11;
-      A12 = -A12;
-    }
-    if (A21 < 0.0q) {
-      *u22 = -1.0q;
-      A21 = -A21;
-      A22 = -A22;
-    }
-    if (A11 < A21) {
-      pvn_qswp(u11, u21);
-      pvn_qswp(u12, u22);
-      pvn_qswp(&A11, &A21);
-      pvn_qswp(&A12, &A22);
-    }
     e = 15;
     break;
   default:
@@ -3891,8 +3468,35 @@ int pvn_qljsv2_
   __float128 tt = 0.0q, ct = 1.0q, st = 0.0q;
 
   if (e == 15) {
-    /* [ X y ] */
-    /* [ x z ] */
+    /* [ * * ] */
+    /* [ * * ] */
+    *s1 = hypotq(A11, A21);
+    *s2 = hypotq(A12, A22);
+    if (*s1 < *s2) {
+      pvn_qswp(&A11, &A12);
+      pvn_qswp(&A21, &A22);
+      pvn_qswp(v11, v12);
+      pvn_qswp(v21, v22);
+      pvn_qswp(s1, s2);
+    }
+    if (copysignq(1.0q, A11) != 1.0q) {
+      *u11 = -*u11;
+      *u12 = -*u12;
+      A11 = -A11;
+      A12 = -A12;
+    }
+    if (copysignq(1.0q, A21) != 1.0q) {
+      *u21 = -*u21;
+      *u22 = -*u22;
+      A21 = -A21;
+      A22 = -A22;
+    }
+    if (A11 < A21) {
+      pvn_qswp(u11, u21);
+      pvn_qswp(u12, u22);
+      pvn_qswp(&A11, &A21);
+      pvn_qswp(&A12, &A22);
+    }
     /* U^T(ϑ):
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
@@ -3935,29 +3539,23 @@ int pvn_qljsv2_
     if (A12 == 0.0q) {
       A12 = 0.0q;
       if (copysignq(1.0q, A22) != 1.0q) {
-        if (*u21 != 0.0q)
-          *u21 = -*u21;
-        if (*u22 != 0.0q)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = -A22;
       }
       *s2 = A22;
       e = 0;
     }
     else if (A22 == 0.0q) {
-      if (A12 < 0.0q) {
+      if (copysignq(1.0q, A12) != 1.0q) {
         A12 = -A12;
         A22 = -A22;
-        if (*v12 != 0.0q)
-          *v12 = -*v12;
-        else
-          *v22 = -*v22;
+        *v12 = -*v12;
+        *v22 = -*v22;
       }
       if (copysignq(1.0q, A22) != 1.0q) {
-        if (*u21 != 0.0q)
-          *u21 = -*u21;
-        if (*u22 != 0.0q)
-          *u22 = -*u22;
+        *u21 = -*u21;
+        *u22 = -*u22;
         A22 = 0.0q;
       }
       *s1 = hypotq(*s1, *s2);
@@ -3969,10 +3567,8 @@ int pvn_qljsv2_
     if (A12 < 0.0q) {
       A12 = -A12;
       A22 = -A22;
-      if (*v12 != 0.0q)
-        *v12 = -*v12;
-      else
-        *v22 = -*v22;
+      *v12 = -*v12;
+      *v22 = -*v22;
     }
     if (A22 < 0.0q) {
       A22 = -A22;
@@ -4111,9 +3707,7 @@ int pvn_qljsv2_
     sf = (tf / cf);
 
     __float128 tp = 0.0q, cp = 1.0q, sp = 0.0q;
-    /* this should never overflow... */
     sp = fmaq(tf, A22, A12);
-    /* ...but this might */
     tp = (sp / A11);
 
     if (isfiniteq(tp)) {
@@ -4131,6 +3725,7 @@ int pvn_qljsv2_
       cp = (1.0q / cp);
     }
     else {
+      /* should never happen */
       nf = frexpq(sp, &ne);
       df = frexpq(A11, &de);
       ef_divq(&t2e, &t2f, ne, nf, de, df);
@@ -4269,9 +3864,6 @@ int pvn_qljsv2_
     }
     else /* V(ψ) = I */
       A21 = 0.0q;
-
-    A21 = 0.0q;
-    e = 0;
   }
 
   if (*s1 < *s2) {
