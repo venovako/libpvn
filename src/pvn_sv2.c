@@ -302,7 +302,31 @@ pvn_sljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    e = 15;
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0f;
+    *v11 = 0.0f;
+    *v22 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v21 = -1.0f;
+    }
+    else
+      *v21 = 1.0f;
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0f;
+    }
+    else
+      *v12 = 1.0f;
+    if (A22 < 0.0f) {
+      *u22 = -1.0f;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -366,7 +390,36 @@ pvn_sljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0f;
+    *u12 = 1.0f;
+    *u22 = 0.0f;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0f;
+    *v11 = 0.0f;
+    *v22 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v21 = -1.0f;
+    }
+    else
+      *v21 = 1.0f;
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0f;
+    }
+    else
+      *v12 = 1.0f;
+    if (A22 < 0.0f) {
+      *u21 = -1.0f;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0f;
+    e = 13;
     break;
   case 12:
     /* [ 0 * ] */
@@ -400,12 +453,49 @@ pvn_sljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    e = 15;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v11 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u22 = -1.0f;
+      A22 = -A22;
+    }
+    A21 = 0.0f;
+    e = 13;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0f;
+    *u12 = 1.0f;
+    *u22 = 0.0f;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v11 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u21 = -1.0f;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0f;
+    e = 13;
     break;
   case 15:
     /* [ * * ] */
@@ -415,6 +505,23 @@ pvn_sljsv2_
   default:
     return INT_MIN;
   }
+
+  if (e == 13) {
+    if (A11 >= A22) {
+      if (A11 < A12)
+        e = 15;
+    }
+    else {
+      if (A22 >= A12)
+        e = -13;
+      else
+        e = -15;
+    }
+  }
+
+  /* TODO: REMOVE WHEN COMPLETED */
+  if (e == -13)
+    e = 15;
 
 #ifndef NDEBUG
   char s[17] = { '\0' };
@@ -427,7 +534,7 @@ pvn_sljsv2_
 
   float tt = 0.0f, ct = 1.0f, st = 0.0f;
 
-  if (e == 15) {
+  if (abs(e) == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypotf(A11, A21);
@@ -536,6 +643,8 @@ pvn_sljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+    if ((A11 < A22) && (e == 13))
+      e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_stoa(s, tt));
     (void)printf("cos(ϑ)=%s, ", pvn_stoa(s, ct));
@@ -631,7 +740,7 @@ pvn_sljsv2_
   (void)printf("%s\n", pvn_stoa(s, scalbnf(A22, -*es)));
 #endif /* !NDEBUG */
 
-  if (e == 13) {
+  if (abs(e) == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
 
@@ -1134,7 +1243,31 @@ pvn_dljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    e = 15;
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0;
+    *v11 = 0.0;
+    *v22 = 0.0;
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v21 = -1.0;
+    }
+    else
+      *v21 = 1.0;
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0;
+    }
+    else
+      *v12 = 1.0;
+    if (A22 < 0.0) {
+      *u22 = -1.0;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -1198,7 +1331,36 @@ pvn_dljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0;
+    *u12 = 1.0;
+    *u22 = 0.0;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0;
+    *v11 = 0.0;
+    *v22 = 0.0;
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v21 = -1.0;
+    }
+    else
+      *v21 = 1.0;
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0;
+    }
+    else
+      *v12 = 1.0;
+    if (A22 < 0.0) {
+      *u21 = -1.0;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0;
+    e = 13;
     break;
   case 12:
     /* [ 0 * ] */
@@ -1232,12 +1394,49 @@ pvn_dljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    e = 15;
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v11 = -1.0;
+    }
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0;
+    }
+    if (A22 < 0.0) {
+      *u22 = -1.0;
+      A22 = -A22;
+    }
+    A21 = 0.0;
+    e = 13;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0;
+    *u12 = 1.0;
+    *u22 = 0.0;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0;
+    if (A11 < 0.0) {
+      A11 = -A11;
+      *v11 = -1.0;
+    }
+    if (A12 < 0.0) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0;
+    }
+    if (A22 < 0.0) {
+      *u21 = -1.0;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0;
+    e = 13;
     break;
   case 15:
     /* [ * * ] */
@@ -1247,6 +1446,23 @@ pvn_dljsv2_
   default:
     return INT_MIN;
   }
+
+  if (e == 13) {
+    if (A11 >= A22) {
+      if (A11 < A12)
+        e = 15;
+    }
+    else {
+      if (A22 >= A12)
+        e = -13;
+      else
+        e = -15;
+    }
+  }
+
+  /* TODO: REMOVE WHEN COMPLETED */
+  if (e == -13)
+    e = 15;
 
 #ifndef NDEBUG
   char s[26] = { '\0' };
@@ -1259,7 +1475,7 @@ pvn_dljsv2_
 
   double tt = 0.0, ct = 1.0, st = 0.0;
 
-  if (e == 15) {
+  if (abs(e) == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypot(A11, A21);
@@ -1368,6 +1584,8 @@ pvn_dljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+    if ((A11 < A22) && (e == 13))
+      e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_dtoa(s, tt));
     (void)printf("cos(ϑ)=%s, ", pvn_dtoa(s, ct));
@@ -1463,7 +1681,7 @@ pvn_dljsv2_
   (void)printf("%s\n", pvn_dtoa(s, scalbn(A22, -*es)));
 #endif /* !NDEBUG */
 
-  if (e == 13) {
+  if (abs(e) == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
 
@@ -2169,6 +2387,7 @@ pvn_zljsv2_
   return knd;
 }
 
+#ifndef _WIN32
 static inline void ef_mull(int *const e, long double *const f, const int e1, const long double f1, const int e2, const long double f2)
 {
   assert(e);
@@ -2187,7 +2406,6 @@ static inline void ef_divl(int *const e, long double *const f, const int e1, con
   *e += (e1 - e2);
 }
 
-#ifndef _WIN32
 int pvn_xljsv2_
 (const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
  long double *const u11, long double *const u21, long double *const u12, long double *const u22,
@@ -2418,7 +2636,31 @@ int pvn_xljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    e = 15;
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0L;
+    *v11 = 0.0L;
+    *v22 = 0.0L;
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v21 = -1.0L;
+    }
+    else
+      *v21 = 1.0L;
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0L;
+    }
+    else
+      *v12 = 1.0L;
+    if (A22 < 0.0L) {
+      *u22 = -1.0L;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -2482,7 +2724,36 @@ int pvn_xljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0L;
+    *u12 = 1.0L;
+    *u22 = 0.0L;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0L;
+    *v11 = 0.0L;
+    *v22 = 0.0L;
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v21 = -1.0L;
+    }
+    else
+      *v21 = 1.0L;
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0L;
+    }
+    else
+      *v12 = 1.0L;
+    if (A22 < 0.0L) {
+      *u21 = -1.0L;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0L;
+    e = 13;
     break;
   case 12:
     /* [ 0 * ] */
@@ -2516,12 +2787,49 @@ int pvn_xljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    e = 15;
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v11 = -1.0L;
+    }
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0L;
+    }
+    if (A22 < 0.0L) {
+      *u22 = -1.0L;
+      A22 = -A22;
+    }
+    A21 = 0.0L;
+    e = 13;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0L;
+    *u12 = 1.0L;
+    *u22 = 0.0L;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0L;
+    if (A11 < 0.0L) {
+      A11 = -A11;
+      *v11 = -1.0L;
+    }
+    if (A12 < 0.0L) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0L;
+    }
+    if (A22 < 0.0L) {
+      *u21 = -1.0L;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0L;
+    e = 13;
     break;
   case 15:
     /* [ * * ] */
@@ -2531,6 +2839,23 @@ int pvn_xljsv2_
   default:
     return INT_MIN;
   }
+
+  if (e == 13) {
+    if (A11 >= A22) {
+      if (A11 < A12)
+        e = 15;
+    }
+    else {
+      if (A22 >= A12)
+        e = -13;
+      else
+        e = -15;
+    }
+  }
+
+  /* TODO: REMOVE WHEN COMPLETED */
+  if (e == -13)
+    e = 15;
 
 #ifndef NDEBUG
 #ifdef __x86_64__
@@ -2547,7 +2872,7 @@ int pvn_xljsv2_
 
   long double tt = 0.0L, ct = 1.0L, st = 0.0L;
 
-  if (e == 15) {
+  if (abs(e) == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypotl(A11, A21);
@@ -2656,6 +2981,8 @@ int pvn_xljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+    if ((A11 < A22) && (e == 13))
+      e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_xtoa(s, tt));
     (void)printf("cos(ϑ)=%s, ", pvn_xtoa(s, ct));
@@ -2751,7 +3078,7 @@ int pvn_xljsv2_
   (void)printf("%s\n", pvn_xtoa(s, scalbnl(A22, -*es)));
 #endif /* !NDEBUG */
 
-  if (e == 13) {
+  if (abs(e) == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
 
@@ -3459,7 +3786,31 @@ int pvn_qljsv2_
   case  7:
     /* [ * * ] */
     /* [ * 0 ] */
-    e = 15;
+    A22 = A11;
+    A11 = A12;
+    A12 = A22;
+    A22 = A21;
+    A21 = 0.0f;
+    *v11 = 0.0f;
+    *v22 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v21 = -1.0f;
+    }
+    else
+      *v21 = 1.0f;
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0f;
+    }
+    else
+      *v12 = 1.0f;
+    if (A22 < 0.0f) {
+      *u22 = -1.0f;
+      A22 = -A22;
+    }
+    e = 13;
     break;
   case  8:
     /* [ 0 0 ] */
@@ -3523,7 +3874,36 @@ int pvn_qljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0f;
+    *u12 = 1.0f;
+    *u22 = 0.0f;
+    A12 = A11;
+    A11 = A22;
+    A22 = A12;
+    A12 = A21;
+    A21 = 0.0f;
+    *v11 = 0.0f;
+    *v22 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v21 = -1.0f;
+    }
+    else
+      *v21 = 1.0f;
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v12 = -1.0f;
+    }
+    else
+      *v12 = 1.0f;
+    if (A22 < 0.0f) {
+      *u21 = -1.0f;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0f;
+    e = 13;
     break;
   case 12:
     /* [ 0 * ] */
@@ -3557,12 +3937,49 @@ int pvn_qljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    e = 15;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v11 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u22 = -1.0f;
+      A22 = -A22;
+    }
+    A21 = 0.0f;
+    e = 13;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    e = 15;
+    *u11 = 0.0f;
+    *u12 = 1.0f;
+    *u22 = 0.0f;
+    A11 = A12;
+    A12 = A22;
+    A22 = A11;
+    A11 = A21;
+    A21 = 0.0f;
+    if (A11 < 0.0f) {
+      A11 = -A11;
+      *v11 = -1.0f;
+    }
+    if (A12 < 0.0f) {
+      A12 = -A12;
+      A22 = -A22;
+      *v22 = -1.0f;
+    }
+    if (A22 < 0.0f) {
+      *u21 = -1.0f;
+      A22 = -A22;
+    }
+    else
+      *u21 = 1.0f;
+    e = 13;
     break;
   case 15:
     /* [ * * ] */
@@ -3572,6 +3989,23 @@ int pvn_qljsv2_
   default:
     return INT_MIN;
   }
+
+  if (e == 13) {
+    if (A11 >= A22) {
+      if (A11 < A12)
+        e = 15;
+    }
+    else {
+      if (A22 >= A12)
+        e = -13;
+      else
+        e = -15;
+    }
+  }
+
+  /* TODO: REMOVE WHEN COMPLETED */
+  if (e == -13)
+    e = 15;
 
 #ifndef NDEBUG
   char s[46] = { '\0' };
@@ -3584,7 +4018,7 @@ int pvn_qljsv2_
 
   __float128 tt = 0.0q, ct = 1.0q, st = 0.0q;
 
-  if (e == 15) {
+  if (abs(e) == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypotq(A11, A21);
@@ -3693,6 +4127,8 @@ int pvn_qljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
+    if ((A11 < A22) && (e == 13))
+      e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_qtoa(s, tt));
     (void)printf("cos(ϑ)=%s, ", pvn_qtoa(s, ct));
@@ -3788,7 +4224,7 @@ int pvn_qljsv2_
   (void)printf("%s\n", pvn_qtoa(s, scalbnq(A22, -*es)));
 #endif /* !NDEBUG */
 
-  if (e == 13) {
+  if (abs(e) == 13) {
     /* [ x y ] */
     /* [ 0 z ] */
 
