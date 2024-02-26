@@ -23,17 +23,6 @@ pvn_sljsv2_
 
 PVN_EXTERN_C int
 #ifdef _WIN32
-PVN_DLJSV2
-#else /* !_WIN32 */
-pvn_dljsv2_
-#endif /* ?_WIN32 */
-(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
- double *const u11, double *const u21, double *const u12, double *const u22,
- double *const v11, double *const v21, double *const v12, double *const v22,
- double *const s1, double *const s2, int *const es);
-
-PVN_EXTERN_C int
-#ifdef _WIN32
 PVN_CLJSV2
 #else /* !_WIN32 */
 pvn_cljsv2_
@@ -42,6 +31,17 @@ pvn_cljsv2_
  float *const u11r, float *const u11i, float *const u21r, float *const u21i, float *const u12r, float *const u12i, float *const u22r, float *const u22i,
  float *const v11r, float *const v11i, float *const v21r, float *const v21i, float *const v12r, float *const v12i, float *const v22r, float *const v22i,
  float *const s1, float *const s2, int *const es);
+
+PVN_EXTERN_C int
+#ifdef _WIN32
+PVN_DLJSV2
+#else /* !_WIN32 */
+pvn_dljsv2_
+#endif /* ?_WIN32 */
+(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
+ double *const u11, double *const u21, double *const u12, double *const u22,
+ double *const v11, double *const v21, double *const v12, double *const v22,
+ double *const s1, double *const s2, int *const es);
 
 PVN_EXTERN_C int
 #ifdef _WIN32
