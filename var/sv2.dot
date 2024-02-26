@@ -13,11 +13,12 @@ strict digraph sv2 {
     0124869 -> SVD [style=dashed]
     3 -> SVD [label=<U<SUP>*</SUP>(ϑ)>]
     7111314 -> 15 [style=dashed]
+    7111314 -> PUT [style=dashed]
     12 -> 3 [style=dashed]
     PUT -> SVD [label=< U<SUP>*</SUP>(φ)<BR/> V(ψ)>,style=bold]
     5 -> SVD [label=< V(θ)>]
     10 -> 5 [style=dashed]
     15 -> 5 [label=< U<SUP>*</SUP>(ϑ)>]
-    15 -> SVD [label=< U<SUP>*</SUP>(ϑ)>,style=dotted]
+    15 -> SVD [label=<U<SUP>*</SUP>(ϑ)>,style=dotted]
     15 -> PUT [label=< U<SUP>*</SUP>(ϑ)>]
 }
