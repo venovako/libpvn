@@ -146,7 +146,13 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   if (b < 0.0f) {
     af = frexpf(A11, &ae);
     bf = frexpf(A22, &be);
-    df = frexpf(A12, &de);
+    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mulf(&ne, &nf, ae, (*cf * af), be, bf);
+    df = frexpf(*sp, &de);
+    ef_divf(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+    *s1 = (*sp / *cf);
+    a_bf = frexpf(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
       *cp = hypotf(*tp, 1.0f);
@@ -154,20 +160,13 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
       *cp = (1.0f / *cp);
     }
     else {
-      nf = frexpf(*sp, &ne);
-      ef_divf(&t2e, &t2f, ne, nf, ae, af);
+      ef_divf(&t2e, &t2f, de, df, ae, af);
       /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
       t2f = fabsf(t2f);
       *sp = copysignf(1.0f, *tp);
       ef_divf(&ne, &nf, 1, 0.5f, t2e, t2f);
       *cp = scalbnf(nf, ne);
     }
-    /* s2 = (A11 / A12) * A22 */
-    ef_divf(&ne, &nf, ae, af, de, df);
-    ef_mulf(&abe, &abf, ne, nf, be, bf);
-    /* s1 = A12 */
-    a_bf = df;
-    a_be = de;
   }
   else {
     /* 1 / cos */
@@ -1345,7 +1344,13 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   if (b < 0.0) {
     af = frexp(A11, &ae);
     bf = frexp(A22, &be);
-    df = frexp(A12, &de);
+    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mul(&ne, &nf, ae, (*cf * af), be, bf);
+    df = frexp(*sp, &de);
+    ef_div(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+    *s1 = (*sp / *cf);
+    a_bf = frexp(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
       *cp = hypot(*tp, 1.0);
@@ -1353,20 +1358,13 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
       *cp = (1.0 / *cp);
     }
     else {
-      nf = frexp(*sp, &ne);
-      ef_div(&t2e, &t2f, ne, nf, ae, af);
+      ef_div(&t2e, &t2f, de, df, ae, af);
       /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
       t2f = fabs(t2f);
       *sp = copysign(1.0, *tp);
       ef_div(&ne, &nf, 1, 0.5, t2e, t2f);
       *cp = scalbn(nf, ne);
     }
-    /* s2 = (A11 / A12) * A22 */
-    ef_div(&ne, &nf, ae, af, de, df);
-    ef_mul(&abe, &abf, ne, nf, be, bf);
-    /* s1 = A12 */
-    a_bf = df;
-    a_be = de;
   }
   else {
     /* 1 / cos */
@@ -2544,7 +2542,13 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   if (b < 0.0L) {
     af = frexpl(A11, &ae);
     bf = frexpl(A22, &be);
-    df = frexpl(A12, &de);
+    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mull(&ne, &nf, ae, (*cf * af), be, bf);
+    df = frexpl(*sp, &de);
+    ef_divl(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+    *s1 = (*sp / *cf);
+    a_bf = frexpl(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
       *cp = hypotl(*tp, 1.0L);
@@ -2552,20 +2556,13 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
       *cp = (1.0L / *cp);
     }
     else {
-      nf = frexpl(*sp, &ne);
-      ef_divl(&t2e, &t2f, ne, nf, ae, af);
+      ef_divl(&t2e, &t2f, de, df, ae, af);
       /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
       t2f = fabsl(t2f);
       *sp = copysignl(1.0L, *tp);
       ef_divl(&ne, &nf, 1, 0.5L, t2e, t2f);
       *cp = scalbnl(nf, ne);
     }
-    /* s2 = (A11 / A12) * A22 */
-    ef_divl(&ne, &nf, ae, af, de, df);
-    ef_mull(&abe, &abf, ne, nf, be, bf);
-    /* s1 = A12 */
-    a_bf = df;
-    a_be = de;
   }
   else {
     /* 1 / cos */
@@ -2573,10 +2570,10 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
     nf = frexpl(*cf, &ne);
     df = frexpl(*cp, &de);
     ef_divl(&ae, &af, ne, nf, de, df);
-    /* s2 = z * (cf / cp) */
+    /* s2 = A22 * (cf / cp) */
     ef_mull(&abe, &abf, be, bf, ae, af);
     bf = frexpl(A11, &be);
-    /* s1 = x * (cp / cf) */
+    /* s1 = A11 * (cp / cf) */
     ef_divl(&a_be, &a_bf, be, bf, ae, af);
     *sp = (*tp / *cp);
     *cp = (1.0L / *cp);
@@ -3723,7 +3720,13 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   if (b < 0.0q) {
     af = frexpq(A11, &ae);
     bf = frexpq(A22, &be);
-    df = frexpq(A12, &de);
+    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mulq(&ne, &nf, ae, (*cf * af), be, bf);
+    df = frexpq(*sp, &de);
+    ef_divq(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+    *s1 = (*sp / *cf);
+    a_bf = frexpq(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
       *cp = hypotq(*tp, 1.0q);
@@ -3731,20 +3734,13 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
       *cp = (1.0q / *cp);
     }
     else {
-      nf = frexpq(*sp, &ne);
-      ef_divq(&t2e, &t2f, ne, nf, ae, af);
+      ef_divq(&t2e, &t2f, de, df, ae, af);
       /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
       t2f = fabsq(t2f);
       *sp = copysignq(1.0q, *tp);
       ef_divq(&ne, &nf, 1, 0.5q, t2e, t2f);
       *cp = scalbnq(nf, ne);
     }
-    /* s2 = (A11 / A12) * A22 */
-    ef_divq(&ne, &nf, ae, af, de, df);
-    ef_mulq(&abe, &abf, ne, nf, be, bf);
-    /* s1 = A12 */
-    a_bf = df;
-    a_be = de;
   }
   else {
     /* 1 / cos */
@@ -3752,10 +3748,10 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
     nf = frexpq(*cf, &ne);
     df = frexpq(*cp, &de);
     ef_divq(&ae, &af, ne, nf, de, df);
-    /* s2 = z * (cf / cp) */
+    /* s2 = A22 * (cf / cp) */
     ef_mulq(&abe, &abf, be, bf, ae, af);
     bf = frexpq(A11, &be);
-    /* s1 = x * (cp / cf) */
+    /* s1 = A11 * (cp / cf) */
     ef_divq(&a_be, &a_bf, be, bf, ae, af);
     *sp = (*tp / *cp);
     *cp = (1.0q / *cp);
