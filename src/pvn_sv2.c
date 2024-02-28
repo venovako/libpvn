@@ -77,53 +77,55 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   assert(s1);
   assert(s2);
   assert(es);
+  int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
+  float af = 0.0f, bf = 0.0f, abf = 0.0f, a_bf = 0.0f, df = 0.0f, nf = 0.0f, t2f = 0.0f, t2 = 0.0f;
 
   /* should never overflow */
   const float a = hypotf(A11, A12);
-  const float b = A22;
+  float b = A22;
 
-  int ae = 0, be = 0;
-  float af = frexpf(a, &ae);
-  float bf = frexpf(b, &be);
-
-  float abf = (a + b);
-  int abe = 0, de = 0;
-  if (!isfinite(abf)) {
-    abf = ((0.5f * a) + (0.5f * b));
-    de = 1;
-  }
-  abf = frexpf(abf, &abe);
-  abe += de;
-
-  int a_be = 0;
-  float a_bf = (a - b), df = 0.0f;
-  if (a == b)
-    de = 0;
-  else if (fabsf(a_bf) >= FLT_MIN) {
-    a_bf = frexpf(a_bf, &a_be);
-    de = 1;
+  if ((A11 < A12) && (a == A12)) {
+    t2 = ((2.0f * A22) / A12);
+    b = -1.0f;
   }
   else {
-    de = ((FLT_MIN_EXP + FLT_MANT_DIG) - pvn_imin(ae, be));
-    a_bf = (scalbnf(af, (ae + de)) - scalbnf(bf, (be + de)));
-    a_bf = frexpf(a_bf, &a_be);
-    a_be -= de;
-    de = -1;
+    const float b = A22;
+    af = frexpf(a, &ae);
+    bf = frexpf(b, &be);
+    abf = (a + b);
+    if (!isfinite(abf)) {
+      abf = ((0.5f * a) + (0.5f * b));
+      de = 1;
+    }
+    abf = frexpf(abf, &abe);
+    abe += de;
+
+    a_bf = (a - b);
+    if (a == b)
+      de = 0;
+    else if (fabsf(a_bf) >= FLT_MIN) {
+      a_bf = frexpf(a_bf, &a_be);
+      de = 1;
+    }
+    else {
+      de = ((FLT_MIN_EXP + FLT_MANT_DIG) - pvn_imin(ae, be));
+      a_bf = (scalbnf(af, (ae + de)) - scalbnf(bf, (be + de)));
+      a_bf = frexpf(a_bf, &a_be);
+      a_be -= de;
+      de = -1;
+    }
+
+    if (de)
+      ef_mulf(&de, &df, a_be, a_bf, abe, abf);
+    af = frexpf(A12, &ae);
+    ef_mulf(&ne, &nf, ae, af, be, bf);
+    ++ne;
+    ef_divf(&t2e, &t2f, ne, nf, de, df);
+    if (isfinite(t2f))
+      t2 = scalbnf(t2f, t2e);
+    else
+      t2 = t2f;
   }
-
-  if (de)
-    ef_mulf(&de, &df, a_be, a_bf, abe, abf);
-
-  af = frexpf(A12, &ae);
-  int ne = 0;
-  float nf = 0.0f;
-  ef_mulf(&ne, &nf, ae, af, be, bf);
-  ++ne;
-
-  int t2e = 0;
-  float t2f = 0.0f;
-  ef_divf(&t2e, &t2f, ne, nf, de, df);
-  const float t2 = (isfinite(t2f) ? scalbnf(t2f, t2e) : t2f);
 
   if (isfinite(t2))
     *tf = (t2 / (1.0f + hypotf(t2, 1.0f)));
@@ -141,36 +143,45 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   (void)printf("tan(ψ)=%s\n", pvn_stoa(s, *tp));
 #endif /* !NDEBUG */
 
-  if (isfinite(*tp)) {
+  if (b < 0.0f) {
+    af = frexpf(A11, &ae);
+    bf = frexpf(A22, &be);
+    df = frexpf(A12, &de);
+    if (isfinite(*tp)) {
+      /* 1 / cos */
+      *cp = hypotf(*tp, 1.0f);
+      *sp = (*tp / *cp);
+      *cp = (1.0f / *cp);
+    }
+    else {
+      nf = frexpf(*sp, &ne);
+      ef_divf(&t2e, &t2f, ne, nf, ae, af);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabsf(t2f);
+      *sp = copysignf(1.0f, *tp);
+      ef_divf(&ne, &nf, 1, 0.5f, t2e, t2f);
+      *cp = scalbnf(nf, ne);
+    }
+    /* s2 = (A11 / A12) * A22 */
+    ef_divf(&ne, &nf, ae, af, de, df);
+    ef_mulf(&abe, &abf, ne, nf, be, bf);
+    /* s1 = A12 */
+    a_bf = df;
+    a_be = de;
+  }
+  else {
     /* 1 / cos */
     *cp = hypotf(*tp, 1.0f);
     nf = frexpf(*cf, &ne);
     df = frexpf(*cp, &de);
     ef_divf(&ae, &af, ne, nf, de, df);
-    /* s2 = z * (cf / cp) */
+    /* s2 = A22 * (cf / cp) */
     ef_mulf(&abe, &abf, be, bf, ae, af);
     bf = frexpf(A11, &be);
-    /* s1 = x * (cp / cf) */
+    /* s1 = A11 * (cp / cf) */
     ef_divf(&a_be, &a_bf, be, bf, ae, af);
     *sp = (*tp / *cp);
     *cp = (1.0f / *cp);
-  }
-  else {
-    /* should never happen */
-    nf = frexpf(*sp, &ne);
-    df = frexpf(A11, &de);
-    ef_divf(&t2e, &t2f, ne, nf, de, df);
-    /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
-    t2f = fabsf(t2f);
-    nf = frexpf(*cf, &ne);
-    ef_divf(&ae, &af, ne, nf, t2e, t2f);
-    /* s2 = z * (cf / cp) */
-    ef_mulf(&abe, &abf, be, bf, ae, af);
-    /* s1 = x * (cp / cf) */
-    ef_divf(&a_be, &a_bf, de, df, ae, af);
-    *sp = copysignf(1.0f, *tp);
-    ef_divf(&ae, &af, 1, 0.5f, t2e, t2f);
-    *cp = scalbnf(af, ae);
   }
 
   *cf = (1.0f / *cf);
@@ -283,14 +294,14 @@ pvn_sljsv2_
     break;
   case  3:
   case  5:
-  case 10:
-  case 12:
-    e = (FLT_MAX_EXP - mxe - 1);
-    break;
   case  7:
+  case 10:
   case 11:
+  case 12:
   case 13:
   case 14:
+    e = (FLT_MAX_EXP - mxe - 1);
+    break;
   case 15:
     e = (FLT_MAX_EXP - mxe - 2);
     break;
@@ -651,18 +662,8 @@ pvn_sljsv2_
     return INT_MIN;
   }
 
-  if (e == 13) {
-    if (A11 >= A22) {
-      if (A11 < A12)
-        e = 15;
-    }
-    else {
-      if (A22 >= A12)
-        e = -13;
-      else
-        e = -15;
-    }
-  }
+  if ((e == 13) && (A11 < A22))
+    e = -13;
 
 #ifndef NDEBUG
   char s[17] = { '\0' };
@@ -675,7 +676,7 @@ pvn_sljsv2_
 
   float tt = 0.0f, ct = 1.0f, st = 0.0f;
 
-  if (abs(e) == 15) {
+  if (e == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypotf(A11, A21);
@@ -784,7 +785,7 @@ pvn_sljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
-    if ((A11 < A22) && (e == 13))
+    if ((e == 13) && (A11 < A22))
       e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_stoa(s, tt));
@@ -1018,169 +1019,6 @@ pvn_sljsv2_
   return knd;
 }
 
-static inline void ef_mul(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
-{
-  assert(e);
-  assert(f);
-  *f = (f1 * f2);
-  *f = frexp(*f, e);
-  *e += (e1 + e2);
-}
-
-static inline void ef_div(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
-{
-  assert(e);
-  assert(f);
-  *f = (f1 / f2);
-  *f = frexp(*f, e);
-  *e += (e1 - e2);
-}
-
-static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es, const int mxe)
-{
-  assert(tf);
-  assert(cf);
-  assert(sf);
-  assert(tp);
-  assert(cp);
-  assert(sp);
-  assert(s1);
-  assert(s2);
-  assert(es);
-
-  /* should never overflow */
-  const double a = hypot(A11, A12);
-  const double b = A22;
-
-  int ae = 0, be = 0;
-  double af = frexp(a, &ae);
-  double bf = frexp(b, &be);
-
-  double abf = (a + b);
-  int abe = 0, de = 0;
-  if (!isfinite(abf)) {
-    abf = ((0.5 * a) + (0.5 * b));
-    de = 1;
-  }
-  abf = frexp(abf, &abe);
-  abe += de;
-
-  int a_be = 0;
-  double a_bf = (a - b), df = 0.0;
-  if (a == b)
-    de = 0;
-  else if (fabs(a_bf) >= DBL_MIN) {
-    a_bf = frexp(a_bf, &a_be);
-    de = 1;
-  }
-  else {
-    de = ((DBL_MIN_EXP + DBL_MANT_DIG) - pvn_imin(ae, be));
-    a_bf = (scalbn(af, (ae + de)) - scalbn(bf, (be + de)));
-    a_bf = frexp(a_bf, &a_be);
-    a_be -= de;
-    de = -1;
-  }
-
-  if (de)
-    ef_mul(&de, &df, a_be, a_bf, abe, abf);
-
-  af = frexp(A12, &ae);
-  int ne = 0;
-  double nf = 0.0;
-  ef_mul(&ne, &nf, ae, af, be, bf);
-  ++ne;
-
-  int t2e = 0;
-  double t2f = 0.0;
-  ef_div(&t2e, &t2f, ne, nf, de, df);
-  const double t2 = (isfinite(t2f) ? scalbn(t2f, t2e) : t2f);
-
-  if (isfinite(t2))
-    *tf = (t2 / (1.0 + hypot(t2, 1.0)));
-  else
-    *tf = copysign(1.0, t2);
-#ifndef NDEBUG
-  (void)printf("tan(φ)=%s, ", pvn_dtoa(s, *tf));
-#endif /* !NDEBUG */
-  *cf = hypot(*tf, 1.0);
-  *sf = (*tf / *cf);
-
-  *sp = fma(*tf, A22, A12);
-  *tp = (*sp / A11);
-#ifndef NDEBUG
-  (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, *tp));
-#endif /* !NDEBUG */
-
-  if (isfinite(*tp)) {
-    /* 1 / cos */
-    *cp = hypot(*tp, 1.0);
-    nf = frexp(*cf, &ne);
-    df = frexp(*cp, &de);
-    ef_div(&ae, &af, ne, nf, de, df);
-    /* s2 = z * (cf / cp) */
-    ef_mul(&abe, &abf, be, bf, ae, af);
-    bf = frexp(A11, &be);
-    /* s1 = x * (cp / cf) */
-    ef_div(&a_be, &a_bf, be, bf, ae, af);
-    *sp = (*tp / *cp);
-    *cp = (1.0 / *cp);
-  }
-  else {
-    /* should never happen */
-    nf = frexp(*sp, &ne);
-    df = frexp(A11, &de);
-    ef_div(&t2e, &t2f, ne, nf, de, df);
-    /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
-    t2f = fabs(t2f);
-    nf = frexp(*cf, &ne);
-    ef_div(&ae, &af, ne, nf, t2e, t2f);
-    /* s2 = z * (cf / cp) */
-    ef_mul(&abe, &abf, be, bf, ae, af);
-    /* s1 = x * (cp / cf) */
-    ef_div(&a_be, &a_bf, de, df, ae, af);
-    *sp = copysign(1.0, *tp);
-    ef_div(&ae, &af, 1, 0.5, t2e, t2f);
-    *cp = scalbn(af, ae);
-  }
-
-  *cf = (1.0 / *cf);
-#ifndef NDEBUG
-  (void)printf("cos(φ)=%s, ", pvn_dtoa(s, *cf));
-  (void)printf("sin(φ)=%s\n", pvn_dtoa(s, *sf));
-  (void)printf("cos(ψ)=%s, ", pvn_dtoa(s, *cf));
-  (void)printf("sin(ψ)=%s\n", pvn_dtoa(s, *sf));
-#endif /* !NDEBUG */
-
-  if (!mxe) {
-    if (abe < DBL_MIN_EXP) {
-      ne = (DBL_MIN_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be < DBL_MIN_EXP) {
-      de = (DBL_MIN_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-    if (abe > DBL_MAX_EXP) {
-      ne = (DBL_MAX_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be > DBL_MAX_EXP) {
-      de = (DBL_MAX_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-  }
-  *s1 = scalbn(a_bf, a_be);
-  *s2 = scalbn(abf, abe);
-}
-
 int
 #ifdef _WIN32
 PVN_CLJSV2
@@ -1410,6 +1248,179 @@ pvn_cljsv2_
   return knd;
 }
 
+static inline void ef_mul(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 * f2);
+  *f = frexp(*f, e);
+  *e += (e1 + e2);
+}
+
+static inline void ef_div(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
+{
+  assert(e);
+  assert(f);
+  *f = (f1 / f2);
+  *f = frexp(*f, e);
+  *e += (e1 - e2);
+}
+
+static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es, const int mxe)
+{
+  assert(tf);
+  assert(cf);
+  assert(sf);
+  assert(tp);
+  assert(cp);
+  assert(sp);
+  assert(s1);
+  assert(s2);
+  assert(es);
+  int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
+  double af = 0.0, bf = 0.0, abf = 0.0, a_bf = 0.0, df = 0.0, nf = 0.0, t2f = 0.0, t2 = 0.0;
+
+  /* should never overflow */
+  const double a = hypot(A11, A12);
+  double b = A22;
+
+  if ((A11 < A12) && (a == A12)) {
+    t2 = ((2.0 * A22) / A12);
+    b = -1.0;
+  }
+  else {
+    af = frexp(a, &ae);
+    bf = frexp(b, &be);
+    abf = (a + b);
+    if (!isfinite(abf)) {
+      abf = ((0.5 * a) + (0.5 * b));
+      de = 1;
+    }
+    abf = frexp(abf, &abe);
+    abe += de;
+
+    a_bf = (a - b);
+    if (a == b)
+      de = 0;
+    else if (fabs(a_bf) >= DBL_MIN) {
+      a_bf = frexp(a_bf, &a_be);
+      de = 1;
+    }
+    else {
+      de = ((DBL_MIN_EXP + DBL_MANT_DIG) - pvn_imin(ae, be));
+      a_bf = (scalbn(af, (ae + de)) - scalbn(bf, (be + de)));
+      a_bf = frexp(a_bf, &a_be);
+      a_be -= de;
+      de = -1;
+    }
+
+    if (de)
+      ef_mul(&de, &df, a_be, a_bf, abe, abf);
+    af = frexp(A12, &ae);
+    ef_mul(&ne, &nf, ae, af, be, bf);
+    ++ne;
+    ef_div(&t2e, &t2f, ne, nf, de, df);
+    if (isfinite(t2f))
+      t2 = scalbn(t2f, t2e);
+    else
+      t2 = t2f;
+  }
+
+  if (isfinite(t2))
+    *tf = (t2 / (1.0 + hypot(t2, 1.0)));
+  else
+    *tf = copysign(1.0, t2);
+#ifndef NDEBUG
+  (void)printf("tan(φ)=%s, ", pvn_dtoa(s, *tf));
+#endif /* !NDEBUG */
+  *cf = hypot(*tf, 1.0);
+  *sf = (*tf / *cf);
+
+  *sp = fma(*tf, A22, A12);
+  *tp = (*sp / A11);
+#ifndef NDEBUG
+  (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, *tp));
+#endif /* !NDEBUG */
+
+  if (b < 0.0) {
+    af = frexp(A11, &ae);
+    bf = frexp(A22, &be);
+    df = frexp(A12, &de);
+    if (isfinite(*tp)) {
+      /* 1 / cos */
+      *cp = hypot(*tp, 1.0);
+      *sp = (*tp / *cp);
+      *cp = (1.0 / *cp);
+    }
+    else {
+      nf = frexp(*sp, &ne);
+      ef_div(&t2e, &t2f, ne, nf, ae, af);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabs(t2f);
+      *sp = copysign(1.0, *tp);
+      ef_div(&ne, &nf, 1, 0.5, t2e, t2f);
+      *cp = scalbn(nf, ne);
+    }
+    /* s2 = (A11 / A12) * A22 */
+    ef_div(&ne, &nf, ae, af, de, df);
+    ef_mul(&abe, &abf, ne, nf, be, bf);
+    /* s1 = A12 */
+    a_bf = df;
+    a_be = de;
+  }
+  else {
+    /* 1 / cos */
+    *cp = hypot(*tp, 1.0);
+    nf = frexp(*cf, &ne);
+    df = frexp(*cp, &de);
+    ef_div(&ae, &af, ne, nf, de, df);
+    /* s2 = A22 * (cf / cp) */
+    ef_mul(&abe, &abf, be, bf, ae, af);
+    bf = frexp(A11, &be);
+    /* s1 = A11 * (cp / cf) */
+    ef_div(&a_be, &a_bf, be, bf, ae, af);
+    *sp = (*tp / *cp);
+    *cp = (1.0 / *cp);
+  }
+
+  *cf = (1.0 / *cf);
+#ifndef NDEBUG
+  (void)printf("cos(φ)=%s, ", pvn_dtoa(s, *cf));
+  (void)printf("sin(φ)=%s\n", pvn_dtoa(s, *sf));
+  (void)printf("cos(ψ)=%s, ", pvn_dtoa(s, *cf));
+  (void)printf("sin(ψ)=%s\n", pvn_dtoa(s, *sf));
+#endif /* !NDEBUG */
+
+  if (!mxe) {
+    if (abe < DBL_MIN_EXP) {
+      ne = (DBL_MIN_EXP - abe);
+      abe += ne;
+      a_be += ne;
+      *es += ne;
+    }
+    if (a_be < DBL_MIN_EXP) {
+      de = (DBL_MIN_EXP - a_be);
+      abe += de;
+      a_be += de;
+      *es += de;
+    }
+    if (abe > DBL_MAX_EXP) {
+      ne = (DBL_MAX_EXP - abe);
+      abe += ne;
+      a_be += ne;
+      *es += ne;
+    }
+    if (a_be > DBL_MAX_EXP) {
+      de = (DBL_MAX_EXP - a_be);
+      abe += de;
+      a_be += de;
+      *es += de;
+    }
+  }
+  *s1 = scalbn(a_bf, a_be);
+  *s2 = scalbn(abf, abe);
+}
+
 int
 #ifdef _WIN32
 PVN_DLJSV2
@@ -1482,14 +1493,14 @@ pvn_dljsv2_
     break;
   case  3:
   case  5:
-  case 10:
-  case 12:
-    e = (DBL_MAX_EXP - mxe - 1);
-    break;
   case  7:
+  case 10:
   case 11:
+  case 12:
   case 13:
   case 14:
+    e = (DBL_MAX_EXP - mxe - 1);
+    break;
   case 15:
     e = (DBL_MAX_EXP - mxe - 2);
     break;
@@ -1850,18 +1861,8 @@ pvn_dljsv2_
     return INT_MIN;
   }
 
-  if (e == 13) {
-    if (A11 >= A22) {
-      if (A11 < A12)
-        e = 15;
-    }
-    else {
-      if (A22 >= A12)
-        e = -13;
-      else
-        e = -15;
-    }
-  }
+  if ((e == 13) && (A11 < A22))
+    e = -13;
 
 #ifndef NDEBUG
   char s[26] = { '\0' };
@@ -1874,7 +1875,7 @@ pvn_dljsv2_
 
   double tt = 0.0, ct = 1.0, st = 0.0;
 
-  if (abs(e) == 15) {
+  if (e == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypot(A11, A21);
@@ -1983,7 +1984,7 @@ pvn_dljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
-    if ((A11 < A22) && (e == 13))
+    if ((e == 13) && (A11 < A22))
       e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_dtoa(s, tt));
@@ -2475,53 +2476,54 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   assert(s1);
   assert(s2);
   assert(es);
+  int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
+  long double af = 0.0L, bf = 0.0L, abf = 0.0L, a_bf = 0.0L, df = 0.0L, nf = 0.0L, t2f = 0.0L, t2 = 0.0L;
 
   /* should never overflow */
   const long double a = hypotl(A11, A12);
-  const long double b = A22;
+  long double b = A22;
 
-  int ae = 0, be = 0;
-  long double af = frexpl(a, &ae);
-  long double bf = frexpl(b, &be);
-
-  long double abf = (a + b);
-  int abe = 0, de = 0;
-  if (!isfinite(abf)) {
-    abf = ((0.5L * a) + (0.5L * b));
-    de = 1;
-  }
-  abf = frexpl(abf, &abe);
-  abe += de;
-
-  int a_be = 0;
-  long double a_bf = (a - b), df = 0.0L;
-  if (a == b)
-    de = 0;
-  else if (fabsl(a_bf) >= LDBL_MIN) {
-    a_bf = frexpl(a_bf, &a_be);
-    de = 1;
+  if ((A11 < A12) && (a == A12)) {
+    t2 = ((2.0L * A22) / A12);
+    b = -1.0L;
   }
   else {
-    de = ((LDBL_MIN_EXP + LDBL_MANT_DIG) - pvn_imin(ae, be));
-    a_bf = (scalbnl(af, (ae + de)) - scalbnl(bf, (be + de)));
-    a_bf = frexpl(a_bf, &a_be);
-    a_be -= de;
-    de = -1;
+    af = frexpl(a, &ae);
+    bf = frexpl(b, &be);
+    abf = (a + b);
+    if (!isfinite(abf)) {
+      abf = ((0.5L * a) + (0.5L * b));
+      de = 1;
+    }
+    abf = frexpl(abf, &abe);
+    abe += de;
+
+    a_bf = (a - b);
+    if (a == b)
+      de = 0;
+    else if (fabsl(a_bf) >= LDBL_MIN) {
+      a_bf = frexpl(a_bf, &a_be);
+      de = 1;
+    }
+    else {
+      de = ((LDBL_MIN_EXP + LDBL_MANT_DIG) - pvn_imin(ae, be));
+      a_bf = (scalbnl(af, (ae + de)) - scalbnl(bf, (be + de)));
+      a_bf = frexpl(a_bf, &a_be);
+      a_be -= de;
+      de = -1;
+    }
+
+    if (de)
+      ef_mull(&de, &df, a_be, a_bf, abe, abf);
+    af = frexpl(A12, &ae);
+    ef_mull(&ne, &nf, ae, af, be, bf);
+    ++ne;
+    ef_divl(&t2e, &t2f, ne, nf, de, df);
+    if (isfinite(t2f))
+      t2 = scalbnl(t2f, t2e);
+    else
+      t2 = t2f;
   }
-
-  if (de)
-    ef_mull(&de, &df, a_be, a_bf, abe, abf);
-
-  af = frexpl(A12, &ae);
-  int ne = 0;
-  long double nf = 0.0L;
-  ef_mull(&ne, &nf, ae, af, be, bf);
-  ++ne;
-
-  int t2e = 0;
-  long double t2f = 0.0L;
-  ef_divl(&t2e, &t2f, ne, nf, de, df);
-  const long double t2 = (isfinite(t2f) ? scalbnl(t2f, t2e) : t2f);
 
   if (isfinite(t2))
     *tf = (t2 / (1.0L + hypotl(t2, 1.0L)));
@@ -2539,7 +2541,33 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, *tp));
 #endif /* !NDEBUG */
 
-  if (isfinite(*tp)) {
+  if (b < 0.0L) {
+    af = frexpl(A11, &ae);
+    bf = frexpl(A22, &be);
+    df = frexpl(A12, &de);
+    if (isfinite(*tp)) {
+      /* 1 / cos */
+      *cp = hypotl(*tp, 1.0L);
+      *sp = (*tp / *cp);
+      *cp = (1.0L / *cp);
+    }
+    else {
+      nf = frexpl(*sp, &ne);
+      ef_divl(&t2e, &t2f, ne, nf, ae, af);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabsl(t2f);
+      *sp = copysignl(1.0L, *tp);
+      ef_divl(&ne, &nf, 1, 0.5L, t2e, t2f);
+      *cp = scalbnl(nf, ne);
+    }
+    /* s2 = (A11 / A12) * A22 */
+    ef_divl(&ne, &nf, ae, af, de, df);
+    ef_mull(&abe, &abf, ne, nf, be, bf);
+    /* s1 = A12 */
+    a_bf = df;
+    a_be = de;
+  }
+  else {
     /* 1 / cos */
     *cp = hypotl(*tp, 1.0L);
     nf = frexpl(*cf, &ne);
@@ -2552,23 +2580,6 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
     ef_divl(&a_be, &a_bf, be, bf, ae, af);
     *sp = (*tp / *cp);
     *cp = (1.0L / *cp);
-  }
-  else {
-    /* should never happen */
-    nf = frexpl(*sp, &ne);
-    df = frexpl(A11, &de);
-    ef_divl(&t2e, &t2f, ne, nf, de, df);
-    /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
-    t2f = fabsl(t2f);
-    nf = frexpl(*cf, &ne);
-    ef_divl(&ae, &af, ne, nf, t2e, t2f);
-    /* s2 = z * (cf / cp) */
-    ef_mull(&abe, &abf, be, bf, ae, af);
-    /* s1 = x * (cp / cf) */
-    ef_divl(&a_be, &a_bf, de, df, ae, af);
-    *sp = copysignl(1.0L, *tp);
-    ef_divl(&ae, &af, 1, 0.5L, t2e, t2f);
-    *cp = scalbnl(af, ae);
   }
 
   *cf = (1.0L / *cf);
@@ -2675,14 +2686,14 @@ int pvn_xljsv2_
     break;
   case  3:
   case  5:
-  case 10:
-  case 12:
-    e = (LDBL_MAX_EXP - mxe - 1);
-    break;
   case  7:
+  case 10:
   case 11:
+  case 12:
   case 13:
   case 14:
+    e = (LDBL_MAX_EXP - mxe - 1);
+    break;
   case 15:
     e = (LDBL_MAX_EXP - mxe - 2);
     break;
@@ -3043,18 +3054,8 @@ int pvn_xljsv2_
     return INT_MIN;
   }
 
-  if (e == 13) {
-    if (A11 >= A22) {
-      if (A11 < A12)
-        e = 15;
-    }
-    else {
-      if (A22 >= A12)
-        e = -13;
-      else
-        e = -15;
-    }
-  }
+  if ((e == 13) && (A11 < A22))
+    e = -13;
 
 #ifndef NDEBUG
 #ifdef __x86_64__
@@ -3071,7 +3072,7 @@ int pvn_xljsv2_
 
   long double tt = 0.0L, ct = 1.0L, st = 0.0L;
 
-  if (abs(e) == 15) {
+  if (e == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypotl(A11, A21);
@@ -3180,7 +3181,7 @@ int pvn_xljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
-    if ((A11 < A22) && (e == 13))
+    if ((e == 13) && (A11 < A22))
       e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_xtoa(s, tt));
@@ -3654,53 +3655,54 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   assert(s1);
   assert(s2);
   assert(es);
+  int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
+  __float128 af = 0.0q, bf = 0.0q, abf = 0.0q, a_bf = 0.0q, df = 0.0q, nf = 0.0q, t2f = 0.0q, t2 = 0.0q;
 
   /* should never overflow */
   const __float128 a = hypotq(A11, A12);
-  const __float128 b = A22;
+  __float128 b = A22;
 
-  int ae = 0, be = 0;
-  __float128 af = frexpq(a, &ae);
-  __float128 bf = frexpq(b, &be);
-
-  __float128 abf = (a + b);
-  int abe = 0, de = 0;
-  if (!isfiniteq(abf)) {
-    abf = ((0.5q * a) + (0.5q * b));
-    de = 1;
-  }
-  abf = frexpq(abf, &abe);
-  abe += de;
-
-  int a_be = 0;
-  __float128 a_bf = (a - b), df = 0.0q;
-  if (a == b)
-    de = 0;
-  else if (fabsq(a_bf) >= FLT128_MIN) {
-    a_bf = frexpq(a_bf, &a_be);
-    de = 1;
+  if ((A11 < A12) && (a == A12)) {
+    t2 = ((2.0q * A22) / A12);
+    b = -1.0q;
   }
   else {
-    de = ((FLT128_MIN_EXP + FLT128_MANT_DIG) - pvn_imin(ae, be));
-    a_bf = (scalbnq(af, (ae + de)) - scalbnq(bf, (be + de)));
-    a_bf = frexpq(a_bf, &a_be);
-    a_be -= de;
-    de = -1;
+    af = frexpq(a, &ae);
+    bf = frexpq(b, &be);
+    abf = (a + b);
+    if (!isfiniteq(abf)) {
+      abf = ((0.5q * a) + (0.5q * b));
+      de = 1;
+    }
+    abf = frexpq(abf, &abe);
+    abe += de;
+
+    a_bf = (a - b);
+    if (a == b)
+      de = 0;
+    else if (fabsq(a_bf) >= FLT128_MIN) {
+      a_bf = frexpq(a_bf, &a_be);
+      de = 1;
+    }
+    else {
+      de = ((FLT128_MIN_EXP + FLT128_MANT_DIG) - pvn_imin(ae, be));
+      a_bf = (scalbnq(af, (ae + de)) - scalbnq(bf, (be + de)));
+      a_bf = frexpq(a_bf, &a_be);
+      a_be -= de;
+      de = -1;
+    }
+
+    if (de)
+      ef_mulq(&de, &df, a_be, a_bf, abe, abf);
+    af = frexpq(A12, &ae);
+    ef_mulq(&ne, &nf, ae, af, be, bf);
+    ++ne;
+    ef_divq(&t2e, &t2f, ne, nf, de, df);
+    if (isfiniteq(t2f))
+      t2 = scalbnq(t2f, t2e);
+    else
+      t2 = t2f;
   }
-
-  if (de)
-    ef_mulq(&de, &df, a_be, a_bf, abe, abf);
-
-  af = frexpq(A12, &ae);
-  int ne = 0;
-  __float128 nf = 0.0q;
-  ef_mulq(&ne, &nf, ae, af, be, bf);
-  ++ne;
-
-  int t2e = 0;
-  __float128 t2f = 0.0q;
-  ef_divq(&t2e, &t2f, ne, nf, de, df);
-  const __float128 t2 = (isfiniteq(t2f) ? scalbnq(t2f, t2e) : t2f);
 
   if (isfiniteq(t2))
     *tf = (t2 / (1.0q + hypotq(t2, 1.0q)));
@@ -3718,7 +3720,33 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   (void)printf("tan(ψ)=%s\n", pvn_qtoa(s, *tp));
 #endif /* !NDEBUG */
 
-  if (isfiniteq(*tp)) {
+  if (b < 0.0q) {
+    af = frexpq(A11, &ae);
+    bf = frexpq(A22, &be);
+    df = frexpq(A12, &de);
+    if (isfinite(*tp)) {
+      /* 1 / cos */
+      *cp = hypotq(*tp, 1.0q);
+      *sp = (*tp / *cp);
+      *cp = (1.0q / *cp);
+    }
+    else {
+      nf = frexpq(*sp, &ne);
+      ef_divq(&t2e, &t2f, ne, nf, ae, af);
+      /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
+      t2f = fabsq(t2f);
+      *sp = copysignq(1.0q, *tp);
+      ef_divq(&ne, &nf, 1, 0.5q, t2e, t2f);
+      *cp = scalbnq(nf, ne);
+    }
+    /* s2 = (A11 / A12) * A22 */
+    ef_divq(&ne, &nf, ae, af, de, df);
+    ef_mulq(&abe, &abf, ne, nf, be, bf);
+    /* s1 = A12 */
+    a_bf = df;
+    a_be = de;
+  }
+  else {
     /* 1 / cos */
     *cp = hypotq(*tp, 1.0q);
     nf = frexpq(*cf, &ne);
@@ -3731,23 +3759,6 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
     ef_divq(&a_be, &a_bf, be, bf, ae, af);
     *sp = (*tp / *cp);
     *cp = (1.0q / *cp);
-  }
-  else {
-    /* should never happen */
-    nf = frexpq(*sp, &ne);
-    df = frexpq(A11, &de);
-    ef_divq(&t2e, &t2f, ne, nf, de, df);
-    /* tan(ψ) so large that sec(ψ) ≈ |tan(ψ)| */
-    t2f = fabsq(t2f);
-    nf = frexpq(*cf, &ne);
-    ef_divq(&ae, &af, ne, nf, t2e, t2f);
-    /* s2 = z * (cf / cp) */
-    ef_mulq(&abe, &abf, be, bf, ae, af);
-    /* s1 = x * (cp / cf) */
-    ef_divq(&a_be, &a_bf, de, df, ae, af);
-    *sp = copysignq(1.0q, *tp);
-    ef_divq(&ae, &af, 1, 0.5q, t2e, t2f);
-    *cp = scalbnq(af, ae);
   }
 
   *cf = (1.0q / *cf);
@@ -3854,14 +3865,14 @@ int pvn_qljsv2_
     break;
   case  3:
   case  5:
-  case 10:
-  case 12:
-    e = (FLT128_MAX_EXP - mxe - 1);
-    break;
   case  7:
+  case 10:
   case 11:
+  case 12:
   case 13:
   case 14:
+    e = (FLT128_MAX_EXP - mxe - 1);
+    break;
   case 15:
     e = (FLT128_MAX_EXP - mxe - 2);
     break;
@@ -4222,18 +4233,8 @@ int pvn_qljsv2_
     return INT_MIN;
   }
 
-  if (e == 13) {
-    if (A11 >= A22) {
-      if (A11 < A12)
-        e = 15;
-    }
-    else {
-      if (A22 >= A12)
-        e = -13;
-      else
-        e = -15;
-    }
-  }
+  if ((e == 13) && (A11 < A22))
+    e = -13;
 
 #ifndef NDEBUG
   char s[46] = { '\0' };
@@ -4246,7 +4247,7 @@ int pvn_qljsv2_
 
   __float128 tt = 0.0q, ct = 1.0q, st = 0.0q;
 
-  if (abs(e) == 15) {
+  if (e == 15) {
     /* [ * * ] */
     /* [ * * ] */
     *s1 = hypotq(A11, A21);
@@ -4355,7 +4356,7 @@ int pvn_qljsv2_
       /* this is just an extra bit of info, used later */
       st = -st;
     }
-    if ((A11 < A22) && (e == 13))
+    if ((e == 13) && (A11 < A22))
       e = -13;
 #ifndef NDEBUG
     (void)printf("tan(ϑ)=%s, ", pvn_qtoa(s, tt));

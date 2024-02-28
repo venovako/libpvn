@@ -80,11 +80,12 @@ pvn_lock.c  \
 pvn_timer.c
 
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
+LIBS=libpvn.a
 EXES=$(SRCS:.c=.exe)
 
 .PHONY: all help clean
 
-all: libpvn.a $(EXES)
+all: $(LIBS) $(EXES)
 
 help:
 	@echo $(MAKE) "[COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [all|clean|help]"
@@ -92,14 +93,19 @@ help:
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
+# not for Darwin
+libpvn.so: $(OBJS)
+	ld -shared -o $@ $(OBJS)
+
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.exe : %.c
-	$(CC) $(CFLAGS) -DPVN_TEST $< -o $@ -L. -lpvn $(LDFLAGS)
+	$(CC) $(CFLAGS) -DPVN_TEST $< -o $@ -L. $(ROPT) -lpvn $(LDFLAGS)
 
 clean:
 	-$(RM) *.exe
+	-$(RM) *.so
 	-$(RM) *.a
 	-$(RM) *.o
 	-$(RM) ../inc/*.o
