@@ -146,12 +146,22 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   if (b < 0.0f) {
     af = frexpf(A11, &ae);
     bf = frexpf(A22, &be);
-    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-    ef_mulf(&ne, &nf, ae, (*cf * af), be, bf);
     df = frexpf(*sp, &de);
-    ef_divf(&abe, &abf, ne, nf, de, df);
-    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-    *s1 = (*sp / *cf);
+    /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
+    if (*cf == 1.0f) {
+      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mulf(&ne, &nf, ae, af, be, bf);
+      ef_divf(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) */
+      *s1 = *sp;
+    }
+    else {
+      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mulf(&ne, &nf, ae, (*cf * af), be, bf);
+      ef_divf(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+      *s1 = (*sp / *cf);
+    }
     a_bf = frexpf(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
@@ -1344,12 +1354,22 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   if (b < 0.0) {
     af = frexp(A11, &ae);
     bf = frexp(A22, &be);
-    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-    ef_mul(&ne, &nf, ae, (*cf * af), be, bf);
     df = frexp(*sp, &de);
-    ef_div(&abe, &abf, ne, nf, de, df);
-    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-    *s1 = (*sp / *cf);
+    /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
+    if (*cf == 1.0) {
+      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mul(&ne, &nf, ae, af, be, bf);
+      ef_div(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) */
+      *s1 = *sp;
+    }
+    else {
+      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mul(&ne, &nf, ae, (*cf * af), be, bf);
+      ef_div(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+      *s1 = (*sp / *cf);
+    }
     a_bf = frexp(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
@@ -2542,12 +2562,22 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   if (b < 0.0L) {
     af = frexpl(A11, &ae);
     bf = frexpl(A22, &be);
-    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-    ef_mull(&ne, &nf, ae, (*cf * af), be, bf);
     df = frexpl(*sp, &de);
-    ef_divl(&abe, &abf, ne, nf, de, df);
-    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-    *s1 = (*sp / *cf);
+    /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
+    if (*cf == 1.0L) {
+      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mull(&ne, &nf, ae, af, be, bf);
+      ef_divl(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) */
+      *s1 = *sp;
+    }
+    else {
+      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mull(&ne, &nf, ae, (*cf * af), be, bf);
+      ef_divl(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+      *s1 = (*sp / *cf);
+    }
     a_bf = frexpl(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
@@ -3720,12 +3750,22 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   if (b < 0.0q) {
     af = frexpq(A11, &ae);
     bf = frexpq(A22, &be);
-    /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-    ef_mulq(&ne, &nf, ae, (*cf * af), be, bf);
     df = frexpq(*sp, &de);
-    ef_divq(&abe, &abf, ne, nf, de, df);
-    /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-    *s1 = (*sp / *cf);
+    /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
+    if (*cf == 1.0q) {
+      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mulq(&ne, &nf, ae, af, be, bf);
+      ef_divq(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) */
+      *s1 = *sp;
+    }
+    else {
+      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
+      ef_mulq(&ne, &nf, ae, (*cf * af), be, bf);
+      ef_divq(&abe, &abf, ne, nf, de, df);
+      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
+      *s1 = (*sp / *cf);
+    }
     a_bf = frexpq(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
