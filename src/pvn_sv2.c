@@ -1028,6 +1028,16 @@ pvn_sljsv2_
   return knd;
 }
 
+static float cpolarf(const float r, const float i, float *const c, float *const s)
+{
+  assert(c);
+  assert(s);
+  const float a = hypotf(r, i);
+  *c = copysignf(fminf((fabsf(r) / a), 1.0f), r);
+  *s = (i / fmaxf(a, FLT_TRUE_MIN));
+  return a;
+}
+
 int
 #ifdef _WIN32
 PVN_CLJSV2
@@ -2236,6 +2246,16 @@ pvn_dljsv2_
   return knd;
 }
 
+static double cpolar(const double r, const double i, double *const c, double *const s)
+{
+  assert(c);
+  assert(s);
+  const double a = hypot(r, i);
+  *c = copysign(fmin((fabs(r) / a), 1.0), r);
+  *s = (i / fmax(a, DBL_TRUE_MIN));
+  return a;
+}
+
 int
 #ifdef _WIN32
 PVN_ZLJSV2
@@ -3442,6 +3462,16 @@ int pvn_xljsv2_
   return knd;
 }
 
+static long double cpolarl(const long double r, const long double i, long double *const c, long double *const s)
+{
+  assert(c);
+  assert(s);
+  const long double a = hypotl(r, i);
+  *c = copysignl(fminl((fabsl(r) / a), 1.0L), r);
+  *s = (i / fmaxl(a, LDBL_TRUE_MIN));
+  return a;
+}
+
 int pvn_wljsv2_
 (const long double *const a11r, const long double *const a11i, const long double *const a21r, const long double *const a21i, const long double *const a12r, const long double *const a12i, const long double *const a22r, const long double *const a22i,
  long double *const u11r, long double *const u11i, long double *const u21r, long double *const u21i, long double *const u12r, long double *const u12i, long double *const u22r, long double *const u22i,
@@ -4624,6 +4654,16 @@ int pvn_qljsv2_
   }
   pvn_qswp(u21, u12);
   return knd;
+}
+
+static __float128 cpolarq(const __float128 r, const __float128 i, __float128 *const c, __float128 *const s)
+{
+  assert(c);
+  assert(s);
+  const __float128 a = hypotq(r, i);
+  *c = copysignq(fminq((fabsq(r) / a), 1.0q), r);
+  *s = (i / fmaxq(a, FLT128_TRUE_MIN));
+  return a;
 }
 
 int pvn_yljsv2_
