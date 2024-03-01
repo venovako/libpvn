@@ -330,7 +330,7 @@ pvn_cjs_init_
   default:
     return -2;
   }
-  if (!ret)
+  if (!*ret)
     return -1;
   const int i = pvn_cjs_init(*ret, *id, *n);
   if (i < 0) {
