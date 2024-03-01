@@ -588,9 +588,6 @@ pvn_cjs_free_
 (void *const *const js)
 {
   assert(js);
-  const int ret = pvn_cjs_free(*js);
-  if (!ret)
-    free(*js);
-  return ret;
+  return pvn_cjs_free(*js);
 }
 #endif /* ?PVN_TEST */
