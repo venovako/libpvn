@@ -302,40 +302,42 @@ int pvn_cjs_init(void *const js, const int id, const int n)
   return info;
 }
 
-void*
+int
 #ifdef _WIN32
 PVN_CJS_INIT
 #else /* !_WIN32 */
 pvn_cjs_init_
 #endif /* ?_WIN32 */
-(const int *const id, const int *const n)
+(void **const ret, const int *const id, const int *const n)
 {
+  assert(ret);
   assert(id);
   assert(n);
-  void *ret = NULL;
+  *ret = NULL;
   switch (*id) {
   case 0:
   case 1:
-    ret = malloc(sizeof(pvn_cjs_rolcyc));
+    *ret = malloc(sizeof(pvn_cjs_rolcyc));
     break;
   case 2:
   case 3:
-    ret = malloc(sizeof(pvn_cjs_maneb2));
+    *ret = malloc(sizeof(pvn_cjs_maneb2));
     break;
   case 4:
   case 5:
-    ret = malloc(sizeof(pvn_cjs_modmod));
+    *ret = malloc(sizeof(pvn_cjs_modmod));
     break;
   default:
-    return ret;
+    return -2;
   }
   if (!ret)
-    return ret;
-  if (pvn_cjs_init(ret, *id, *n) < 0) {
-    free(ret);
-    ret = NULL;
+    return -1;
+  const int i = pvn_cjs_init(*ret, *id, *n);
+  if (i < 0) {
+    free(*ret);
+    *ret = NULL;
   }
-  return ret;
+  return i;
 }
 
 int pvn_cjs_next(void *const js, int *const arr)
@@ -585,9 +587,13 @@ PVN_CJS_FREE
 #else /* !_WIN32 */
 pvn_cjs_free_
 #endif /* ?_WIN32 */
-(void *const *const js)
+(void **const js)
 {
   assert(js);
-  return pvn_cjs_free(*js);
+  const int i = pvn_cjs_free(*js);
+  if (!i)
+    free(*js);
+  *js = NULL;
+  return i;
 }
 #endif /* ?PVN_TEST */
