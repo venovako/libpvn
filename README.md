@@ -16,25 +16,23 @@ The library has been successfully built using:
 | clang(1) | Darwin  | x86_64   |
 | clang(2) | FreeBSD | amd64    |
 | clang(2) | FreeBSD | arm64    |
-| clang(3) | Linux   | ppc64le  |
-| gcc(4)   | Darwin  | x86_64   |
+| gcc(3)   | Darwin  | x86_64   |
 | gcc(2)   | FreeBSD | amd64    |
 | gcc(2)   | FreeBSD | arm64    |
-| gcc(5)   | Linux   | aarch64  |
-| gcc(5)   | Linux   | ppc64le  |
-| gcc(6)   | Linux   | x86_64   |
-| gcc(7)   | SunOS   | i86pc    |
-| icx(8)   | Linux   | x86_64   |
+| gcc(4)   | Linux   | aarch64  |
+| gcc(4)   | Linux   | ppc64le  |
+| gcc(5)   | Linux   | x86_64   |
+| gcc(6)   | SunOS   | i86pc    |
+| icx(7)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been povided by:
 1. Apple,
 2. FreeBSD,
-3. IBM Open XL C/C++,
-4. Homebrew,
-5. openSUSE Tumbleweed,
-6. Oracle Linux,
-7. Oracle Solaris,
-8. Intel oneAPI.
+3. Homebrew,
+4. openSUSE Tumbleweed,
+5. Oracle Linux,
+6. Oracle Solaris,
+7. Intel oneAPI.
 
 Examples of building the library:
 ```bash
