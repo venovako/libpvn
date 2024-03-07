@@ -66,7 +66,11 @@ static inline void ef_divf(int *const e, float *const f, const int e1, const flo
   *e += (e1 - e2);
 }
 
-static void slpsv2(const float A11, const float A12, const float A22, float *const tf, float *const cf, float *const sf, float *const tp, float *const cp, float *const sp, float *const s1, float *const s2, int *const es, const int mxe)
+static void slpsv2(const float A11, const float A12, const float A22, float *const tf, float *const cf, float *const sf, float *const tp, float *const cp, float *const sp, float *const s1, float *const s2, int *const es, const int mxe
+#ifndef NDEBUG
+                   , char *const s
+#endif /* !NDEBUG */
+                   )
 {
   assert(tf);
   assert(cf);
@@ -77,6 +81,9 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   assert(s1);
   assert(s2);
   assert(es);
+#ifndef NDEBUG
+  assert(s);
+#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   float af = 0.0f, bf = 0.0f, abf = 0.0f, a_bf = 0.0f, df = 0.0f, nf = 0.0f, t2f = 0.0f, t2 = 0.0f;
 
@@ -898,7 +905,11 @@ pvn_sljsv2_
     float tf = 0.0f, cf = 1.0f, sf = 0.0f, tp = 0.0f, cp = 1.0f, sp = 0.0f;
     if (e == -13) {
       float tf_ = 0.0f, cf_ = 1.0f, sf_ = 0.0f, tp_ = 0.0f, cp_ = 1.0f, sp_ = 0.0f;
-      slpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe);
+      slpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
       tf = (1.0f / tp_);
       cf = -sp_;
       sf = -cp_;
@@ -907,7 +918,11 @@ pvn_sljsv2_
       sp = cf_;
     }
     else
-      slpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe);
+      slpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
 
     /* update U */
     if (copysignf(1.0f, st) != 1.0f) {
@@ -1521,7 +1536,11 @@ static inline void ef_div(int *const e, double *const f, const int e1, const dou
   *e += (e1 - e2);
 }
 
-static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es, const int mxe)
+static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es, const int mxe
+#ifndef NDEBUG
+                   , char *const s
+#endif /* !NDEBUG */
+                   )
 {
   assert(tf);
   assert(cf);
@@ -1532,6 +1551,9 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   assert(s1);
   assert(s2);
   assert(es);
+#ifndef NDEBUG
+  assert(s);
+#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   double af = 0.0, bf = 0.0, abf = 0.0, a_bf = 0.0, df = 0.0, nf = 0.0, t2f = 0.0, t2 = 0.0;
 
@@ -2352,7 +2374,11 @@ pvn_dljsv2_
     double tf = 0.0, cf = 1.0, sf = 0.0, tp = 0.0, cp = 1.0, sp = 0.0;
     if (e == -13) {
       double tf_ = 0.0, cf_ = 1.0, sf_ = 0.0, tp_ = 0.0, cp_ = 1.0, sp_ = 0.0;
-      dlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe);
+      dlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
       tf = (1.0 / tp_);
       cf = -sp_;
       sf = -cp_;
@@ -2361,7 +2387,11 @@ pvn_dljsv2_
       sp = cf_;
     }
     else
-      dlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe);
+      dlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
 
     /* update U */
     if (copysign(1.0, st) != 1.0) {
@@ -2742,7 +2772,11 @@ static inline void ef_divl(int *const e, long double *const f, const int e1, con
   *e += (e1 - e2);
 }
 
-static void xlpsv2(const long double A11, const long double A12, const long double A22, long double *const tf, long double *const cf, long double *const sf, long double *const tp, long double *const cp, long double *const sp, long double *const s1, long double *const s2, int *const es, const int mxe)
+static void xlpsv2(const long double A11, const long double A12, const long double A22, long double *const tf, long double *const cf, long double *const sf, long double *const tp, long double *const cp, long double *const sp, long double *const s1, long double *const s2, int *const es, const int mxe
+#ifndef NDEBUG
+                   , char *const s
+#endif /* !NDEBUG */
+                   )
 {
   assert(tf);
   assert(cf);
@@ -2753,6 +2787,9 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   assert(s1);
   assert(s2);
   assert(es);
+#ifndef NDEBUG
+  assert(s);
+#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   long double af = 0.0L, bf = 0.0L, abf = 0.0L, a_bf = 0.0L, df = 0.0L, nf = 0.0L, t2f = 0.0L, t2 = 0.0L;
 
@@ -3571,7 +3608,11 @@ int pvn_xljsv2_
     long double tf = 0.0L, cf = 1.0L, sf = 0.0L, tp = 0.0L, cp = 1.0L, sp = 0.0L;
     if (e == -13) {
       long double tf_ = 0.0L, cf_ = 1.0L, sf_ = 0.0L, tp_ = 0.0L, cp_ = 1.0L, sp_ = 0.0L;
-      xlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe);
+      xlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
       tf = (1.0L / tp_);
       cf = -sp_;
       sf = -cp_;
@@ -3580,7 +3621,11 @@ int pvn_xljsv2_
       sp = cf_;
     }
     else
-      xlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe);
+      xlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
 
     /* update U */
     if (copysignl(1.0L, st) != 1.0L) {
@@ -3943,7 +3988,11 @@ static inline void ef_divq(int *const e, __float128 *const f, const int e1, cons
   *e += (e1 - e2);
 }
 
-static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 A22, __float128 *const tf, __float128 *const cf, __float128 *const sf, __float128 *const tp, __float128 *const cp, __float128 *const sp, __float128 *const s1, __float128 *const s2, int *const es, const int mxe)
+static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 A22, __float128 *const tf, __float128 *const cf, __float128 *const sf, __float128 *const tp, __float128 *const cp, __float128 *const sp, __float128 *const s1, __float128 *const s2, int *const es, const int mxe
+#ifndef NDEBUG
+                   , char *const s
+#endif /* !NDEBUG */
+                   )
 {
   assert(tf);
   assert(cf);
@@ -3954,6 +4003,9 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   assert(s1);
   assert(s2);
   assert(es);
+#ifndef NDEBUG
+  assert(s);
+#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   __float128 af = 0.0q, bf = 0.0q, abf = 0.0q, a_bf = 0.0q, df = 0.0q, nf = 0.0q, t2f = 0.0q, t2 = 0.0q;
 
@@ -4768,7 +4820,11 @@ int pvn_qljsv2_
     __float128 tf = 0.0q, cf = 1.0q, sf = 0.0q, tp = 0.0q, cp = 1.0q, sp = 0.0q;
     if (e == -13) {
       __float128 tf_ = 0.0q, cf_ = 1.0q, sf_ = 0.0q, tp_ = 0.0q, cp_ = 1.0q, sp_ = 0.0q;
-      qlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe);
+      qlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
       tf = (1.0q / tp_);
       cf = -sp_;
       sf = -cp_;
@@ -4777,7 +4833,11 @@ int pvn_qljsv2_
       sp = cf_;
     }
     else
-      qlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe);
+      qlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
 
     /* update U */
     if (copysignq(1.0q, st) != 1.0q) {
