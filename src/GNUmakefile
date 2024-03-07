@@ -74,6 +74,7 @@ pvn_fmt.c   \
 pvn_mem.c   \
 pvn_mm2.c   \
 pvn_mtx.c   \
+pvn_ran.c   \
 pvn_sv2.c   \
 pvn_error.c \
 pvn_lock.c  \
