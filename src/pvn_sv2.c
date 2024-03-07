@@ -12,15 +12,15 @@ int main(int argc, char *argv[])
   const float a12 = (float)atof(argv[3]);
   const float a22 = (float)atof(argv[4]);
   float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
-  int es = 0;
+  int es[3] = { 0, 0, 0 };
   const int knd =
 #ifdef _WIN32
 PVN_SLJSV2
 #else /* !_WIN32 */
 pvn_sljsv2_
 #endif /* ?_WIN32 */
-    (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, &es);
-  (void)printf("knd=%d, es=%d\n\ta =\n", knd, es);
+    (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+  (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
   char s[17] = { '\0' };
   (void)printf("%s ", pvn_stoa(s, a11));
   (void)printf("%s\n", pvn_stoa(s, a12));
@@ -36,11 +36,8 @@ pvn_sljsv2_
   (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
   (void)printf("%s ", pvn_stoa(s, s1));
   (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
-  if (es) {
-    es = -es;
-    s1 = scalbnf(s1, es);
-    s2 = scalbnf(s2, es);
-  }
+  s1 = scalbnf(s1, (es[1] - es[0]));
+  s2 = scalbnf(s2, (es[2] - es[0]));
   (void)printf("%s ", pvn_stoa(s, s1));
   (void)printf("%s\n", pvn_stoa(s, s2));
   return EXIT_SUCCESS;
@@ -66,7 +63,7 @@ static inline void ef_divf(int *const e, float *const f, const int e1, const flo
   *e += (e1 - e2);
 }
 
-static void slpsv2(const float A11, const float A12, const float A22, float *const tf, float *const cf, float *const sf, float *const tp, float *const cp, float *const sp, float *const s1, float *const s2, int *const es, const int mxe
+static void slpsv2(const float A11, const float A12, const float A22, float *const tf, float *const cf, float *const sf, float *const tp, float *const cp, float *const sp, float *const s1, float *const s2, int *const es
 #ifndef NDEBUG
                    , char *const s
 #endif /* !NDEBUG */
@@ -95,8 +92,10 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
     t2 = ((2.0f * A22) / A12);
     b = -1.0f;
   }
-  else if ((A11 < A12) && (a == A12))
+  else if ((A11 < A12) && (a == A12)) {
+    bf = frexpf(b, &be);
     t2 = ((2.0f * A22) / A12);
+  }
   else {
     af = frexpf(a, &ae);
     bf = frexpf(b, &be);
@@ -200,34 +199,10 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   (void)printf("sin(ψ)=%s\n", pvn_stoa(s, *sf));
 #endif /* !NDEBUG */
 
-  if (!mxe) {
-    if (abe < FLT_MIN_EXP) {
-      ne = (FLT_MIN_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be < FLT_MIN_EXP) {
-      de = (FLT_MIN_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-    if (abe > FLT_MAX_EXP) {
-      ne = (FLT_MAX_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be > FLT_MAX_EXP) {
-      de = (FLT_MAX_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-  }
-  *s1 = scalbnf(a_bf, a_be);
-  *s2 = scalbnf(abf, abe);
+  *s1 = a_bf;
+  es[1] = a_be;
+  *s2 = abf;
+  es[2] = abe;
 }
 
 int
@@ -321,6 +296,7 @@ pvn_sljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   float A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
@@ -908,7 +884,7 @@ pvn_sljsv2_
     float tf = 0.0f, cf = 1.0f, sf = 0.0f, tp = 0.0f, cp = 1.0f, sp = 0.0f;
     if (e == -13) {
       float tf_ = 0.0f, cf_ = 1.0f, sf_ = 0.0f, tp_ = 0.0f, cp_ = 1.0f, sp_ = 0.0f;
-      slpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+      slpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -921,7 +897,7 @@ pvn_sljsv2_
       sp = cf_;
     }
     else
-      slpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+      slpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -1220,6 +1196,7 @@ pvn_cljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   float A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
@@ -1539,7 +1516,7 @@ static inline void ef_div(int *const e, double *const f, const int e1, const dou
   *e += (e1 - e2);
 }
 
-static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es, const int mxe
+static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es
 #ifndef NDEBUG
                    , char *const s
 #endif /* !NDEBUG */
@@ -1568,8 +1545,10 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
     t2 = ((2.0 * A22) / A12);
     b = -1.0;
   }
-  else if ((A11 < A12) && (a == A12))
+  else if ((A11 < A12) && (a == A12)) {
+    bf = frexp(b, &be);
     t2 = ((2.0 * A22) / A12);
+  }
   else {
     af = frexp(a, &ae);
     bf = frexp(b, &be);
@@ -1673,34 +1652,10 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   (void)printf("sin(ψ)=%s\n", pvn_dtoa(s, *sf));
 #endif /* !NDEBUG */
 
-  if (!mxe) {
-    if (abe < DBL_MIN_EXP) {
-      ne = (DBL_MIN_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be < DBL_MIN_EXP) {
-      de = (DBL_MIN_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-    if (abe > DBL_MAX_EXP) {
-      ne = (DBL_MAX_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be > DBL_MAX_EXP) {
-      de = (DBL_MAX_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-  }
-  *s1 = scalbn(a_bf, a_be);
-  *s2 = scalbn(abf, abe);
+  *s1 = a_bf;
+  es[1] = a_be;
+  *s2 = abf;
+  es[2] = abe;
 }
 
 int
@@ -1794,6 +1749,7 @@ pvn_dljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
@@ -2381,7 +2337,7 @@ pvn_dljsv2_
     double tf = 0.0, cf = 1.0, sf = 0.0, tp = 0.0, cp = 1.0, sp = 0.0;
     if (e == -13) {
       double tf_ = 0.0, cf_ = 1.0, sf_ = 0.0, tp_ = 0.0, cp_ = 1.0, sp_ = 0.0;
-      dlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+      dlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -2394,7 +2350,7 @@ pvn_dljsv2_
       sp = cf_;
     }
     else
-      dlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+      dlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -2692,6 +2648,7 @@ pvn_zljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
@@ -2779,7 +2736,7 @@ static inline void ef_divl(int *const e, long double *const f, const int e1, con
   *e += (e1 - e2);
 }
 
-static void xlpsv2(const long double A11, const long double A12, const long double A22, long double *const tf, long double *const cf, long double *const sf, long double *const tp, long double *const cp, long double *const sp, long double *const s1, long double *const s2, int *const es, const int mxe
+static void xlpsv2(const long double A11, const long double A12, const long double A22, long double *const tf, long double *const cf, long double *const sf, long double *const tp, long double *const cp, long double *const sp, long double *const s1, long double *const s2, int *const es
 #ifndef NDEBUG
                    , char *const s
 #endif /* !NDEBUG */
@@ -2808,8 +2765,10 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
     t2 = ((2.0L * A22) / A12);
     b = -1.0L;
   }
-  else if ((A11 < A12) && (a == A12))
+  else if ((A11 < A12) && (a == A12)) {
+    bf = frexpl(b, &be);
     t2 = ((2.0L * A22) / A12);
+  }
   else {
     af = frexpl(a, &ae);
     bf = frexpl(b, &be);
@@ -2913,34 +2872,10 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   (void)printf("sin(ψ)=%s\n", pvn_xtoa(s, *sf));
 #endif /* !NDEBUG */
 
-  if (!mxe) {
-    if (abe < LDBL_MIN_EXP) {
-      ne = (LDBL_MIN_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be < LDBL_MIN_EXP) {
-      de = (LDBL_MIN_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-    if (abe > LDBL_MAX_EXP) {
-      ne = (LDBL_MAX_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be > LDBL_MAX_EXP) {
-      de = (LDBL_MAX_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-  }
-  *s1 = scalbnl(a_bf, a_be);
-  *s2 = scalbnl(abf, abe);
+  *s1 = a_bf;
+  es[1] = a_be;
+  *s2 = abf;
+  es[2] = abe;
 }
 
 int pvn_xljsv2_
@@ -3028,6 +2963,7 @@ int pvn_xljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   long double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
@@ -3619,7 +3555,7 @@ int pvn_xljsv2_
     long double tf = 0.0L, cf = 1.0L, sf = 0.0L, tp = 0.0L, cp = 1.0L, sp = 0.0L;
     if (e == -13) {
       long double tf_ = 0.0L, cf_ = 1.0L, sf_ = 0.0L, tp_ = 0.0L, cp_ = 1.0L, sp_ = 0.0L;
-      xlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+      xlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -3632,7 +3568,7 @@ int pvn_xljsv2_
       sp = cf_;
     }
     else
-      xlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+      xlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -3912,6 +3848,7 @@ int pvn_wljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   long double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
@@ -3999,7 +3936,7 @@ static inline void ef_divq(int *const e, __float128 *const f, const int e1, cons
   *e += (e1 - e2);
 }
 
-static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 A22, __float128 *const tf, __float128 *const cf, __float128 *const sf, __float128 *const tp, __float128 *const cp, __float128 *const sp, __float128 *const s1, __float128 *const s2, int *const es, const int mxe
+static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 A22, __float128 *const tf, __float128 *const cf, __float128 *const sf, __float128 *const tp, __float128 *const cp, __float128 *const sp, __float128 *const s1, __float128 *const s2, int *const es
 #ifndef NDEBUG
                    , char *const s
 #endif /* !NDEBUG */
@@ -4028,8 +3965,10 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
     t2 = ((2.0q * A22) / A12);
     b = -1.0q;
   }
-  else if ((A11 < A12) && (a == A12))
+  else if ((A11 < A12) && (a == A12)) {
+    bf = frexpq(b, &be);
     t2 = ((2.0q * A22) / A12);
+  }
   else {
     af = frexpq(a, &ae);
     bf = frexpq(b, &be);
@@ -4133,34 +4072,10 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   (void)printf("sin(ψ)=%s\n", pvn_qtoa(s, *sf));
 #endif /* !NDEBUG */
 
-  if (!mxe) {
-    if (abe < FLT128_MIN_EXP) {
-      ne = (FLT128_MIN_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be < FLT128_MIN_EXP) {
-      de = (FLT128_MIN_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-    if (abe > FLT128_MAX_EXP) {
-      ne = (FLT128_MAX_EXP - abe);
-      abe += ne;
-      a_be += ne;
-      *es += ne;
-    }
-    if (a_be > FLT128_MAX_EXP) {
-      de = (FLT128_MAX_EXP - a_be);
-      abe += de;
-      a_be += de;
-      *es += de;
-    }
-  }
-  *s1 = scalbnq(a_bf, a_be);
-  *s2 = scalbnq(abf, abe);
+  *s1 = a_bf;
+  es[1] = a_be;
+  *s2 = abf;
+  es[2] = abe;
 }
 
 int pvn_qljsv2_
@@ -4248,6 +4163,7 @@ int pvn_qljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   __float128 A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
@@ -4835,7 +4751,7 @@ int pvn_qljsv2_
     __float128 tf = 0.0q, cf = 1.0q, sf = 0.0q, tp = 0.0q, cp = 1.0q, sp = 0.0q;
     if (e == -13) {
       __float128 tf_ = 0.0q, cf_ = 1.0q, sf_ = 0.0q, tp_ = 0.0q, cp_ = 1.0q, sp_ = 0.0q;
-      qlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es, mxe
+      qlpsv2(A22, A12, A11, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -4848,7 +4764,7 @@ int pvn_qljsv2_
       sp = cf_;
     }
     else
-      qlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es, mxe
+      qlpsv2(A11, A12, A22, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es
 #ifndef NDEBUG
              , s
 #endif /* !NDEBUG */
@@ -5128,6 +5044,7 @@ int pvn_yljsv2_
     *es = e;
   else if (*es < 0)
     ++*es;
+  es[2] = es[1] = 0;
 
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   __float128 A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
