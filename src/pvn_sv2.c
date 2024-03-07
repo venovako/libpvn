@@ -91,12 +91,13 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   const float a = hypotf(A11, A12);
   float b = A22;
 
-  if ((A11 < A12) && (a == A12)) {
+  if ((A11 / A12) < (FLT_EPSILON * 0.5f)) {
     t2 = ((2.0f * A22) / A12);
     b = -1.0f;
   }
+  else if ((A11 < A12) && (a == A12))
+    t2 = ((2.0f * A22) / A12);
   else {
-    const float b = A22;
     af = frexpf(a, &ae);
     bf = frexpf(b, &be);
     abf = (a + b);
@@ -155,20 +156,11 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
     bf = frexpf(A22, &be);
     df = frexpf(*sp, &de);
     /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
-    if (*cf == 1.0f) {
-      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mulf(&ne, &nf, ae, af, be, bf);
-      ef_divf(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) */
-      *s1 = *sp;
-    }
-    else {
-      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mulf(&ne, &nf, ae, (*cf * af), be, bf);
-      ef_divf(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-      *s1 = (*sp / *cf);
-    }
+    /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mulf(&ne, &nf, ae, af, be, bf);
+    ef_divf(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) */
+    *s1 = *sp;
     a_bf = frexpf(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
@@ -1572,10 +1564,12 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   const double a = hypot(A11, A12);
   double b = A22;
 
-  if ((A11 < A12) && (a == A12)) {
+  if ((A11 / A12) < (DBL_EPSILON * 0.5)) {
     t2 = ((2.0 * A22) / A12);
     b = -1.0;
   }
+  else if ((A11 < A12) && (a == A12))
+    t2 = ((2.0 * A22) / A12);
   else {
     af = frexp(a, &ae);
     bf = frexp(b, &be);
@@ -1635,20 +1629,11 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
     bf = frexp(A22, &be);
     df = frexp(*sp, &de);
     /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
-    if (*cf == 1.0) {
-      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mul(&ne, &nf, ae, af, be, bf);
-      ef_div(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) */
-      *s1 = *sp;
-    }
-    else {
-      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mul(&ne, &nf, ae, (*cf * af), be, bf);
-      ef_div(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-      *s1 = (*sp / *cf);
-    }
+    /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mul(&ne, &nf, ae, af, be, bf);
+    ef_div(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) */
+    *s1 = *sp;
     a_bf = frexp(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
@@ -2819,10 +2804,12 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   const long double a = hypotl(A11, A12);
   long double b = A22;
 
-  if ((A11 < A12) && (a == A12)) {
+  if ((A11 / A12) < (LDBL_EPSILON * 0.5L)) {
     t2 = ((2.0L * A22) / A12);
     b = -1.0L;
   }
+  else if ((A11 < A12) && (a == A12))
+    t2 = ((2.0L * A22) / A12);
   else {
     af = frexpl(a, &ae);
     bf = frexpl(b, &be);
@@ -2882,20 +2869,11 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
     bf = frexpl(A22, &be);
     df = frexpl(*sp, &de);
     /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
-    if (*cf == 1.0L) {
-      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mull(&ne, &nf, ae, af, be, bf);
-      ef_divl(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) */
-      *s1 = *sp;
-    }
-    else {
-      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mull(&ne, &nf, ae, (*cf * af), be, bf);
-      ef_divl(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-      *s1 = (*sp / *cf);
-    }
+    /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mull(&ne, &nf, ae, af, be, bf);
+    ef_divl(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) */
+    *s1 = *sp;
     a_bf = frexpl(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
@@ -4046,10 +4024,12 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   const __float128 a = hypotq(A11, A12);
   __float128 b = A22;
 
-  if ((A11 < A12) && (a == A12)) {
+  if ((A11 / A12) < (FLT128_EPSILON * 0.5q)) {
     t2 = ((2.0q * A22) / A12);
     b = -1.0q;
   }
+  else if ((A11 < A12) && (a == A12))
+    t2 = ((2.0q * A22) / A12);
   else {
     af = frexpq(a, &ae);
     bf = frexpq(b, &be);
@@ -4109,20 +4089,11 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
     bf = frexpq(A22, &be);
     df = frexpq(*sp, &de);
     /* expect to be (A12 + tan(φ) * A22) == A12, but the LHS has already been computed */
-    if (*cf == 1.0q) {
-      /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mulq(&ne, &nf, ae, af, be, bf);
-      ef_divq(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) */
-      *s1 = *sp;
-    }
-    else {
-      /* s2 ≈ (sec(φ) * A11 * A22) / (A12 + tan(φ) * A22) */
-      ef_mulq(&ne, &nf, ae, (*cf * af), be, bf);
-      ef_divq(&abe, &abf, ne, nf, de, df);
-      /* s1 ≈ (A12 + tan(φ) * A22) / sec(φ) */
-      *s1 = (*sp / *cf);
-    }
+    /* s2 ≈ (A11 * A22) / (A12 + tan(φ) * A22) */
+    ef_mulq(&ne, &nf, ae, af, be, bf);
+    ef_divq(&abe, &abf, ne, nf, de, df);
+    /* s1 ≈ (A12 + tan(φ) * A22) */
+    *s1 = *sp;
     a_bf = frexpq(*s1, &a_be);
     if (isfinite(*tp)) {
       /* 1 / cos */
