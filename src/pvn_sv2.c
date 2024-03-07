@@ -347,15 +347,17 @@ pvn_sljsv2_
       if (!isfinite(A22))
         return -8;
     }
-    knd = 0;
-    if (A11 != 0.0f)
-      knd |= 1;
-    if (A21 != 0.0f)
-      knd |= 2;
-    if (A12 != 0.0f)
-      knd |= 4;
-    if (A22 != 0.0f)
-      knd |= 8;
+    if (*es < 0) {
+      knd = 0;
+      if (A11 != 0.0f)
+        knd |= 1;
+      if (A21 != 0.0f)
+        knd |= 2;
+      if (A12 != 0.0f)
+        knd |= 4;
+      if (A22 != 0.0f)
+        knd |= 8;
+    }
   }
 
   *u11 = 1.0f;
@@ -1825,15 +1827,17 @@ pvn_dljsv2_
       if (!isfinite(A22))
         return -8;
     }
-    knd = 0;
-    if (A11 != 0.0)
-      knd |= 1;
-    if (A21 != 0.0)
-      knd |= 2;
-    if (A12 != 0.0)
-      knd |= 4;
-    if (A22 != 0.0)
-      knd |= 8;
+    if (*es < 0) {
+      knd = 0;
+      if (A11 != 0.0)
+        knd |= 1;
+      if (A21 != 0.0)
+        knd |= 2;
+      if (A12 != 0.0)
+        knd |= 4;
+      if (A22 != 0.0)
+        knd |= 8;
+    }
   }
 
   *u11 = 1.0;
@@ -3064,15 +3068,17 @@ int pvn_xljsv2_
       if (!isfinite(A22))
         return -8;
     }
-    knd = 0;
-    if (A11 != 0.0L)
-      knd |= 1;
-    if (A21 != 0.0L)
-      knd |= 2;
-    if (A12 != 0.0L)
-      knd |= 4;
-    if (A22 != 0.0L)
-      knd |= 8;
+    if (*es < 0) {
+      knd = 0;
+      if (A11 != 0.0L)
+        knd |= 1;
+      if (A21 != 0.0L)
+        knd |= 2;
+      if (A12 != 0.0L)
+        knd |= 4;
+      if (A22 != 0.0L)
+        knd |= 8;
+    }
   }
 
   *u11 = 1.0L;
@@ -4289,15 +4295,17 @@ int pvn_qljsv2_
       if (!isfiniteq(A22))
         return -8;
     }
-    knd = 0;
-    if (A11 != 0.0q)
-      knd |= 1;
-    if (A21 != 0.0q)
-      knd |= 2;
-    if (A12 != 0.0q)
-      knd |= 4;
-    if (A22 != 0.0q)
-      knd |= 8;
+    if (*es < 0) {
+      knd = 0;
+      if (A11 != 0.0q)
+        knd |= 1;
+      if (A21 != 0.0q)
+        knd |= 2;
+      if (A12 != 0.0q)
+        knd |= 4;
+      if (A22 != 0.0q)
+        knd |= 8;
+    }
   }
 
   *u11 = 1.0q;
