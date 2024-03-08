@@ -63,6 +63,24 @@ static inline void ef_divf(int *const e, float *const f, const int e1, const flo
   *e += (e1 - e2);
 }
 
+/* f1, f2 >= 0 */
+static inline int ef_cmpf(const int e1, const float f1, const int e2, const float f2)
+{
+  if (f2 == 0.0f)
+    return (f1 != 0.0f);
+  if (f1 == 0.0f)
+    return -1;
+  if (e1 < e2)
+    return -1;
+  if (e2 < e1)
+    return 1;
+  if (f1 < f2)
+    return -1;
+  if (f2 < f1)
+    return 1;
+  return 0;
+}
+
 static void slpsv2(const float A11, const float A12, const float A22, float *const tf, float *const cf, float *const sf, float *const tp, float *const cp, float *const sp, float *const s1, float *const s2, int *const es
 #ifndef NDEBUG
                    , char *const s
@@ -1011,7 +1029,7 @@ pvn_sljsv2_
     }
   }
 
-  if (*s1 < *s2) {
+  if (ef_cmpf(es[1], *s1, es[2], *s2) < 0) {
     pvn_fswp(u11, u21);
     pvn_fswp(u12, u22);
     pvn_fswp(v11, v12);
@@ -1478,7 +1496,7 @@ pvn_cljsv2_
 
   /* TODO */
 
-  if (*s1 < *s2) {
+  if (ef_cmpf(es[1], *s1, es[2], *s2) < 0) {
     pvn_fswp(u11r, u21r);
     pvn_fswp(u11i, u21i);
     pvn_fswp(u12r, u22r);
@@ -1514,6 +1532,24 @@ static inline void ef_div(int *const e, double *const f, const int e1, const dou
   *f = (f1 / f2);
   *f = frexp(*f, e);
   *e += (e1 - e2);
+}
+
+/* f1, f2 >= 0 */
+static inline int ef_cmp(const int e1, const double f1, const int e2, const double f2)
+{
+  if (f2 == 0.0)
+    return (f1 != 0.0);
+  if (f1 == 0.0)
+    return -1;
+  if (e1 < e2)
+    return -1;
+  if (e2 < e1)
+    return 1;
+  if (f1 < f2)
+    return -1;
+  if (f2 < f1)
+    return 1;
+  return 0;
 }
 
 static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es
@@ -2464,7 +2500,7 @@ pvn_dljsv2_
     }
   }
 
-  if (*s1 < *s2) {
+  if (ef_cmp(es[1], *s1, es[2], *s2) < 0) {
     pvn_dswp(u11, u21);
     pvn_dswp(u12, u22);
     pvn_dswp(v11, v12);
@@ -2697,7 +2733,7 @@ pvn_zljsv2_
 
   /* TODO */
 
-  if (*s1 < *s2) {
+  if (ef_cmp(es[1], *s1, es[2], *s2) < 0) {
     pvn_dswp(u11r, u21r);
     pvn_dswp(u11i, u21i);
     pvn_dswp(u12r, u22r);
@@ -2734,6 +2770,24 @@ static inline void ef_divl(int *const e, long double *const f, const int e1, con
   *f = (f1 / f2);
   *f = frexpl(*f, e);
   *e += (e1 - e2);
+}
+
+/* f1, f2 >= 0 */
+static inline int ef_cmpl(const int e1, const long double f1, const int e2, const long double f2)
+{
+  if (f2 == 0.0L)
+    return (f1 != 0.0L);
+  if (f1 == 0.0L)
+    return -1;
+  if (e1 < e2)
+    return -1;
+  if (e2 < e1)
+    return 1;
+  if (f1 < f2)
+    return -1;
+  if (f2 < f1)
+    return 1;
+  return 0;
 }
 
 static void xlpsv2(const long double A11, const long double A12, const long double A22, long double *const tf, long double *const cf, long double *const sf, long double *const tp, long double *const cp, long double *const sp, long double *const s1, long double *const s2, int *const es
@@ -3682,7 +3736,7 @@ int pvn_xljsv2_
     }
   }
 
-  if (*s1 < *s2) {
+  if (ef_cmpl(es[1], *s1, es[2], *s2) < 0) {
     pvn_Lswp(u11, u21);
     pvn_Lswp(u12, u22);
     pvn_Lswp(v11, v12);
@@ -3897,7 +3951,7 @@ int pvn_wljsv2_
 
   /* TODO */
 
-  if (*s1 < *s2) {
+  if (ef_cmpl(es[1], *s1, es[2], *s2) < 0) {
     pvn_Lswp(u11r, u21r);
     pvn_Lswp(u11i, u21i);
     pvn_Lswp(u12r, u22r);
@@ -3934,6 +3988,24 @@ static inline void ef_divq(int *const e, __float128 *const f, const int e1, cons
   *f = (f1 / f2);
   *f = frexpq(*f, e);
   *e += (e1 - e2);
+}
+
+/* f1, f2 >= 0 */
+static inline int ef_cmpq(const int e1, const __float128 f1, const int e2, const __float128 f2)
+{
+  if (f2 == 0.0q)
+    return (f1 != 0.0q);
+  if (f1 == 0.0q)
+    return -1;
+  if (e1 < e2)
+    return -1;
+  if (e2 < e1)
+    return 1;
+  if (f1 < f2)
+    return -1;
+  if (f2 < f1)
+    return 1;
+  return 0;
 }
 
 static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 A22, __float128 *const tf, __float128 *const cf, __float128 *const sf, __float128 *const tp, __float128 *const cp, __float128 *const sp, __float128 *const s1, __float128 *const s2, int *const es
@@ -4878,7 +4950,7 @@ int pvn_qljsv2_
     }
   }
 
-  if (*s1 < *s2) {
+  if (ef_cmpq(es[1], *s1, es[2], *s2) < 0) {
     pvn_qswp(u11, u21);
     pvn_qswp(u12, u22);
     pvn_qswp(v11, v12);
@@ -5093,7 +5165,7 @@ int pvn_yljsv2_
 
   /* TODO */
 
-  if (*s1 < *s2) {
+  if (ef_cmpq(es[1], *s1, es[2], *s2) < 0) {
     pvn_qswp(u11r, u21r);
     pvn_qswp(u11i, u21i);
     pvn_qswp(u12r, u22r);
