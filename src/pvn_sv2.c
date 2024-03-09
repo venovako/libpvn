@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 #else /* !__x86_64__ */
     char s[46] = { '\0' };
 #endif /* ?__x86_64__ */
-    long double EU = 0.0L, EV = 0.0L, EG = 0.0L;
+    long double EC = 0.0L, EU = 0.0L, EV = 0.0L, EG = 0.0L;
     for (int i = 0u; i < n; ++i) {
       const float a11 = pvn_ran_safe_f_(&u);
       if (!(a11 != 0.0f)) {
@@ -93,12 +93,18 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
       long double u11l = u11, u21l = u21, u12l = u12, u22l = u22, v11l = v11, v21l = v21, v12l = v12, v22l = v22,
         s1l = scalbnl(s1, es[1] - es[0]), s2l = scalbnl(s2, es[2] - es[0]);
+      /* cond_2(G) */
+      long double Err = (s1l / s2l);
+      EC = fmaxl(EC, Err);
+#ifndef NDEBUG
+      (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, Err));
+#endif /* !NDEBUG */
       /* U^T U - I */
       long double T11 = (u11l * u11l + u21l * u21l - 1.0L);
       long double T21 = (u12l * u11l + u22l * u21l);
       long double T12 = T21;
       long double T22 = (u12l * u12l + u22l * u22l - 1.0L);
-      long double Err = hypotl(hypotl(T11, T21), hypotl(T12, T22));
+      Err = hypotl(hypotl(T11, T21), hypotl(T12, T22));
       EU = fmaxl(EU, Err);
 #ifndef NDEBUG
       (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, Err));
@@ -130,9 +136,28 @@ int main(int argc, char *argv[])
 #endif /* !NDEBUG */
     }
     u = pvn_ran_close_(&u);
-    (void)printf("max(|| U^T U - I ||_F)=%s\n", pvn_xtoa(s, EU));
-    (void)printf("max(|| V^T V - I ||_F)=%s\n", pvn_xtoa(s, EV));
-    (void)printf("max(|| U Σ V^T - G ||_F / || G ||_F)=%s\n", pvn_xtoa(s, EG));
+#ifndef NDEBUG
+    (void)printf("max(cond_2(G))=");
+#endif /* !NDEBUG */
+    (void)printf("%s", pvn_xtoa(s, EC));
+#ifndef NDEBUG
+    (void)printf("\nmax(|| U^T U - I ||_F)=");
+#else /* NDEBUG */
+    (void)putchar(',');
+#endif /* ?NDEBUG */
+    (void)printf("%s", pvn_xtoa(s, EU));
+#ifndef NDEBUG
+    (void)printf("\nmax(|| V^T V - I ||_F)=");
+#else /* NDEBUG */
+    (void)putchar(',');
+#endif /* ?NDEBUG */
+    (void)printf("%s", pvn_xtoa(s, EV));
+#ifndef NDEBUG
+    (void)printf("\nmax(|| U Σ V^T - G ||_F / || G ||_F)=");
+#else /* NDEBUG */
+    (void)putchar(',');
+#endif /* ?NDEBUG */
+    (void)printf("%s\n", pvn_xtoa(s, EG));
     if (u != 0) {
       (void)fprintf(stderr, "close(/dev/random): %d\n", u);
       return EXIT_FAILURE;
