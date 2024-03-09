@@ -3,47 +3,89 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if ((argc != 2) && (argc != 5)) {
-    (void)fprintf(stderr, "%s N | a11 a21 a12 a22\n", *argv);
+  if ((argc != 3) && (argc != 6)) {
+    (void)fprintf(stderr, "%s (S|D) (N | a11 a21 a12 a22)\n", *argv);
     return EXIT_FAILURE;
   }
-  if (argc == 5) {
-    const float a11 = (float)atof(argv[1]);
-    const float a21 = (float)atof(argv[2]);
-    const float a12 = (float)atof(argv[3]);
-    const float a22 = (float)atof(argv[4]);
-    float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
-    int es[3] = { 0, 0, 0 };
-    const int knd =
+  if (argc == 6) {
+    if (toupper(*(argv[1])) == 'S') {
+      const float a11 = (float)atof(argv[2]);
+      const float a21 = (float)atof(argv[3]);
+      const float a12 = (float)atof(argv[4]);
+      const float a22 = (float)atof(argv[5]);
+      float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
+      int es[3] = { 0, 0, 0 };
+      const int knd =
 #ifdef _WIN32
-      PVN_SLJSV2
+        PVN_SLJSV2
 #else /* !_WIN32 */
-      pvn_sljsv2_
+        pvn_sljsv2_
 #endif /* ?_WIN32 */
-      (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
-    (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
-    char s[17] = { '\0' };
-    (void)printf("%s ", pvn_stoa(s, a11));
-    (void)printf("%s\n", pvn_stoa(s, a12));
-    (void)printf("%s ", pvn_stoa(s, a21));
-    (void)printf("%s\n\tu =\n", pvn_stoa(s, a22));
-    (void)printf("%s ", pvn_stoa(s, u11));
-    (void)printf("%s\n", pvn_stoa(s, u12));
-    (void)printf("%s ", pvn_stoa(s, u21));
-    (void)printf("%s\n\tv =\n", pvn_stoa(s, u22));
-    (void)printf("%s ", pvn_stoa(s, v11));
-    (void)printf("%s\n", pvn_stoa(s, v12));
-    (void)printf("%s ", pvn_stoa(s, v21));
-    (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
-    (void)printf("%s ", pvn_stoa(s, s1));
-    (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
-    s1 = scalbnf(s1, (es[1] - es[0]));
-    s2 = scalbnf(s2, (es[2] - es[0]));
-    (void)printf("%s ", pvn_stoa(s, s1));
-    (void)printf("%s\n", pvn_stoa(s, s2));
+        (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+      (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
+      char s[17] = { '\0' };
+      (void)printf("%s ", pvn_stoa(s, a11));
+      (void)printf("%s\n", pvn_stoa(s, a12));
+      (void)printf("%s ", pvn_stoa(s, a21));
+      (void)printf("%s\n\tu =\n", pvn_stoa(s, a22));
+      (void)printf("%s ", pvn_stoa(s, u11));
+      (void)printf("%s\n", pvn_stoa(s, u12));
+      (void)printf("%s ", pvn_stoa(s, u21));
+      (void)printf("%s\n\tv =\n", pvn_stoa(s, u22));
+      (void)printf("%s ", pvn_stoa(s, v11));
+      (void)printf("%s\n", pvn_stoa(s, v12));
+      (void)printf("%s ", pvn_stoa(s, v21));
+      (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
+      (void)printf("%s ", pvn_stoa(s, s1));
+      (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
+      s1 = scalbnf(s1, (es[1] - es[0]));
+      s2 = scalbnf(s2, (es[2] - es[0]));
+      (void)printf("%s ", pvn_stoa(s, s1));
+      (void)printf("%s\n", pvn_stoa(s, s2));
+    }
+    else if (toupper(*(argv[1])) == 'D') {
+      const double a11 = atof(argv[2]);
+      const double a21 = atof(argv[3]);
+      const double a12 = atof(argv[4]);
+      const double a22 = atof(argv[5]);
+      double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
+      int es[3] = { 0, 0, 0 };
+      const int knd =
+#ifdef _WIN32
+        PVN_DLJSV2
+#else /* !_WIN32 */
+        pvn_dljsv2_
+#endif /* ?_WIN32 */
+        (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+      (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
+      char s[26] = { '\0' };
+      (void)printf("%s ", pvn_dtoa(s, a11));
+      (void)printf("%s\n", pvn_dtoa(s, a12));
+      (void)printf("%s ", pvn_dtoa(s, a21));
+      (void)printf("%s\n\tu =\n", pvn_dtoa(s, a22));
+      (void)printf("%s ", pvn_dtoa(s, u11));
+      (void)printf("%s\n", pvn_dtoa(s, u12));
+      (void)printf("%s ", pvn_dtoa(s, u21));
+      (void)printf("%s\n\tv =\n", pvn_dtoa(s, u22));
+      (void)printf("%s ", pvn_dtoa(s, v11));
+      (void)printf("%s\n", pvn_dtoa(s, v12));
+      (void)printf("%s ", pvn_dtoa(s, v21));
+      (void)printf("%s\n\ts =\n", pvn_dtoa(s, v22));
+      (void)printf("%s ", pvn_dtoa(s, s1));
+      (void)printf("%s\n\tS =\n", pvn_dtoa(s, s2));
+      s1 = scalbnf(s1, (es[1] - es[0]));
+      s2 = scalbnf(s2, (es[2] - es[0]));
+      (void)printf("%s ", pvn_dtoa(s, s1));
+      (void)printf("%s\n", pvn_dtoa(s, s2));
+    }
+    else
+      return EXIT_FAILURE;
   }
+#ifdef _WIN32
+  (void)fprintf(stderr, "NOT IMPLEMENTED YET!\n");
+#else /* !_WIN32 */
   else {
-    int n = atoi(argv[1]);
+    int n = atoi(argv[2]);
     if (!n)
       return EXIT_SUCCESS;
     const int upper = (n < 0);
@@ -59,57 +101,102 @@ int main(int argc, char *argv[])
     char s[46] = { '\0' };
 #endif /* ?__x86_64__ */
     long double EC = 0.0L, EU = 0.0L, EV = 0.0L, EG = 0.0L;
-    for (int i = 0u; i < n; ++i) {
-      const float a11 = pvn_ran_safe_f_(&u);
-      if (!(a11 != 0.0f)) {
-        (void)fprintf(stderr, "%10d: G(1,1) =%s\n", i, pvn_stoa(s, a11));
-        return EXIT_FAILURE;
-      }
-      const float a21 = (upper ? 0.0f : pvn_ran_safe_f_(&u));
-      if (!upper && !(a21 != 0.0f)) {
-        (void)fprintf(stderr, "%10d: G(2,1) =%s\n", i, pvn_stoa(s, a21));
-        return EXIT_FAILURE;
-      }
-      const float a12 = pvn_ran_safe_f_(&u);
-      if (!(a12 != 0.0f)) {
-        (void)fprintf(stderr, "%10d: G(1,2) =%s\n", i, pvn_stoa(s, a12));
-        return EXIT_FAILURE;
-      }
-      const float a22 = pvn_ran_safe_f_(&u);
-      if (!(a22 != 0.0f)) {
-        (void)fprintf(stderr, "%10d: G(2,2) =%s\n", i, pvn_stoa(s, a22));
-        return EXIT_FAILURE;
-      }
-      float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
-      int es[3] = { 0, 0, 0 };
-      const int knd =
-#ifdef _WIN32
-        PVN_SLJSV2
-#else /* !_WIN32 */
-        pvn_sljsv2_
-#endif /* ?_WIN32 */
-        (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
-      if ((knd < 0) || ((knd != 13) && (knd != 15)))
-        return EXIT_FAILURE;
-      long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
-      pvn_sxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
-      EC = fmaxl(EC, E[0]);
+    if (toupper(*(argv[1])) == 'S') {
+      for (int i = 0u; i < n; ++i) {
+        const float a11 = pvn_ran_safe_f_(&u);
+        if (!(a11 != 0.0f)) {
+          (void)fprintf(stderr, "%10d: G(1,1) =%s\n", i, pvn_stoa(s, a11));
+          return EXIT_FAILURE;
+        }
+        const float a21 = (upper ? 0.0f : pvn_ran_safe_f_(&u));
+        if (!upper && !(a21 != 0.0f)) {
+          (void)fprintf(stderr, "%10d: G(2,1) =%s\n", i, pvn_stoa(s, a21));
+          return EXIT_FAILURE;
+        }
+        const float a12 = pvn_ran_safe_f_(&u);
+        if (!(a12 != 0.0f)) {
+          (void)fprintf(stderr, "%10d: G(1,2) =%s\n", i, pvn_stoa(s, a12));
+          return EXIT_FAILURE;
+        }
+        const float a22 = pvn_ran_safe_f_(&u);
+        if (!(a22 != 0.0f)) {
+          (void)fprintf(stderr, "%10d: G(2,2) =%s\n", i, pvn_stoa(s, a22));
+          return EXIT_FAILURE;
+        }
+        float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
+        int es[3] = { 0, 0, 0 };
+        const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+        if ((knd < 0) || ((knd != 13) && (knd != 15)))
+          return EXIT_FAILURE;
+        long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
+        pvn_sxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
+        EC = fmaxl(EC, E[0]);
 #ifndef NDEBUG
-      (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+        (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
 #endif /* !NDEBUG */
-      EU = fmaxl(EU, E[1]);
+        EU = fmaxl(EU, E[1]);
 #ifndef NDEBUG
-      (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+        (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
 #endif /* !NDEBUG */
-      EV = fmaxl(EV, E[2]);
+        EV = fmaxl(EV, E[2]);
 #ifndef NDEBUG
-      (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+        (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
 #endif /* !NDEBUG */
-      EG = fmaxl(EG, E[3]);
+        EG = fmaxl(EG, E[3]);
 #ifndef NDEBUG
-      (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+        (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
 #endif /* !NDEBUG */
+      }
     }
+    else if (toupper(*(argv[1])) == 'D') {
+      for (int i = 0u; i < n; ++i) {
+        const double a11 = pvn_ran_safe_(&u);
+        if (!(a11 != 0.0)) {
+          (void)fprintf(stderr, "%10d: G(1,1) =%s\n", i, pvn_dtoa(s, a11));
+          return EXIT_FAILURE;
+        }
+        const double a21 = (upper ? 0.0 : pvn_ran_safe_(&u));
+        if (!upper && !(a21 != 0.0)) {
+          (void)fprintf(stderr, "%10d: G(2,1) =%s\n", i, pvn_dtoa(s, a21));
+          return EXIT_FAILURE;
+        }
+        const double a12 = pvn_ran_safe_(&u);
+        if (!(a12 != 0.0)) {
+          (void)fprintf(stderr, "%10d: G(1,2) =%s\n", i, pvn_dtoa(s, a12));
+          return EXIT_FAILURE;
+        }
+        const double a22 = pvn_ran_safe_(&u);
+        if (!(a22 != 0.0)) {
+          (void)fprintf(stderr, "%10d: G(2,2) =%s\n", i, pvn_dtoa(s, a22));
+          return EXIT_FAILURE;
+        }
+        double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
+        int es[3] = { 0, 0, 0 };
+        const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+        if ((knd < 0) || ((knd != 13) && (knd != 15)))
+          return EXIT_FAILURE;
+        long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
+        pvn_dxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
+        EC = fmaxl(EC, E[0]);
+#ifndef NDEBUG
+        (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+#endif /* !NDEBUG */
+        EU = fmaxl(EU, E[1]);
+#ifndef NDEBUG
+        (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+#endif /* !NDEBUG */
+        EV = fmaxl(EV, E[2]);
+#ifndef NDEBUG
+        (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+#endif /* !NDEBUG */
+        EG = fmaxl(EG, E[3]);
+#ifndef NDEBUG
+        (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+#endif /* !NDEBUG */
+      }
+    }
+    else
+      return EXIT_FAILURE;
     u = pvn_ran_close_(&u);
 #ifndef NDEBUG
     (void)printf("max(cond_2(G))=");
@@ -138,6 +225,7 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
     }
   }
+#endif /* ?_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
