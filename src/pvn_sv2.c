@@ -3,43 +3,141 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (argc != 5) {
-    (void)fprintf(stderr, "%s a11 a21 a12 a22\n", *argv);
+  if ((argc != 2) && (argc != 5)) {
+    (void)fprintf(stderr, "%s N | a11 a21 a12 a22\n", *argv);
     return EXIT_FAILURE;
   }
-  const float a11 = (float)atof(argv[1]);
-  const float a21 = (float)atof(argv[2]);
-  const float a12 = (float)atof(argv[3]);
-  const float a22 = (float)atof(argv[4]);
-  float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
-  int es[3] = { 0, 0, 0 };
-  const int knd =
+  if (argc == 5) {
+    const float a11 = (float)atof(argv[1]);
+    const float a21 = (float)atof(argv[2]);
+    const float a12 = (float)atof(argv[3]);
+    const float a22 = (float)atof(argv[4]);
+    float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
+    int es[3] = { 0, 0, 0 };
+    const int knd =
 #ifdef _WIN32
-PVN_SLJSV2
+      PVN_SLJSV2
 #else /* !_WIN32 */
-pvn_sljsv2_
+      pvn_sljsv2_
 #endif /* ?_WIN32 */
-    (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
-  (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
-  char s[17] = { '\0' };
-  (void)printf("%s ", pvn_stoa(s, a11));
-  (void)printf("%s\n", pvn_stoa(s, a12));
-  (void)printf("%s ", pvn_stoa(s, a21));
-  (void)printf("%s\n\tu =\n", pvn_stoa(s, a22));
-  (void)printf("%s ", pvn_stoa(s, u11));
-  (void)printf("%s\n", pvn_stoa(s, u12));
-  (void)printf("%s ", pvn_stoa(s, u21));
-  (void)printf("%s\n\tv =\n", pvn_stoa(s, u22));
-  (void)printf("%s ", pvn_stoa(s, v11));
-  (void)printf("%s\n", pvn_stoa(s, v12));
-  (void)printf("%s ", pvn_stoa(s, v21));
-  (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
-  (void)printf("%s ", pvn_stoa(s, s1));
-  (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
-  s1 = scalbnf(s1, (es[1] - es[0]));
-  s2 = scalbnf(s2, (es[2] - es[0]));
-  (void)printf("%s ", pvn_stoa(s, s1));
-  (void)printf("%s\n", pvn_stoa(s, s2));
+      (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+    (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
+    char s[17] = { '\0' };
+    (void)printf("%s ", pvn_stoa(s, a11));
+    (void)printf("%s\n", pvn_stoa(s, a12));
+    (void)printf("%s ", pvn_stoa(s, a21));
+    (void)printf("%s\n\tu =\n", pvn_stoa(s, a22));
+    (void)printf("%s ", pvn_stoa(s, u11));
+    (void)printf("%s\n", pvn_stoa(s, u12));
+    (void)printf("%s ", pvn_stoa(s, u21));
+    (void)printf("%s\n\tv =\n", pvn_stoa(s, u22));
+    (void)printf("%s ", pvn_stoa(s, v11));
+    (void)printf("%s\n", pvn_stoa(s, v12));
+    (void)printf("%s ", pvn_stoa(s, v21));
+    (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
+    (void)printf("%s ", pvn_stoa(s, s1));
+    (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
+    s1 = scalbnf(s1, (es[1] - es[0]));
+    s2 = scalbnf(s2, (es[2] - es[0]));
+    (void)printf("%s ", pvn_stoa(s, s1));
+    (void)printf("%s\n", pvn_stoa(s, s2));
+  }
+  else {
+    int n = atoi(argv[1]);
+    if (!n)
+      return EXIT_SUCCESS;
+    const int upper = (n < 0);
+    n = abs(n);
+    int u = pvn_ran_open_();
+    if (u < 0) {
+      (void)fprintf(stderr, "open(/dev/random): %d\n", u);
+      return EXIT_FAILURE;
+    }
+#ifdef __x86_64__
+    char s[31] = { '\0' };
+#else /* !__x86_64__ */
+    char s[46] = { '\0' };
+#endif /* ?__x86_64__ */
+    long double EU = 0.0L, EV = 0.0L, EG = 0.0L;
+    for (int i = 0u; i < n; ++i) {
+      const float a11 = pvn_ran_safe_f_(&u);
+      if (!(a11 != 0.0f)) {
+        (void)fprintf(stderr, "%10d: G(1,1) =%s\n", i, pvn_stoa(s, a11));
+        return EXIT_FAILURE;
+      }
+      const float a21 = (upper ? 0.0f : pvn_ran_safe_f_(&u));
+      if (!upper && !(a21 != 0.0f)) {
+        (void)fprintf(stderr, "%10d: G(2,1) =%s\n", i, pvn_stoa(s, a21));
+        return EXIT_FAILURE;
+      }
+      const float a12 = pvn_ran_safe_f_(&u);
+      if (!(a12 != 0.0f)) {
+        (void)fprintf(stderr, "%10d: G(1,2) =%s\n", i, pvn_stoa(s, a12));
+        return EXIT_FAILURE;
+      }
+      const float a22 = pvn_ran_safe_f_(&u);
+      if (!(a22 != 0.0f)) {
+        (void)fprintf(stderr, "%10d: G(2,2) =%s\n", i, pvn_stoa(s, a22));
+        return EXIT_FAILURE;
+      }
+      float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
+      int es[3] = { 0, 0, 0 };
+      const int knd =
+#ifdef _WIN32
+        PVN_SLJSV2
+#else /* !_WIN32 */
+        pvn_sljsv2_
+#endif /* ?_WIN32 */
+        (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+      if ((knd < 0) || ((knd != 13) && (knd != 15)))
+        return EXIT_FAILURE;
+      long double u11l = u11, u21l = u21, u12l = u12, u22l = u22, v11l = v11, v21l = v21, v12l = v12, v22l = v22,
+        s1l = scalbnl(s1, es[1] - es[0]), s2l = scalbnl(s2, es[2] - es[0]);
+      /* U^T U - I */
+      long double T11 = (u11l * u11l + u21l * u21l - 1.0L);
+      long double T21 = (u12l * u11l + u22l * u21l);
+      long double T12 = T21;
+      long double T22 = (u12l * u12l + u22l * u22l - 1.0L);
+      long double Err = hypotl(hypotl(T11, T21), hypotl(T12, T22));
+      EU = fmaxl(EU, Err);
+#ifndef NDEBUG
+      (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, Err));
+#endif /* !NDEBUG */
+      T11 = (v11l * v11l + v21l * v21l - 1.0L);
+      T21 = (v12l * v11l + v22l * v21l);
+      T22 = (v12l * v12l + v22l * v22l - 1.0L);
+      Err = hypotl(hypotl(T11, T21), hypotl(T21, T22));
+      EV = fmaxl(EV, Err);
+#ifndef NDEBUG
+      (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, Err));
+#endif /* !NDEBUG */
+      u11l *= s1l;
+      u21l *= s1l;
+      u12l *= s2l;
+      u22l *= s2l;
+      Err = hypotl(hypotl(a11, a21), hypotl(a12, a22));
+#ifndef NDEBUG
+      (void)printf("%10d: || G ||_F =%s\n", i, pvn_xtoa(s, Err));
+#endif /* !NDEBUG */
+      T11 = (u11l * v11l + u12l * v12l - a11);
+      T21 = (u21l * v11l + u22l * v12l - a21);
+      T12 = (u11l * v21l + u12l * v22l - a12);
+      T22 = (u21l * v21l + u22l * v22l - a22);
+      Err = hypotl(hypotl(T11, T21), hypotl(T12, T22)) / Err;
+      EG = fmaxl(EG, Err);
+#ifndef NDEBUG
+      (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, Err));
+#endif /* !NDEBUG */
+    }
+    u = pvn_ran_close_(&u);
+    (void)printf("max(|| U^T U - I ||_F)=%s\n", pvn_xtoa(s, EU));
+    (void)printf("max(|| V^T V - I ||_F)=%s\n", pvn_xtoa(s, EV));
+    (void)printf("max(|| U Σ V^T - G ||_F / || G ||_F)=%s\n", pvn_xtoa(s, EG));
+    if (u != 0) {
+      (void)fprintf(stderr, "close(/dev/random): %d\n", u);
+      return EXIT_FAILURE;
+    }
+  }
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */

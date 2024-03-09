@@ -32,10 +32,13 @@ float pvn_ran_safe_f_(const int *const u)
   const float rmax = (FLT_MAX * 0.25f);
   float a = FLT_MAX, r = 0.0f;
   while (!(a >= rmin) || !(a <= rmax)) {
-    if ((ssize_t)sizeof(r) == read(*u, &r, sizeof(r)))
+    const ssize_t s = read(*u, &r, sizeof(r));
+    if (s == (ssize_t)sizeof(r))
       a = fabsf(r);
-    else
-      return 0.0f;
+    else if (s <= 0)
+      return ((float)s);
+    else /* s > 0 */
+      return -0.0f;
   }
   return r;
 }
@@ -47,10 +50,13 @@ double pvn_ran_safe_(const int *const u)
   const double rmax = (DBL_MAX * 0.25);
   double a = DBL_MAX, r = 0.0;
   while (!(a >= rmin) || !(a <= rmax)) {
-    if ((ssize_t)sizeof(r) == read(*u, &r, sizeof(r)))
+    const ssize_t s = read(*u, &r, sizeof(r));
+    if (s == (ssize_t)sizeof(r))
       a = fabs(r);
-    else
-      return 0.0;
+    else if (s <= 0)
+      return ((double)s);
+    else /* s > 0 */
+      return -0.0;
   }
   return r;
 }
@@ -62,10 +68,13 @@ long double pvn_ran_safe_l_(const int *const u)
   const long double rmax = (LDBL_MAX * 0.25L);
   long double a = LDBL_MAX, r = 0.0L;
   while (!(a >= rmin) || !(a <= rmax)) {
-    if ((ssize_t)sizeof(r) == read(*u, &r, sizeof(r)))
+    const ssize_t s = read(*u, &r, sizeof(r));
+    if (s == (ssize_t)sizeof(r))
       a = fabsl(r);
-    else
-      return 0.0L;
+    else if (s <= 0)
+      return ((long double)s);
+    else /* s > 0 */
+      return -0.0L;
   }
   return r;
 }
@@ -78,10 +87,13 @@ __float128 pvn_ran_safe_q_(const int *const u)
   const __float128 rmax = (FLT128_MAX * 0.25q);
   __float128 a = FLT128_MAX, r = 0.0q;
   while (!(a >= rmin) || !(a <= rmax)) {
-    if ((ssize_t)sizeof(r) == read(*u, &r, sizeof(r)))
+    const ssize_t s = read(*u, &r, sizeof(r));
+    if (s == (ssize_t)sizeof(r))
       a = fabsq(r);
-    else
-      return 0.0q;
+    else if (s <= 0)
+      return ((__float128)s);
+    else /* s > 0 */
+      return -0.0q;
   }
   return r;
 }
