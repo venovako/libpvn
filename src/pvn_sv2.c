@@ -91,48 +91,23 @@ int main(int argc, char *argv[])
         (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
       if ((knd < 0) || ((knd != 13) && (knd != 15)))
         return EXIT_FAILURE;
-      long double u11l = u11, u21l = u21, u12l = u12, u22l = u22, v11l = v11, v21l = v21, v12l = v12, v22l = v22,
-        s1l = scalbnl(s1, es[1] - es[0]), s2l = scalbnl(s2, es[2] - es[0]);
-      /* cond_2(G) */
-      long double Err = (s1l / s2l);
-      EC = fmaxl(EC, Err);
+      long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
+      pvn_sxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
+      EC = fmaxl(EC, E[0]);
 #ifndef NDEBUG
-      (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, Err));
+      (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
 #endif /* !NDEBUG */
-      /* U^T U - I */
-      long double T11 = (u11l * u11l + u21l * u21l - 1.0L);
-      long double T21 = (u12l * u11l + u22l * u21l);
-      long double T12 = T21;
-      long double T22 = (u12l * u12l + u22l * u22l - 1.0L);
-      Err = hypotl(hypotl(T11, T21), hypotl(T12, T22));
-      EU = fmaxl(EU, Err);
+      EU = fmaxl(EU, E[1]);
 #ifndef NDEBUG
-      (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, Err));
+      (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
 #endif /* !NDEBUG */
-      T11 = (v11l * v11l + v21l * v21l - 1.0L);
-      T21 = (v12l * v11l + v22l * v21l);
-      T22 = (v12l * v12l + v22l * v22l - 1.0L);
-      Err = hypotl(hypotl(T11, T21), hypotl(T21, T22));
-      EV = fmaxl(EV, Err);
+      EV = fmaxl(EV, E[2]);
 #ifndef NDEBUG
-      (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, Err));
+      (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
 #endif /* !NDEBUG */
-      u11l *= s1l;
-      u21l *= s1l;
-      u12l *= s2l;
-      u22l *= s2l;
-      Err = hypotl(hypotl(a11, a21), hypotl(a12, a22));
+      EG = fmaxl(EG, E[3]);
 #ifndef NDEBUG
-      (void)printf("%10d: || G ||_F =%s\n", i, pvn_xtoa(s, Err));
-#endif /* !NDEBUG */
-      T11 = (u11l * v11l + u12l * v12l - a11);
-      T21 = (u21l * v11l + u22l * v12l - a21);
-      T12 = (u11l * v21l + u12l * v22l - a12);
-      T22 = (u21l * v21l + u22l * v22l - a22);
-      Err = hypotl(hypotl(T11, T21), hypotl(T12, T22)) / Err;
-      EG = fmaxl(EG, Err);
-#ifndef NDEBUG
-      (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, Err));
+      (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
 #endif /* !NDEBUG */
     }
     u = pvn_ran_close_(&u);
@@ -2877,6 +2852,72 @@ pvn_zljsv2_
 }
 
 #ifndef _WIN32
+#ifdef XLJR2
+#error XLJR2 already defined
+#else /* !XLJR2 */
+#define XLJR2                                                   \
+  assert(a11);                                                  \
+  assert(a21);                                                  \
+  assert(a12);                                                  \
+  assert(a22);                                                  \
+  assert(u11);                                                  \
+  assert(u21);                                                  \
+  assert(u12);                                                  \
+  assert(u22);                                                  \
+  assert(v11);                                                  \
+  assert(v21);                                                  \
+  assert(v12);                                                  \
+  assert(v22);                                                  \
+  assert(s1);                                                   \
+  assert(s2);                                                   \
+  assert(es);                                                   \
+  assert(E);                                                    \
+  long double                                                   \
+    u11l = *u11, u21l = *u21, u12l = *u12, u22l = *u22,         \
+    v11l = *v11, v21l = *v21, v12l = *v12, v22l = *v22,         \
+    s1l = scalbnl(*s1, es[1] - es[0]),                          \
+    s2l = scalbnl(*s2, es[2] - es[0]);                          \
+  /* cond_2(G) */                                               \
+  E[0] = (s1l / s2l);                                           \
+  /* U^T U - I */                                               \
+  long double T11 = (u11l * u11l + u21l * u21l - 1.0L);         \
+  long double T21 = (u12l * u11l + u22l * u21l);                \
+  long double T12 = T21;                                        \
+  long double T22 = (u12l * u12l + u22l * u22l - 1.0L);         \
+  E[1] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
+  T11 = (v11l * v11l + v21l * v21l - 1.0L);                     \
+  T21 = (v12l * v11l + v22l * v21l);                            \
+  T22 = (v12l * v12l + v22l * v22l - 1.0L);                     \
+  E[2] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
+  u11l *= s1l;                                                  \
+  u21l *= s1l;                                                  \
+  u12l *= s2l;                                                  \
+  u22l *= s2l;                                                  \
+  E[3] = hypotl(hypotl(*a11, *a21), hypotl(*a12, *a22));        \
+  T11 = (u11l * v11l + u12l * v12l - *a11);                     \
+  T21 = (u21l * v11l + u22l * v12l - *a21);                     \
+  T12 = (u11l * v21l + u12l * v22l - *a12);                     \
+  T22 = (u21l * v21l + u22l * v22l - *a22);                     \
+  E[3] = (hypotl(hypotl(T11, T21), hypotl(T12, T22)) / E[3])
+#endif /* ?XLJR2 */
+void pvn_sxljr2_
+(const float *const a11, const float *const a21, const float *const a12, const float *const a22,
+ const float *const u11, const float *const u21, const float *const u12, const float *const u22,
+ const float *const v11, const float *const v21, const float *const v12, const float *const v22,
+ const float *const s1, const float *const s2, const int *const es, long double *const E)
+{
+  XLJR2;
+}
+
+void pvn_dxljr2_
+(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
+ const double *const u11, const double *const u21, const double *const u12, const double *const u22,
+ const double *const v11, const double *const v21, const double *const v12, const double *const v22,
+ const double *const s1, const double *const s2, const int *const es, long double *const E)
+{
+  XLJR2;
+}
+
 static inline void ef_mull(int *const e, long double *const f, const int e1, const long double f1, const int e2, const long double f2)
 {
   assert(e);

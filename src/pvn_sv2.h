@@ -57,6 +57,18 @@ pvn_zljsv2_
 /* at present, the functions declared below might not be fail-safe */
 
 #ifndef _WIN32
+PVN_EXTERN_C void pvn_sxljr2_
+(const float *const a11, const float *const a21, const float *const a12, const float *const a22,
+ const float *const u11, const float *const u21, const float *const u12, const float *const u22,
+ const float *const v11, const float *const v21, const float *const v12, const float *const v22,
+ const float *const s1, const float *const s2, const int *const es, long double *const E);
+
+PVN_EXTERN_C void pvn_dxljr2_
+(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
+ const double *const u11, const double *const u21, const double *const u12, const double *const u22,
+ const double *const v11, const double *const v21, const double *const v12, const double *const v22,
+ const double *const s1, const double *const s2, const int *const es, long double *const E);
+
 PVN_EXTERN_C int pvn_xljsv2_
 (const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
  long double *const u11, long double *const u21, long double *const u12, long double *const u22,
