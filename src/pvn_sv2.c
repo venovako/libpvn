@@ -1094,8 +1094,8 @@ pvn_sljsv2_
 #endif /* !NDEBUG */
              );
       tf = (1.0f / tp_);
-      cf = -sp_;
-      sf = -cp_;
+      cf = sp_;
+      sf = cp_;
       tp = (1.0f / tf_);
       cp = sf_;
       sp = cf_;
@@ -1208,8 +1208,8 @@ pvn_sljsv2_
 #endif /* !NDEBUG */
 
     if (e == -13) {
-      *u11 = -*u11;
-      *u12 = -*u12;
+      *u21 = -*u21;
+      *u22 = -*u22;
       *v12 = -*v12;
       *v22 = -*v22;
     }
@@ -2565,8 +2565,8 @@ pvn_dljsv2_
 #endif /* !NDEBUG */
              );
       tf = (1.0 / tp_);
-      cf = -sp_;
-      sf = -cp_;
+      cf = sp_;
+      sf = cp_;
       tp = (1.0 / tf_);
       cp = sf_;
       sp = cf_;
@@ -2679,8 +2679,8 @@ pvn_dljsv2_
 #endif /* !NDEBUG */
 
     if (e == -13) {
-      *u11 = -*u11;
-      *u12 = -*u12;
+      *u21 = -*u21;
+      *u22 = -*u22;
       *v12 = -*v12;
       *v22 = -*v22;
     }
@@ -3867,8 +3867,8 @@ int pvn_xljsv2_
 #endif /* !NDEBUG */
              );
       tf = (1.0L / tp_);
-      cf = -sp_;
-      sf = -cp_;
+      cf = sp_;
+      sf = cp_;
       tp = (1.0L / tf_);
       cp = sf_;
       sp = cf_;
@@ -3981,8 +3981,8 @@ int pvn_xljsv2_
 #endif /* !NDEBUG */
 
     if (e == -13) {
-      *u11 = -*u11;
-      *u12 = -*u12;
+      *u21 = -*u21;
+      *u22 = -*u22;
       *v12 = -*v12;
       *v22 = -*v22;
     }
@@ -5081,8 +5081,8 @@ int pvn_qljsv2_
 #endif /* !NDEBUG */
              );
       tf = (1.0q / tp_);
-      cf = -sp_;
-      sf = -cp_;
+      cf = sp_;
+      sf = cp_;
       tp = (1.0q / tf_);
       cp = sf_;
       sp = cf_;
@@ -5195,8 +5195,8 @@ int pvn_qljsv2_
 #endif /* !NDEBUG */
 
     if (e == -13) {
-      *u11 = -*u11;
-      *u12 = -*u12;
+      *u21 = -*u21;
+      *u22 = -*u22;
       *v12 = -*v12;
       *v22 = -*v22;
     }
