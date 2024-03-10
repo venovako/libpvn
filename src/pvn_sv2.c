@@ -312,9 +312,6 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   assert(s1);
   assert(s2);
   assert(es);
-#ifndef NDEBUG
-  assert(s);
-#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   float af = 0.0f, bf = 0.0f, abf = 0.0f, a_bf = 0.0f, df = 0.0f, nf = 0.0f, t2f = 0.0f, t2 = 0.0f;
 
@@ -373,7 +370,7 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   else
     *tf = copysignf(1.0f, t2);
 #ifndef NDEBUG
-  (void)printf("tan(φ)=%s, ", pvn_stoa(s, *tf));
+  if (s) (void)printf("tan(φ)=%s, ", pvn_stoa(s, *tf));
 #endif /* !NDEBUG */
   *cf = hypotf(*tf, 1.0f);
   *sf = (*tf / *cf);
@@ -381,7 +378,7 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   *sp = fmaf(*tf, A22, A12);
   *tp = (*sp / A11);
 #ifndef NDEBUG
-  (void)printf("tan(ψ)=%s\n", pvn_stoa(s, *tp));
+  if (s) (void)printf("tan(ψ)=%s\n", pvn_stoa(s, *tp));
 #endif /* !NDEBUG */
 
   if (b < 0.0f) {
@@ -427,10 +424,12 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
 
   *cf = (1.0f / *cf);
 #ifndef NDEBUG
-  (void)printf("cos(φ)=%s, ", pvn_stoa(s, *cf));
-  (void)printf("sin(φ)=%s\n", pvn_stoa(s, *sf));
-  (void)printf("cos(ψ)=%s, ", pvn_stoa(s, *cf));
-  (void)printf("sin(ψ)=%s\n", pvn_stoa(s, *sf));
+  if (s) {
+    (void)printf("cos(φ)=%s, ", pvn_stoa(s, *cf));
+    (void)printf("sin(φ)=%s\n", pvn_stoa(s, *sf));
+    (void)printf("cos(ψ)=%s, ", pvn_stoa(s, *cf));
+    (void)printf("sin(ψ)=%s\n", pvn_stoa(s, *sf));
+  }
 #endif /* !NDEBUG */
 
   *s1 = a_bf;
@@ -1851,12 +1850,158 @@ pvn_cljsv2_
   /* TODO */
 
   if (e == 3) {
+    tt = (A21r / A11r);
+    /* 1 / cos */
+    ct = hypotf(tt, 1.0f);
+    /* apply the left Givens rotation to U */
+    st = -tt;
+    A21r = *u11r;
+    A21i = *u11i;
+    if (ct == 1.0f) {
+      *u11r = fmaf(tt, *u21r, *u11r);
+      *u11i = fmaf(tt, *u21i, *u11i);
+      *u21r = fmaf(st,  A21r, *u21r);
+      *u21i = fmaf(st,  A21i, *u21i);
+      A21r = *u12r;
+      A21i = *u12i;
+      *u12r = fmaf(tt, *u22r, *u12r);
+      *u12i = fmaf(tt, *u22i, *u12i);
+      *u22r = fmaf(st,  A21r, *u22r);
+      *u22i = fmaf(st,  A21i, *u22i);
+      st = tt;
+    }
+    else {
+      *u11r = (fmaf(tt, *u21r, *u11r) / ct);
+      *u11i = (fmaf(tt, *u21i, *u11i) / ct);
+      *u21r = (fmaf(st,  A21r, *u21r) / ct);
+      *u21i = (fmaf(st,  A21i, *u21i) / ct);
+      A21r = *u12r;
+      A21i = *u12i;
+      *u12r = (fmaf(tt, *u22r, *u12r) / ct);
+      *u12i = (fmaf(tt, *u22i, *u12i) / ct);
+      *u22r = (fmaf(st,  A21r, *u22r) / ct);
+      *u22i = (fmaf(st,  A21i, *u22i) / ct);
+      st = (tt / ct);
+      ct = (1.0f / ct);
+    }
+    A11r = *s1;
+    A21i = A21r = 0.0f;
+    e = 0;
   }
 
   if (e == 5) {
+    tt = (A12r / A11r);
+    /* 1 / cos */
+    ct = hypotf(tt, 1.0f);
+    /* apply the right Givens rotation to V */
+    st = -tt;
+    A12r = *v11r;
+    A12i = *v11i;
+    if (ct == 1.0f) {
+      *v11r = fmaf(tt, *v12r, *v11r);
+      *v11i = fmaf(tt, *v12i, *v11i);
+      *v12r = fmaf(st,  A12r, *v12r);
+      *v12i = fmaf(st,  A12i, *v12i);
+      A12r = *v21r;
+      A12i = *v21i;
+      *v21r = fmaf(tt, *v22r, *v21r);
+      *v21i = fmaf(tt, *v22i, *v21i);
+      *v22r = fmaf(st,  A12r, *v22r);
+      *v22i = fmaf(st,  A12i, *v22i);
+      st = tt;
+    }
+    else {
+      *v11r = (fmaf(tt, *v12r, *v11r) / ct);
+      *v11i = (fmaf(tt, *v12i, *v11i) / ct);
+      *v12r = (fmaf(st,  A12r, *v12r) / ct);
+      *v12i = (fmaf(st,  A12i, *v12i) / ct);
+      A12r = *v21r;
+      A12i = *v21i;
+      *v21r = (fmaf(tt, *v22r, *v21r) / ct);
+      *v21i = (fmaf(tt, *v22i, *v21i) / ct);
+      *v22r = (fmaf(st,  A12r, *v22r) / ct);
+      *v22i = (fmaf(st,  A12i, *v22i) / ct);
+      st = (tt / ct);
+      ct = (1.0f / ct);
+    }
+    A11r = *s1;
+    A12i = A12r = 0.0f;
+    e = 0;
   }
 
   if (abs(e) == 13) {
+    float tf = 0.0f, cf = 1.0f, sf = 0.0f, tp = 0.0f, cp = 1.0f, sp = 0.0f;
+    if (e == -13) {
+      float tf_ = 0.0f, cf_ = 1.0f, sf_ = 0.0f, tp_ = 0.0f, cp_ = 1.0f, sp_ = 0.0f;
+      slpsv2(A22r, A12r, A11r, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es
+#ifndef NDEBUG
+             , (char*)NULL
+#endif /* !NDEBUG */
+             );
+      tf = (1.0f / tp_);
+      cf = sp_;
+      sf = cp_;
+      tp = (1.0f / tf_);
+      cp = sf_;
+      sp = cf_;
+    }
+    else
+      slpsv2(A11r, A12r, A22r, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es
+#ifndef NDEBUG
+             , (char*)NULL
+#endif /* !NDEBUG */
+             );
+
+    if (tf != 0.0f) {
+      A21r = *u11r;
+      A21i = *u11i;
+      *u11r = (cf * *u11r + sf * *u21r);
+      *u11i = (cf * *u11i + sf * *u21i);
+      *u21r = (cf * *u21r - sf *  A21r);
+      *u21i = (cf * *u21i - sf *  A21i);
+      A21r = *u12r;
+      A21i = *u12i;
+      *u12r = (cf * *u12r + sf * *u22r);
+      *u12i = (cf * *u12i + sf * *u22i);
+      *u22r = (cf * *u22r - sf *  A21r);
+      *u22i = (cf * *u22i - sf *  A21i);
+      A21i = A21r = -0.0f;
+    }
+    else
+      A21i = A21r = 0.0f;
+
+    if (tp != 0.0f) {
+      /* V(ψ):
+         cos(ψ) -sin(ψ)
+         sin(ψ)  cos(ψ)
+      */
+      A21r = *v11r;
+      A21i = *v11i;
+      *v11r = (*v11r * cp + *v12r * sp);
+      *v11i = (*v11i * cp + *v12i * sp);
+      *v12r = (*v12r * cp -  A21r * sp);
+      *v12i = (*v12i * cp -  A21i * sp);
+      A21r = *v21r;
+      A21i = *v21i;
+      *v21r = (*v21r * cp + *v22r * sp);
+      *v21i = (*v21i * cp + *v22i * sp);
+      *v22r = (*v22r * cp -  A21r * sp);
+      *v22i = (*v22i * cp -  A21i * sp);
+      A21i = A21r = -0.0f;
+    }
+    else
+      A21i = A21r = 0.0f;
+
+    if (e == -13) {
+      *u21r = -*u21r;
+      *u21i = -*u21i;
+      *u22r = -*u22r;
+      *u22i = -*u22i;
+      *v12r = -*v12r;
+      *v12i = -*v12i;
+      *v22r = -*v22r;
+      *v22i = -*v22i;
+    }
   }
 
   if (ef_cmpf(es[1], *s1, es[2], *s2) < 0) {
@@ -1930,9 +2075,6 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   assert(s1);
   assert(s2);
   assert(es);
-#ifndef NDEBUG
-  assert(s);
-#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   double af = 0.0, bf = 0.0, abf = 0.0, a_bf = 0.0, df = 0.0, nf = 0.0, t2f = 0.0, t2 = 0.0;
 
@@ -1991,7 +2133,7 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   else
     *tf = copysign(1.0, t2);
 #ifndef NDEBUG
-  (void)printf("tan(φ)=%s, ", pvn_dtoa(s, *tf));
+  if (s) (void)printf("tan(φ)=%s, ", pvn_dtoa(s, *tf));
 #endif /* !NDEBUG */
   *cf = hypot(*tf, 1.0);
   *sf = (*tf / *cf);
@@ -1999,7 +2141,7 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   *sp = fma(*tf, A22, A12);
   *tp = (*sp / A11);
 #ifndef NDEBUG
-  (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, *tp));
+  if (s) (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, *tp));
 #endif /* !NDEBUG */
 
   if (b < 0.0) {
@@ -2045,10 +2187,12 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
 
   *cf = (1.0 / *cf);
 #ifndef NDEBUG
-  (void)printf("cos(φ)=%s, ", pvn_dtoa(s, *cf));
-  (void)printf("sin(φ)=%s\n", pvn_dtoa(s, *sf));
-  (void)printf("cos(ψ)=%s, ", pvn_dtoa(s, *cf));
-  (void)printf("sin(ψ)=%s\n", pvn_dtoa(s, *sf));
+  if (s) {
+    (void)printf("cos(φ)=%s, ", pvn_dtoa(s, *cf));
+    (void)printf("sin(φ)=%s\n", pvn_dtoa(s, *sf));
+    (void)printf("cos(ψ)=%s, ", pvn_dtoa(s, *cf));
+    (void)printf("sin(ψ)=%s\n", pvn_dtoa(s, *sf));
+  }
 #endif /* !NDEBUG */
 
   *s1 = a_bf;
@@ -3255,9 +3399,6 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   assert(s1);
   assert(s2);
   assert(es);
-#ifndef NDEBUG
-  assert(s);
-#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   long double af = 0.0L, bf = 0.0L, abf = 0.0L, a_bf = 0.0L, df = 0.0L, nf = 0.0L, t2f = 0.0L, t2 = 0.0L;
 
@@ -3316,7 +3457,7 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   else
     *tf = copysignl(1.0L, t2);
 #ifndef NDEBUG
-  (void)printf("tan(φ)=%s, ", pvn_xtoa(s, *tf));
+  if (s) (void)printf("tan(φ)=%s, ", pvn_xtoa(s, *tf));
 #endif /* !NDEBUG */
   *cf = hypotl(*tf, 1.0L);
   *sf = (*tf / *cf);
@@ -3324,7 +3465,7 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   *sp = fmal(*tf, A22, A12);
   *tp = (*sp / A11);
 #ifndef NDEBUG
-  (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, *tp));
+  if (s) (void)printf("tan(ψ)=%s\n", pvn_dtoa(s, *tp));
 #endif /* !NDEBUG */
 
   if (b < 0.0L) {
@@ -3370,10 +3511,12 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
 
   *cf = (1.0L / *cf);
 #ifndef NDEBUG
-  (void)printf("cos(φ)=%s, ", pvn_xtoa(s, *cf));
-  (void)printf("sin(φ)=%s\n", pvn_xtoa(s, *sf));
-  (void)printf("cos(ψ)=%s, ", pvn_xtoa(s, *cf));
-  (void)printf("sin(ψ)=%s\n", pvn_xtoa(s, *sf));
+  if (s) {
+    (void)printf("cos(φ)=%s, ", pvn_xtoa(s, *cf));
+    (void)printf("sin(φ)=%s\n", pvn_xtoa(s, *sf));
+    (void)printf("cos(ψ)=%s, ", pvn_xtoa(s, *cf));
+    (void)printf("sin(ψ)=%s\n", pvn_xtoa(s, *sf));
+  }
 #endif /* !NDEBUG */
 
   *s1 = a_bf;
@@ -4493,9 +4636,6 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   assert(s1);
   assert(s2);
   assert(es);
-#ifndef NDEBUG
-  assert(s);
-#endif /* !NDEBUG */
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   __float128 af = 0.0q, bf = 0.0q, abf = 0.0q, a_bf = 0.0q, df = 0.0q, nf = 0.0q, t2f = 0.0q, t2 = 0.0q;
 
@@ -4554,7 +4694,7 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   else
     *tf = copysignq(1.0q, t2);
 #ifndef NDEBUG
-  (void)printf("tan(φ)=%s, ", pvn_qtoa(s, *tf));
+  if (s) (void)printf("tan(φ)=%s, ", pvn_qtoa(s, *tf));
 #endif /* !NDEBUG */
   *cf = hypotq(*tf, 1.0q);
   *sf = (*tf / *cf);
@@ -4562,7 +4702,7 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
   *sp = fmaq(*tf, A22, A12);
   *tp = (*sp / A11);
 #ifndef NDEBUG
-  (void)printf("tan(ψ)=%s\n", pvn_qtoa(s, *tp));
+  if (s) (void)printf("tan(ψ)=%s\n", pvn_qtoa(s, *tp));
 #endif /* !NDEBUG */
 
   if (b < 0.0q) {
@@ -4608,10 +4748,12 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
 
   *cf = (1.0q / *cf);
 #ifndef NDEBUG
-  (void)printf("cos(φ)=%s, ", pvn_qtoa(s, *cf));
-  (void)printf("sin(φ)=%s\n", pvn_qtoa(s, *sf));
-  (void)printf("cos(ψ)=%s, ", pvn_qtoa(s, *cf));
-  (void)printf("sin(ψ)=%s\n", pvn_qtoa(s, *sf));
+  if (s) {
+    (void)printf("cos(φ)=%s, ", pvn_qtoa(s, *cf));
+    (void)printf("sin(φ)=%s\n", pvn_qtoa(s, *sf));
+    (void)printf("cos(ψ)=%s, ", pvn_qtoa(s, *cf));
+    (void)printf("sin(ψ)=%s\n", pvn_qtoa(s, *sf));
+  }
 #endif /* !NDEBUG */
 
   *s1 = a_bf;
