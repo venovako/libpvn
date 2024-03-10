@@ -102,96 +102,126 @@ int main(int argc, char *argv[])
 #endif /* ?__x86_64__ */
     long double EC = 0.0L, EU = 0.0L, EV = 0.0L, EG = 0.0L;
     if (toupper(*(argv[1])) == 'S') {
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(n,s,u,upper) reduction(max:EC,EU,EV,EG)
+#endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
         const float a11 = pvn_ran_safe_f_(&u);
-        if (!(a11 != 0.0f)) {
-          (void)fprintf(stderr, "%10d: G(1,1) =%s\n", i, pvn_stoa(s, a11));
-          return EXIT_FAILURE;
-        }
+        if (!(a11 != 0.0f))
+          continue;
         const float a21 = (upper ? 0.0f : pvn_ran_safe_f_(&u));
-        if (!upper && !(a21 != 0.0f)) {
-          (void)fprintf(stderr, "%10d: G(2,1) =%s\n", i, pvn_stoa(s, a21));
-          return EXIT_FAILURE;
-        }
+        if (!upper && !(a21 != 0.0f))
+          continue;
         const float a12 = pvn_ran_safe_f_(&u);
-        if (!(a12 != 0.0f)) {
-          (void)fprintf(stderr, "%10d: G(1,2) =%s\n", i, pvn_stoa(s, a12));
-          return EXIT_FAILURE;
-        }
+        if (!(a12 != 0.0f))
+          continue;
         const float a22 = pvn_ran_safe_f_(&u);
-        if (!(a22 != 0.0f)) {
-          (void)fprintf(stderr, "%10d: G(2,2) =%s\n", i, pvn_stoa(s, a22));
-          return EXIT_FAILURE;
-        }
+        if (!(a22 != 0.0f))
+          continue;
         float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
         int es[3] = { 0, 0, 0 };
         const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
         if ((knd < 0) || ((knd != 13) && (knd != 15)))
-          return EXIT_FAILURE;
+          continue;
         long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
         pvn_sxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
         EC = fmaxl(EC, E[0]);
 #ifndef NDEBUG
-        (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+        }
 #endif /* !NDEBUG */
         EU = fmaxl(EU, E[1]);
 #ifndef NDEBUG
-        (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+        }
 #endif /* !NDEBUG */
         EV = fmaxl(EV, E[2]);
 #ifndef NDEBUG
-        (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+        }
 #endif /* !NDEBUG */
         EG = fmaxl(EG, E[3]);
 #ifndef NDEBUG
-        (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+        }
 #endif /* !NDEBUG */
       }
     }
     else if (toupper(*(argv[1])) == 'D') {
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(n,s,u,upper) reduction(max:EC,EU,EV,EG)
+#endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
         const double a11 = pvn_ran_safe_(&u);
-        if (!(a11 != 0.0)) {
-          (void)fprintf(stderr, "%10d: G(1,1) =%s\n", i, pvn_dtoa(s, a11));
-          return EXIT_FAILURE;
-        }
+        if (!(a11 != 0.0))
+          continue;
         const double a21 = (upper ? 0.0 : pvn_ran_safe_(&u));
-        if (!upper && !(a21 != 0.0)) {
-          (void)fprintf(stderr, "%10d: G(2,1) =%s\n", i, pvn_dtoa(s, a21));
-          return EXIT_FAILURE;
-        }
+        if (!upper && !(a21 != 0.0))
+          continue;
         const double a12 = pvn_ran_safe_(&u);
-        if (!(a12 != 0.0)) {
-          (void)fprintf(stderr, "%10d: G(1,2) =%s\n", i, pvn_dtoa(s, a12));
-          return EXIT_FAILURE;
-        }
+        if (!(a12 != 0.0))
+          continue;
         const double a22 = pvn_ran_safe_(&u);
-        if (!(a22 != 0.0)) {
-          (void)fprintf(stderr, "%10d: G(2,2) =%s\n", i, pvn_dtoa(s, a22));
-          return EXIT_FAILURE;
-        }
+        if (!(a22 != 0.0))
+          continue;
         double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
         int es[3] = { 0, 0, 0 };
         const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
         if ((knd < 0) || ((knd != 13) && (knd != 15)))
-          return EXIT_FAILURE;
+          continue;
         long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
         pvn_dxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
         EC = fmaxl(EC, E[0]);
 #ifndef NDEBUG
-        (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+        }
 #endif /* !NDEBUG */
         EU = fmaxl(EU, E[1]);
 #ifndef NDEBUG
-        (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+        }
 #endif /* !NDEBUG */
         EV = fmaxl(EV, E[2]);
 #ifndef NDEBUG
-        (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+        }
 #endif /* !NDEBUG */
         EG = fmaxl(EG, E[3]);
 #ifndef NDEBUG
-        (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+        }
 #endif /* !NDEBUG */
       }
     }
@@ -1515,6 +1545,7 @@ pvn_cljsv2_
     A11i = A12i;
     A21r = A22r;
     A21i = A22i;
+    /* FALLTHRU */
   case  3:
     /* [ * 0 ] */
     /* [ * 0 ] */
@@ -1549,6 +1580,7 @@ pvn_cljsv2_
     A11i = A21i;
     A12r = A22r;
     A12i = A22i;
+    /* FALLTHRU */
   case  5:
     /* [ * * ] */
     /* [ 0 0 ] */
