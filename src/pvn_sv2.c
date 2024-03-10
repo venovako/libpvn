@@ -108,21 +108,21 @@ int main(int argc, char *argv[])
       for (int i = 0u; i < n; ++i) {
         const float a11 = pvn_ran_safe_f_(&u);
         if (!(a11 != 0.0f))
-          continue;
+          PVN_STOP("G(1,1)");
         const float a21 = (upper ? 0.0f : pvn_ran_safe_f_(&u));
         if (!upper && !(a21 != 0.0f))
-          continue;
+          PVN_STOP("G(2,1)");
         const float a12 = pvn_ran_safe_f_(&u);
         if (!(a12 != 0.0f))
-          continue;
+          PVN_STOP("G(1,2)");
         const float a22 = pvn_ran_safe_f_(&u);
         if (!(a22 != 0.0f))
-          continue;
+          PVN_STOP("G(2,2)");
         float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
         int es[3] = { 0, 0, 0 };
         const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
         if ((knd < 0) || ((knd != 13) && (knd != 15)))
-          continue;
+          PVN_STOP("pvn_sljsv2_");
         long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
         pvn_sxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
         EC = fmaxl(EC, E[0]);
@@ -170,21 +170,21 @@ int main(int argc, char *argv[])
       for (int i = 0u; i < n; ++i) {
         const double a11 = pvn_ran_safe_(&u);
         if (!(a11 != 0.0))
-          continue;
+          PVN_STOP("G(1,1)");
         const double a21 = (upper ? 0.0 : pvn_ran_safe_(&u));
         if (!upper && !(a21 != 0.0))
-          continue;
+          PVN_STOP("G(2,1)");
         const double a12 = pvn_ran_safe_(&u);
         if (!(a12 != 0.0))
-          continue;
+          PVN_STOP("G(1,2)");
         const double a22 = pvn_ran_safe_(&u);
         if (!(a22 != 0.0))
-          continue;
+          PVN_STOP("G(2,2)");
         double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
         int es[3] = { 0, 0, 0 };
         const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
         if ((knd < 0) || ((knd != 13) && (knd != 15)))
-          continue;
+          PVN_STOP("pvn_dljsv2_");
         long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
         pvn_dxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
         EC = fmaxl(EC, E[0]);
@@ -1612,19 +1612,15 @@ pvn_cljsv2_
     A22r = A21r;
     A22i = A21i;
     *v11r = 0.0f;
-    *v21r = 1.0f;
     *v22r = 0.0f;
-    *s1 = cpolarf(A11r, A11i, u11r, u11i);
-    *u11i = -*u11i;
+    *s1 = cpolarf(A11r, A11i, v21r, v21i);
+    *v21i = -*v21i;
     A11r = *s1;
     A11i = 0.0f;
-    pvn_cmul(&A21r, &A21i, *u11r, *u11i, A12r, A12i);
-    A12r = A21r;
-    A12i = A21i;
-    *s2 = cpolarf(A12r, A12i, v12r, v12i);
-    A12r = *s2;
-    A12i = 0.0f;
+    *s1 = cpolarf(A12r, A12i, v12r, v12i);
     *v12i = -*v12i;
+    A12r = *s1;
+    A12i = 0.0f;
     pvn_cmul(&A21r, &A21i, A22r, A22i, *v12r, *v12i);
     A22r = A21r;
     A22i = A21i;
@@ -1639,25 +1635,22 @@ pvn_cljsv2_
     /* [ * 0 ] */
     /* [ * * ] */
     *u11r = 0.0f;
+    *u12r = 1.0f;
     *u22r = 0.0f;
     pvn_fswp(&A11r, &A22r);
     pvn_fswp(&A11i, &A22i);
     A12r = A21r;
     A12i = A21i;
     *v11r = 0.0f;
-    *v21r = 1.0f;
     *v22r = 0.0f;
-    *s1 = cpolarf(A11r, A11i, u12r, u12i);
-    *u12i = -*u12i;
+    *s1 = cpolarf(A11r, A11i, v21r, v21i);
+    *v21i = -*v21i;
     A11r = *s1;
     A11i = 0.0f;
-    pvn_cmul(&A21r, &A21i, *u12r, *u12i, A12r, A12i);
-    A12r = A21r;
-    A12i = A21i;
-    *s2 = cpolarf(A12r, A12i, v12r, v12i);
-    A12r = *s2;
-    A12i = 0.0f;
+    *s1 = cpolarf(A12r, A12i, v12r, v12i);
     *v12i = -*v12i;
+    A12r = *s1;
+    A12i = 0.0f;
     pvn_cmul(&A21r, &A21i, A22r, A22i, *v12r, *v12i);
     A22r = A21r;
     A22i = A21i;
@@ -1671,17 +1664,14 @@ pvn_cljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    *s1 = cpolarf(A11r, A11i, u11r, u11i);
-    *u11i = -*u11i;
+    *s1 = cpolarf(A11r, A11i, v11r, v11i);
+    *v11i = -*v11i;
     A11r = *s1;
     A11i = 0.0f;
-    pvn_cmul(&A21r, &A21i, *u11r, *u11i, A12r, A12i);
-    A12r = A21r;
-    A12i = A21i;
-    *s2 = cpolarf(A12r, A12i, v22r, v22i);
-    A12r = *s2;
-    A12i = 0.0f;
+    *s1 = cpolarf(A12r, A12i, v22r, v22i);
     *v22i = -*v22i;
+    A12r = *s1;
+    A12i = 0.0f;
     pvn_cmul(&A21r, &A21i, A22r, A22i, *v22r, *v22i);
     A22r = A21r;
     A22i = A21i;
@@ -1696,22 +1686,20 @@ pvn_cljsv2_
     /* [ 0 * ] */
     /* [ * * ] */
     *u11r = 0.0f;
+    *u12r = 1.0f;
     *u22r = 0.0f;
     A11r = A21r;
     A11i = A21i;
     pvn_fswp(&A12r, &A22r);
     pvn_fswp(&A12i, &A22i);
-    *s1 = cpolarf(A11r, A11i, u12r, u12i);
-    *u12i = -*u12i;
+    *s1 = cpolarf(A11r, A11i, v11r, v11i);
+    *v11i = -*v11i;
     A11r = *s1;
     A11i = 0.0f;
-    pvn_cmul(&A21r, &A21i, *u12r, *u12i, A12r, A12i);
-    A12r = A21r;
-    A12i = A21i;
-    *s2 = cpolarf(A12r, A12i, v22r, v22i);
-    A12r = *s2;
-    A12i = 0.0f;
+    *s1 = cpolarf(A12r, A12i, v22r, v22i);
     *v22i = -*v22i;
+    A12r = *s1;
+    A12i = 0.0f;
     pvn_cmul(&A21r, &A21i, A22r, A22i, *v22r, *v22i);
     A22r = A21r;
     A22i = A21i;
