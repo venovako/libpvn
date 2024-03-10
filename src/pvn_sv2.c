@@ -1667,6 +1667,9 @@ pvn_cljsv2_
   if ((e == 13) && (A11r < A22r))
     e = -13;
 
+#ifndef NDEBUG
+  char s[17] = { '\0' };
+#endif /* !NDEBUG */
   float tt = 0.0f, ct = 1.0f, st = 0.0f;
 
   if (e == 15) {
@@ -1710,14 +1713,20 @@ pvn_cljsv2_
       pvn_fswp(&S11, &S21);
       pvn_fswp(&S12, &S22);
     }
-    pvn_cmul(u11r, u11i, C11, S11, *u11r, *u11i);
-    pvn_cmul(u12r, u12i, C11, S11, *u12r, *u12i);
+    pvn_cmul(&ct, &st, C11, S11, *u11r, *u11i);
+    *u11r = ct; *u11i = st;
+    pvn_cmul(&ct, &st, C11, S11, *u12r, *u12i);
+    *u12r = ct; *u12i = st;
     A11r = B11; A11i = 0.0f;
-    pvn_cmul(&A12r, &A12i, C11, S11, A12r, A12i);
-    pvn_cmul(u21r, u21i, C21, S21, *u21r, *u21i);
-    pvn_cmul(u22r, u22i, C21, S21, *u22r, *u22i);
+    pvn_cmul(&ct, &st, C11, S11, A12r, A12i);
+    A12r = ct; A12i = st;
+    pvn_cmul(&ct, &st, C21, S21, *u21r, *u21i);
+    *u21r = ct; *u21i = st;
+    pvn_cmul(&ct, &st, C21, S21, *u22r, *u22i);
+    *u22r = ct; *u22i = st;
     A21r = B21; A21i = 0.0f;
-    pvn_cmul(&A22r, &A22i, C21, S21, A22r, A22i);
+    pvn_cmul(&ct, &st, C21, S21, A22r, A22i);
+    A22r = ct; A22i = st;
     /* rotate */
     tt = (A21r / A11r);
     /* 1 / cos */
@@ -1766,7 +1775,7 @@ pvn_cljsv2_
       ct = (1.0f / ct);
     }
     A11r = *s1;
-    A21r = cpolarf(A12r, A12i, &C12, &S12); S12 = -S12;
+    B12 = cpolarf(A12r, A12i, &C12, &S12); S12 = -S12;
     A12r = B12; A12i = 0.0f;
     pvn_cmul(&A21r, &A21i, A22r, A22i, C12, S12);
     A22r = A21r; A22i = A21i;
@@ -1774,7 +1783,7 @@ pvn_cljsv2_
     *v12r = A21r; *v12i = A21i;
     pvn_cmul(&A21r, &A21i, *v22r, *v22i, C12, S12);
     *v22r = A21r; *v22i = A21i;
-    A21i = cpolarf(A22r, A22i, &C22, &S22); S22 = -S22;
+    B22 = cpolarf(A22r, A22i, &C22, &S22); S22 = -S22;
     A22r = B22; A22i = 0.0f;
     pvn_cmul(&A21r, &A21i, C22, S22, *u21r, *u21i);
     *u21r = A21r; *u21i = A21i;
@@ -1792,6 +1801,11 @@ pvn_cljsv2_
       e = -13;
     else
       e = 13;
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_stoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_stoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_stoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 3) {
@@ -1832,6 +1846,11 @@ pvn_cljsv2_
     A11r = *s1;
     A21i = A21r = 0.0f;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_stoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_stoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_stoa(s, st));
+#endif /* !NDEBUG */
   }
 
   if (e == 5) {
@@ -1872,7 +1891,24 @@ pvn_cljsv2_
     A11r = *s1;
     A12i = A12r = 0.0f;
     e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(θ)=%s, ", pvn_stoa(s, tt));
+    (void)printf("cos(θ)=%s, ", pvn_stoa(s, ct));
+    (void)printf("sin(θ)=%s\n", pvn_stoa(s, st));
+#endif /* !NDEBUG */
   }
+
+#ifndef NDEBUG
+  (void)printf("\tA =\n");
+  (void)printf("(%s,", pvn_stoa(s, scalbnf(A11r, -*es)));
+  (void)printf("%s) ", pvn_stoa(s, scalbnf(A11i, -*es)));
+  (void)printf("(%s,", pvn_stoa(s, scalbnf(A12r, -*es)));
+  (void)printf("%s)\n", pvn_stoa(s, scalbnf(A12i, -*es)));
+  (void)printf("(%s,", pvn_stoa(s, scalbnf(A21r, -*es)));
+  (void)printf("%s) ", pvn_stoa(s, scalbnf(A21i, -*es)));
+  (void)printf("(%s,", pvn_stoa(s, scalbnf(A22r, -*es)));
+  (void)printf("%s)\n", pvn_stoa(s, scalbnf(A22i, -*es)));
+#endif /* !NDEBUG */
 
   if (abs(e) == 13) {
     float tf = 0.0f, cf = 1.0f, sf = 0.0f, tp = 0.0f, cp = 1.0f, sp = 0.0f;
@@ -1880,7 +1916,7 @@ pvn_cljsv2_
       float tf_ = 0.0f, cf_ = 1.0f, sf_ = 0.0f, tp_ = 0.0f, cp_ = 1.0f, sp_ = 0.0f;
       slpsv2(A22r, A12r, A11r, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es
 #ifndef NDEBUG
-             , (char*)NULL
+             , s
 #endif /* !NDEBUG */
              );
       tf = (1.0f / tp_);
@@ -1893,7 +1929,7 @@ pvn_cljsv2_
     else
       slpsv2(A11r, A12r, A22r, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es
 #ifndef NDEBUG
-             , (char*)NULL
+             , s
 #endif /* !NDEBUG */
              );
 
