@@ -1467,6 +1467,7 @@ pvn_cljsv2_
 
   /* simplify the form of A */
   switch (knd) {
+  case  0:
   case  1:
   case  8:
   case  9:
