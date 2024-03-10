@@ -1371,7 +1371,7 @@ pvn_cljsv2_
       (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
 
-  const int knd = (kndr | kndi);
+  int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -1430,6 +1430,27 @@ pvn_cljsv2_
         return -15;
       if (!isfinite(A22i))
         return -16;
+    }
+    if (*es < 0) {
+      kndr = 0;
+      if (A11r != 0.0f)
+        kndr |= 1;
+      if (A21r != 0.0f)
+        kndr |= 2;
+      if (A12r != 0.0f)
+        kndr |= 4;
+      if (A22r != 0.0f)
+        kndr |= 8;
+      kndi = 0;
+      if (A11i != 0.0f)
+        kndi |= 1;
+      if (A21i != 0.0f)
+        kndi |= 2;
+      if (A12i != 0.0f)
+        kndi |= 4;
+      if (A22i != 0.0f)
+        kndi |= 8;
+      knd = (kndr | kndi);
     }
   }
 
@@ -2841,7 +2862,7 @@ pvn_zljsv2_
 #endif /* ?_WIN32 */
       (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
-  const int knd = (kndr | kndi);
+  int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -2900,6 +2921,27 @@ pvn_zljsv2_
         return -15;
       if (!isfinite(A22i))
         return -16;
+    }
+    if (*es < 0) {
+      kndr = 0;
+      if (A11r != 0.0)
+        kndr |= 1;
+      if (A21r != 0.0)
+        kndr |= 2;
+      if (A12r != 0.0)
+        kndr |= 4;
+      if (A22r != 0.0)
+        kndr |= 8;
+      kndi = 0;
+      if (A11i != 0.0)
+        kndi |= 1;
+      if (A21i != 0.0)
+        kndi |= 2;
+      if (A12i != 0.0)
+        kndi |= 4;
+      if (A22i != 0.0)
+        kndi |= 8;
+      knd = (kndr | kndi);
     }
   }
 
@@ -2975,6 +3017,7 @@ pvn_zljsv2_
   E[1] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
   T11 = (v11l * v11l + v21l * v21l - 1.0L);                     \
   T21 = (v12l * v11l + v22l * v21l);                            \
+  T12 = T21;                                                    \
   T22 = (v12l * v12l + v22l * v22l - 1.0L);                     \
   E[2] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
   u11l *= s1l;                                                  \
@@ -4125,7 +4168,7 @@ int pvn_wljsv2_
     *u22r = 0.0L;
     return pvn_xljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
-  const int knd = (kndr | kndi);
+  int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -4184,6 +4227,27 @@ int pvn_wljsv2_
         return -15;
       if (!isfinite(A22i))
         return -16;
+    }
+    if (*es < 0) {
+      kndr = 0;
+      if (A11r != 0.0L)
+        kndr |= 1;
+      if (A21r != 0.0L)
+        kndr |= 2;
+      if (A12r != 0.0L)
+        kndr |= 4;
+      if (A22r != 0.0L)
+        kndr |= 8;
+      kndi = 0;
+      if (A11i != 0.0L)
+        kndi |= 1;
+      if (A21i != 0.0L)
+        kndi |= 2;
+      if (A12i != 0.0L)
+        kndi |= 4;
+      if (A22i != 0.0L)
+        kndi |= 8;
+      knd = (kndr | kndi);
     }
   }
 
@@ -5339,7 +5403,7 @@ int pvn_yljsv2_
     *u22r = 0.0q;
     return pvn_qljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
-  const int knd = (kndr | kndi);
+  int knd = (kndr | kndi);
   switch (knd) {
   case  1:
   case  2:
@@ -5398,6 +5462,27 @@ int pvn_yljsv2_
         return -15;
       if (!isfiniteq(A22i))
         return -16;
+    }
+    if (*es < 0) {
+      kndr = 0;
+      if (A11r != 0.0q)
+        kndr |= 1;
+      if (A21r != 0.0q)
+        kndr |= 2;
+      if (A12r != 0.0q)
+        kndr |= 4;
+      if (A22r != 0.0q)
+        kndr |= 8;
+      kndi = 0;
+      if (A11i != 0.0q)
+        kndi |= 1;
+      if (A21i != 0.0q)
+        kndi |= 2;
+      if (A12i != 0.0q)
+        kndi |= 4;
+      if (A22i != 0.0q)
+        kndi |= 8;
+      knd = (kndr | kndi);
     }
   }
 
