@@ -3008,27 +3008,27 @@ pvn_zljsv2_
     s1l = scalbnl(*s1, es[1] - es[0]),                          \
     s2l = scalbnl(*s2, es[2] - es[0]);                          \
   /* cond_2(G) */                                               \
-  E[0] = (s1l / s2l);                                           \
+  E[0] = fminl((s1l / s2l), INFINITY);                          \
   /* U^T U - I */                                               \
-  long double T11 = (u11l * u11l + u21l * u21l - 1.0L);         \
-  long double T21 = (u12l * u11l + u22l * u21l);                \
+  long double T11 = fmal(u11l, u11l, fmal(u21l, u21l, -1.0L));  \
+  long double T21 = fmal(u12l, u11l, u22l * u21l);              \
   long double T12 = T21;                                        \
-  long double T22 = (u12l * u12l + u22l * u22l - 1.0L);         \
+  long double T22 = fmal(u12l, u12l, fmal(u22l, u22l, -1.0L));  \
   E[1] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
-  T11 = (v11l * v11l + v21l * v21l - 1.0L);                     \
-  T21 = (v12l * v11l + v22l * v21l);                            \
+  T11 = fmal(v11l, v11l, fmal(v21l, v21l, -1.0L));              \
+  T21 = fmal(v12l, v11l, v22l * v21l);                          \
   T12 = T21;                                                    \
-  T22 = (v12l * v12l + v22l * v22l - 1.0L);                     \
+  T22 = fmal(v12l, v12l, fmal(v22l, v22l, -1.0L));              \
   E[2] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
   u11l *= s1l;                                                  \
   u21l *= s1l;                                                  \
   u12l *= s2l;                                                  \
   u22l *= s2l;                                                  \
   E[3] = hypotl(hypotl(*a11, *a21), hypotl(*a12, *a22));        \
-  T11 = (u11l * v11l + u12l * v12l - *a11);                     \
-  T21 = (u21l * v11l + u22l * v12l - *a21);                     \
-  T12 = (u11l * v21l + u12l * v22l - *a12);                     \
-  T22 = (u21l * v21l + u22l * v22l - *a22);                     \
+  T11 = fmal(u11l, v11l, fmal(u12l, v12l, -*a11));              \
+  T21 = fmal(u21l, v11l, fmal(u22l, v12l, -*a21));              \
+  T12 = fmal(u11l, v21l, fmal(u12l, v22l, -*a12));              \
+  T22 = fmal(u21l, v21l, fmal(u22l, v22l, -*a22));              \
   E[3] = (hypotl(hypotl(T11, T21), hypotl(T12, T22)) / E[3])
 #endif /* ?XLJR2 */
 void pvn_sxljr2_
