@@ -58,7 +58,7 @@ gmake clean all
 Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.a` static library, as shown in `GNUmakefile`.
 There are no mutable global/static variables present, but some static constant lookup tables are used.
 The functions can safely be called from multiple threads on *unrelated* data without locking.
-You might wish to tune the compiler flags to match yours, especially if you are building a dynamic library, a static executable, and/or wish to use OpenMP.
+You might wish to tune the compiler flags to match yours, especially if you are building a dynamic library, a static executable, and/or want to use OpenMP.
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 
@@ -74,14 +74,20 @@ Either way, the object files will be integrated into `libpvn.a` for easier re-us
 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.
+Bear in mind, however, that this will introduce a dependency on the OpenMP runtime library!
 
-If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic.
+If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic, unless `COMPILER=clang` is used.
 If the autodetection fails, the relevant linker options can be set via the `QUADMATH` variable.
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
+Also, several functions will not work on Windows, and probably on other untested systems as well.
 
 ## Examples
 
 Several examples and tests are built as `*.exe` executables in the `src` subdirectory and are meant to be run from there.
+
+## Documentation
+
+...is a work in progress.
 
 This work has been supported in part by Croatian Science Foundation under the project IP-2014-09-3670 ([MFBDA](https://web.math.pmf.unizg.hr/mfbda/)).
