@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   const char t = (char)toupper(*(argv[1]));
+  const char T = (((t == 'C') || (t == 'Z')) ? 'H' : 'T');
   int n = atoi(argv[2]);
   const int upper = (n < 0);
   n = abs(n);
@@ -29,16 +30,16 @@ int main(int argc, char *argv[])
       float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
       int es[3] = { 0, 0, 0 };
       const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
-      (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
+      (void)printf("knd=%d, es={%d,%d,%d}\n\tG =\n", knd, es[0], es[1], es[2]);
       char s[17] = { '\0' };
       (void)printf("%s ", pvn_stoa(s, a11));
       (void)printf("%s\n", pvn_stoa(s, a12));
       (void)printf("%s ", pvn_stoa(s, a21));
-      (void)printf("%s\n\tu =\n", pvn_stoa(s, a22));
+      (void)printf("%s\n\tU =\n", pvn_stoa(s, a22));
       (void)printf("%s ", pvn_stoa(s, u11));
       (void)printf("%s\n", pvn_stoa(s, u12));
       (void)printf("%s ", pvn_stoa(s, u21));
-      (void)printf("%s\n\tv =\n", pvn_stoa(s, u22));
+      (void)printf("%s\n\tV =\n", pvn_stoa(s, u22));
       (void)printf("%s ", pvn_stoa(s, v11));
       (void)printf("%s\n", pvn_stoa(s, v12));
       (void)printf("%s ", pvn_stoa(s, v21));
@@ -67,16 +68,16 @@ int main(int argc, char *argv[])
       double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
       int es[3] = { 0, 0, 0 };
       const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
-      (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
+      (void)printf("knd=%d, es={%d,%d,%d}\n\tG =\n", knd, es[0], es[1], es[2]);
       char s[26] = { '\0' };
       (void)printf("%s ", pvn_dtoa(s, a11));
       (void)printf("%s\n", pvn_dtoa(s, a12));
       (void)printf("%s ", pvn_dtoa(s, a21));
-      (void)printf("%s\n\tu =\n", pvn_dtoa(s, a22));
+      (void)printf("%s\n\tU =\n", pvn_dtoa(s, a22));
       (void)printf("%s ", pvn_dtoa(s, u11));
       (void)printf("%s\n", pvn_dtoa(s, u12));
       (void)printf("%s ", pvn_dtoa(s, u21));
-      (void)printf("%s\n\tv =\n", pvn_dtoa(s, u22));
+      (void)printf("%s\n\tV =\n", pvn_dtoa(s, u22));
       (void)printf("%s ", pvn_dtoa(s, v11));
       (void)printf("%s\n", pvn_dtoa(s, v12));
       (void)printf("%s ", pvn_dtoa(s, v21));
@@ -89,8 +90,124 @@ int main(int argc, char *argv[])
       (void)printf("%s\n", pvn_dtoa(s, s2));
     }
     else if (t == 'C') {
+      float a11r = 0.0f, a11i = 0.0f, a21r = 0.0f, a21i = 0.0f, a12r = 0.0f, a12i = 0.0f, a22r = 0.0f, a22i = 0.0f;
+      (void)printf("G(1,1) = ");
+      if (scanf(" (%e,%e)", &a11r, &a11i) != 2)
+        return EXIT_FAILURE;
+      (void)printf("G(2,1) = ");
+      if (scanf(" (%e,%e)", &a21r, &a21i) != 2)
+        return EXIT_FAILURE;
+      (void)printf("G(1,2) = ");
+      if (scanf(" (%e,%e)", &a12r, &a12i) != 2)
+        return EXIT_FAILURE;
+      (void)printf("G(2,2) = ");
+      if (scanf(" (%e,%e)", &a22r, &a22i) != 2)
+        return EXIT_FAILURE;
+      float
+        u11r = -0.0f, u11i = -0.0f, u21r = -0.0f, u21i = -0.0f, u12r = -0.0f, u12i = -0.0f, u22r = -0.0f, u22i = -0.0f,
+        v11r = -0.0f, v11i = -0.0f, v21r = -0.0f, v21i = -0.0f, v12r = -0.0f, v12i = -0.0f, v22r = -0.0f, v22i = -0.0f,
+        s1 = -0.0f, s2 = -0.0f;
+      int es[3] = { 0, 0, 0 };
+      const int knd = pvn_cljsv2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                                  &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                                  &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                                  &s1, &s2, es);
+      (void)printf("knd=%d, es={%d,%d,%d}\n", knd, es[0], es[1], es[2]);
+      char s[17] = { '\0' };
+      (void)printf("\tG =\n");
+      (void)printf("(%s,", pvn_stoa(s, a11r));
+      (void)printf("%s) ", pvn_stoa(s, a11i));
+      (void)printf("(%s,", pvn_stoa(s, a12r));
+      (void)printf("%s)\n", pvn_stoa(s, a12i));
+      (void)printf("(%s,", pvn_stoa(s, a21r));
+      (void)printf("%s) ", pvn_stoa(s, a21i));
+      (void)printf("(%s,", pvn_stoa(s, a22r));
+      (void)printf("%s)\n", pvn_stoa(s, a22i));
+      (void)printf("\tU =\n");
+      (void)printf("(%s,", pvn_stoa(s, u11r));
+      (void)printf("%s) ", pvn_stoa(s, u11i));
+      (void)printf("(%s,", pvn_stoa(s, u12r));
+      (void)printf("%s)\n", pvn_stoa(s, u12i));
+      (void)printf("(%s,", pvn_stoa(s, u21r));
+      (void)printf("%s) ", pvn_stoa(s, u21i));
+      (void)printf("(%s,", pvn_stoa(s, u22r));
+      (void)printf("%s)\n", pvn_stoa(s, u22i));
+      (void)printf("\tV =\n");
+      (void)printf("(%s,", pvn_stoa(s, v11r));
+      (void)printf("%s) ", pvn_stoa(s, v11i));
+      (void)printf("(%s,", pvn_stoa(s, v12r));
+      (void)printf("%s)\n", pvn_stoa(s, v12i));
+      (void)printf("(%s,", pvn_stoa(s, v21r));
+      (void)printf("%s) ", pvn_stoa(s, v21i));
+      (void)printf("(%s,", pvn_stoa(s, v22r));
+      (void)printf("%s)\n", pvn_stoa(s, v22i));
+      (void)printf("\ts =\n");
+      (void)printf("%s ", pvn_stoa(s, s1));
+      (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
+      s1 = scalbnf(s1, (es[1] - es[0]));
+      s2 = scalbnf(s2, (es[2] - es[0]));
+      (void)printf("%s ", pvn_stoa(s, s1));
+      (void)printf("%s\n", pvn_stoa(s, s2));
     }
     else if (t == 'Z') {
+      double a11r = 0.0, a11i = 0.0, a21r = 0.0, a21i = 0.0, a12r = 0.0, a12i = 0.0, a22r = 0.0, a22i = 0.0;
+      (void)printf("G(1,1) = ");
+      if (scanf(" (%le,%le)", &a11r, &a11i) != 2)
+        return EXIT_FAILURE;
+      (void)printf("G(2,1) = ");
+      if (scanf(" (%le,%le)", &a21r, &a21i) != 2)
+        return EXIT_FAILURE;
+      (void)printf("G(1,2) = ");
+      if (scanf(" (%le,%le)", &a12r, &a12i) != 2)
+        return EXIT_FAILURE;
+      (void)printf("G(2,2) = ");
+      if (scanf(" (%le,%le)", &a22r, &a22i) != 2)
+        return EXIT_FAILURE;
+      double
+        u11r = -0.0, u11i = -0.0, u21r = -0.0, u21i = -0.0, u12r = -0.0, u12i = -0.0, u22r = -0.0, u22i = -0.0,
+        v11r = -0.0, v11i = -0.0, v21r = -0.0, v21i = -0.0, v12r = -0.0, v12i = -0.0, v22r = -0.0, v22i = -0.0,
+        s1 = -0.0, s2 = -0.0;
+      int es[3] = { 0, 0, 0 };
+      const int knd = pvn_zljsv2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                                  &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                                  &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                                  &s1, &s2, es);
+      (void)printf("knd=%d, es={%d,%d,%d}\n", knd, es[0], es[1], es[2]);
+      char s[26] = { '\0' };
+      (void)printf("\tG =\n");
+      (void)printf("(%s,", pvn_dtoa(s, a11r));
+      (void)printf("%s) ", pvn_dtoa(s, a11i));
+      (void)printf("(%s,", pvn_dtoa(s, a12r));
+      (void)printf("%s)\n", pvn_dtoa(s, a12i));
+      (void)printf("(%s,", pvn_dtoa(s, a21r));
+      (void)printf("%s) ", pvn_dtoa(s, a21i));
+      (void)printf("(%s,", pvn_dtoa(s, a22r));
+      (void)printf("%s)\n", pvn_dtoa(s, a22i));
+      (void)printf("\tU =\n");
+      (void)printf("(%s,", pvn_dtoa(s, u11r));
+      (void)printf("%s) ", pvn_dtoa(s, u11i));
+      (void)printf("(%s,", pvn_dtoa(s, u12r));
+      (void)printf("%s)\n", pvn_dtoa(s, u12i));
+      (void)printf("(%s,", pvn_dtoa(s, u21r));
+      (void)printf("%s) ", pvn_dtoa(s, u21i));
+      (void)printf("(%s,", pvn_dtoa(s, u22r));
+      (void)printf("%s)\n", pvn_dtoa(s, u22i));
+      (void)printf("\tV =\n");
+      (void)printf("(%s,", pvn_dtoa(s, v11r));
+      (void)printf("%s) ", pvn_dtoa(s, v11i));
+      (void)printf("(%s,", pvn_dtoa(s, v12r));
+      (void)printf("%s)\n", pvn_dtoa(s, v12i));
+      (void)printf("(%s,", pvn_dtoa(s, v21r));
+      (void)printf("%s) ", pvn_dtoa(s, v21i));
+      (void)printf("(%s,", pvn_dtoa(s, v22r));
+      (void)printf("%s)\n", pvn_dtoa(s, v22i));
+      (void)printf("\ts =\n");
+      (void)printf("%s ", pvn_dtoa(s, s1));
+      (void)printf("%s\n\tS =\n", pvn_dtoa(s, s2));
+      s1 = scalbn(s1, (es[1] - es[0]));
+      s2 = scalbn(s2, (es[2] - es[0]));
+      (void)printf("%s ", pvn_dtoa(s, s1));
+      (void)printf("%s\n", pvn_dtoa(s, s2));
     }
     else
       return EXIT_FAILURE;
@@ -101,12 +218,12 @@ int main(int argc, char *argv[])
       (void)fprintf(stderr, "open(/dev/random): %d\n", u);
       return EXIT_FAILURE;
     }
-#ifdef __x86_64__
-    char s[31] = { '\0' };
-#else /* !__x86_64__ */
     char s[46] = { '\0' };
-#endif /* ?__x86_64__ */
+#ifdef PVN_QUADMATH
+    __float128 EC = 0.0q, EU = 0.0q, EV = 0.0q, EG = 0.0q;
+#else /* !PVN_QUADMATH */
     long double EC = 0.0L, EU = 0.0L, EV = 0.0L, EG = 0.0L;
+#endif /* ?PVN_QUADMATH */
     if (t == 'S') {
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(n,s,u,upper) reduction(max:EC,EU,EV,EG)
@@ -129,42 +246,62 @@ int main(int argc, char *argv[])
         const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
         if ((knd < 0) || ((knd != 13) && (knd != 15)))
           PVN_STOP("pvn_sljsv2_");
+#ifdef PVN_QUADMATH
+        __float128 E[4] = { 0.0q, 0.0q, 0.0q, 0.0q };
+#else /* !PVN_QUADMATH */
         long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
-        pvn_sxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
+#endif /* ?PVN_QUADMATH */
+        pvn_sqljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
+#ifdef PVN_QUADMATH
+        EC = fmaxq(EC, E[0]);
+#else /* !PVN_QUADMATH */
         EC = fmaxl(EC, E[0]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
 #endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EU = fmaxq(EU, E[1]);
+#else /* !PVN_QUADMATH */
         EU = fmaxl(EU, E[1]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+          (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
 #endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EV = fmaxq(EV, E[2]);
+#else /* !PVN_QUADMATH */
         EV = fmaxl(EV, E[2]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+          (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
 #endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EG = fmaxq(EG, E[3]);
+#else /* !PVN_QUADMATH */
         EG = fmaxl(EG, E[3]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+          (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
 #endif /* !NDEBUG */
       }
@@ -191,49 +328,271 @@ int main(int argc, char *argv[])
         const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
         if ((knd < 0) || ((knd != 13) && (knd != 15)))
           PVN_STOP("pvn_dljsv2_");
+#ifdef PVN_QUADMATH
+        __float128 E[4] = { 0.0q, 0.0q, 0.0q, 0.0q };
+#else /* !PVN_QUADMATH */
         long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
-        pvn_dxljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
+#endif /* ?PVN_QUADMATH */
+        pvn_dqljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
+#ifdef PVN_QUADMATH
+        EC = fmaxq(EC, E[0]);
+#else /* !PVN_QUADMATH */
         EC = fmaxl(EC, E[0]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_xtoa(s, E[0]));
+          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
 #endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EU = fmaxq(EU, E[1]);
+#else /* !PVN_QUADMATH */
         EU = fmaxl(EU, E[1]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: || U^T U - I ||_F =%s\n", i, pvn_xtoa(s, E[1]));
+          (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
 #endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EV = fmaxq(EV, E[2]);
+#else /* !PVN_QUADMATH */
         EV = fmaxl(EV, E[2]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: || V^T V - I ||_F =%s\n", i, pvn_xtoa(s, E[2]));
+          (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
 #endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EG = fmaxq(EG, E[3]);
+#else /* !PVN_QUADMATH */
         EG = fmaxl(EG, E[3]);
+#endif /* ?PVN_QUADMATH */
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
 #endif /* _OPENMP */
         {
-          (void)printf("%10d: || U Σ V^T - G ||_F / || G ||_F =%s\n", i, pvn_xtoa(s, E[3]));
+          (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
 #endif /* !NDEBUG */
       }
     }
     else if (t == 'C') {
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(n,s,u,upper) reduction(max:EC,EU,EV,EG)
+#endif /* _OPENMP */
+      for (int i = 0u; i < n; ++i) {
+        const float a11r = pvn_ran_safe_f_(&u);
+        if (!(a11r != 0.0f))
+          PVN_STOP("G(1,1)");
+        const float a11i = pvn_ran_safe_f_(&u);
+        if (!(a11i != 0.0f))
+          PVN_STOP("G(1,1)");
+        const float a21r = (upper ? 0.0f : pvn_ran_safe_f_(&u));
+        if (!upper && !(a21r != 0.0f))
+          PVN_STOP("G(2,1)");
+        const float a21i = (upper ? 0.0f : pvn_ran_safe_f_(&u));
+        if (!upper && !(a21i != 0.0f))
+          PVN_STOP("G(2,1)");
+        const float a12r = pvn_ran_safe_f_(&u);
+        if (!(a12r != 0.0f))
+          PVN_STOP("G(1,2)");
+        const float a12i = pvn_ran_safe_f_(&u);
+        if (!(a12i != 0.0f))
+          PVN_STOP("G(1,2)");
+        const float a22r = pvn_ran_safe_f_(&u);
+        if (!(a22r != 0.0f))
+          PVN_STOP("G(2,2)");
+        const float a22i = pvn_ran_safe_f_(&u);
+        if (!(a22i != 0.0f))
+          PVN_STOP("G(2,2)");
+        float
+          u11r = -0.0f, u11i = -0.0f, u21r = -0.0f, u21i = -0.0f, u12r = -0.0f, u12i = -0.0f, u22r = -0.0f, u22i = -0.0f,
+          v11r = -0.0f, v11i = -0.0f, v21r = -0.0f, v21i = -0.0f, v12r = -0.0f, v12i = -0.0f, v22r = -0.0f, v22i = -0.0f,
+          s1 = -0.0f, s2 = -0.0f;
+        int es[3] = { 0, 0, 0 };
+        const int knd = pvn_cljsv2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                                    &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                                    &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                                    &s1, &s2, es);
+        if ((knd < 0) || ((knd != 13) && (knd != 15)))
+          PVN_STOP("pvn_cljsv2_");
+#ifdef PVN_QUADMATH
+        __float128 E[4] = { 0.0q, 0.0q, 0.0q, 0.0q };
+#else /* !PVN_QUADMATH */
+        long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
+#endif /* ?PVN_QUADMATH */
+        pvn_cyljr2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                    &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                    &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                    &s1, &s2, es, E);
+#ifdef PVN_QUADMATH
+        EC = fmaxq(EC, E[0]);
+#else /* !PVN_QUADMATH */
+        EC = fmaxl(EC, E[0]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
+        }
+#endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EU = fmaxq(EU, E[1]);
+#else /* !PVN_QUADMATH */
+        EU = fmaxl(EU, E[1]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
+        }
+#endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EV = fmaxq(EV, E[2]);
+#else /* !PVN_QUADMATH */
+        EV = fmaxl(EV, E[2]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
+        }
+#endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EG = fmaxq(EG, E[3]);
+#else /* !PVN_QUADMATH */
+        EG = fmaxl(EG, E[3]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
+        }
+#endif /* !NDEBUG */
+      }
     }
     else if (t == 'Z') {
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(n,s,u,upper) reduction(max:EC,EU,EV,EG)
+#endif /* _OPENMP */
+      for (int i = 0u; i < n; ++i) {
+        const double a11r = pvn_ran_safe_(&u);
+        if (!(a11r != 0.0))
+          PVN_STOP("G(1,1)");
+        const double a11i = pvn_ran_safe_(&u);
+        if (!(a11i != 0.0))
+          PVN_STOP("G(1,1)");
+        const double a21r = (upper ? 0.0 : pvn_ran_safe_(&u));
+        if (!upper && !(a21r != 0.0))
+          PVN_STOP("G(2,1)");
+        const double a21i = (upper ? 0.0 : pvn_ran_safe_(&u));
+        if (!upper && !(a21i != 0.0))
+          PVN_STOP("G(2,1)");
+        const double a12r = pvn_ran_safe_(&u);
+        if (!(a12r != 0.0))
+          PVN_STOP("G(1,2)");
+        const double a12i = pvn_ran_safe_(&u);
+        if (!(a12i != 0.0))
+          PVN_STOP("G(1,2)");
+        const double a22r = pvn_ran_safe_(&u);
+        if (!(a22r != 0.0))
+          PVN_STOP("G(2,2)");
+        const double a22i = pvn_ran_safe_(&u);
+        if (!(a22i != 0.0))
+          PVN_STOP("G(2,2)");
+        double
+          u11r = -0.0, u11i = -0.0, u21r = -0.0, u21i = -0.0, u12r = -0.0, u12i = -0.0, u22r = -0.0, u22i = -0.0,
+          v11r = -0.0, v11i = -0.0, v21r = -0.0, v21i = -0.0, v12r = -0.0, v12i = -0.0, v22r = -0.0, v22i = -0.0,
+          s1 = -0.0, s2 = -0.0;
+        int es[3] = { 0, 0, 0 };
+        const int knd = pvn_zljsv2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                                    &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                                    &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                                    &s1, &s2, es);
+        if ((knd < 0) || ((knd != 13) && (knd != 15)))
+          PVN_STOP("pvn_zljsv2_");
+#ifdef PVN_QUADMATH
+        __float128 E[4] = { 0.0q, 0.0q, 0.0q, 0.0q };
+#else /* !PVN_QUADMATH */
+        long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
+#endif /* ?PVN_QUADMATH */
+        pvn_zyljr2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                    &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                    &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                    &s1, &s2, es, E);
+#ifdef PVN_QUADMATH
+        EC = fmaxq(EC, E[0]);
+#else /* !PVN_QUADMATH */
+        EC = fmaxl(EC, E[0]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
+        }
+#endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EU = fmaxq(EU, E[1]);
+#else /* !PVN_QUADMATH */
+        EU = fmaxl(EU, E[1]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
+        }
+#endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EV = fmaxq(EV, E[2]);
+#else /* !PVN_QUADMATH */
+        EV = fmaxl(EV, E[2]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
+        }
+#endif /* !NDEBUG */
+#ifdef PVN_QUADMATH
+        EG = fmaxq(EG, E[3]);
+#else /* !PVN_QUADMATH */
+        EG = fmaxl(EG, E[3]);
+#endif /* ?PVN_QUADMATH */
+#ifndef NDEBUG
+#ifdef _OPENMP
+#pragma omp critical
+#endif /* _OPENMP */
+        {
+          (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
+        }
+#endif /* !NDEBUG */
+      }
     }
     else
       return EXIT_FAILURE;
@@ -241,25 +600,25 @@ int main(int argc, char *argv[])
 #ifndef NDEBUG
     (void)printf("max(cond_2(G))=");
 #endif /* !NDEBUG */
-    (void)printf("%s", pvn_xtoa(s, EC));
+    (void)printf("%s", pvn_qtoa(s, EC));
 #ifndef NDEBUG
-    (void)printf("\nmax(|| U^%c U - I ||_F)=", (((t == 'C') || (t == 'Z')) ? 'H' : 'T'));
+    (void)printf("\nmax(|| U^%c U - I ||_F)=", T);
 #else /* NDEBUG */
     (void)putchar(',');
 #endif /* ?NDEBUG */
-    (void)printf("%s", pvn_xtoa(s, EU));
+    (void)printf("%s", pvn_qtoa(s, EU));
 #ifndef NDEBUG
-    (void)printf("\nmax(|| V^%c V - I ||_F)=", (((t == 'C') || (t == 'Z')) ? 'H' : 'T'));
+    (void)printf("\nmax(|| V^%c V - I ||_F)=", T);
 #else /* NDEBUG */
     (void)putchar(',');
 #endif /* ?NDEBUG */
-    (void)printf("%s", pvn_xtoa(s, EV));
+    (void)printf("%s", pvn_qtoa(s, EV));
 #ifndef NDEBUG
-    (void)printf("\nmax(|| U Σ V^%c - G ||_F / || G ||_F)=", (((t == 'C') || (t == 'Z')) ? 'H' : 'T'));
+    (void)printf("\nmax(|| U Σ V^%c - G ||_F / || G ||_F)=", T);
 #else /* NDEBUG */
     (void)putchar(',');
 #endif /* ?NDEBUG */
-    (void)printf("%s\n", pvn_xtoa(s, EG));
+    (void)printf("%s\n", pvn_qtoa(s, EG));
     if (u != 0) {
       (void)fprintf(stderr, "close(/dev/random): %d\n", u);
       return EXIT_FAILURE;
@@ -1272,30 +1631,18 @@ int pvn_cljsv2_
  float *const v11r, float *const v11i, float *const v21r, float *const v21i, float *const v12r, float *const v12i, float *const v22r, float *const v22i,
  float *const s1, float *const s2, int *const es)
 {
-  assert(a11r);
-  assert(a11i);
-  assert(a21r);
-  assert(a21i);
-  assert(a12r);
-  assert(a12i);
-  assert(a22r);
-  assert(a22i);
-  assert(u11r);
-  assert(u11i);
-  assert(u21r);
-  assert(u21i);
-  assert(u12r);
-  assert(u12i);
-  assert(u22r);
-  assert(u22i);
-  assert(v11r);
-  assert(v11i);
-  assert(v21r);
-  assert(v21i);
-  assert(v12r);
-  assert(v12i);
-  assert(v22r);
-  assert(v22i);
+  assert(a11r); assert(a11i);
+  assert(a21r); assert(a21i);
+  assert(a12r); assert(a12i);
+  assert(a22r); assert(a22i);
+  assert(u11r); assert(u11i);
+  assert(u21r); assert(u21i);
+  assert(u12r); assert(u12i);
+  assert(u22r); assert(u22i);
+  assert(v11r); assert(v11i);
+  assert(v21r); assert(v21i);
+  assert(v12r); assert(v12i);
+  assert(v22r); assert(v22i);
   assert(s1);
   assert(s2);
   assert(es);
@@ -2992,30 +3339,18 @@ int pvn_zljsv2_
  double *const v11r, double *const v11i, double *const v21r, double *const v21i, double *const v12r, double *const v12i, double *const v22r, double *const v22i,
  double *const s1, double *const s2, int *const es)
 {
-  assert(a11r);
-  assert(a11i);
-  assert(a21r);
-  assert(a21i);
-  assert(a12r);
-  assert(a12i);
-  assert(a22r);
-  assert(a22i);
-  assert(u11r);
-  assert(u11i);
-  assert(u21r);
-  assert(u21i);
-  assert(u12r);
-  assert(u12i);
-  assert(u22r);
-  assert(u22i);
-  assert(v11r);
-  assert(v11i);
-  assert(v21r);
-  assert(v21i);
-  assert(v12r);
-  assert(v12i);
-  assert(v22r);
-  assert(v22i);
+  assert(a11r); assert(a11i);
+  assert(a21r); assert(a21i);
+  assert(a12r); assert(a12i);
+  assert(a22r); assert(a22i);
+  assert(u11r); assert(u11i);
+  assert(u21r); assert(u21i);
+  assert(u12r); assert(u12i);
+  assert(u22r); assert(u22i);
+  assert(v11r); assert(v11i);
+  assert(v21r); assert(v21i);
+  assert(v12r); assert(v12i);
+  assert(v22r); assert(v22i);
   assert(s1);
   assert(s2);
   assert(es);
@@ -3779,18 +4114,18 @@ void pvn_dxljr2_
 
 #ifndef WLJR2
 #define WLJR2                                                        \
-  assert(a11);                                                       \
-  assert(a21);                                                       \
-  assert(a12);                                                       \
-  assert(a22);                                                       \
-  assert(u11);                                                       \
-  assert(u21);                                                       \
-  assert(u12);                                                       \
-  assert(u22);                                                       \
-  assert(v11);                                                       \
-  assert(v21);                                                       \
-  assert(v12);                                                       \
-  assert(v22);                                                       \
+  assert(a11r); assert(a11i);                                        \
+  assert(a21r); assert(a21i);                                        \
+  assert(a12r); assert(a12i);                                        \
+  assert(a22r); assert(a22i);                                        \
+  assert(u11r); assert(u11i);                                        \
+  assert(u21r); assert(u21i);                                        \
+  assert(u12r); assert(u12i);                                        \
+  assert(u22r); assert(u22i);                                        \
+  assert(v11r); assert(v11i);                                        \
+  assert(v21r); assert(v21i);                                        \
+  assert(v12r); assert(v12i);                                        \
+  assert(v22r); assert(v22i);                                        \
   assert(s1);                                                        \
   assert(s2);                                                        \
   assert(es);                                                        \
@@ -4879,30 +5214,18 @@ int pvn_wljsv2_
  long double *const v11r, long double *const v11i, long double *const v21r, long double *const v21i, long double *const v12r, long double *const v12i, long double *const v22r, long double *const v22i,
  long double *const s1, long double *const s2, int *const es)
 {
-  assert(a11r);
-  assert(a11i);
-  assert(a21r);
-  assert(a21i);
-  assert(a12r);
-  assert(a12i);
-  assert(a22r);
-  assert(a22i);
-  assert(u11r);
-  assert(u11i);
-  assert(u21r);
-  assert(u21i);
-  assert(u12r);
-  assert(u12i);
-  assert(u22r);
-  assert(u22i);
-  assert(v11r);
-  assert(v11i);
-  assert(v21r);
-  assert(v21i);
-  assert(v12r);
-  assert(v12i);
-  assert(v22r);
-  assert(v22i);
+  assert(a11r); assert(a11i);
+  assert(a21r); assert(a21i);
+  assert(a12r); assert(a12i);
+  assert(a22r); assert(a22i);
+  assert(u11r); assert(u11i);
+  assert(u21r); assert(u21i);
+  assert(u12r); assert(u12i);
+  assert(u22r); assert(u22i);
+  assert(v11r); assert(v11i);
+  assert(v21r); assert(v21i);
+  assert(v12r); assert(v12i);
+  assert(v22r); assert(v22i);
   assert(s1);
   assert(s2);
   assert(es);
@@ -5624,10 +5947,10 @@ int pvn_wljsv2_
   /* cond_2(G) */                                               \
   E[0] = fminq((s1l / s2l), INFINITY);                          \
   /* U^T U - I */                                               \
-  long double T11 = fmaq(u11l, u11l, fmaq(u21l, u21l, -1.0q));  \
-  long double T21 = fmaq(u12l, u11l, u22l * u21l);              \
-  long double T12 = T21;                                        \
-  long double T22 = fmaq(u12l, u12l, fmaq(u22l, u22l, -1.0q));  \
+  __float128 T11 = fmaq(u11l, u11l, fmaq(u21l, u21l, -1.0q));   \
+  __float128 T21 = fmaq(u12l, u11l, u22l * u21l);               \
+  __float128 T12 = T21;                                         \
+  __float128 T22 = fmaq(u12l, u12l, fmaq(u22l, u22l, -1.0q));   \
   E[1] = hypotq(hypotq(T11, T21), hypotq(T12, T22));            \
   T11 = fmaq(v11l, v11l, fmaq(v21l, v21l, -1.0q));              \
   T21 = fmaq(v12l, v11l, v22l * v21l);                          \
@@ -5647,6 +5970,7 @@ int pvn_wljsv2_
 #else /* QLJR2 */
 #error QLJR2 already defined
 #endif /* ?QLJR2 */
+
 void pvn_sqljr2_
 (const float *const a11, const float *const a21, const float *const a12, const float *const a22,
  const float *const u11, const float *const u21, const float *const u12, const float *const u22,
@@ -5672,6 +5996,113 @@ void pvn_xqljr2_
  const long double *const s1, const long double *const s2, const int *const es, __float128 *const E)
 {
   QLJR2;
+}
+
+#ifndef YLJR2
+#define YLJR2                                                        \
+  assert(a11r); assert(a11i);                                        \
+  assert(a21r); assert(a21i);                                        \
+  assert(a12r); assert(a12i);                                        \
+  assert(a22r); assert(a22i);                                        \
+  assert(u11r); assert(u11i);                                        \
+  assert(u21r); assert(u21i);                                        \
+  assert(u12r); assert(u12i);                                        \
+  assert(u22r); assert(u22i);                                        \
+  assert(v11r); assert(v11i);                                        \
+  assert(v21r); assert(v21i);                                        \
+  assert(v12r); assert(v12i);                                        \
+  assert(v22r); assert(v22i);                                        \
+  assert(s1);                                                        \
+  assert(s2);                                                        \
+  assert(es);                                                        \
+  assert(E);                                                         \
+  __float128                                                         \
+    U11r = *u11r, U11i = *u11i, U21r = *u21r, U21i = *u21i,          \
+    U12r = *u12r, U12i = *u12i, U22r = *u22r, U22i = *u22i,          \
+    V11r = *v11r, V11i = *v11i, V21r = *v21r, V21i = *v21i,          \
+    V12r = *v12r, V12i = *v12i, V22r = *v22r, V22i = *v22i,          \
+    S1 = scalbnq(*s1, es[1] - es[0]),                                \
+    S2 = scalbnq(*s2, es[2] - es[0]);                                \
+  /* cond_2(G) */                                                    \
+  E[0] = fminq((S1 / S2), INFINITY);                                 \
+  /* U^H U - I */                                                    \
+  __float128 T11r = -1.0q, T11i = 0.0q;                              \
+  pvn_yfma(&T11r, &T11i, U21r, U21i, U21r, U21i, T11r, T11i);        \
+  pvn_yfma(&T11r, &T11i, U11r, U11i, U11r, U11i, T11r, T11i);        \
+  __float128 T21r = 0.0q, T21i = 0.0q;                               \
+  pvn_ymul(&T21r, &T21i, U22r, U22i, U21r, U21i);                    \
+  pvn_yfma(&T21r, &T21i, U12r, U12i, U11r, U11i, T21r, T21i);        \
+  __float128 T12r = T21r, T12i = T21i;                               \
+  __float128 T22r = -1.0q, T22i = 0.0q;                              \
+  pvn_yfma(&T22r, &T22i, U22r, U22i, U22r, U22i, T22r, T22i);        \
+  pvn_yfma(&T22r, &T22i, U12r, U12i, U12r, U12i, T22r, T22i);        \
+  E[1] = hypotq(hypotq(hypotq(T11r, T11i), hypotq(T21r, T21i)),      \
+                hypotq(hypotq(T12r, T12i), hypotq(T22r, T22i)));     \
+  /* V^H V -I */                                                     \
+  pvn_yfma(&T11r, &T11i, V21r, V21i, V21r, V21i, -1.0q, 0.0q);       \
+  pvn_yfma(&T11r, &T11i, V11r, V11i, V11r, V11i, T11r, T11i);        \
+  pvn_ymul(&T21r, &T21i, V22r, V22i, V21r, V21i);                    \
+  pvn_yfma(&T21r, &T21r, V12r, V12i, V11r, V11i, T21r, T21i);        \
+  T12r = T21r; T12i = T21i;                                          \
+  pvn_yfma(&T22r, &T22i, V22r, V22i, V22r, V22i, -1.0q, 0.0q);       \
+  pvn_yfma(&T22r, &T22i, V12r, V12i, V12r, V12i, T22r, T22i);        \
+  E[2] = hypotq(hypotq(hypotq(T11r, T11i), hypotq(T21r, T21i)),      \
+                hypotq(hypotq(T12r, T12i), hypotq(T22r, T22i)));     \
+  /* U Σ V^H - G */                                                  \
+  U11r *= S1; U11i *= S1;                                            \
+  U21r *= S1; U21i *= S1;                                            \
+  U12r *= S2; U12i *= S2;                                            \
+  U22r *= S2; U22i *= S2;                                            \
+  E[3] = hypotq(hypotq(hypotq(*a11r, *a11i), hypotq(*a21r, *a21i)),  \
+                hypotq(hypotq(*a12r, *a12i), hypotq(*a22r, *a22i))); \
+  pvn_yfma(&T11r, &T11i, U12r, U12i, V12r, V12i, -*a11r, -*a11i);    \
+  pvn_yfma(&T11r, &T11i, U11r, U11i, V11r, V11i, T11r, T11i);        \
+  pvn_yfma(&T21r, &T21i, U22r, U22i, V12r, V12i, -*a21r, -*a21i);    \
+  pvn_yfma(&T21r, &T21i, U21r, U21i, V11r, V11i, T21r, T21i);        \
+  pvn_yfma(&T12r, &T12i, U12r, U12i, V22r, V22i, -*a12r, -*a12i);    \
+  pvn_yfma(&T12r, &T12i, U11r, U11i, V21r, V21i, T12r, T12i);        \
+  pvn_yfma(&T22r, &T22i, U22r, U22i, V22r, V22i, -*a22r, -*a22i);    \
+  pvn_yfma(&T22r, &T22i, U21r, U21i, V21r, V21i, T22r, T22i);        \
+  E[3] = (hypotq(hypotq(hypotq(T11r, T11i), hypotq(T21r, T21i)),     \
+                 hypotq(hypotq(T12r, T12i), hypotq(T22r, T22i))) / E[3])
+#else /* YLJR2 */
+#error YLJR2 already defined
+#endif /* ?YLJR2 */
+
+void pvn_cyljr2_
+(const float *const a11r, const float *const a11i, const float *const a21r, const float *const a21i,
+ const float *const a12r, const float *const a12i, const float *const a22r, const float *const a22i,
+ const float *const u11r, const float *const u11i, const float *const u21r, const float *const u21i,
+ const float *const u12r, const float *const u12i, const float *const u22r, const float *const u22i,
+ const float *const v11r, const float *const v11i, const float *const v21r, const float *const v21i,
+ const float *const v12r, const float *const v12i, const float *const v22r, const float *const v22i,
+ const float *const s1, const float *const s2, const int *const es, __float128 *const E)
+{
+  YLJR2;
+}
+
+void pvn_zyljr2_
+(const double *const a11r, const double *const a11i, const double *const a21r, const double *const a21i,
+ const double *const a12r, const double *const a12i, const double *const a22r, const double *const a22i,
+ const double *const u11r, const double *const u11i, const double *const u21r, const double *const u21i,
+ const double *const u12r, const double *const u12i, const double *const u22r, const double *const u22i,
+ const double *const v11r, const double *const v11i, const double *const v21r, const double *const v21i,
+ const double *const v12r, const double *const v12i, const double *const v22r, const double *const v22i,
+ const double *const s1, const double *const s2, const int *const es, __float128 *const E)
+{
+  YLJR2;
+}
+
+void pvn_wyljr2_
+(const long double *const a11r, const long double *const a11i, const long double *const a21r, const long double *const a21i,
+ const long double *const a12r, const long double *const a12i, const long double *const a22r, const long double *const a22i,
+ const long double *const u11r, const long double *const u11i, const long double *const u21r, const long double *const u21i,
+ const long double *const u12r, const long double *const u12i, const long double *const u22r, const long double *const u22i,
+ const long double *const v11r, const long double *const v11i, const long double *const v21r, const long double *const v21i,
+ const long double *const v12r, const long double *const v12i, const long double *const v22r, const long double *const v22i,
+ const long double *const s1, const long double *const s2, const int *const es, __float128 *const E)
+{
+  YLJR2;
 }
 
 static inline void ef_mulq(int *const e, __float128 *const f, const int e1, const __float128 f1, const int e2, const __float128 f2)
@@ -6677,30 +7108,18 @@ int pvn_yljsv2_
  __float128 *const v11r, __float128 *const v11i, __float128 *const v21r, __float128 *const v21i, __float128 *const v12r, __float128 *const v12i, __float128 *const v22r, __float128 *const v22i,
  __float128 *const s1, __float128 *const s2, int *const es)
 {
-  assert(a11r);
-  assert(a11i);
-  assert(a21r);
-  assert(a21i);
-  assert(a12r);
-  assert(a12i);
-  assert(a22r);
-  assert(a22i);
-  assert(u11r);
-  assert(u11i);
-  assert(u21r);
-  assert(u21i);
-  assert(u12r);
-  assert(u12i);
-  assert(u22r);
-  assert(u22i);
-  assert(v11r);
-  assert(v11i);
-  assert(v21r);
-  assert(v21i);
-  assert(v12r);
-  assert(v12i);
-  assert(v22r);
-  assert(v22i);
+  assert(a11r); assert(a11i);
+  assert(a21r); assert(a21i);
+  assert(a12r); assert(a12i);
+  assert(a22r); assert(a22i);
+  assert(u11r); assert(u11i);
+  assert(u21r); assert(u21i);
+  assert(u12r); assert(u12i);
+  assert(u22r); assert(u22i);
+  assert(v11r); assert(v11i);
+  assert(v21r); assert(v21i);
+  assert(v12r); assert(v12i);
+  assert(v22r); assert(v22i);
   assert(s1);
   assert(s2);
   assert(es);
@@ -7416,6 +7835,42 @@ void pvn_xqljr2_
  const long double *const s1, const long double *const s2, const int *const es, long double *const E)
 {
   XLJR2;
+}
+
+void pvn_cyljr2_
+(const float *const a11r, const float *const a11i, const float *const a21r, const float *const a21i,
+ const float *const a12r, const float *const a12i, const float *const a22r, const float *const a22i,
+ const float *const u11r, const float *const u11i, const float *const u21r, const float *const u21i,
+ const float *const u12r, const float *const u12i, const float *const u22r, const float *const u22i,
+ const float *const v11r, const float *const v11i, const float *const v21r, const float *const v21i,
+ const float *const v12r, const float *const v12i, const float *const v22r, const float *const v22i,
+ const float *const s1, const float *const s2, const int *const es, long double *const E)
+{
+  WLJR2;
+}
+
+void pvn_zyljr2_
+(const double *const a11r, const double *const a11i, const double *const a21r, const double *const a21i,
+ const double *const a12r, const double *const a12i, const double *const a22r, const double *const a22i,
+ const double *const u11r, const double *const u11i, const double *const u21r, const double *const u21i,
+ const double *const u12r, const double *const u12i, const double *const u22r, const double *const u22i,
+ const double *const v11r, const double *const v11i, const double *const v21r, const double *const v21i,
+ const double *const v12r, const double *const v12i, const double *const v22r, const double *const v22i,
+ const double *const s1, const double *const s2, const int *const es, long double *const E)
+{
+  WLJR2;
+}
+
+void pvn_wyljr2_
+(const long double *const a11r, const long double *const a11i, const long double *const a21r, const long double *const a21i,
+ const long double *const a12r, const long double *const a12i, const long double *const a22r, const long double *const a22i,
+ const long double *const u11r, const long double *const u11i, const long double *const u21r, const long double *const u21i,
+ const long double *const u12r, const long double *const u12i, const long double *const u22r, const long double *const u22i,
+ const long double *const v11r, const long double *const v11i, const long double *const v21r, const long double *const v21i,
+ const long double *const v12r, const long double *const v12i, const long double *const v22r, const long double *const v22i,
+ const long double *const s1, const long double *const s2, const int *const es, long double *const E)
+{
+  WLJR2;
 }
 
 int pvn_qljsv2_
