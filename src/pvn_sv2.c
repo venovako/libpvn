@@ -5475,6 +5475,82 @@ int pvn_wljsv2_
 }
 
 #ifdef PVN_QUADMATH
+#ifdef QLJR2
+#error QLJR2 already defined
+#else /* !QLJR2 */
+#define QLJR2                                                   \
+  assert(a11);                                                  \
+  assert(a21);                                                  \
+  assert(a12);                                                  \
+  assert(a22);                                                  \
+  assert(u11);                                                  \
+  assert(u21);                                                  \
+  assert(u12);                                                  \
+  assert(u22);                                                  \
+  assert(v11);                                                  \
+  assert(v21);                                                  \
+  assert(v12);                                                  \
+  assert(v22);                                                  \
+  assert(s1);                                                   \
+  assert(s2);                                                   \
+  assert(es);                                                   \
+  assert(E);                                                    \
+  __float128                                                    \
+    u11l = *u11, u21l = *u21, u12l = *u12, u22l = *u22,         \
+    v11l = *v11, v21l = *v21, v12l = *v12, v22l = *v22,         \
+    s1l = scalbnq(*s1, es[1] - es[0]),                          \
+    s2l = scalbnq(*s2, es[2] - es[0]);                          \
+  /* cond_2(G) */                                               \
+  E[0] = fminq((s1l / s2l), INFINITY);                          \
+  /* U^T U - I */                                               \
+  long double T11 = fmaq(u11l, u11l, fmaq(u21l, u21l, -1.0q));  \
+  long double T21 = fmaq(u12l, u11l, u22l * u21l);              \
+  long double T12 = T21;                                        \
+  long double T22 = fmaq(u12l, u12l, fmaq(u22l, u22l, -1.0q));  \
+  E[1] = hypotq(hypotq(T11, T21), hypotq(T12, T22));            \
+  T11 = fmaq(v11l, v11l, fmaq(v21l, v21l, -1.0q));              \
+  T21 = fmaq(v12l, v11l, v22l * v21l);                          \
+  T12 = T21;                                                    \
+  T22 = fmaq(v12l, v12l, fmaq(v22l, v22l, -1.0q));              \
+  E[2] = hypotq(hypotq(T11, T21), hypotq(T12, T22));            \
+  u11l *= s1l;                                                  \
+  u21l *= s1l;                                                  \
+  u12l *= s2l;                                                  \
+  u22l *= s2l;                                                  \
+  E[3] = hypotq(hypotq(*a11, *a21), hypotq(*a12, *a22));        \
+  T11 = fmaq(u11l, v11l, fmaq(u12l, v12l, -*a11));              \
+  T21 = fmaq(u21l, v11l, fmaq(u22l, v12l, -*a21));              \
+  T12 = fmaq(u11l, v21l, fmaq(u12l, v22l, -*a12));              \
+  T22 = fmaq(u21l, v21l, fmaq(u22l, v22l, -*a22));              \
+  E[3] = (hypotq(hypotq(T11, T21), hypotq(T12, T22)) / E[3])
+#endif /* ?QLJR2 */
+void pvn_sqljr2_
+(const float *const a11, const float *const a21, const float *const a12, const float *const a22,
+ const float *const u11, const float *const u21, const float *const u12, const float *const u22,
+ const float *const v11, const float *const v21, const float *const v12, const float *const v22,
+ const float *const s1, const float *const s2, const int *const es, __float128 *const E)
+{
+  QLJR2;
+}
+
+void pvn_dqljr2_
+(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
+ const double *const u11, const double *const u21, const double *const u12, const double *const u22,
+ const double *const v11, const double *const v21, const double *const v12, const double *const v22,
+ const double *const s1, const double *const s2, const int *const es, __float128 *const E)
+{
+  QLJR2;
+}
+
+void pvn_xqljr2_
+(const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
+ const long double *const u11, const long double *const u21, const long double *const u12, const long double *const u22,
+ const long double *const v11, const long double *const v21, const long double *const v12, const long double *const v22,
+ const long double *const s1, const long double *const s2, const int *const es, __float128 *const E)
+{
+  QLJR2;
+}
+
 static inline void ef_mulq(int *const e, __float128 *const f, const int e1, const __float128 f1, const int e2, const __float128 f2)
 {
   assert(e);
@@ -7192,6 +7268,33 @@ int pvn_yljsv2_
   return knd;
 }
 #else /* !PVN_QUADMATH */
+void pvn_sqljr2_
+(const float *const a11, const float *const a21, const float *const a12, const float *const a22,
+ const float *const u11, const float *const u21, const float *const u12, const float *const u22,
+ const float *const v11, const float *const v21, const float *const v12, const float *const v22,
+ const float *const s1, const float *const s2, const int *const es, long double *const E)
+{
+  XLJR2;
+}
+
+void pvn_dqljr2_
+(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
+ const double *const u11, const double *const u21, const double *const u12, const double *const u22,
+ const double *const v11, const double *const v21, const double *const v12, const double *const v22,
+ const double *const s1, const double *const s2, const int *const es, long double *const E)
+{
+  XLJR2;
+}
+
+void pvn_xqljr2_
+(const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
+ const long double *const u11, const long double *const u21, const long double *const u12, const long double *const u22,
+ const long double *const v11, const long double *const v21, const long double *const v12, const long double *const v22,
+ const long double *const s1, const long double *const s2, const int *const es, long double *const E)
+{
+  XLJR2;
+}
+
 int pvn_qljsv2_
 (const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
  long double *const u11, long double *const u21, long double *const u12, long double *const u22,

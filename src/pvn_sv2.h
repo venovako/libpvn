@@ -60,6 +60,24 @@ PVN_EXTERN_C int pvn_wljsv2_
  long double *const v11r, long double *const v11i, long double *const v21r, long double *const v21i, long double *const v12r, long double *const v12i, long double *const v22r, long double *const v22i,
  long double *const s1, long double *const s2, int *const es);
 #ifdef PVN_QUADMATH
+PVN_EXTERN_C void pvn_sqljr2_
+(const float *const a11, const float *const a21, const float *const a12, const float *const a22,
+ const float *const u11, const float *const u21, const float *const u12, const float *const u22,
+ const float *const v11, const float *const v21, const float *const v12, const float *const v22,
+ const float *const s1, const float *const s2, const int *const es, __float128 *const E);
+
+PVN_EXTERN_C void pvn_dqljr2_
+(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
+ const double *const u11, const double *const u21, const double *const u12, const double *const u22,
+ const double *const v11, const double *const v21, const double *const v12, const double *const v22,
+ const double *const s1, const double *const s2, const int *const es, __float128 *const E);
+
+PVN_EXTERN_C void pvn_xqljr2_
+(const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
+ const long double *const u11, const long double *const u21, const long double *const u12, const long double *const u22,
+ const long double *const v11, const long double *const v21, const long double *const v12, const long double *const v22,
+ const long double *const s1, const long double *const s2, const int *const es, __float128 *const E);
+
 PVN_EXTERN_C int pvn_qljsv2_
 (const __float128 *const a11, const __float128 *const a21, const __float128 *const a12, const __float128 *const a22,
  __float128 *const u11, __float128 *const u21, __float128 *const u12, __float128 *const u22,
@@ -72,6 +90,24 @@ PVN_EXTERN_C int pvn_yljsv2_
  __float128 *const v11r, __float128 *const v11i, __float128 *const v21r, __float128 *const v21i, __float128 *const v12r, __float128 *const v12i, __float128 *const v22r, __float128 *const v22i,
  __float128 *const s1, __float128 *const s2, int *const es);
 #else /* !PVN_QUADMATH */
+PVN_EXTERN_C void pvn_sqljr2_
+(const float *const a11, const float *const a21, const float *const a12, const float *const a22,
+ const float *const u11, const float *const u21, const float *const u12, const float *const u22,
+ const float *const v11, const float *const v21, const float *const v12, const float *const v22,
+ const float *const s1, const float *const s2, const int *const es, long double *const E);
+
+PVN_EXTERN_C void pvn_dqljr2_
+(const double *const a11, const double *const a21, const double *const a12, const double *const a22,
+ const double *const u11, const double *const u21, const double *const u12, const double *const u22,
+ const double *const v11, const double *const v21, const double *const v12, const double *const v22,
+ const double *const s1, const double *const s2, const int *const es, long double *const E);
+
+PVN_EXTERN_C void pvn_xqljr2_
+(const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
+ const long double *const u11, const long double *const u21, const long double *const u12, const long double *const u22,
+ const long double *const v11, const long double *const v21, const long double *const v12, const long double *const v22,
+ const long double *const s1, const long double *const s2, const int *const es, long double *const E);
+
 PVN_EXTERN_C int pvn_qljsv2_
 (const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
  long double *const u11, long double *const u21, long double *const u12, long double *const u22,
