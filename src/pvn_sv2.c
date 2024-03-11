@@ -12,7 +12,13 @@ int main(int argc, char *argv[])
   int n = atoi(argv[2]);
   const int upper = (n < 0);
   n = abs(n);
+  char s[46] = { '\0' };
   if (!n) {
+#ifdef PVN_QUADMATH
+    __float128 E[4] = { 0.0q, 0.0q, 0.0q, 0.0q };
+#else /* !PVN_QUADMATH */
+    long double E[4] = { 0.0L, 0.0L, 0.0L, 0.0L };
+#endif /* ?PVN_QUADMATH */
     if (t == 'S') {
       float a11 = 0.0f, a21 = 0.0f, a12 = 0.0f, a22 = 0.0f;
       (void)printf("G(1,1) = ");
@@ -31,7 +37,6 @@ int main(int argc, char *argv[])
       int es[3] = { 0, 0, 0 };
       const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
       (void)printf("knd=%d, es={%d,%d,%d}\n\tG =\n", knd, es[0], es[1], es[2]);
-      char s[17] = { '\0' };
       (void)printf("%s ", pvn_stoa(s, a11));
       (void)printf("%s\n", pvn_stoa(s, a12));
       (void)printf("%s ", pvn_stoa(s, a21));
@@ -46,6 +51,7 @@ int main(int argc, char *argv[])
       (void)printf("%s\n\ts =\n", pvn_stoa(s, v22));
       (void)printf("%s ", pvn_stoa(s, s1));
       (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
+      pvn_sqljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
       s1 = scalbnf(s1, (es[1] - es[0]));
       s2 = scalbnf(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_stoa(s, s1));
@@ -69,7 +75,6 @@ int main(int argc, char *argv[])
       int es[3] = { 0, 0, 0 };
       const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
       (void)printf("knd=%d, es={%d,%d,%d}\n\tG =\n", knd, es[0], es[1], es[2]);
-      char s[26] = { '\0' };
       (void)printf("%s ", pvn_dtoa(s, a11));
       (void)printf("%s\n", pvn_dtoa(s, a12));
       (void)printf("%s ", pvn_dtoa(s, a21));
@@ -84,6 +89,7 @@ int main(int argc, char *argv[])
       (void)printf("%s\n\ts =\n", pvn_dtoa(s, v22));
       (void)printf("%s ", pvn_dtoa(s, s1));
       (void)printf("%s\n\tS =\n", pvn_dtoa(s, s2));
+      pvn_dqljr2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
       s1 = scalbnf(s1, (es[1] - es[0]));
       s2 = scalbnf(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_dtoa(s, s1));
@@ -113,7 +119,6 @@ int main(int argc, char *argv[])
                                   &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
                                   &s1, &s2, es);
       (void)printf("knd=%d, es={%d,%d,%d}\n", knd, es[0], es[1], es[2]);
-      char s[17] = { '\0' };
       (void)printf("\tG =\n");
       (void)printf("(%s,", pvn_stoa(s, a11r));
       (void)printf("%s) ", pvn_stoa(s, a11i));
@@ -144,6 +149,10 @@ int main(int argc, char *argv[])
       (void)printf("\ts =\n");
       (void)printf("%s ", pvn_stoa(s, s1));
       (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
+      pvn_cyljr2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                  &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                  &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                  &s1, &s2, es, E);
       s1 = scalbnf(s1, (es[1] - es[0]));
       s2 = scalbnf(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_stoa(s, s1));
@@ -173,7 +182,6 @@ int main(int argc, char *argv[])
                                   &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
                                   &s1, &s2, es);
       (void)printf("knd=%d, es={%d,%d,%d}\n", knd, es[0], es[1], es[2]);
-      char s[26] = { '\0' };
       (void)printf("\tG =\n");
       (void)printf("(%s,", pvn_dtoa(s, a11r));
       (void)printf("%s) ", pvn_dtoa(s, a11i));
@@ -204,6 +212,10 @@ int main(int argc, char *argv[])
       (void)printf("\ts =\n");
       (void)printf("%s ", pvn_dtoa(s, s1));
       (void)printf("%s\n\tS =\n", pvn_dtoa(s, s2));
+      pvn_zyljr2_(&a11r, &a11i, &a21r, &a21i, &a12r, &a12i, &a22r, &a22i,
+                  &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
+                  &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
+                  &s1, &s2, es, E);
       s1 = scalbn(s1, (es[1] - es[0]));
       s2 = scalbn(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_dtoa(s, s1));
@@ -211,6 +223,10 @@ int main(int argc, char *argv[])
     }
     else
       return EXIT_FAILURE;
+    (void)printf("cond_2(G) =%s\n", pvn_qtoa(s, E[0]));
+    (void)printf("|| U^%c U - I ||_F =%s\n", T, pvn_qtoa(s, E[1]));
+    (void)printf("|| V^%c V - I ||_F =%s\n", T, pvn_qtoa(s, E[2]));
+    (void)printf("|| U Σ V^%c - G ||_F / || G ||_F =%s\n", T, pvn_qtoa(s, E[3]));
   }
   else {
     int u = pvn_ran_open_();
@@ -218,7 +234,6 @@ int main(int argc, char *argv[])
       (void)fprintf(stderr, "open(/dev/random): %d\n", u);
       return EXIT_FAILURE;
     }
-    char s[46] = { '\0' };
 #ifdef PVN_QUADMATH
     __float128 EC = 0.0q, EU = 0.0q, EV = 0.0q, EG = 0.0q;
 #else /* !PVN_QUADMATH */
