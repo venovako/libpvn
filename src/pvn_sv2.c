@@ -3682,9 +3682,7 @@ int pvn_zljsv2_
   return knd;
 }
 
-#ifdef XLJR2
-#error XLJR2 already defined
-#else /* !XLJR2 */
+#ifndef XLJR2
 #define XLJR2                                                   \
   assert(a11);                                                  \
   assert(a21);                                                  \
@@ -3730,7 +3728,10 @@ int pvn_zljsv2_
   T12 = fmal(u11l, v21l, fmal(u12l, v22l, -*a12));              \
   T22 = fmal(u21l, v21l, fmal(u22l, v22l, -*a22));              \
   E[3] = (hypotl(hypotl(T11, T21), hypotl(T12, T22)) / E[3])
+#else /* XLJR2 */
+#error XLJR2 already defined
 #endif /* ?XLJR2 */
+
 void pvn_sxljr2_
 (const float *const a11, const float *const a21, const float *const a12, const float *const a22,
  const float *const u11, const float *const u21, const float *const u12, const float *const u22,
@@ -3747,6 +3748,99 @@ void pvn_dxljr2_
  const double *const s1, const double *const s2, const int *const es, long double *const E)
 {
   XLJR2;
+}
+
+#ifndef WLJR2
+#define WLJR2                                                        \
+  assert(a11);                                                       \
+  assert(a21);                                                       \
+  assert(a12);                                                       \
+  assert(a22);                                                       \
+  assert(u11);                                                       \
+  assert(u21);                                                       \
+  assert(u12);                                                       \
+  assert(u22);                                                       \
+  assert(v11);                                                       \
+  assert(v21);                                                       \
+  assert(v12);                                                       \
+  assert(v22);                                                       \
+  assert(s1);                                                        \
+  assert(s2);                                                        \
+  assert(es);                                                        \
+  assert(E);                                                         \
+  long double                                                        \
+    U11r = *u11r, U11i = *u11i, U21r = *u21r, U21i = *u21i,          \
+    U12r = *u12r, U12i = *u12i, U22r = *u22r, U22i = *u22i,          \
+    V11r = *v11r, V11i = *v11i, V21r = *v21r, V21i = *v21i,          \
+    V12r = *v12r, V12i = *v12i, V22r = *v22r, V22i = *v22i,          \
+    S1 = scalbnl(*s1, es[1] - es[0]),                                \
+    S2 = scalbnl(*s2, es[2] - es[0]);                                \
+  /* cond_2(G) */                                                    \
+  E[0] = fminl((S1 / S2), INFINITY);                                 \
+  /* U^T U - I */                                                    \
+  long double T11r = -1.0L, T11i = 0.0L;                             \
+  pvn_wfma(&T11r, &T11i, U21r, U21i, U21r, U21i, T11r, T11i);        \
+  pvn_wfma(&T11r, &T11i, U11r, U11i, U11r, U11i, T11r, T11i);        \
+  long double T21r = 0.0L, T21i = 0.0L;                              \
+  pvn_wmul(&T21r, &T21i, U22r, U22i, U21r, U21i);                    \
+  pvn_wfma(&T21r, &T21i, U12r, U12i, U11r, U11i, T21r, T21i);        \
+  long double T12r = T21r, T12i = T21i;                              \
+  long double T22r = -1.0L, T22i = 0.0L;                             \
+  pvn_wfma(&T22r, &T22i, U22r, U22i, U22r, U22i, T22r, T22i);        \
+  pvn_wfma(&T22r, &T22i, U12r, U12i, U12r, U12i, T22r, T22i);        \
+  E[1] = hypotl(hypotl(hypotl(T11r, T11i), hypotl(T21r, T21i)),      \
+                hypotl(hypotl(T12r, T12i), hypotl(T22r, T22i)));     \
+  pvn_wfma(&T11r, &T11i, V21r, V21i, V21r, V21i, -1.0L, 0.0L);       \
+  pvn_wfma(&T11r, &T11i, V11r, V11i, V11r, V11i, T11r, T11i);        \
+  pvn_wmul(&T21r, &T21i, V22r, V22i, V21r, V21i);                    \
+  pvn_wfma(&T21r, &T21r, V12r, V12i, V11r, V11i, T21r, T21i);        \
+  T12r = T21r; T12i = T21i;                                          \
+  pvn_wfma(&T22r, &T22i, V22r, V22i, V22r, V22i, -1.0L, 0.0L);       \
+  pvn_wfma(&T22r, &T22i, V12r, V12i, V12r, V12i, T22r, T22i);        \
+  E[2] = hypotl(hypotl(hypotl(T11r, T11i), hypotl(T21r, T21i)),      \
+                hypotl(hypotl(T12r, T12i), hypotl(T22r, T22i)));     \
+  U11r *= S1; U11i *= S1;                                            \
+  U21r *= S1; U21i *= S1;                                            \
+  U12r *= S2; U12i *= S2;                                            \
+  U22r *= S2; U22i *= S2;                                            \
+  E[3] = hypotl(hypotl(hypotl(*a11r, *a11i), hypotl(*a21r, *a21i)),  \
+                hypotl(hypotl(*a12r, *a12i), hypotl(*a22r, *a22i))); \
+  pvn_wfma(&T11r, &T11i, U12r, U12i, V12r, V12i, -*a11r, -*a11i);    \
+  pvn_wfma(&T11r, &T11i, U11r, U11i, V11r, V11i, T11r, T11i);        \
+  pvn_wfma(&T21r, &T21i, U22r, U22i, V12r, V12i, -*a21r, -*a21i);    \
+  pvn_wfma(&T21r, &T21i, U21r, U21i, V11r, V11i, T21r, T21i);        \
+  pvn_wfma(&T12r, &T12i, U12r, U12i, V22r, V22i, -*a12r, -*a12i);    \
+  pvn_wfma(&T12r, &T12i, U11r, U11i, V21r, V21i, T12r, T12i);        \
+  pvn_wfma(&T22r, &T22i, U22r, U22i, V22r, V22i, -*a22r, -*a22i);    \
+  pvn_wfma(&T22r, &T22i, U21r, U21i, V21r, V21i, T22r, T22i);        \
+  E[3] = (hypotl(hypotl(hypotl(T11r, T11i), hypotl(T21r, T21i)),     \
+                 hypotl(hypotl(T12r, T12i), hypotl(T22r, T22i))) / E[3])
+#else /* WLJR2 */
+#error WLJR2 already defined
+#endif /* ?WLJR2 */
+
+void pvn_cwljr2_
+(const float *const a11r, const float *const a11i, const float *const a21r, const float *const a21i,
+ const float *const a12r, const float *const a12i, const float *const a22r, const float *const a22i,
+ const float *const u11r, const float *const u11i, const float *const u21r, const float *const u21i,
+ const float *const u12r, const float *const u12i, const float *const u22r, const float *const u22i,
+ const float *const v11r, const float *const v11i, const float *const v21r, const float *const v21i,
+ const float *const v12r, const float *const v12i, const float *const v22r, const float *const v22i,
+ const float *const s1, const float *const s2, const int *const es, long double *const E)
+{
+  WLJR2;
+}
+
+void pvn_zwljr2_
+(const double *const a11r, const double *const a11i, const double *const a21r, const double *const a21i,
+ const double *const a12r, const double *const a12i, const double *const a22r, const double *const a22i,
+ const double *const u11r, const double *const u11i, const double *const u21r, const double *const u21i,
+ const double *const u12r, const double *const u12i, const double *const u22r, const double *const u22i,
+ const double *const v11r, const double *const v11i, const double *const v21r, const double *const v21i,
+ const double *const v12r, const double *const v12i, const double *const v22r, const double *const v22i,
+ const double *const s1, const double *const s2, const int *const es, long double *const E)
+{
+  WLJR2;
 }
 
 static inline void ef_mull(int *const e, long double *const f, const int e1, const long double f1, const int e2, const long double f2)
@@ -5475,9 +5569,7 @@ int pvn_wljsv2_
 }
 
 #ifdef PVN_QUADMATH
-#ifdef QLJR2
-#error QLJR2 already defined
-#else /* !QLJR2 */
+#ifndef QLJR2
 #define QLJR2                                                   \
   assert(a11);                                                  \
   assert(a21);                                                  \
@@ -5523,6 +5615,8 @@ int pvn_wljsv2_
   T12 = fmaq(u11l, v21l, fmaq(u12l, v22l, -*a12));              \
   T22 = fmaq(u21l, v21l, fmaq(u22l, v22l, -*a22));              \
   E[3] = (hypotq(hypotq(T11, T21), hypotq(T12, T22)) / E[3])
+#else /* QLJR2 */
+#error QLJR2 already defined
 #endif /* ?QLJR2 */
 void pvn_sqljr2_
 (const float *const a11, const float *const a21, const float *const a12, const float *const a22,

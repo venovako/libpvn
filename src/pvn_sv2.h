@@ -72,6 +72,24 @@ PVN_EXTERN_C void pvn_dqljr2_
  const double *const v11, const double *const v21, const double *const v12, const double *const v22,
  const double *const s1, const double *const s2, const int *const es, __float128 *const E);
 
+PVN_EXTERN_C void pvn_cwljr2_
+(const float *const a11r, const float *const a11i, const float *const a21r, const float *const a21i,
+ const float *const a12r, const float *const a12i, const float *const a22r, const float *const a22i,
+ const float *const u11r, const float *const u11i, const float *const u21r, const float *const u21i,
+ const float *const u12r, const float *const u12i, const float *const u22r, const float *const u22i,
+ const float *const v11r, const float *const v11i, const float *const v21r, const float *const v21i,
+ const float *const v12r, const float *const v12i, const float *const v22r, const float *const v22i,
+ const float *const s1, const float *const s2, const int *const es, long double *const E);
+
+PVN_EXTERN_C void pvn_zwljr2_
+(const double *const a11r, const double *const a11i, const double *const a21r, const double *const a21i,
+ const double *const a12r, const double *const a12i, const double *const a22r, const double *const a22i,
+ const double *const u11r, const double *const u11i, const double *const u21r, const double *const u21i,
+ const double *const u12r, const double *const u12i, const double *const u22r, const double *const u22i,
+ const double *const v11r, const double *const v11i, const double *const v21r, const double *const v21i,
+ const double *const v12r, const double *const v12i, const double *const v22r, const double *const v22i,
+ const double *const s1, const double *const s2, const int *const es, long double *const E);
+
 PVN_EXTERN_C void pvn_xqljr2_
 (const long double *const a11, const long double *const a21, const long double *const a12, const long double *const a22,
  const long double *const u11, const long double *const u21, const long double *const u12, const long double *const u22,
