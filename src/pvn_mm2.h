@@ -73,7 +73,6 @@ static inline void pvn_zmm2(double *const c11r, double *const c11i, double *cons
   pvn_zfma(c22r, c22i, a21r, a21i, b12r, b12i, *c22r, *c22i);
 }
 
-#ifndef _WIN32
 static inline void pvn_xmm2(long double *const c11, long double *const c21, long double *const c12, long double *const c22, const long double a11, const long double a21, const long double a12, const long double a22, const long double b11, const long double b21, const long double b12, const long double b22)
 {
   assert(c11);
@@ -150,7 +149,6 @@ static inline void pvn_ymm2(__float128 *const c11r, __float128 *const c11i, __fl
 #define pvn_ymm2 pvn_wmm2
 #endif /* ?pvn_ymm2 */
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 
 /* C += A * B */
 
@@ -218,7 +216,6 @@ static inline void pvn_zmma2(double *const c11r, double *const c11i, double *con
   pvn_zfma(c22r, c22i, a21r, a21i, b12r, b12i, *c22r, *c22i);
 }
 
-#ifndef _WIN32
 static inline void pvn_xmma2(long double *const c11, long double *const c21, long double *const c12, long double *const c22, const long double a11, const long double a21, const long double a12, const long double a22, const long double b11, const long double b21, const long double b12, const long double b22)
 {
   assert(c11);
@@ -295,5 +292,4 @@ static inline void pvn_ymma2(__float128 *const c11r, __float128 *const c11i, __f
 #define pvn_ymma2 pvn_wmma2
 #endif /* ?pvn_ymma2 */
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 #endif /* !PVN_MM2_H */

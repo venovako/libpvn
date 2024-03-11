@@ -27,7 +27,6 @@ static inline void pvn_zmul(double *const cr, double *const ci, const double ar,
   *ci = fma(ar, bi,  ai * br);
 }
 
-#ifndef _WIN32
 static inline void pvn_wmul(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
 {
   assert(cr);
@@ -51,7 +50,6 @@ static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __
 #define pvn_ymul pvn_wmul
 #endif /* ?pvn_ymul */
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 
 /* D = A * B + C */
 /* similar to the CUDA's complex FMA from cuComplex.h */
@@ -72,7 +70,6 @@ static inline void pvn_zfma(double *const dr, double *const di, const double ar,
   *di = fma(ar, bi, fma( ai, br, ci));
 }
 
-#ifndef _WIN32
 static inline void pvn_wfma(long double *const dr, long double *const di, const long double ar, const long double ai, const long double br, const long double bi, const long double cr, const long double ci)
 {
   assert(dr);
@@ -96,32 +93,17 @@ static inline void pvn_yfma(__float128 *const dr, __float128 *const di, const __
 #define pvn_yfma pvn_wfma
 #endif /* ?pvn_yfma */
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 
 /* x^H y */
 
-PVN_EXTERN_C void
-#ifdef _WIN32
-PVN_CDP
-#else /* !_WIN32 */
-pvn_cdp_
-#endif /* ?_WIN32 */
-(float *const zr, float *const zi, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi, const float *const yr, const unsigned *const iyr, const float *const yi, const unsigned *const iyi);
+PVN_EXTERN_C void pvn_cdp_(float *const zr, float *const zi, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi, const float *const yr, const unsigned *const iyr, const float *const yi, const unsigned *const iyi);
 
-PVN_EXTERN_C void
-#ifdef _WIN32
-PVN_ZDP
-#else /* !_WIN32 */
-pvn_zdp_
-#endif /* ?_WIN32 */
-(double *const zr, double *const zi, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi, const double *const yr, const unsigned *const iyr, const double *const yi, const unsigned *const iyi);
+PVN_EXTERN_C void pvn_zdp_(double *const zr, double *const zi, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi, const double *const yr, const unsigned *const iyr, const double *const yi, const unsigned *const iyi);
 
-#ifndef _WIN32
 PVN_EXTERN_C void pvn_wdp_(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi);
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C void pvn_ydp_(__float128 *const zr, __float128 *const zi, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi, const __float128 *const yr, const unsigned *const iyr, const __float128 *const yi, const unsigned *const iyi);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C void pvn_ydp_(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi);
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 #endif /* !PVN_CDP_H */

@@ -15,13 +15,7 @@ int main(int argc, char *argv[])
       const float a22 = (float)atof(argv[5]);
       float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
       int es[3] = { 0, 0, 0 };
-      const int knd =
-#ifdef _WIN32
-        PVN_SLJSV2
-#else /* !_WIN32 */
-        pvn_sljsv2_
-#endif /* ?_WIN32 */
-        (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+      const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
       (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
       char s[17] = { '\0' };
       (void)printf("%s ", pvn_stoa(s, a11));
@@ -50,13 +44,7 @@ int main(int argc, char *argv[])
       const double a22 = atof(argv[5]);
       double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
       int es[3] = { 0, 0, 0 };
-      const int knd =
-#ifdef _WIN32
-        PVN_DLJSV2
-#else /* !_WIN32 */
-        pvn_dljsv2_
-#endif /* ?_WIN32 */
-        (&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
+      const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
       (void)printf("knd=%d, es={%d,%d,%d}\n\ta =\n", knd, es[0], es[1], es[2]);
       char s[26] = { '\0' };
       (void)printf("%s ", pvn_dtoa(s, a11));
@@ -81,9 +69,6 @@ int main(int argc, char *argv[])
     else
       return EXIT_FAILURE;
   }
-#ifdef _WIN32
-  (void)fprintf(stderr, "NOT IMPLEMENTED YET!\n");
-#else /* !_WIN32 */
   else {
     int n = atoi(argv[2]);
     if (!n)
@@ -255,7 +240,6 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
     }
   }
-#endif /* ?_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -436,12 +420,7 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   es[2] = abe;
 }
 
-int
-#ifdef _WIN32
-PVN_SLJSV2
-#else /* !_WIN32 */
-pvn_sljsv2_
-#endif /* ?_WIN32 */
+int pvn_sljsv2_
 (const float *const a11, const float *const a21, const float *const a12, const float *const a22,
  float *const u11, float *const u21, float *const u12, float *const u22,
  float *const v11, float *const v21, float *const v12, float *const v22,
@@ -1262,12 +1241,7 @@ static float cpolarf(const float r, const float i, float *const c, float *const 
   return a;
 }
 
-int
-#ifdef _WIN32
-PVN_CLJSV2
-#else /* !_WIN32 */
-pvn_cljsv2_
-#endif /* ?_WIN32 */
+int pvn_cljsv2_
 (const float *const a11r, const float *const a11i, const float *const a21r, const float *const a21i, const float *const a12r, const float *const a12i, const float *const a22r, const float *const a22i,
  float *const u11r, float *const u11i, float *const u21r, float *const u21i, float *const u12r, float *const u12i, float *const u22r, float *const u22i,
  float *const v11r, float *const v11i, float *const v21r, float *const v21i, float *const v12r, float *const v12i, float *const v22r, float *const v22i,
@@ -1351,13 +1325,7 @@ pvn_cljsv2_
   *v12i = 0.0f;
   *v22i = 0.0f;
   if (!kndi)
-    return
-#ifdef _WIN32
-      PVN_SLJSV2
-#else /* !_WIN32 */
-      pvn_sljsv2_
-#endif /* ?_WIN32 */
-      (a11r, a21r, a12r, a22r, u11r, u21r, u12r, u22r, v11r, v21r, v12r, v22r, s1, s2, es);
+    return pvn_sljsv2_(a11r, a21r, a12r, a22r, u11r, u21r, u12r, u22r, v11r, v21r, v12r, v22r, s1, s2, es);
   int kndr = 0;
   if (*a11r != 0.0f) {
     kndr |= 1;
@@ -1388,13 +1356,7 @@ pvn_cljsv2_
     *u21r = 0.0f;
     *u12r = 0.0f;
     *u22r = 0.0f;
-    return
-#ifdef _WIN32
-      PVN_SLJSV2
-#else /* !_WIN32 */
-      pvn_sljsv2_
-#endif /* ?_WIN32 */
-      (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
+    return pvn_sljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
 
   int knd = (kndr | kndi);
@@ -2178,12 +2140,7 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   es[2] = abe;
 }
 
-int
-#ifdef _WIN32
-PVN_DLJSV2
-#else /* !_WIN32 */
-pvn_dljsv2_
-#endif /* ?_WIN32 */
+int pvn_dljsv2_
 (const double *const a11, const double *const a21, const double *const a12, const double *const a22,
  double *const u11, double *const u21, double *const u12, double *const u22,
  double *const v11, double *const v21, double *const v12, double *const v22,
@@ -3004,12 +2961,7 @@ static double cpolar(const double r, const double i, double *const c, double *co
   return a;
 }
 
-int
-#ifdef _WIN32
-PVN_ZLJSV2
-#else /* !_WIN32 */
-pvn_zljsv2_
-#endif /* ?_WIN32 */
+int pvn_zljsv2_
 (const double *const a11r, const double *const a11i, const double *const a21r, const double *const a21i, const double *const a12r, const double *const a12i, const double *const a22r, const double *const a22i,
  double *const u11r, double *const u11i, double *const u21r, double *const u21i, double *const u12r, double *const u12i, double *const u22r, double *const u22i,
  double *const v11r, double *const v11i, double *const v21r, double *const v21i, double *const v12r, double *const v12i, double *const v22r, double *const v22i,
@@ -3093,13 +3045,7 @@ pvn_zljsv2_
   *v12i = 0.0;
   *v22i = 0.0;
   if (!kndi)
-    return
-#ifdef _WIN32
-      PVN_DLJSV2
-#else /* !_WIN32 */
-      pvn_dljsv2_
-#endif /* ?_WIN32 */
-      (a11r, a21r, a12r, a22r, u11r, u21r, u12r, u22r, v11r, v21r, v12r, v22r, s1, s2, es);
+    return pvn_dljsv2_(a11r, a21r, a12r, a22r, u11r, u21r, u12r, u22r, v11r, v21r, v12r, v22r, s1, s2, es);
   int kndr = 0;
   if (*a11r != 0.0) {
     kndr |= 1;
@@ -3130,13 +3076,7 @@ pvn_zljsv2_
     *u21r = 0.0;
     *u12r = 0.0;
     *u22r = 0.0;
-    return
-#ifdef _WIN32
-      PVN_DLJSV2
-#else /* !_WIN32 */
-      pvn_dljsv2_
-#endif /* ?_WIN32 */
-      (a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
+    return pvn_dljsv2_(a11i, a21i, a12i, a22i, u11i, u21i, u12i, u22i, v11r, v21r, v12r, v22r, s1, s2, es);
   }
   int knd = (kndr | kndi);
   switch (knd) {
@@ -3742,7 +3682,6 @@ pvn_zljsv2_
   return knd;
 }
 
-#ifndef _WIN32
 #ifdef XLJR2
 #error XLJR2 already defined
 #else /* !XLJR2 */
@@ -7271,5 +7210,4 @@ int pvn_yljsv2_
   return pvn_wljsv2_(a11r, a11i, a21r, a21i, a12r, a12i, a22r, a22i, u11r, u11i, u21r, u21i, u12r, u12i, u22r, u22i, v11r, v11i, v21r, v21i, v12r, v12i, v22r, v22i, s1, s2, es);
 }
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */

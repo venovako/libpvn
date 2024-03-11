@@ -13,13 +13,7 @@ int main(/* int argc, char *argv[] */)
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-void
-#ifdef _WIN32
-PVN_CDP
-#else /* !_WIN32 */
-pvn_cdp_
-#endif /* ?_WIN32 */
-(float *const zr, float *const zi, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi, const float *const yr, const unsigned *const iyr, const float *const yi, const unsigned *const iyi)
+void pvn_cdp_(float *const zr, float *const zi, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi, const float *const yr, const unsigned *const iyr, const float *const yi, const unsigned *const iyi)
 {
   assert(zr);
   assert(zi);
@@ -55,13 +49,7 @@ pvn_cdp_
   }
 }
 
-void
-#ifdef _WIN32
-PVN_ZDP
-#else /* !_WIN32 */
-pvn_zdp_
-#endif /* ?_WIN32 */
-(double *const zr, double *const zi, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi, const double *const yr, const unsigned *const iyr, const double *const yi, const unsigned *const iyi)
+void pvn_zdp_(double *const zr, double *const zi, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi, const double *const yr, const unsigned *const iyr, const double *const yi, const unsigned *const iyi)
 {
   assert(zr);
   assert(zi);
@@ -97,7 +85,6 @@ pvn_zdp_
   }
 }
 
-#ifndef _WIN32
 void pvn_wdp_(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi)
 {
   assert(zr);
@@ -176,5 +163,4 @@ void pvn_ydp_(long double *const zr, long double *const zi, const int *const m, 
   pvn_wdp_(zr, zi, m, xr, ixr, xi, ixi, yr, iyr, yi, iyi);
 }
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */

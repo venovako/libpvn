@@ -9,11 +9,7 @@ int main(int argc, char *argv[])
   }
   (void)printf(" size_t      = %zu\n", pvn_atoz(argv[1]));
 
-#ifdef _WIN32
-  char s[31u];
-#else /* !_WIN32 */
-  char s[46u];
-#endif /* ?_WIN32 */
+  char s[46u] = { '\0' };
   (void)printf(" FLT_TRUE_MIN=%s\n", pvn_stoa(s, FLT_TRUE_MIN));
   (void)printf(" FLT_MIN     =%s\n", pvn_stoa(s, FLT_MIN));
   (void)printf(" FLT_EPSILON =%s\n", pvn_stoa(s, FLT_EPSILON));
@@ -22,7 +18,6 @@ int main(int argc, char *argv[])
   (void)printf(" DBL_MIN     =%s\n", pvn_dtoa(s, DBL_MIN));
   (void)printf(" DBL_EPSILON =%s\n", pvn_dtoa(s, DBL_EPSILON));
   (void)printf(" DBL_MAX     =%s\n", pvn_dtoa(s, DBL_MAX));
-#ifndef _WIN32
   (void)printf("LDBL_TRUE_MIN=%s\n", pvn_xtoa(s, LDBL_TRUE_MIN));
   (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
   (void)printf("LDBL_EPSILON =%s\n", pvn_xtoa(s, LDBL_EPSILON));
@@ -33,7 +28,6 @@ int main(int argc, char *argv[])
   (void)printf("FLT128_EPSILON =%s\n", pvn_qtoa(s, FLT128_EPSILON));
   (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
 #endif /* PVN_QUADMATH */
-#endif /* !_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -102,7 +96,6 @@ char *pvn_dtoa(char *const s, const double x)
   return s;
 }
 
-#ifndef _WIN32
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
@@ -189,5 +182,4 @@ char *pvn_qtoa(char *const s, const long double x)
   return pvn_xtoa(s, x);
 }
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */

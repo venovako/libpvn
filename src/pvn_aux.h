@@ -152,29 +152,11 @@ pvn_Tmax4(unsigned long long,ull)
 pvn_Tmax4(size_t,z)
 
 PVN_EXTERN_C size_t pvn_gcd(const size_t a, const size_t b);
-PVN_EXTERN_C size_t
-#ifdef _WIN32
-PVN_GCD
-#else /* !_WIN32 */
-pvn_gcd_
-#endif /* ?_WIN32 */
-(const size_t *const a, const size_t *const b);
+PVN_EXTERN_C size_t pvn_gcd_(const size_t *const a, const size_t *const b);
 PVN_EXTERN_C size_t pvn_lcm(const size_t a, const size_t b);
-PVN_EXTERN_C size_t
-#ifdef _WIN32
-PVN_LCM
-#else /* !_WIN32 */
-pvn_lcm_
-#endif /* ?_WIN32 */
-(const size_t *const a, const size_t *const b);
+PVN_EXTERN_C size_t pvn_lcm_(const size_t *const a, const size_t *const b);
 
 PVN_EXTERN_C char *pvn_hexify(char *const s, const void *const x, const size_t z);
-PVN_EXTERN_C size_t
-#ifdef _WIN32
-PVN_HEXIFY
-#else /* !_WIN32 */
-pvn_hexify_
-#endif /* ?_WIN32 */
-(char *const s, const void *const x, const size_t *const z, ...);
+PVN_EXTERN_C size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...);
 
 #endif /* !PVN_AUX_H */

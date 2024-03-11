@@ -1,6 +1,5 @@
 #include "pvn.h"
 
-#ifndef _WIN32
 #ifndef OPEN_RW
 #define OPEN_RW (O_RDWR | O_CREAT | O_TRUNC | PVN_LF64)
 #else /* OPEN_RW */
@@ -11,23 +10,6 @@
 #else /* PERM_RW */
 #error PERM_RW already defined
 #endif /* ?PERM_RW */
-#else /* _WIN32 */
-#ifndef ssize_t
-#define ssize_t long
-#else /* ssize_t */
-#error ssize_t already defined
-#endif /* ?ssize_t */
-#ifndef OPEN_RW
-#define OPEN_RW (_O_RDWR | _O_CREAT | _O_TRUNC)
-#else /* OPEN_RW */
-#error OPEN_RW already defined
-#endif /* ?OPEN_RW */
-#ifndef PERM_RW
-#define PERM_RW (_S_IREAD | _S_IWRITE)
-#else /* PERM_RW */
-#error PERM_RW already defined
-#endif /* ?PERM_RW */
-#endif /* ?_WIN32 */
 
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
@@ -100,7 +82,6 @@ int main(int argc, char *argv[])
   (void)fprintf(stderr, "%d\n", r);
   if (r)
     return EXIT_FAILURE;
-#ifndef _WIN32
   (void)fprintf(stderr, "Converting the BMPs to the PNGs with ImageMagick...\n");
   (void)system("for B in ../etc/*.bmp; do convert $B -quality 90 ../etc/`basename $B bmp`png; done");
   (void)fprintf(stderr, "Assembling the APNG animation from the PNGs with apngasm...\n");
@@ -125,7 +106,6 @@ int main(int argc, char *argv[])
     (void)system("apng2gif ../etc/pvn_mtx_r8.png ../etc/pvn_mtx_r8.gif");
   else
     return EXIT_FAILURE;
-#endif /* !_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -166,13 +146,7 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
   return 1;
 }
 
-pvn_rvis_ctx_f*
-#ifdef _WIN32
-PVN_RVIS_START_F
-#else /* !_WIN32 */
-pvn_rvis_start_f_
-#endif /* ?_WIN32 */
-(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+pvn_rvis_ctx_f* pvn_rvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
 {
   assert(m);
   assert(n);
@@ -241,13 +215,7 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
   return 1;
 }
 
-pvn_rvis_ctx*
-#ifdef _WIN32
-PVN_RVIS_START
-#else /* !_WIN32 */
-pvn_rvis_start_
-#endif /* ?_WIN32 */
-(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+pvn_rvis_ctx* pvn_rvis_start_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
 {
   assert(m);
   assert(n);
@@ -279,7 +247,6 @@ pvn_rvis_start_
   return ret;
 }
 
-#ifndef _WIN32
 int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned n, const pvn_rop_l op, const char *const fnB)
 {
   if (!ctx)
@@ -348,7 +315,6 @@ pvn_rvis_ctx_l *pvn_rvis_start_l_(const unsigned *const m, const unsigned *const
   }
   return ret;
 }
-#endif /* !_WIN32 */
 
 int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, const size_t ldA)
 {
@@ -370,13 +336,7 @@ int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, c
   return ret;
 }
 
-int
-#ifdef _WIN32
-PVN_RVIS_FRAME_F
-#else /* !_WIN32 */
-pvn_rvis_frame_f_
-#endif /* ?_WIN32 */
-(pvn_rvis_ctx_f *const *const ctx, const float *const restrict A, const size_t *const ldA)
+int pvn_rvis_frame_f_(pvn_rvis_ctx_f *const *const ctx, const float *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -404,13 +364,7 @@ int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, cons
   return ret;
 }
 
-int
-#ifdef _WIN32
-PVN_RVIS_FRAME
-#else /* !_WIN32 */
-pvn_rvis_frame_
-#endif /* ?_WIN32 */
-(pvn_rvis_ctx *const *const ctx, const double *const restrict A, const size_t *const ldA)
+int pvn_rvis_frame_(pvn_rvis_ctx *const *const ctx, const double *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -418,7 +372,6 @@ pvn_rvis_frame_
   return pvn_rvis_frame(*ctx, A, *ldA);
 }
 
-#ifndef _WIN32
 int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restrict A, const size_t ldA)
 {
   if (!ctx)
@@ -446,7 +399,6 @@ int pvn_rvis_frame_l_(pvn_rvis_ctx_l *const *const ctx, const long double *const
   assert(ldA);
   return pvn_rvis_frame_l(*ctx, A, *ldA);
 }
-#endif /* !_WIN32 */
 
 int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB)
 {
@@ -613,13 +565,7 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return ret;
 }
 
-int
-#ifdef _WIN32
-PVN_RVIS_STOP_F
-#else /* !_WIN32 */
-pvn_rvis_stop_f_
-#endif /* ?_WIN32 */
-(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int pvn_rvis_stop_f_(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
   assert(ctx);
   assert(sx);
@@ -797,13 +743,7 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return ret;
 }
 
-int
-#ifdef _WIN32
-PVN_RVIS_STOP
-#else /* !_WIN32 */
-pvn_rvis_stop_
-#endif /* ?_WIN32 */
-(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int pvn_rvis_stop_(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
   assert(ctx);
   assert(sx);
@@ -816,7 +756,6 @@ pvn_rvis_stop_
   return r;
 }
 
-#ifndef _WIN32
 int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB)
 {
   if (!ctx)
@@ -1000,7 +939,6 @@ int pvn_rvis_stop_l_(pvn_rvis_ctx_l *const *const ctx, const unsigned *const sx,
     free(*ctx);
   return r;
 }
-#endif /* !_WIN32 */
 
 int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned n, const pvn_cop_f op, const char *const fnB, const char *const fnC)
 {
@@ -1061,13 +999,7 @@ int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned
   return 0;
 }
 
-pvn_cvis_ctx_f*
-#ifdef _WIN32
-PVN_CVIS_START_F
-#else /* !_WIN32 */
-pvn_cvis_start_f_
-#endif /* ?_WIN32 */
-(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+pvn_cvis_ctx_f* pvn_cvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
 {
   pvn_cvis_ctx_f *ret = (pvn_cvis_ctx_f*)NULL;
   if (!m)
@@ -1164,13 +1096,7 @@ int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, 
   return 0;
 }
 
-pvn_cvis_ctx*
-#ifdef _WIN32
-PVN_CVIS_START
-#else /* !_WIN32 */
-pvn_cvis_start_
-#endif /* ?_WIN32 */
-(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+pvn_cvis_ctx* pvn_cvis_start_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
 {
   pvn_cvis_ctx *ret = (pvn_cvis_ctx*)NULL;
   if (!m)
@@ -1208,7 +1134,6 @@ pvn_cvis_start_
   return ret;
 }
 
-#ifndef _WIN32
 int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned n, const pvn_cop_l op, const char *const fnB, const char *const fnC)
 {
   if (!ctx)
@@ -1305,7 +1230,6 @@ pvn_cvis_ctx_l *pvn_cvis_start_l_(const unsigned *const m, const unsigned *const
   }
   return ret;
 }
-#endif /* !_WIN32 */
 
 int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restrict A, const size_t ldA)
 {
@@ -1330,13 +1254,7 @@ int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restr
   return ret;
 }
 
-int
-#ifdef _WIN32
-PVN_CVIS_FRAME_F
-#else /* !_WIN32 */
-pvn_cvis_frame_f_
-#endif /* ?_WIN32 */
-(pvn_cvis_ctx_f *const *const ctx, const float complex *const restrict A, const size_t *const ldA)
+int pvn_cvis_frame_f_(pvn_cvis_ctx_f *const *const ctx, const float complex *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -1367,13 +1285,7 @@ int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict
   return ret;
 }
 
-int
-#ifdef _WIN32
-PVN_CVIS_FRAME
-#else /* !_WIN32 */
-pvn_cvis_frame_
-#endif /* ?_WIN32 */
-(pvn_cvis_ctx *const *const ctx, const double complex *const restrict A, const size_t *const ldA)
+int pvn_cvis_frame_(pvn_cvis_ctx *const *const ctx, const double complex *const restrict A, const size_t *const ldA)
 {
   assert(ctx);
   assert(A);
@@ -1381,7 +1293,6 @@ pvn_cvis_frame_
   return pvn_cvis_frame(*ctx, A, *ldA);
 }
 
-#ifndef _WIN32
 int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const restrict A, const size_t ldA)
 {
   if (!ctx)
@@ -1412,7 +1323,6 @@ int pvn_cvis_frame_l_(pvn_cvis_ctx_l *const *const ctx, const long double comple
   assert(ldA);
   return pvn_cvis_frame_l(*ctx, A, *ldA);
 }
-#endif /* !_WIN32 */
 
 int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB, const unsigned bppC, const char *const bnC)
 {
@@ -1456,13 +1366,7 @@ int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return (ret | ctx->err);
 }
 
-int
-#ifdef _WIN32
-PVN_CVIS_STOP_F
-#else /* !_WIN32 */
-pvn_cvis_stop_f_
-#endif /* ?_WIN32 */
-(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int pvn_cvis_stop_f_(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
   assert(ctx);
   assert(sx);
@@ -1519,13 +1423,7 @@ int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return (ret | ctx->err);
 }
 
-int
-#ifdef _WIN32
-PVN_CVIS_STOP
-#else /* !_WIN32 */
-pvn_cvis_stop_
-#endif /* ?_WIN32 */
-(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int pvn_cvis_stop_(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
   assert(ctx);
   assert(sx);
@@ -1540,7 +1438,6 @@ pvn_cvis_stop_
   return r;
 }
 
-#ifndef _WIN32
 int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned sy, const unsigned bppB, const char *const bnB, const unsigned bppC, const char *const bnC)
 {
   if (!ctx)
@@ -1597,7 +1494,6 @@ int pvn_cvis_stop_l_(pvn_cvis_ctx_l *const *const ctx, const unsigned *const sx,
     free(*ctx);
   return r;
 }
-#endif /* !_WIN32 */
 
 int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
@@ -1685,7 +1581,6 @@ int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict 
   return 0;
 }
 
-#ifndef _WIN32
 int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
@@ -1728,7 +1623,6 @@ int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const res
     *maxB = fmaxl(*maxB, MB);
   return 0;
 }
-#endif /* !_WIN32 */
 
 int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
@@ -1816,7 +1710,6 @@ int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict
   return 0;
 }
 
-#ifndef _WIN32
 int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
@@ -1859,7 +1752,6 @@ int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const re
     *maxB = fmaxl(*maxB, MB);
   return 0;
 }
-#endif /* !_WIN32 */
 
 int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
@@ -1947,7 +1839,6 @@ int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restri
   return 0;
 }
 
-#ifndef _WIN32
 int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
@@ -1990,7 +1881,6 @@ int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const 
     *maxB = fmaxl(*maxB, MB);
   return 0;
 }
-#endif /* !_WIN32 */
 
 int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
 {
@@ -2078,7 +1968,6 @@ int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restr
   return 0;
 }
 
-#ifndef _WIN32
 int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
 {
   if (!m)
@@ -2121,7 +2010,6 @@ int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const
     *maxB = fmaxl(*maxB, MB);
   return 0;
 }
-#endif /* !_WIN32 */
 
 int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
 {
@@ -2249,7 +2137,6 @@ int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const r
   return 0;
 }
 
-#ifndef _WIN32
 int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
 {
   if (!m)
@@ -2312,7 +2199,6 @@ int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *c
     *maxC = fmaxl(*maxC, MC);
   return 0;
 }
-#endif /* !_WIN32 */
 
 int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
 {
@@ -2442,7 +2328,6 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
   return (MB == INFINITY);
 }
 
-#ifndef _WIN32
 int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
 {
   if (!m)
@@ -2506,7 +2391,6 @@ int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
-#endif /* !_WIN32 */
 
 int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
 {
@@ -2636,7 +2520,6 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
   return (MB == INFINITY);
 }
 
-#ifndef _WIN32
 int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
 {
   if (!m)
@@ -2700,7 +2583,6 @@ int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
-#endif /* !_WIN32 */
 
 int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
 {
@@ -2830,7 +2712,6 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
   return (MB == INFINITY);
 }
 
-#ifndef _WIN32
 int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
 {
   if (!m)
@@ -2894,5 +2775,4 @@ int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double comple
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
-#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */

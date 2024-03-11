@@ -10,45 +10,25 @@
 /* !     AND IF THE CORRECTLY ROUNDED ARITHMETIC IS AVAILABLE     ! */
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
-PVN_EXTERN_C int
-#ifdef _WIN32
-PVN_SLJSV2
-#else /* !_WIN32 */
-pvn_sljsv2_
-#endif /* ?_WIN32 */
+PVN_EXTERN_C int pvn_sljsv2_
 (const float *const a11, const float *const a21, const float *const a12, const float *const a22,
  float *const u11, float *const u21, float *const u12, float *const u22,
  float *const v11, float *const v21, float *const v12, float *const v22,
  float *const s1, float *const s2, int *const es);
 
-PVN_EXTERN_C int
-#ifdef _WIN32
-PVN_CLJSV2
-#else /* !_WIN32 */
-pvn_cljsv2_
-#endif /* ?_WIN32 */
+PVN_EXTERN_C int pvn_cljsv2_
 (const float *const a11r, const float *const a11i, const float *const a21r, const float *const a21i, const float *const a12r, const float *const a12i, const float *const a22r, const float *const a22i,
  float *const u11r, float *const u11i, float *const u21r, float *const u21i, float *const u12r, float *const u12i, float *const u22r, float *const u22i,
  float *const v11r, float *const v11i, float *const v21r, float *const v21i, float *const v12r, float *const v12i, float *const v22r, float *const v22i,
  float *const s1, float *const s2, int *const es);
 
-PVN_EXTERN_C int
-#ifdef _WIN32
-PVN_DLJSV2
-#else /* !_WIN32 */
-pvn_dljsv2_
-#endif /* ?_WIN32 */
+PVN_EXTERN_C int pvn_dljsv2_
 (const double *const a11, const double *const a21, const double *const a12, const double *const a22,
  double *const u11, double *const u21, double *const u12, double *const u22,
  double *const v11, double *const v21, double *const v12, double *const v22,
  double *const s1, double *const s2, int *const es);
 
-PVN_EXTERN_C int
-#ifdef _WIN32
-PVN_ZLJSV2
-#else /* !_WIN32 */
-pvn_zljsv2_
-#endif /* ?_WIN32 */
+PVN_EXTERN_C int pvn_zljsv2_
 (const double *const a11r, const double *const a11i, const double *const a21r, const double *const a21i, const double *const a12r, const double *const a12i, const double *const a22r, const double *const a22i,
  double *const u11r, double *const u11i, double *const u21r, double *const u21i, double *const u12r, double *const u12i, double *const u22r, double *const u22i,
  double *const v11r, double *const v11i, double *const v21r, double *const v21i, double *const v12r, double *const v12i, double *const v22r, double *const v22i,
@@ -56,7 +36,6 @@ pvn_zljsv2_
 
 /* at present, the functions declared below might not be fail-safe */
 
-#ifndef _WIN32
 PVN_EXTERN_C void pvn_sxljr2_
 (const float *const a11, const float *const a21, const float *const a12, const float *const a22,
  const float *const u11, const float *const u21, const float *const u12, const float *const u22,
@@ -105,5 +84,4 @@ PVN_EXTERN_C int pvn_yljsv2_
  long double *const v11r, long double *const v11i, long double *const v21r, long double *const v21i, long double *const v12r, long double *const v12i, long double *const v22r, long double *const v22i,
  long double *const s1, long double *const s2, int *const es);
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
 #endif /* !PVN_SV2_H */

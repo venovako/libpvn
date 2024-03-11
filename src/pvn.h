@@ -50,15 +50,11 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#ifdef _WIN32
-#include <io.h>
-#else /* !_WIN32 */
 #include <sys/uio.h>
 #include <execinfo.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <unistd.h>
-#endif /* ?_WIN32 */
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -135,11 +131,9 @@ static inline __float128 rsqrtq(__float128 x)
 #include "pvn_mtx.h"
 #include "pvn_ran.h"
 #include "pvn_sv2.h"
-#ifndef _WIN32
 #include "pvn_error.h"
 #include "pvn_lock.h"
 #include "pvn_timer.h"
-#endif /* !_WIN32 */
 
 static inline int pvn_le()
 {
@@ -147,13 +141,7 @@ static inline int pvn_le()
   return (int)*(const char*)&one;
 }
 
-PVN_EXTERN_C int
-#ifdef _WIN32
-PVN_LE
-#else /* !_WIN32 */
-pvn_le_
-#endif /* ?_WIN32 */
-();
+PVN_EXTERN_C int pvn_le_();
 
 static inline int pvn_omp()
 {
@@ -165,11 +153,6 @@ static inline int pvn_omp()
 #endif /* ?_OPENMP */
     ;
 }
-PVN_EXTERN_C int
-#ifdef _WIN32
-PVN_OMP
-#else /* !_WIN32 */
-pvn_omp_
-#endif /* ?_WIN32 */
-();
+PVN_EXTERN_C int pvn_omp_();
+
 #endif /* !PVN_H */
