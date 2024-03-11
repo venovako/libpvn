@@ -259,8 +259,6 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-#pragma message "DO NOT USE THE INCOMPLETE COMPLEX pvn_sv2 ROUTINES YET!!!"
-
 static inline void ef_mulf(int *const e, float *const f, const int e1, const float f1, const int e2, const float f2)
 {
   assert(e);
@@ -1934,14 +1932,12 @@ pvn_cljsv2_
              );
 
     if (tf != 0.0f) {
-      A21r = *u11r;
-      A21i = *u11i;
+      A21r = *u11r; A21i = *u11i;
       *u11r = (cf * *u11r + sf * *u21r);
       *u11i = (cf * *u11i + sf * *u21i);
       *u21r = (cf * *u21r - sf *  A21r);
       *u21i = (cf * *u21i - sf *  A21i);
-      A21r = *u12r;
-      A21i = *u12i;
+      A21r = *u12r; A21i = *u12i;
       *u12r = (cf * *u12r + sf * *u22r);
       *u12i = (cf * *u12i + sf * *u22i);
       *u22r = (cf * *u22r - sf *  A21r);
@@ -1952,18 +1948,12 @@ pvn_cljsv2_
       A21i = A21r = 0.0f;
 
     if (tp != 0.0f) {
-      /* V(ψ):
-         cos(ψ) -sin(ψ)
-         sin(ψ)  cos(ψ)
-      */
-      A21r = *v11r;
-      A21i = *v11i;
+      A21r = *v11r; A21i = *v11i;
       *v11r = (*v11r * cp + *v12r * sp);
       *v11i = (*v11i * cp + *v12i * sp);
       *v12r = (*v12r * cp -  A21r * sp);
       *v12i = (*v12i * cp -  A21i * sp);
-      A21r = *v21r;
-      A21i = *v21i;
+      A21r = *v21r; A21i = *v21i;
       *v21r = (*v21r * cp + *v22r * sp);
       *v21i = (*v21i * cp + *v22i * sp);
       *v22r = (*v22r * cp -  A21r * sp);
@@ -3236,10 +3226,489 @@ pvn_zljsv2_
   *s1 = 0.0;
   *s2 = 0.0;
 
+  /* simplify the form of A */
+  switch (knd) {
+  case  0:
+  case  1:
+  case  8:
+  case  9:
+    /* [ ? 0 ] */
+    /* [ 0 ? ] */
+    *s1 = cpolar(A11r, A11i, u11r, u11i); *u11i = -*u11i;
+    A11r = *s1; A11i = 0.0;
+    *s2 = cpolar(A22r, A22i, u22r, u22i); *u22i = -*u22i;
+    A22r = *s2; A22i = 0.0;
+    A12i = A12r = A21i = A21r = 0.0;
+    break;
+  case  2:
+  case  4:
+  case  6:
+    /* [ 0 ? ] */
+    /* [ ? 0 ] */
+    *u11r = 0.0;
+    *u22r = 0.0;
+    A11r = A21r; A11i = A21i;
+    A22r = A12r; A22i = A12i;
+    *s1 = cpolar(A11r, A11i, u12r, u12i); *u12i = -*u12i;
+    A11r = *s1; A11i = 0.0;
+    *s2 = cpolar(A22r, A22i, u21r, u21i); *u21i = -*u21i;
+    A22r = *s2; A22i = 0.0;
+    A12i = A12r = A21i = A21r = 0.0;
+    break;
+  case 12:
+    /* [ 0 * ] */
+    /* [ 0 * ] */
+    *v11r = 0.0;
+    *v21r = 1.0;
+    *v12r = 1.0;
+    *v22r = 0.0;
+    A11r = A12r; A11i = A12i;
+    A21r = A22r; A21i = A22i;
+    /* FALLTHRU */
+  case  3:
+    /* [ * 0 ] */
+    /* [ * 0 ] */
+    *s1 = cpolar(A11r, A11i, u11r, u11i); *u11i = -*u11i;
+    A11r = *s1; A11i = 0.0;
+    *s2 = cpolar(A21r, A21i, u22r, u22i); *u22i = -*u22i;
+    A21r = *s2; A21i = 0.0;
+    if (A11r < A21r) {
+      pvn_dswp(u11r, u21r);
+      pvn_dswp(u11i, u21i);
+      pvn_dswp(u22r, u12r);
+      pvn_dswp(u22i, u12i);
+      pvn_dswp(&A11r, &A21r);
+    }
+    A22i = A22r = A12i = A12r = 0.0;
+    *s1 = hypot(A11r, A21r);
+    *s2 = 0.0;
+    e = 3;
+    break;
+  case 10:
+    /* [ 0 0 ] */
+    /* [ * * ] */
+    *u11r = 0.0;
+    *u21r = 1.0;
+    *u12r = 1.0;
+    *u22r = 0.0;
+    A11r = A21r; A11i = A21i;
+    A12r = A22r; A12i = A22i;
+    /* FALLTHRU */
+  case  5:
+    /* [ * * ] */
+    /* [ 0 0 ] */
+    *s1 = cpolar(A11r, A11i, v11r, v11i); *v11i = -*v11i;
+    A11r = *s1; A11i = 0.0;
+    *s2 = cpolar(A12r, A12i, v22r, v22i); *v22i = -*v22i;
+    A12r = *s2; A12i = 0.0;
+    if (A11r < A12r) {
+      pvn_dswp(&A11r, &A12r);
+      pvn_dswp(v11r, v12r);
+      pvn_dswp(v11i, v12i);
+      pvn_dswp(v22r, v21r);
+      pvn_dswp(v22i, v21i);
+    }
+    A22i = A22r = A21i = A21r = 0.0;
+    *s1 = hypot(A11r, A12r);
+    *s2 = 0.0;
+    e = 5;
+    break;
+  case  7:
+    /* [ * * ] */
+    /* [ * 0 ] */
+    pvn_dswp(&A11r, &A12r);
+    pvn_dswp(&A11i, &A12i);
+    A22r = A21r; A22i = A21i;
+    *v11r = 0.0;
+    *v22r = 0.0;
+    *s1 = cpolar(A11r, A11i, v21r, v21i); *v21i = -*v21i;
+    A11r = *s1; A11i = 0.0;
+    *s1 = cpolar(A12r, A12i, v12r, v12i); *v12i = -*v12i;
+    A12r = *s1; A12i = 0.0;
+    pvn_zmul(&A21r, &A21i, A22r, A22i, *v12r, *v12i);
+    A22r = A21r; A22i = A21i;
+    *s2 = cpolar(A22r, A22i, u22r, u22i); *u22i = -*u22i;
+    A22r = *s2; A22i = 0.0;
+    *s2 = *s1 = A21i = A21r = 0.0;
+    e = 13;
+    break;
+  case 11:
+    /* [ * 0 ] */
+    /* [ * * ] */
+    *u11r = 0.0;
+    *u12r = 1.0;
+    *u22r = 0.0;
+    pvn_dswp(&A11r, &A22r);
+    pvn_dswp(&A11i, &A22i);
+    A12r = A21r; A12i = A21i;
+    *v11r = 0.0;
+    *v22r = 0.0;
+    *s1 = cpolar(A11r, A11i, v21r, v21i); *v21i = -*v21i;
+    A11r = *s1; A11i = 0.0;
+    *s1 = cpolar(A12r, A12i, v12r, v12i); *v12i = -*v12i;
+    A12r = *s1; A12i = 0.0;
+    pvn_zmul(&A21r, &A21i, A22r, A22i, *v12r, *v12i);
+    A22r = A21r; A22i = A21i;
+    *s2 = cpolar(A22r, A22i, u21r, u21i); *u21i = -*u21i;
+    A22r = *s2; A22i = 0.0;
+    *s2 = *s1 = A21i = A21r = 0.0;
+    e = 13;
+    break;
+  case 13:
+    /* [ * * ] */
+    /* [ 0 * ] */
+    *s1 = cpolar(A11r, A11i, v11r, v11i); *v11i = -*v11i;
+    A11r = *s1; A11i = 0.0;
+    *s1 = cpolar(A12r, A12i, v22r, v22i); *v22i = -*v22i;
+    A12r = *s1; A12i = 0.0;
+    pvn_zmul(&A21r, &A21i, A22r, A22i, *v22r, *v22i);
+    A22r = A21r; A22i = A21i;
+    *s2 = cpolar(A22r, A22i, u22r, u22i); *u22i = -*u22i;
+    A22r = *s2; A22i = 0.0;
+    *s2 = *s1 = A21i = A21r = 0.0;
+    e = 13;
+    break;
+  case 14:
+    /* [ 0 * ] */
+    /* [ * * ] */
+    *u11r = 0.0;
+    *u12r = 1.0;
+    *u22r = 0.0;
+    A11r = A21r; A11i = A21i;
+    pvn_dswp(&A12r, &A22r);
+    pvn_dswp(&A12i, &A22i);
+    *s1 = cpolar(A11r, A11i, v11r, v11i); *v11i = -*v11i;
+    A11r = *s1; A11i = 0.0;
+    *s1 = cpolar(A12r, A12i, v22r, v22i); *v22i = -*v22i;
+    A12r = *s1; A12i = 0.0;
+    pvn_zmul(&A21r, &A21i, A22r, A22i, *v22r, *v22i);
+    A22r = A21r; A22i = A21i;
+    *s2 = cpolar(A22r, A22i, u21r, u21i); *u21i = -*u21i;
+    A22r = *s2; A22i = 0.0;
+    *s2 = *s1 = A21i = A21r = 0.0;
+    e = 13;
+    break;
+  case 15:
+    /* [ * * ] */
+    /* [ * * ] */
+    e = 15;
+    break;
+  default:
+    return INT_MIN;
+  }
+
   if ((e == 13) && (A11r < A22r))
     e = -13;
 
-  /* TODO */
+#ifndef NDEBUG
+  char s[26] = { '\0' };
+#endif /* !NDEBUG */
+  double tt = 0.0, ct = 1.0, st = 0.0;
+
+  if (e == 15) {
+    double B11, B21, B12, B22, C11, C21, C12, C22, S11, S21, S12, S22;
+    B11 = cpolar(A11r, A11i, &C11, &S11); S11 = -S11;
+    B21 = cpolar(A21r, A21i, &C21, &S21); S21 = -S21;
+    B12 = cpolar(A12r, A12i, &C12, &S12); S12 = -S12;
+    B22 = cpolar(A22r, A22i, &C22, &S22); S22 = -S22;
+    *s1 = hypot(B11, B21);
+    *s2 = hypot(B12, B22);
+    if (*s1 < *s2) {
+      pvn_dswp(&A11r, &A12r);
+      pvn_dswp(&A11i, &A12i);
+      pvn_dswp(&A21r, &A22r);
+      pvn_dswp(&A21i, &A22i);
+      pvn_dswp(&B11, &B12);
+      pvn_dswp(&B21, &B22);
+      pvn_dswp(&C11, &C12);
+      pvn_dswp(&C21, &C22);
+      pvn_dswp(&S11, &S12);
+      pvn_dswp(&S21, &S22);
+      pvn_dswp(s1, s2);
+      pvn_dswp(v11r, v12r);
+      pvn_dswp(v11i, v12i);
+      pvn_dswp(v21r, v22r);
+      pvn_dswp(v21i, v22i);
+    }
+    if (B11 < B21) {
+      pvn_dswp(u11r, u21r);
+      pvn_dswp(u11i, u21i);
+      pvn_dswp(u12r, u22r);
+      pvn_dswp(u12i, u22i);
+      pvn_dswp(&A11r, &A21r);
+      pvn_dswp(&A11i, &A21i);
+      pvn_dswp(&A12r, &A22r);
+      pvn_dswp(&A12i, &A22i);
+      pvn_dswp(&B11, &B21);
+      pvn_dswp(&B12, &B22);
+      pvn_dswp(&C11, &C21);
+      pvn_dswp(&C12, &C22);
+      pvn_dswp(&S11, &S21);
+      pvn_dswp(&S12, &S22);
+    }
+    pvn_zmul(&ct, &st, C11, S11, *u11r, *u11i);
+    *u11r = ct; *u11i = st;
+    pvn_zmul(&ct, &st, C11, S11, *u12r, *u12i);
+    *u12r = ct; *u12i = st;
+    A11r = B11; A11i = 0.0;
+    pvn_zmul(&ct, &st, C11, S11, A12r, A12i);
+    A12r = ct; A12i = st;
+    pvn_zmul(&ct, &st, C21, S21, *u21r, *u21i);
+    *u21r = ct; *u21i = st;
+    pvn_zmul(&ct, &st, C21, S21, *u22r, *u22i);
+    *u22r = ct; *u22i = st;
+    A21r = B21; A21i = 0.0;
+    pvn_zmul(&ct, &st, C21, S21, A22r, A22i);
+    A22r = ct; A22i = st;
+    /* rotate */
+    tt = (A21r / A11r);
+    /* 1 / cos */
+    ct = hypot(tt, 1.0);
+    /* apply the left Givens rotation to A and U */
+    st = -tt;
+    A21r = A12r;
+    A21i = A12i;
+    if (ct == 1.0) {
+      A12r = fma(tt, A22r, A12r);
+      A12i = fma(tt, A22i, A12i);
+      A22r = fma(st, A21r, A22r);
+      A22i = fma(st, A21i, A22i);
+      A21r = *u11r;
+      A21i = *u11i;
+      *u11r = fma(tt, *u21r, *u11r);
+      *u11i = fma(tt, *u21i, *u11i);
+      *u21r = fma(st,  A21r, *u21r);
+      *u21i = fma(st,  A21i, *u21i);
+      A21r = *u12r;
+      A21i = *u12i;
+      *u12r = fma(tt, *u22r, *u12r);
+      *u12i = fma(tt, *u22i, *u12i);
+      *u22r = fma(st,  A21r, *u22r);
+      *u22i = fma(st,  A21i, *u22i);
+      st = tt;
+    }
+    else {
+      A12r = (fma(tt, A22r, A12r) / ct);
+      A12i = (fma(tt, A22i, A12i) / ct);
+      A22r = (fma(st, A21r, A22r) / ct);
+      A22i = (fma(st, A21i, A22i) / ct);
+      A21r = *u11r;
+      A21i = *u11i;
+      *u11r = (fma(tt, *u21r, *u11r) / ct);
+      *u11i = (fma(tt, *u21i, *u11i) / ct);
+      *u21r = (fma(st,  A21r, *u21r) / ct);
+      *u21i = (fma(st,  A21i, *u21i) / ct);
+      A21r = *u12r;
+      A21i = *u12i;
+      *u12r = (fma(tt, *u22r, *u12r) / ct);
+      *u12i = (fma(tt, *u22i, *u12i) / ct);
+      *u22r = (fma(st,  A21r, *u22r) / ct);
+      *u22i = (fma(st,  A21i, *u22i) / ct);
+      st = (tt / ct);
+      ct = (1.0 / ct);
+    }
+    A11r = *s1;
+    B12 = cpolar(A12r, A12i, &C12, &S12); S12 = -S12;
+    A12r = B12; A12i = 0.0;
+    pvn_zmul(&A21r, &A21i, A22r, A22i, C12, S12);
+    A22r = A21r; A22i = A21i;
+    pvn_zmul(&A21r, &A21i, *v12r, *v12i, C12, S12);
+    *v12r = A21r; *v12i = A21i;
+    pvn_zmul(&A21r, &A21i, *v22r, *v22i, C12, S12);
+    *v22r = A21r; *v22i = A21i;
+    B22 = cpolar(A22r, A22i, &C22, &S22); S22 = -S22;
+    A22r = B22; A22i = 0.0;
+    pvn_zmul(&A21r, &A21i, C22, S22, *u21r, *u21i);
+    *u21r = A21r; *u21i = A21i;
+    pvn_zmul(&A21r, &A21i, C22, S22, *u22r, *u22i);
+    *u22r = A21r; *u22i = A21i;
+    A21i = A21r = 0.0;
+    if (A12r == 0.0)
+      e = 0;
+    else if (A22r == 0.0) {
+      *s1 = hypot(*s1, *s2);
+      *s2 = 0.0;
+      e = 5;
+    }
+    else if (A11r < A22r)
+      e = -13;
+    else
+      e = 13;
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_dtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_dtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_dtoa(s, st));
+#endif /* !NDEBUG */
+  }
+
+  if (e == 3) {
+    tt = (A21r / A11r);
+    /* 1 / cos */
+    ct = hypot(tt, 1.0);
+    /* apply the left Givens rotation to U */
+    st = -tt;
+    A21r = *u11r;
+    A21i = *u11i;
+    if (ct == 1.0) {
+      *u11r = fma(tt, *u21r, *u11r);
+      *u11i = fma(tt, *u21i, *u11i);
+      *u21r = fma(st,  A21r, *u21r);
+      *u21i = fma(st,  A21i, *u21i);
+      A21r = *u12r;
+      A21i = *u12i;
+      *u12r = fma(tt, *u22r, *u12r);
+      *u12i = fma(tt, *u22i, *u12i);
+      *u22r = fma(st,  A21r, *u22r);
+      *u22i = fma(st,  A21i, *u22i);
+      st = tt;
+    }
+    else {
+      *u11r = (fma(tt, *u21r, *u11r) / ct);
+      *u11i = (fma(tt, *u21i, *u11i) / ct);
+      *u21r = (fma(st,  A21r, *u21r) / ct);
+      *u21i = (fma(st,  A21i, *u21i) / ct);
+      A21r = *u12r;
+      A21i = *u12i;
+      *u12r = (fma(tt, *u22r, *u12r) / ct);
+      *u12i = (fma(tt, *u22i, *u12i) / ct);
+      *u22r = (fma(st,  A21r, *u22r) / ct);
+      *u22i = (fma(st,  A21i, *u22i) / ct);
+      st = (tt / ct);
+      ct = (1.0 / ct);
+    }
+    A11r = *s1;
+    A21i = A21r = 0.0;
+    e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(ϑ)=%s, ", pvn_dtoa(s, tt));
+    (void)printf("cos(ϑ)=%s, ", pvn_dtoa(s, ct));
+    (void)printf("sin(ϑ)=%s\n", pvn_dtoa(s, st));
+#endif /* !NDEBUG */
+  }
+
+  if (e == 5) {
+    tt = (A12r / A11r);
+    /* 1 / cos */
+    ct = hypot(tt, 1.0);
+    /* apply the right Givens rotation to V */
+    st = -tt;
+    A12r = *v11r;
+    A12i = *v11i;
+    if (ct == 1.0) {
+      *v11r = fma(tt, *v12r, *v11r);
+      *v11i = fma(tt, *v12i, *v11i);
+      *v12r = fma(st,  A12r, *v12r);
+      *v12i = fma(st,  A12i, *v12i);
+      A12r = *v21r;
+      A12i = *v21i;
+      *v21r = fma(tt, *v22r, *v21r);
+      *v21i = fma(tt, *v22i, *v21i);
+      *v22r = fma(st,  A12r, *v22r);
+      *v22i = fma(st,  A12i, *v22i);
+      st = tt;
+    }
+    else {
+      *v11r = (fma(tt, *v12r, *v11r) / ct);
+      *v11i = (fma(tt, *v12i, *v11i) / ct);
+      *v12r = (fma(st,  A12r, *v12r) / ct);
+      *v12i = (fma(st,  A12i, *v12i) / ct);
+      A12r = *v21r;
+      A12i = *v21i;
+      *v21r = (fma(tt, *v22r, *v21r) / ct);
+      *v21i = (fma(tt, *v22i, *v21i) / ct);
+      *v22r = (fma(st,  A12r, *v22r) / ct);
+      *v22i = (fma(st,  A12i, *v22i) / ct);
+      st = (tt / ct);
+      ct = (1.0 / ct);
+    }
+    A11r = *s1;
+    A12i = A12r = 0.0;
+    e = 0;
+#ifndef NDEBUG
+    (void)printf("tan(θ)=%s, ", pvn_dtoa(s, tt));
+    (void)printf("cos(θ)=%s, ", pvn_dtoa(s, ct));
+    (void)printf("sin(θ)=%s\n", pvn_dtoa(s, st));
+#endif /* !NDEBUG */
+  }
+
+#ifndef NDEBUG
+  (void)printf("\tA =\n");
+  (void)printf("(%s,", pvn_dtoa(s, scalbn(A11r, -*es)));
+  (void)printf("%s) ", pvn_dtoa(s, scalbn(A11i, -*es)));
+  (void)printf("(%s,", pvn_dtoa(s, scalbn(A12r, -*es)));
+  (void)printf("%s)\n", pvn_dtoa(s, scalbn(A12i, -*es)));
+  (void)printf("(%s,", pvn_dtoa(s, scalbn(A21r, -*es)));
+  (void)printf("%s) ", pvn_dtoa(s, scalbn(A21i, -*es)));
+  (void)printf("(%s,", pvn_dtoa(s, scalbn(A22r, -*es)));
+  (void)printf("%s)\n", pvn_dtoa(s, scalbn(A22i, -*es)));
+#endif /* !NDEBUG */
+
+  if (abs(e) == 13) {
+    double tf = 0.0, cf = 1.0, sf = 0.0, tp = 0.0, cp = 1.0, sp = 0.0;
+    if (e == -13) {
+      double tf_ = 0.0, cf_ = 1.0, sf_ = 0.0, tp_ = 0.0, cp_ = 1.0, sp_ = 0.0;
+      dlpsv2(A22r, A12r, A11r, &tf_, &cf_, &sf_, &tp_, &cp_, &sp_, s1, s2, es
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
+      tf = (1.0 / tp_);
+      cf = sp_;
+      sf = cp_;
+      tp = (1.0 / tf_);
+      cp = sf_;
+      sp = cf_;
+    }
+    else
+      dlpsv2(A11r, A12r, A22r, &tf, &cf, &sf, &tp, &cp, &sp, s1, s2, es
+#ifndef NDEBUG
+             , s
+#endif /* !NDEBUG */
+             );
+
+    if (tf != 0.0) {
+      A21r = *u11r; A21i = *u11i;
+      *u11r = (cf * *u11r + sf * *u21r);
+      *u11i = (cf * *u11i + sf * *u21i);
+      *u21r = (cf * *u21r - sf *  A21r);
+      *u21i = (cf * *u21i - sf *  A21i);
+      A21r = *u12r; A21i = *u12i;
+      *u12r = (cf * *u12r + sf * *u22r);
+      *u12i = (cf * *u12i + sf * *u22i);
+      *u22r = (cf * *u22r - sf *  A21r);
+      *u22i = (cf * *u22i - sf *  A21i);
+      A21i = A21r = -0.0;
+    }
+    else
+      A21i = A21r = 0.0;
+
+    if (tp != 0.0) {
+      A21r = *v11r; A21i = *v11i;
+      *v11r = (*v11r * cp + *v12r * sp);
+      *v11i = (*v11i * cp + *v12i * sp);
+      *v12r = (*v12r * cp -  A21r * sp);
+      *v12i = (*v12i * cp -  A21i * sp);
+      A21r = *v21r; A21i = *v21i;
+      *v21r = (*v21r * cp + *v22r * sp);
+      *v21i = (*v21i * cp + *v22i * sp);
+      *v22r = (*v22r * cp -  A21r * sp);
+      *v22i = (*v22i * cp -  A21i * sp);
+      A21i = A21r = -0.0;
+    }
+    else
+      A21i = A21r = 0.0;
+
+    if (e == -13) {
+      *u21r = -*u21r;
+      *u21i = -*u21i;
+      *u22r = -*u22r;
+      *u22i = -*u22i;
+      *v12r = -*v12r;
+      *v12i = -*v12i;
+      *v22r = -*v22r;
+      *v22i = -*v22i;
+    }
+  }
 
   if (ef_cmp(es[1], *s1, es[2], *s2) < 0) {
     pvn_dswp(u11r, u21r);
@@ -4989,24 +5458,24 @@ int pvn_qljsv2_
     A11 = A12;
     A12 = A22;
     A22 = A21;
-    A21 = 0.0f;
-    *v11 = 0.0f;
-    *v22 = 0.0f;
-    if (A11 < 0.0f) {
+    A21 = 0.0q;
+    *v11 = 0.0q;
+    *v22 = 0.0q;
+    if (A11 < 0.0q) {
       A11 = -A11;
-      *v21 = -1.0f;
+      *v21 = -1.0q;
     }
     else
-      *v21 = 1.0f;
-    if (A12 < 0.0f) {
+      *v21 = 1.0q;
+    if (A12 < 0.0q) {
       A12 = -A12;
       A22 = -A22;
-      *v12 = -1.0f;
+      *v12 = -1.0q;
     }
     else
-      *v12 = 1.0f;
-    if (A22 < 0.0f) {
-      *u22 = -1.0f;
+      *v12 = 1.0q;
+    if (A22 < 0.0q) {
+      *u22 = -1.0q;
       A22 = -A22;
     }
     e = 13;
@@ -5073,35 +5542,35 @@ int pvn_qljsv2_
   case 11:
     /* [ * 0 ] */
     /* [ * * ] */
-    *u11 = 0.0f;
-    *u12 = 1.0f;
-    *u22 = 0.0f;
+    *u11 = 0.0q;
+    *u12 = 1.0q;
+    *u22 = 0.0q;
     A12 = A11;
     A11 = A22;
     A22 = A12;
     A12 = A21;
-    A21 = 0.0f;
-    *v11 = 0.0f;
-    *v22 = 0.0f;
-    if (A11 < 0.0f) {
+    A21 = 0.0q;
+    *v11 = 0.0q;
+    *v22 = 0.0q;
+    if (A11 < 0.0q) {
       A11 = -A11;
-      *v21 = -1.0f;
+      *v21 = -1.0q;
     }
     else
-      *v21 = 1.0f;
-    if (A12 < 0.0f) {
+      *v21 = 1.0q;
+    if (A12 < 0.0q) {
       A12 = -A12;
       A22 = -A22;
-      *v12 = -1.0f;
+      *v12 = -1.0q;
     }
     else
-      *v12 = 1.0f;
-    if (A22 < 0.0f) {
-      *u21 = -1.0f;
+      *v12 = 1.0q;
+    if (A22 < 0.0q) {
+      *u21 = -1.0q;
       A22 = -A22;
     }
     else
-      *u21 = 1.0f;
+      *u21 = 1.0q;
     e = 13;
     break;
   case 12:
@@ -5136,48 +5605,48 @@ int pvn_qljsv2_
   case 13:
     /* [ * * ] */
     /* [ 0 * ] */
-    if (A11 < 0.0f) {
+    if (A11 < 0.0q) {
       A11 = -A11;
-      *v11 = -1.0f;
+      *v11 = -1.0q;
     }
-    if (A12 < 0.0f) {
+    if (A12 < 0.0q) {
       A12 = -A12;
       A22 = -A22;
-      *v22 = -1.0f;
+      *v22 = -1.0q;
     }
-    if (A22 < 0.0f) {
-      *u22 = -1.0f;
+    if (A22 < 0.0q) {
+      *u22 = -1.0q;
       A22 = -A22;
     }
-    A21 = 0.0f;
+    A21 = 0.0q;
     e = 13;
     break;
   case 14:
     /* [ 0 * ] */
     /* [ * * ] */
-    *u11 = 0.0f;
-    *u12 = 1.0f;
-    *u22 = 0.0f;
+    *u11 = 0.0q;
+    *u12 = 1.0q;
+    *u22 = 0.0q;
     A11 = A12;
     A12 = A22;
     A22 = A11;
     A11 = A21;
-    A21 = 0.0f;
-    if (A11 < 0.0f) {
+    A21 = 0.0q;
+    if (A11 < 0.0q) {
       A11 = -A11;
-      *v11 = -1.0f;
+      *v11 = -1.0q;
     }
-    if (A12 < 0.0f) {
+    if (A12 < 0.0q) {
       A12 = -A12;
       A22 = -A22;
-      *v22 = -1.0f;
+      *v22 = -1.0q;
     }
-    if (A22 < 0.0f) {
-      *u21 = -1.0f;
+    if (A22 < 0.0q) {
+      *u21 = -1.0q;
       A22 = -A22;
     }
     else
-      *u21 = 1.0f;
+      *u21 = 1.0q;
     e = 13;
     break;
   case 15:
