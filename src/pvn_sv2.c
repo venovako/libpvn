@@ -3,16 +3,29 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if ((argc != 3) && (argc != 6)) {
-    (void)fprintf(stderr, "%s (S|D) (N | a11 a21 a12 a22)\n", *argv);
+  if (argc != 3) {
+    (void)fprintf(stderr, "%s (S|D|C|Z) N\n", *argv);
     return EXIT_FAILURE;
   }
-  if (argc == 6) {
-    if (toupper(*(argv[1])) == 'S') {
-      const float a11 = (float)atof(argv[2]);
-      const float a21 = (float)atof(argv[3]);
-      const float a12 = (float)atof(argv[4]);
-      const float a22 = (float)atof(argv[5]);
+  const char t = (char)toupper(*(argv[1]));
+  int n = atoi(argv[2]);
+  const int upper = (n < 0);
+  n = abs(n);
+  if (!n) {
+    if (t == 'S') {
+      float a11 = 0.0f, a21 = 0.0f, a12 = 0.0f, a22 = 0.0f;
+      (void)printf("G(1,1) = ");
+      if (scanf("%e", &a11) != 1)
+        return EXIT_FAILURE;
+      (void)printf("G(2,1) = ");
+      if (scanf("%e", &a21) != 1)
+        return EXIT_FAILURE;
+      (void)printf("G(1,2) = ");
+      if (scanf("%e", &a12) != 1)
+        return EXIT_FAILURE;
+      (void)printf("G(2,2) = ");
+      if (scanf("%e", &a22) != 1)
+        return EXIT_FAILURE;
       float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
       int es[3] = { 0, 0, 0 };
       const int knd = pvn_sljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
@@ -37,11 +50,20 @@ int main(int argc, char *argv[])
       (void)printf("%s ", pvn_stoa(s, s1));
       (void)printf("%s\n", pvn_stoa(s, s2));
     }
-    else if (toupper(*(argv[1])) == 'D') {
-      const double a11 = atof(argv[2]);
-      const double a21 = atof(argv[3]);
-      const double a12 = atof(argv[4]);
-      const double a22 = atof(argv[5]);
+    else if (t == 'D') {
+      double a11 = 0.0, a21 = 0.0, a12 = 0.0, a22 = 0.0;
+      (void)printf("G(1,1) = ");
+      if (scanf("%le", &a11) != 1)
+        return EXIT_FAILURE;
+      (void)printf("G(2,1) = ");
+      if (scanf("%le", &a21) != 1)
+        return EXIT_FAILURE;
+      (void)printf("G(1,2) = ");
+      if (scanf("%le", &a12) != 1)
+        return EXIT_FAILURE;
+      (void)printf("G(2,2) = ");
+      if (scanf("%le", &a22) != 1)
+        return EXIT_FAILURE;
       double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
       int es[3] = { 0, 0, 0 };
       const int knd = pvn_dljsv2_(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es);
@@ -66,15 +88,14 @@ int main(int argc, char *argv[])
       (void)printf("%s ", pvn_dtoa(s, s1));
       (void)printf("%s\n", pvn_dtoa(s, s2));
     }
+    else if (t == 'C') {
+    }
+    else if (t == 'Z') {
+    }
     else
       return EXIT_FAILURE;
   }
   else {
-    int n = atoi(argv[2]);
-    if (!n)
-      return EXIT_SUCCESS;
-    const int upper = (n < 0);
-    n = abs(n);
     int u = pvn_ran_open_();
     if (u < 0) {
       (void)fprintf(stderr, "open(/dev/random): %d\n", u);
@@ -86,7 +107,7 @@ int main(int argc, char *argv[])
     char s[46] = { '\0' };
 #endif /* ?__x86_64__ */
     long double EC = 0.0L, EU = 0.0L, EV = 0.0L, EG = 0.0L;
-    if (toupper(*(argv[1])) == 'S') {
+    if (t == 'S') {
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(n,s,u,upper) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
@@ -148,7 +169,7 @@ int main(int argc, char *argv[])
 #endif /* !NDEBUG */
       }
     }
-    else if (toupper(*(argv[1])) == 'D') {
+    else if (t == 'D') {
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(n,s,u,upper) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
@@ -210,6 +231,10 @@ int main(int argc, char *argv[])
 #endif /* !NDEBUG */
       }
     }
+    else if (t == 'C') {
+    }
+    else if (t == 'Z') {
+    }
     else
       return EXIT_FAILURE;
     u = pvn_ran_close_(&u);
@@ -218,19 +243,19 @@ int main(int argc, char *argv[])
 #endif /* !NDEBUG */
     (void)printf("%s", pvn_xtoa(s, EC));
 #ifndef NDEBUG
-    (void)printf("\nmax(|| U^T U - I ||_F)=");
+    (void)printf("\nmax(|| U^%c U - I ||_F)=", (((t == 'C') || (t == 'Z')) ? 'H' : 'T'));
 #else /* NDEBUG */
     (void)putchar(',');
 #endif /* ?NDEBUG */
     (void)printf("%s", pvn_xtoa(s, EU));
 #ifndef NDEBUG
-    (void)printf("\nmax(|| V^T V - I ||_F)=");
+    (void)printf("\nmax(|| V^%c V - I ||_F)=", (((t == 'C') || (t == 'Z')) ? 'H' : 'T'));
 #else /* NDEBUG */
     (void)putchar(',');
 #endif /* ?NDEBUG */
     (void)printf("%s", pvn_xtoa(s, EV));
 #ifndef NDEBUG
-    (void)printf("\nmax(|| U Σ V^T - G ||_F / || G ||_F)=");
+    (void)printf("\nmax(|| U Σ V^%c - G ||_F / || G ||_F)=", (((t == 'C') || (t == 'Z')) ? 'H' : 'T'));
 #else /* NDEBUG */
     (void)putchar(',');
 #endif /* ?NDEBUG */
@@ -3713,11 +3738,13 @@ int pvn_zljsv2_
   long double T12 = T21;                                        \
   long double T22 = fmal(u12l, u12l, fmal(u22l, u22l, -1.0L));  \
   E[1] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
+  /* V^T V - I */                                               \
   T11 = fmal(v11l, v11l, fmal(v21l, v21l, -1.0L));              \
   T21 = fmal(v12l, v11l, v22l * v21l);                          \
   T12 = T21;                                                    \
   T22 = fmal(v12l, v12l, fmal(v22l, v22l, -1.0L));              \
   E[2] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
+  /* U Σ V^T - G */                                             \
   u11l *= s1l;                                                  \
   u21l *= s1l;                                                  \
   u12l *= s2l;                                                  \
@@ -3777,7 +3804,7 @@ void pvn_dxljr2_
     S2 = scalbnl(*s2, es[2] - es[0]);                                \
   /* cond_2(G) */                                                    \
   E[0] = fminl((S1 / S2), INFINITY);                                 \
-  /* U^T U - I */                                                    \
+  /* U^H U - I */                                                    \
   long double T11r = -1.0L, T11i = 0.0L;                             \
   pvn_wfma(&T11r, &T11i, U21r, U21i, U21r, U21i, T11r, T11i);        \
   pvn_wfma(&T11r, &T11i, U11r, U11i, U11r, U11i, T11r, T11i);        \
@@ -3790,6 +3817,7 @@ void pvn_dxljr2_
   pvn_wfma(&T22r, &T22i, U12r, U12i, U12r, U12i, T22r, T22i);        \
   E[1] = hypotl(hypotl(hypotl(T11r, T11i), hypotl(T21r, T21i)),      \
                 hypotl(hypotl(T12r, T12i), hypotl(T22r, T22i)));     \
+  /* V^H V -I */                                                     \
   pvn_wfma(&T11r, &T11i, V21r, V21i, V21r, V21i, -1.0L, 0.0L);       \
   pvn_wfma(&T11r, &T11i, V11r, V11i, V11r, V11i, T11r, T11i);        \
   pvn_wmul(&T21r, &T21i, V22r, V22i, V21r, V21i);                    \
@@ -3799,6 +3827,7 @@ void pvn_dxljr2_
   pvn_wfma(&T22r, &T22i, V12r, V12i, V12r, V12i, T22r, T22i);        \
   E[2] = hypotl(hypotl(hypotl(T11r, T11i), hypotl(T21r, T21i)),      \
                 hypotl(hypotl(T12r, T12i), hypotl(T22r, T22i)));     \
+  /* U Σ V^H - G */                                                  \
   U11r *= S1; U11i *= S1;                                            \
   U21r *= S1; U21i *= S1;                                            \
   U12r *= S2; U12i *= S2;                                            \
