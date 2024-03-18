@@ -4156,25 +4156,28 @@ void pvn_dxljr2_
   E[0] = fminl((S1 / S2), INFINITY);                                 \
   /* U^H U - I */                                                    \
   long double T11r = -1.0L, T11i = 0.0L;                             \
-  pvn_wfma(&T11r, &T11i, U21r, U21i, U21r, U21i, T11r, T11i);        \
-  pvn_wfma(&T11r, &T11i, U11r, U11i, U11r, U11i, T11r, T11i);        \
+  pvn_wfma(&T11r, &T11i, U21r, -U21i, U21r, U21i, T11r, T11i);       \
+  pvn_wfma(&T11r, &T11i, U11r, -U11i, U11r, U11i, T11r, T11i);       \
   long double T21r = 0.0L, T21i = 0.0L;                              \
-  pvn_wmul(&T21r, &T21i, U22r, U22i, U21r, U21i);                    \
-  pvn_wfma(&T21r, &T21i, U12r, U12i, U11r, U11i, T21r, T21i);        \
-  long double T12r = T21r, T12i = T21i;                              \
+  pvn_wmul(&T21r, &T21i, U22r, -U22i, U21r, U21i);                   \
+  pvn_wfma(&T21r, &T21i, U12r, -U12i, U11r, U11i, T21r, T21i);       \
+  long double T12r = 0.0L, T12i = 0.0L;                              \
+  pvn_wmul(&T12r, &T12i, U21r, -U21i, U22r, U22i);                   \
+  pvn_wfma(&T12r, &T12i, U11r, -U11i, U12r, U12i, T12r, T12i);       \
   long double T22r = -1.0L, T22i = 0.0L;                             \
-  pvn_wfma(&T22r, &T22i, U22r, U22i, U22r, U22i, T22r, T22i);        \
-  pvn_wfma(&T22r, &T22i, U12r, U12i, U12r, U12i, T22r, T22i);        \
+  pvn_wfma(&T22r, &T22i, U22r, -U22i, U22r, U22i, T22r, T22i);       \
+  pvn_wfma(&T22r, &T22i, U12r, -U12i, U12r, U12i, T22r, T22i);       \
   E[1] = hypotl(hypotl(hypotl(T11r, T11i), hypotl(T21r, T21i)),      \
                 hypotl(hypotl(T12r, T12i), hypotl(T22r, T22i)));     \
   /* V^H V -I */                                                     \
-  pvn_wfma(&T11r, &T11i, V21r, V21i, V21r, V21i, -1.0L, 0.0L);       \
-  pvn_wfma(&T11r, &T11i, V11r, V11i, V11r, V11i, T11r, T11i);        \
-  pvn_wmul(&T21r, &T21i, V22r, V22i, V21r, V21i);                    \
-  pvn_wfma(&T21r, &T21r, V12r, V12i, V11r, V11i, T21r, T21i);        \
-  T12r = T21r; T12i = T21i;                                          \
-  pvn_wfma(&T22r, &T22i, V22r, V22i, V22r, V22i, -1.0L, 0.0L);       \
-  pvn_wfma(&T22r, &T22i, V12r, V12i, V12r, V12i, T22r, T22i);        \
+  pvn_wfma(&T11r, &T11i, V21r, -V21i, V21r, V21i, -1.0L, 0.0L);      \
+  pvn_wfma(&T11r, &T11i, V11r, -V11i, V11r, V11i, T11r, T11i);       \
+  pvn_wmul(&T21r, &T21i, V22r, -V22i, V21r, V21i);                   \
+  pvn_wfma(&T21r, &T21i, V12r, -V12i, V11r, V11i, T21r, T21i);       \
+  pvn_wmul(&T12r, &T12i, V21r, -V21i, V22r, V22i);                   \
+  pvn_wfma(&T12r, &T12i, V11r, -V11i, V12r, V12i, T12r, T12i);       \
+  pvn_wfma(&T22r, &T22i, V22r, -V22i, V22r, V22i, -1.0L, 0.0L);      \
+  pvn_wfma(&T22r, &T22i, V12r, -V12i, V12r, V12i, T22r, T22i);       \
   E[2] = hypotl(hypotl(hypotl(T11r, T11i), hypotl(T21r, T21i)),      \
                 hypotl(hypotl(T12r, T12i), hypotl(T22r, T22i)));     \
   /* U Σ V^H - G */                                                  \
@@ -4182,6 +4185,7 @@ void pvn_dxljr2_
   U21r *= S1; U21i *= S1;                                            \
   U12r *= S2; U12i *= S2;                                            \
   U22r *= S2; U22i *= S2;                                            \
+  V11i = -V11i; V21i = -V21i; V12i = -V12i; V22i = -V22i;            \
   E[3] = hypotl(hypotl(hypotl(*a11r, *a11i), hypotl(*a21r, *a21i)),  \
                 hypotl(hypotl(*a12r, *a12i), hypotl(*a22r, *a22i))); \
   pvn_wfma(&T11r, &T11i, U12r, U12i, V12r, V12i, -*a11r, -*a11i);    \
@@ -6042,25 +6046,28 @@ void pvn_xqljr2_
   E[0] = fminq((S1 / S2), INFINITY);                                 \
   /* U^H U - I */                                                    \
   __float128 T11r = -1.0q, T11i = 0.0q;                              \
-  pvn_yfma(&T11r, &T11i, U21r, U21i, U21r, U21i, T11r, T11i);        \
-  pvn_yfma(&T11r, &T11i, U11r, U11i, U11r, U11i, T11r, T11i);        \
+  pvn_yfma(&T11r, &T11i, U21r, -U21i, U21r, U21i, T11r, T11i);       \
+  pvn_yfma(&T11r, &T11i, U11r, -U11i, U11r, U11i, T11r, T11i);       \
   __float128 T21r = 0.0q, T21i = 0.0q;                               \
-  pvn_ymul(&T21r, &T21i, U22r, U22i, U21r, U21i);                    \
-  pvn_yfma(&T21r, &T21i, U12r, U12i, U11r, U11i, T21r, T21i);        \
-  __float128 T12r = T21r, T12i = T21i;                               \
+  pvn_ymul(&T21r, &T21i, U22r, -U22i, U21r, U21i);                   \
+  pvn_yfma(&T21r, &T21i, U12r, -U12i, U11r, U11i, T21r, T21i);       \
+  __float128 T12r = 0.0q, T12i = 0.0q;                               \
+  pvn_ymul(&T12r, &T12i, U21r, -U21i, U22r, U22i);                   \
+  pvn_yfma(&T12r, &T12i, U11r, -U11i, U12r, U12i, T12r, T12i);       \
   __float128 T22r = -1.0q, T22i = 0.0q;                              \
-  pvn_yfma(&T22r, &T22i, U22r, U22i, U22r, U22i, T22r, T22i);        \
-  pvn_yfma(&T22r, &T22i, U12r, U12i, U12r, U12i, T22r, T22i);        \
+  pvn_yfma(&T22r, &T22i, U22r, -U22i, U22r, U22i, T22r, T22i);       \
+  pvn_yfma(&T22r, &T22i, U12r, -U12i, U12r, U12i, T22r, T22i);       \
   E[1] = hypotq(hypotq(hypotq(T11r, T11i), hypotq(T21r, T21i)),      \
                 hypotq(hypotq(T12r, T12i), hypotq(T22r, T22i)));     \
   /* V^H V -I */                                                     \
-  pvn_yfma(&T11r, &T11i, V21r, V21i, V21r, V21i, -1.0q, 0.0q);       \
-  pvn_yfma(&T11r, &T11i, V11r, V11i, V11r, V11i, T11r, T11i);        \
-  pvn_ymul(&T21r, &T21i, V22r, V22i, V21r, V21i);                    \
-  pvn_yfma(&T21r, &T21r, V12r, V12i, V11r, V11i, T21r, T21i);        \
-  T12r = T21r; T12i = T21i;                                          \
-  pvn_yfma(&T22r, &T22i, V22r, V22i, V22r, V22i, -1.0q, 0.0q);       \
-  pvn_yfma(&T22r, &T22i, V12r, V12i, V12r, V12i, T22r, T22i);        \
+  pvn_yfma(&T11r, &T11i, V21r, -V21i, V21r, V21i, -1.0q, 0.0q);      \
+  pvn_yfma(&T11r, &T11i, V11r, -V11i, V11r, V11i, T11r, T11i);       \
+  pvn_ymul(&T21r, &T21i, V22r, -V22i, V21r, V21i);                   \
+  pvn_yfma(&T21r, &T21i, V12r, -V12i, V11r, V11i, T21r, T21i);       \
+  pvn_ymul(&T12r, &T12i, V21r, -V21i, V22r, V22i);                   \
+  pvn_yfma(&T12r, &T12i, V11r, -V11i, V12r, V12i, T12r, T12i);       \
+  pvn_yfma(&T22r, &T22i, V22r, -V22i, V22r, V22i, -1.0q, 0.0q);      \
+  pvn_yfma(&T22r, &T22i, V12r, -V12i, V12r, V12i, T22r, T22i);       \
   E[2] = hypotq(hypotq(hypotq(T11r, T11i), hypotq(T21r, T21i)),      \
                 hypotq(hypotq(T12r, T12i), hypotq(T22r, T22i)));     \
   /* U Σ V^H - G */                                                  \
@@ -6068,6 +6075,7 @@ void pvn_xqljr2_
   U21r *= S1; U21i *= S1;                                            \
   U12r *= S2; U12i *= S2;                                            \
   U22r *= S2; U22i *= S2;                                            \
+  V11i = -V11i; V21i = -V21i; V12i = -V12i; V22i = -V22i;            \
   E[3] = hypotq(hypotq(hypotq(*a11r, *a11i), hypotq(*a21r, *a21i)),  \
                 hypotq(hypotq(*a12r, *a12i), hypotq(*a22r, *a22i))); \
   pvn_yfma(&T11r, &T11i, U12r, U12i, V12r, V12i, -*a11r, -*a11i);    \
