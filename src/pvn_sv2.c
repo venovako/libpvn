@@ -1754,7 +1754,7 @@ int pvn_cljsv2_
   case  6:
   case  8:
   case  9:
-    e = 0;
+    e = (FLT_MAX_EXP - mxe - 1);
     break;
   case  3:
   case  5:
@@ -1853,6 +1853,7 @@ int pvn_cljsv2_
     *s2 = cpolarf(A22r, A22i, u22r, u22i); *u22i = -*u22i;
     A22r = *s2; A22i = 0.0f;
     A12i = A12r = A21i = A21r = 0.0f;
+    e = 0;
     break;
   case  2:
   case  4:
@@ -1868,6 +1869,7 @@ int pvn_cljsv2_
     *s2 = cpolarf(A22r, A22i, u21r, u21i); *u21i = -*u21i;
     A22r = *s2; A22i = 0.0f;
     A12i = A12r = A21i = A21r = 0.0f;
+    e = 0;
     break;
   case 12:
     /* [ 0 * ] */
@@ -3461,7 +3463,7 @@ int pvn_zljsv2_
   case  6:
   case  8:
   case  9:
-    e = 0;
+    e = (DBL_MAX_EXP - mxe - 1);
     break;
   case  3:
   case  5:
@@ -3560,6 +3562,7 @@ int pvn_zljsv2_
     *s2 = cpolar(A22r, A22i, u22r, u22i); *u22i = -*u22i;
     A22r = *s2; A22i = 0.0;
     A12i = A12r = A21i = A21r = 0.0;
+    e = 0;
     break;
   case  2:
   case  4:
@@ -3575,6 +3578,7 @@ int pvn_zljsv2_
     *s2 = cpolar(A22r, A22i, u21r, u21i); *u21i = -*u21i;
     A22r = *s2; A22i = 0.0;
     A12i = A12r = A21i = A21r = 0.0;
+    e = 0;
     break;
   case 12:
     /* [ 0 * ] */
@@ -5339,7 +5343,7 @@ int pvn_wljsv2_
   case  6:
   case  8:
   case  9:
-    e = 0;
+    e = (LDBL_MAX_EXP - mxe - 1);
     break;
   case  3:
   case  5:
@@ -5438,6 +5442,7 @@ int pvn_wljsv2_
     *s2 = cpolarl(A22r, A22i, u22r, u22i); *u22i = -*u22i;
     A22r = *s2; A22i = 0.0L;
     A12i = A12r = A21i = A21r = 0.0L;
+    e = 0;
     break;
   case  2:
   case  4:
@@ -5453,6 +5458,7 @@ int pvn_wljsv2_
     *s2 = cpolarl(A22r, A22i, u21r, u21i); *u21i = -*u21i;
     A22r = *s2; A22i = 0.0L;
     A12i = A12r = A21i = A21r = 0.0L;
+    e = 0;
     break;
   case 12:
     /* [ 0 * ] */
@@ -7237,7 +7243,7 @@ int pvn_yljsv2_
   case  6:
   case  8:
   case  9:
-    e = 0;
+    e = (FLT128_MAX_EXP - mxe - 1);
     break;
   case  3:
   case  5:
@@ -7336,6 +7342,7 @@ int pvn_yljsv2_
     *s2 = cpolarq(A22r, A22i, u22r, u22i); *u22i = -*u22i;
     A22r = *s2; A22i = 0.0q;
     A12i = A12r = A21i = A21r = 0.0q;
+    e = 0;
     break;
   case  2:
   case  4:
@@ -7351,6 +7358,7 @@ int pvn_yljsv2_
     *s2 = cpolarq(A22r, A22i, u21r, u21i); *u21i = -*u21i;
     A22r = *s2; A22i = 0.0q;
     A12i = A12r = A21i = A21r = 0.0q;
+    e = 0;
     break;
   case 12:
     /* [ 0 * ] */
