@@ -5,15 +5,12 @@
 #error pvn_lock.h not intended for direct inclusion
 #endif /* !PVN_H */
 
-typedef struct {
-  pthread_mutex_t mutex;
-  volatile sig_atomic_t count;
-  int mutex_type;
-} pvn_lock_t;
+typedef pthread_mutex_t pvn_lock_t;
 
-PVN_EXTERN_C void pvn_lock_init(pvn_lock_t *const, const bool);
-PVN_EXTERN_C void pvn_lock_destroy(pvn_lock_t *const);
-PVN_EXTERN_C sig_atomic_t pvn_lock(pvn_lock_t *const);
-PVN_EXTERN_C sig_atomic_t pvn_unlock(pvn_lock_t *const);
+PVN_EXTERN_C size_t pvn_lock_size_(size_t *const);
+PVN_EXTERN_C int pvn_lock_init_(pvn_lock_t *const);
+PVN_EXTERN_C int pvn_lock_destroy_(pvn_lock_t *const);
+PVN_EXTERN_C int pvn_lock_(pvn_lock_t *const);
+PVN_EXTERN_C int pvn_unlock_(pvn_lock_t *const);
 
 #endif /* !PVN_LOCK_H */
