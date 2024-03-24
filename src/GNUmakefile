@@ -62,6 +62,9 @@ CR_SRCS= \
 ../inc/rsqrt_noerrno.c
 CR_OBJS=$(CR_SRCS:.c=.o)
 endif # ?CR_MATH
+ifdef PROFILE
+CFLAGS += -DPVN_PROFILE="\"$(PROFILE)\"" -fno-inline -finstrument-functions
+endif # PROFILE
 
 SRCS=pvn.c  \
 pvn_aux.c   \
@@ -78,11 +81,12 @@ pvn_nrm.c   \
 pvn_ran.c   \
 pvn_sv2.c   \
 pvn_error.c \
+pvn_prof.c  \
 pvn_lock.c  \
 pvn_timer.c
 
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
-LIBS=libpvn.a
+LIBS=libpvn$(PROFILE).a
 EXES=$(SRCS:.c=.exe)
 
 .PHONY: all help clean
@@ -90,20 +94,20 @@ EXES=$(SRCS:.c=.exe)
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [PROFILE=...] [all|clean|help]"
 
-libpvn.a: $(OBJS)
+libpvn$(PROFILE).a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 # not for Darwin
-libpvn.so: $(OBJS)
+libpvn$(PROFILE).so: $(OBJS)
 	ld -shared -o $@ $(OBJS)
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.exe : %.c
-	$(CC) $(CFLAGS) -DPVN_TEST $< -o $@ -L. $(ROPT) -lpvn $(LDFLAGS)
+	$(CC) $(CFLAGS) -DPVN_TEST $< -o $@ -L. -lpvn$(PROFILE) $(LDFLAGS)
 
 clean:
 	-$(RM) *.exe

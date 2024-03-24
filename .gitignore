@@ -62,4 +62,7 @@ dkms.conf
 *.png
 
 # Other
+*.bt
+*.pt
+*.st
 src/phi.mk

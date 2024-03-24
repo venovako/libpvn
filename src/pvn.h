@@ -47,12 +47,14 @@
 #endif /* ?__cplusplus */
 
 #include <stdalign.h>
+#include <dlfcn.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <execinfo.h>
 #include <pthread.h>
+#include <search.h>
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -69,6 +71,16 @@
 #else /* PVN_EXTERN_C */
 #error PVN_EXTERN_C already defined
 #endif /* ?PVN_EXTERN_C */
+
+#ifndef PVN_NO_PROF
+#ifdef PVN_PROFILE
+#define PVN_NO_PROF __attribute__((no_instrument_function))
+#else /* !PVN_PROFILE */
+#define PVN_NO_PROF
+#endif /* ?PVN_PROFILE */
+#else /* PVN_NO_PROF */
+#error PVN_NO_PROF already defined
+#endif /* ?PVN_NO_PROF */
 
 /* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
@@ -134,6 +146,7 @@ static inline __float128 rsqrtq(__float128 x)
 #include "pvn_sv2.h"
 #include "pvn_error.h"
 #include "pvn_lock.h"
+#include "pvn_prof.h"
 #include "pvn_timer.h"
 
 static inline int pvn_le()
