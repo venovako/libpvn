@@ -4,19 +4,32 @@
 int main(/* int argc, char *argv[] */)
 {
 #ifdef PVN_PROFILE
-  (void)printf("PVN_PROFILE=%s\n", PVN_PROFILE);
+  (void)printf("PVN_PROFILE=%u\n", PVN_PROFILE);
 #endif /* PVN_PROFILE */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
 #ifdef PVN_PROFILE
+#if (PVN_PROFILE > 0u)
 static pthread_mutex_t prof_lock = PTHREAD_MUTEX_INITIALIZER;
+#ifndef PVN_THREAD
+#define PVN_THREAD __thread
+#else /* PVN_THREAD */
+#error PVN_THREAD already defined
+#endif /* ?PVN_THREAD */
+#else /* PVN_PROFILE == 0u */
+#ifndef PVN_THREAD
+#define PVN_THREAD
+#else /* PVN_THREAD */
+#error PVN_THREAD already defined
+#endif /* ?PVN_THREAD */
+#endif /* ?PVN_PROFILE */
 static void (*on_exit_ptr)(void) = (void (*)(void))NULL;
 static void *bt_root = NULL;
 static FILE *bt_file = (FILE*)NULL;
 static FILE *st_file = (FILE*)NULL;
-static __thread char file_name[20];
-static __thread FILE *prof_file = (FILE*)NULL;
+static PVN_THREAD char file_name[20];
+static PVN_THREAD FILE *prof_file = (FILE*)NULL;
 
 #ifndef PVN_PROFILE_TIMEREF
 #ifdef CLOCK_MONOTONIC_RAW
@@ -79,10 +92,12 @@ static void PVN_NO_PROF bt_destroy()
 /* It is assumed that atexit() handlers are called when exactly one thread of the process has remained running. */
 static void PVN_NO_PROF on_prog_exit()
 {
+#if (PVN_PROFILE > 0u)
   if (pthread_mutex_lock(&prof_lock)) {
     pflerror(__FILE__, __LINE__);
     return;
   }
+#endif /* PVN_PROFILE */
   file_name[17] = 's';
   if (!(st_file = fopen(file_name, "wb"))) {
     pflerror(__FILE__, __LINE__);
@@ -102,21 +117,27 @@ static void PVN_NO_PROF on_prog_exit()
   if (fflush((FILE*)NULL))
     pflerror(__FILE__, __LINE__);
   bt_destroy();
+#if (PVN_PROFILE > 0u)
   if (pthread_mutex_unlock(&prof_lock))
     pflerror(__FILE__, __LINE__);
   if (pthread_mutex_destroy(&prof_lock))
     pflerror(__FILE__, __LINE__);
+#endif /* PVN_PROFILE */
 }
 
 static int PVN_NO_PROF bt_insert(void *const addr)
 {
+#if (PVN_PROFILE > 0u)
   if (pthread_mutex_lock(&prof_lock)) {
     pflerror(__FILE__, __LINE__);
     return 1;
   }
+#endif /* PVN_PROFILE */
   pvn_addr_rec_t **const node = (pvn_addr_rec_t**)tsearch((const void*)&addr, &bt_root, bt_comp);
+#if (PVN_PROFILE > 0u)
   if (pthread_mutex_unlock(&prof_lock))
     pflerror(__FILE__, __LINE__);
+#endif /* PVN_PROFILE */
   if (!node) {
     pflerror(__FILE__, __LINE__);
     return 2;
@@ -143,14 +164,18 @@ static int PVN_NO_PROF bt_insert(void *const addr)
     (void)strcpy(ar->sym, (info.dli_sname ? info.dli_sname : ""));
     (ar->sym)[ar->fof] = '\n';
     (ar->sym)[ar->fof + 1] = '\0';
+#if (PVN_PROFILE > 0u)
     if (pthread_mutex_lock(&prof_lock)) {
       free(ar->sym);
       pflerror(__FILE__, __LINE__);
       goto bt_err;
     }
+#endif /* PVN_PROFILE */
     *node = ar;
+#if (PVN_PROFILE > 0u)
     if (pthread_mutex_unlock(&prof_lock))
       pflerror(__FILE__, __LINE__);
+#endif /* PVN_PROFILE */
   }
   return 0;
  bt_err:
@@ -170,18 +195,22 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
       pflerror(__FILE__, __LINE__);
       return;
     }
+#if (PVN_PROFILE > 0u)
     if (pthread_mutex_lock(&prof_lock)) {
       pflerror(__FILE__, __LINE__);
       return;
     }
+#endif /* PVN_PROFILE */
     if (!on_exit_ptr) {
       if (atexit(on_prog_exit))
         pflerror(__FILE__, __LINE__);
       else
         on_exit_ptr = on_prog_exit;
     }
+#if (PVN_PROFILE > 0u)
     if (pthread_mutex_unlock(&prof_lock))
       pflerror(__FILE__, __LINE__);
+#endif /* PVN_PROFILE */
   }
 
   if (bt_insert(this_fn))
