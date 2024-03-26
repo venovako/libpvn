@@ -49,11 +49,11 @@ static int PVN_NO_PROF bt_comp(const void *a, const void *b)
 {
   if (a == b)
     return 0;
-  const uintptr_t A = (uintptr_t)(((const pvn_addr_rec_t*)a)->addr);
-  const uintptr_t B = (uintptr_t)(((const pvn_addr_rec_t*)b)->addr);
-  if (A < B)
+  const void *const *const A = (const void *const *)a;
+  const void *const *const B = (const void *const *)b;
+  if (*A < *B)
     return -1;
-  if (B < A)
+  if (*B < *A)
     return 1;
   return 0;
 }
@@ -125,63 +125,63 @@ static void PVN_NO_PROF on_prog_exit()
 #endif /* PVN_PROFILE */
 }
 
-static int PVN_NO_PROF bt_insert(void *const addr)
+static int PVN_NO_PROF bt_insert(void *addr)
 {
+  if (!addr) {
+    pflerror(__FILE__, __LINE__);
+    return -1;
+  }
 #if (PVN_PROFILE > 0u)
   if (pthread_mutex_lock(&prof_lock)) {
     pflerror(__FILE__, __LINE__);
-    return 1;
+    return -2;
   }
 #endif /* PVN_PROFILE */
-  pvn_addr_rec_t **const node = (pvn_addr_rec_t**)tsearch((const void*)&addr, &bt_root, bt_comp);
-#if (PVN_PROFILE > 0u)
-  if (pthread_mutex_unlock(&prof_lock))
-    pflerror(__FILE__, __LINE__);
-#endif /* PVN_PROFILE */
-  if (!node) {
-    pflerror(__FILE__, __LINE__);
-    return 2;
-  }
-  if ((const void*)*node == (const void*)&addr) {
+  int r = 0;
+  pvn_addr_rec_t **node = (pvn_addr_rec_t**)tfind((const void*)&addr, &bt_root, bt_comp);
+  if (node)
+    r = 1;
+  else {
     Dl_info info;
-    if (addr && !dladdr(addr, (Dl_info*)memset(&info, 0, sizeof(info)))) {
+    if (!dladdr(addr, (Dl_info*)memset(&info, 0, sizeof(info)))) {
       pflerror(__FILE__, __LINE__);
-      goto bt_err;
+      r = -3;
     }
-    /* replace the node's value with a pointer to a dynamically allocated struct */
-    pvn_addr_rec_t *const ar = (pvn_addr_rec_t*)malloc(sizeof(pvn_addr_rec_t));
-    if (!ar) {
-      pflerror(__FILE__, __LINE__);
-      goto bt_err;
+    else {
+      pvn_addr_rec_t *const ar = (pvn_addr_rec_t*)malloc(sizeof(pvn_addr_rec_t));
+      if (!ar) {
+        pflerror(__FILE__, __LINE__);
+        r = -4;
+      }
+      else {
+        ar->addr = addr = info.dli_saddr;
+        ar->fof = (long)(info.dli_sname ? strlen(info.dli_sname) : (size_t)0u);
+        if (!(ar->sym = (char*)malloc(ar->fof + 2))) {
+          free(ar);
+          pflerror(__FILE__, __LINE__);
+          r = -5;
+        }
+        else {
+          (void)strcpy(ar->sym, (info.dli_sname ? info.dli_sname : ""));
+          (ar->sym)[ar->fof] = '\n';
+          (ar->sym)[ar->fof + 1] = '\0';
+          if (!(node = (pvn_addr_rec_t**)tsearch((const void*)ar, &bt_root, bt_comp))) {
+            free(ar->sym);
+            free(ar);
+            pflerror(__FILE__, __LINE__);
+            r = -6;
+          }
+        }
+      }
     }
-    ar->addr = addr;
-    ar->off = (info.dli_saddr ? ((uintptr_t)addr - (uintptr_t)(info.dli_saddr)) : (uintptr_t)0u);
-    ar->fof = (long)(info.dli_sname ? strlen(info.dli_sname) : (size_t)0u);
-    if (!(ar->sym = (char*)malloc(ar->fof + 2))) {
-      pflerror(__FILE__, __LINE__);
-      goto bt_err;
-    }
-    (void)strcpy(ar->sym, (info.dli_sname ? info.dli_sname : ""));
-    (ar->sym)[ar->fof] = '\n';
-    (ar->sym)[ar->fof + 1] = '\0';
-#if (PVN_PROFILE > 0u)
-    if (pthread_mutex_lock(&prof_lock)) {
-      free(ar->sym);
-      pflerror(__FILE__, __LINE__);
-      goto bt_err;
-    }
-#endif /* PVN_PROFILE */
-    *node = ar;
-#if (PVN_PROFILE > 0u)
-    if (pthread_mutex_unlock(&prof_lock))
-      pflerror(__FILE__, __LINE__);
-#endif /* PVN_PROFILE */
   }
-  return 0;
- bt_err:
-  if (!tdelete(&addr, &bt_root, bt_comp))
+#if (PVN_PROFILE > 0u)
+  if (pthread_mutex_unlock(&prof_lock)) {
     pflerror(__FILE__, __LINE__);
-  return 3;
+    r = -7;
+  }
+#endif /* PVN_PROFILE */
+  return r;
 }
 
 PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void *const call_site)
@@ -213,9 +213,7 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
 #endif /* PVN_PROFILE */
   }
 
-  if (bt_insert(this_fn))
-    return;
-  if (bt_insert(call_site))
+  if (bt_insert(this_fn) < 0)
     return;
 
   pvn_prof_rec_t pr;

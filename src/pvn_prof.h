@@ -13,7 +13,6 @@ typedef struct {
 
 typedef struct {
   void *addr;
-  uintptr_t off;
   long fof;
   char *sym;
 } pvn_addr_rec_t;
