@@ -50,6 +50,7 @@ static ssize_t proct()
 #endif /* !NDEBUG */
   qsort(addrs, addrc, sizeof(pvn_addr_rec_t), addr_cmp);
   PVN_SYSP_CALL(profs = (pvn_prof_rec_x*)calloc((size_t)1u, sizeof(pvn_prof_rec_x)));
+  ssize_t max_level = (ssize_t)0;
   for (size_t level = 0u; fread((profs + profc), sizeof(pvn_prof_rec_t), (size_t)1u, pt) == (size_t)1u; ) {
     if (profs[profc].call_site) {
       pvn_addr_rec_t *addr = (addrs + addrc);
@@ -65,13 +66,17 @@ static ssize_t proct()
           profs[i].tns = (profs[profc].tns - profs[i].tns);
           break;
         }
-        if (!i)
-          return -(ssize_t)(profc + 1u);
+        if (!i) {
+          max_level = -(ssize_t)(profc + 1u);
+          goto cleanup;
+        }
       }
       --level;
     }
-    else
-      return (ssize_t)-1;
+    else {
+      max_level = (ssize_t)-1;
+      goto cleanup;
+    }
   }
 #ifndef NDEBUG
   profs[profc].this_fn = NULL;
@@ -79,15 +84,25 @@ static ssize_t proct()
   profs[profc].tns = 0l;
   profs[profc].level = (size_t)0u;
 #endif /* !NDEBUG */
-  ssize_t max_level = (ssize_t)0;
   for (size_t i = 0u; i < profc; ++i) {
     if ((ssize_t)(profs[i].level) > max_level)
       max_level = (ssize_t)(profs[i].level);
     for (size_t j = 0u; j < profs[i].level; ++j) {
       PVN_SYSI_CALL(fputc('\t', tt) == EOF);
     }
-    PVN_SYSI_CALL(fprintf(tt, "%s%ld ns\n", (char*)(profs[i].call_site), profs[i].tns) < 7);
+    PVN_SYSI_CALL(fprintf(tt, "%s%ld ns\n", (const char*)(profs[i].call_site), profs[i].tns) < 7);
   }
+ cleanup:
+  free(profs);
+  profs = (pvn_prof_rec_x*)NULL;
+  for (size_t i = 0u; i < addrc; ++i) {
+    free(addrs[i].sym);
+#ifndef NDEBUG
+    addrs[i].sym = (char*)NULL;
+#endif /* !NDEBUG */
+  }
+  free(addrs);
+  addrs = (pvn_addr_rec_t*)NULL;
   return max_level;
 }
 
@@ -112,8 +127,6 @@ int main(int argc, char *argv[])
   fn[17] = 't';
   PVN_SYSP_CALL(tt = fopen(fn, "w"));
   (void)printf("DEPTH=%zd\n", proct());
-  free(profs);
-  free(addrs);
   PVN_SYSI_CALL(fclose(tt));
   PVN_SYSI_CALL(fclose(st));
   PVN_SYSI_CALL(fclose(bt));
