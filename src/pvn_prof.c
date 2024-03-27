@@ -1,11 +1,123 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+typedef struct {
+  void *this_fn;
+  void *call_site;
+  long tns;
+  size_t level;
+} pvn_prof_rec_x;
+
+static FILE *pt = (FILE*)NULL;
+static FILE *bt = (FILE*)NULL;
+static FILE *st = (FILE*)NULL;
+static FILE *tt = (FILE*)NULL;
+
+static pvn_addr_rec_t *addrs = (pvn_addr_rec_t*)NULL;
+static pvn_prof_rec_x *profs = (pvn_prof_rec_x*)NULL;
+
+static size_t profc = (size_t)0u;
+static size_t addrc = (size_t)0u;
+
+static int addr_cmp(const void *a, const void *b)
+{
+  if (a == b)
+    return 0;
+  const pvn_addr_rec_t *const A = (const pvn_addr_rec_t*)a;
+  const pvn_addr_rec_t *const B = (const pvn_addr_rec_t*)b;
+  if (A->addr < B->addr)
+    return -1;
+  if (B->addr < A->addr)
+    return 1;
+  return 0;
+}
+
+static ssize_t proct()
+{
+  PVN_SYSP_CALL(addrs = (pvn_addr_rec_t*)calloc((size_t)1u, sizeof(pvn_addr_rec_t)));
+  while (fread((addrs + addrc), (sizeof(pvn_addr_rec_t) - sizeof(char*)), (size_t)1u, bt) == (size_t)1u) {
+    PVN_SYSI_CALL(fseek(st, addrs[addrc].fof, SEEK_SET));
+    addrs[addrc].fof = 0l;
+    addrs[addrc].sym = (char*)NULL;
+    PVN_SYSI_CALL((addrs[addrc].fof = (long)getline(&(addrs[addrc].sym), (size_t*)&(addrs[addrc].fof), st)) < (ssize_t)0);
+    addrs[addrc].sym[addrs[addrc].fof - 1] = '\t';
+    PVN_SYSP_CALL(addrs = (pvn_addr_rec_t*)realloc(addrs, (++addrc + 1u) * sizeof(pvn_addr_rec_t)));
+  }
+#ifndef NDEBUG
+  addrs[addrc].addr = NULL;
+  addrs[addrc].fof = 0l;
+  addrs[addrc].sym = (char*)NULL;
+#endif /* !NDEBUG */
+  qsort(addrs, addrc, sizeof(pvn_addr_rec_t), addr_cmp);
+  PVN_SYSP_CALL(profs = (pvn_prof_rec_x*)calloc((size_t)1u, sizeof(pvn_prof_rec_x)));
+  for (size_t level = 0u; fread((profs + profc), sizeof(pvn_prof_rec_t), (size_t)1u, pt) == (size_t)1u; ) {
+    if (profs[profc].call_site) {
+      pvn_addr_rec_t *addr = (addrs + addrc);
+      PVN_SYSP_CALL(addr = bsearch((profs + profc), addrs, addrc, sizeof(pvn_addr_rec_t), addr_cmp));
+      profs[profc].call_site = (void*)(addr->sym);
+      profs[profc].level = level++;
+      PVN_SYSP_CALL(profs = (pvn_prof_rec_x*)realloc(profs, (++profc + 1u) * sizeof(pvn_prof_rec_x)));
+    }
+    else if (profc) {
+      for (size_t i = (profc - 1u); ; --i) {
+        if (profs[profc].this_fn == profs[i].this_fn) {
+          /* assumes no wrap-around of the timer */
+          profs[i].tns = (profs[profc].tns - profs[i].tns);
+          break;
+        }
+        if (!i)
+          return -(ssize_t)(profc + 1u);
+      }
+      --level;
+    }
+    else
+      return (ssize_t)-1;
+  }
+#ifndef NDEBUG
+  profs[profc].this_fn = NULL;
+  profs[profc].call_site = NULL;
+  profs[profc].tns = 0l;
+  profs[profc].level = (size_t)0u;
+#endif /* !NDEBUG */
+  ssize_t max_level = (ssize_t)0;
+  for (size_t i = 0u; i < profc; ++i) {
+    if ((ssize_t)(profs[i].level) > max_level)
+      max_level = (ssize_t)(profs[i].level);
+    for (size_t j = 0u; j < profs[i].level; ++j) {
+      PVN_SYSI_CALL(fputc('\t', tt) == EOF);
+    }
+    PVN_SYSI_CALL(fprintf(tt, "%s%ld ns\n", (char*)(profs[i].call_site), profs[i].tns) < 7);
+  }
+  return max_level;
+}
+
+int main(int argc, char *argv[])
 {
 #ifdef PVN_PROFILE
   (void)printf("PVN_PROFILE=%u\n", PVN_PROFILE);
 #endif /* PVN_PROFILE */
+  if (argc != 2) {
+    (void)fprintf(stderr, "%s prefix\n", *argv);
+    return EXIT_FAILURE;
+  }
+  char fn[20] = { '\0' };
+  (void)strcpy(strncpy(fn, argv[1], 16u) + 16, ".?t");
+  (void)printf("FILES=%s\n", fn);
+  fn[17] = 'p';
+  PVN_SYSP_CALL(pt = fopen(fn, "rb"));
+  fn[17] = 'b';
+  PVN_SYSP_CALL(bt = fopen(fn, "rb"));
+  fn[17] = 's';
+  PVN_SYSP_CALL(st = fopen(fn, "rb"));
+  fn[17] = 't';
+  PVN_SYSP_CALL(tt = fopen(fn, "w"));
+  (void)printf("DEPTH=%zd\n", proct());
+  free(profs);
+  free(addrs);
+  PVN_SYSI_CALL(fclose(tt));
+  PVN_SYSI_CALL(fclose(st));
+  PVN_SYSI_CALL(fclose(bt));
+  PVN_SYSI_CALL(fclose(pt));
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
