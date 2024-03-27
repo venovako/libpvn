@@ -6,15 +6,15 @@
 #endif /* !PVN_H */
 
 typedef struct {
-  void *this_fn;
-  void *call_site;
-  long tns;
-} pvn_prof_rec_t;
-
-typedef struct {
   void *addr;
   long fof;
   char *sym;
 } pvn_addr_rec_t;
+
+typedef struct {
+  void *this_fn;
+  void *call_site;
+  long tns;
+} pvn_prof_rec_t;
 
 #endif /* !PVN_PROF_H */

@@ -2,6 +2,13 @@
 
 #ifdef PVN_TEST
 typedef struct {
+  void *addr;
+  long fof;
+  char *sym;
+  long tot;
+} pvn_addr_rec_x;
+
+typedef struct {
   void *this_fn;
   void *call_site;
   long tns;
@@ -12,8 +19,8 @@ static int addr_cmp(const void *a, const void *b)
 {
   if (a == b)
     return 0;
-  const pvn_addr_rec_t *const A = (const pvn_addr_rec_t*)a;
-  const pvn_addr_rec_t *const B = (const pvn_addr_rec_t*)b;
+  const pvn_addr_rec_x *const A = (const pvn_addr_rec_x*)a;
+  const pvn_addr_rec_x *const B = (const pvn_addr_rec_x*)b;
   if (A->addr < B->addr)
     return -1;
   if (B->addr < A->addr)
@@ -27,8 +34,8 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
   assert(bt);
   assert(st);
   assert(tt);
-  pvn_addr_rec_t *addrs = (pvn_addr_rec_t*)NULL;
-  PVN_SYSP_CALL(addrs = (pvn_addr_rec_t*)calloc((size_t)1u, sizeof(pvn_addr_rec_t)));
+  pvn_addr_rec_x *addrs = (pvn_addr_rec_x*)NULL;
+  PVN_SYSP_CALL(addrs = (pvn_addr_rec_x*)calloc((size_t)1u, sizeof(pvn_addr_rec_x)));
   size_t addrc = (size_t)0u;
   while (fread((addrs + addrc), (sizeof(pvn_addr_rec_t) - sizeof(char*)), (size_t)1u, bt) == (size_t)1u) {
     PVN_SYSI_CALL(fseek(st, addrs[addrc].fof, SEEK_SET));
@@ -36,22 +43,24 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
     addrs[addrc].sym = (char*)NULL;
     PVN_SYSI_CALL((addrs[addrc].fof = (long)getline(&(addrs[addrc].sym), (size_t*)&(addrs[addrc].fof), st)) < (ssize_t)0);
     addrs[addrc].sym[addrs[addrc].fof - 1] = '\t';
-    PVN_SYSP_CALL(addrs = (pvn_addr_rec_t*)realloc(addrs, (++addrc + 1u) * sizeof(pvn_addr_rec_t)));
+    addrs[addrc].tot = addrs[addrc].fof = 0l;
+    PVN_SYSP_CALL(addrs = (pvn_addr_rec_x*)realloc(addrs, (++addrc + 1u) * sizeof(pvn_addr_rec_x)));
   }
 #ifndef NDEBUG
   addrs[addrc].addr = NULL;
   addrs[addrc].fof = 0l;
   addrs[addrc].sym = (char*)NULL;
+  addrs[addrc].tot = 0l;
 #endif /* !NDEBUG */
-  qsort(addrs, addrc, sizeof(pvn_addr_rec_t), addr_cmp);
+  qsort(addrs, addrc, sizeof(pvn_addr_rec_x), addr_cmp);
   pvn_prof_rec_x *profs = (pvn_prof_rec_x*)NULL;
   PVN_SYSP_CALL(profs = (pvn_prof_rec_x*)calloc((size_t)1u, sizeof(pvn_prof_rec_x)));
   size_t profc = (size_t)0u;
   ssize_t max_level = (ssize_t)0;
   for (size_t level = (size_t)0u; fread((profs + profc), sizeof(pvn_prof_rec_t), (size_t)1u, pt) == (size_t)1u; ) {
+    pvn_addr_rec_x *addr = (addrs + addrc);
+    PVN_SYSP_CALL(addr = bsearch((profs + profc), addrs, addrc, sizeof(pvn_addr_rec_x), addr_cmp));
     if (profs[profc].call_site) {
-      pvn_addr_rec_t *addr = (addrs + addrc);
-      PVN_SYSP_CALL(addr = bsearch((profs + profc), addrs, addrc, sizeof(pvn_addr_rec_t), addr_cmp));
       profs[profc].call_site = (void*)(addr->sym);
       profs[profc].level = level++;
       PVN_SYSP_CALL(profs = (pvn_prof_rec_x*)realloc(profs, (++profc + 1u) * sizeof(pvn_prof_rec_x)));
@@ -61,6 +70,8 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
         if (profs[profc].this_fn == profs[i].this_fn) {
           /* assumes no wrap-around of the timer */
           profs[i].tns = (profs[profc].tns - profs[i].tns);
+          ++(addr->fof);
+          addr->tot += profs[i].tns;
           break;
         }
         if (!i) {
@@ -89,15 +100,19 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
     }
     PVN_SYSI_CALL(fprintf(tt, "%s%ld ns\n", (const char*)(profs[i].call_site), profs[i].tns) < 7);
   }
+  PVN_SYSI_CALL(fputc('\n', tt) == EOF);
  cleanup:
   free(profs);
   profs = (pvn_prof_rec_x*)NULL;
   for (size_t i = 0u; i < addrc; ++i) {
+    if (max_level >= 0l) {
+      PVN_SYSI_CALL(fprintf(tt, "%s%ld\ttotal\t%ld ns\n", addrs[i].sym, addrs[i].fof, addrs[i].tot) < 15);
+    }
     free(addrs[i].sym);
     addrs[i].sym = (char*)NULL;
   }
   free(addrs);
-  addrs = (pvn_addr_rec_t*)NULL;
+  addrs = (pvn_addr_rec_x*)NULL;
   return max_level;
 }
 
