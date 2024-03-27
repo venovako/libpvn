@@ -8,17 +8,6 @@ typedef struct {
   size_t level;
 } pvn_prof_rec_x;
 
-static FILE *pt = (FILE*)NULL;
-static FILE *bt = (FILE*)NULL;
-static FILE *st = (FILE*)NULL;
-static FILE *tt = (FILE*)NULL;
-
-static pvn_addr_rec_t *addrs = (pvn_addr_rec_t*)NULL;
-static pvn_prof_rec_x *profs = (pvn_prof_rec_x*)NULL;
-
-static size_t profc = (size_t)0u;
-static size_t addrc = (size_t)0u;
-
 static int addr_cmp(const void *a, const void *b)
 {
   if (a == b)
@@ -32,9 +21,15 @@ static int addr_cmp(const void *a, const void *b)
   return 0;
 }
 
-static ssize_t proct()
+static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const tt)
 {
+  assert(pt);
+  assert(bt);
+  assert(st);
+  assert(tt);
+  pvn_addr_rec_t *addrs = (pvn_addr_rec_t*)NULL;
   PVN_SYSP_CALL(addrs = (pvn_addr_rec_t*)calloc((size_t)1u, sizeof(pvn_addr_rec_t)));
+  size_t addrc = (size_t)0u;
   while (fread((addrs + addrc), (sizeof(pvn_addr_rec_t) - sizeof(char*)), (size_t)1u, bt) == (size_t)1u) {
     PVN_SYSI_CALL(fseek(st, addrs[addrc].fof, SEEK_SET));
     addrs[addrc].fof = 0l;
@@ -49,9 +44,11 @@ static ssize_t proct()
   addrs[addrc].sym = (char*)NULL;
 #endif /* !NDEBUG */
   qsort(addrs, addrc, sizeof(pvn_addr_rec_t), addr_cmp);
+  pvn_prof_rec_x *profs = (pvn_prof_rec_x*)NULL;
   PVN_SYSP_CALL(profs = (pvn_prof_rec_x*)calloc((size_t)1u, sizeof(pvn_prof_rec_x)));
+  size_t profc = (size_t)0u;
   ssize_t max_level = (ssize_t)0;
-  for (size_t level = 0u; fread((profs + profc), sizeof(pvn_prof_rec_t), (size_t)1u, pt) == (size_t)1u; ) {
+  for (size_t level = (size_t)0u; fread((profs + profc), sizeof(pvn_prof_rec_t), (size_t)1u, pt) == (size_t)1u; ) {
     if (profs[profc].call_site) {
       pvn_addr_rec_t *addr = (addrs + addrc);
       PVN_SYSP_CALL(addr = bsearch((profs + profc), addrs, addrc, sizeof(pvn_addr_rec_t), addr_cmp));
@@ -97,9 +94,7 @@ static ssize_t proct()
   profs = (pvn_prof_rec_x*)NULL;
   for (size_t i = 0u; i < addrc; ++i) {
     free(addrs[i].sym);
-#ifndef NDEBUG
     addrs[i].sym = (char*)NULL;
-#endif /* !NDEBUG */
   }
   free(addrs);
   addrs = (pvn_addr_rec_t*)NULL;
@@ -119,14 +114,18 @@ int main(int argc, char *argv[])
   (void)strcpy(strncpy(fn, argv[1], 16u) + 16, ".?t");
   (void)printf("FILES=%s\n", fn);
   fn[17] = 'p';
-  PVN_SYSP_CALL(pt = fopen(fn, "rb"));
+  FILE *const pt = fopen(fn, "rb");
+  PVN_SYSP_CALL(pt);
   fn[17] = 'b';
-  PVN_SYSP_CALL(bt = fopen(fn, "rb"));
+  FILE *const bt = fopen(fn, "rb");
+  PVN_SYSP_CALL(bt);
   fn[17] = 's';
-  PVN_SYSP_CALL(st = fopen(fn, "rb"));
+  FILE *const st = fopen(fn, "rb");
+  PVN_SYSP_CALL(st);
   fn[17] = 't';
-  PVN_SYSP_CALL(tt = fopen(fn, "w"));
-  (void)printf("DEPTH=%zd\n", proct());
+  FILE *const tt = fopen(fn, "w");
+  PVN_SYSP_CALL(tt);
+  (void)printf("DEPTH=%zd\n", proct(pt, bt, st, tt));
   PVN_SYSI_CALL(fclose(tt));
   PVN_SYSI_CALL(fclose(st));
   PVN_SYSI_CALL(fclose(bt));
