@@ -11,7 +11,7 @@ typedef struct {
 typedef struct {
   void *this_fn;
   void *call_site;
-  long tns;
+  long tns, dur;
   size_t level;
 } pvn_prof_rec_x;
 
@@ -42,7 +42,7 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
     addrs[addrc].fof = 0l;
     addrs[addrc].sym = (char*)NULL;
     PVN_SYSI_CALL((addrs[addrc].fof = (long)getline(&(addrs[addrc].sym), (size_t*)&(addrs[addrc].fof), st)) < (ssize_t)0);
-    addrs[addrc].sym[addrs[addrc].fof - 1] = '\t';
+    addrs[addrc].sym[addrs[addrc].fof - 1] = '(';
     addrs[addrc].tot = addrs[addrc].fof = 0l;
     PVN_SYSP_CALL(addrs = (pvn_addr_rec_x*)realloc(addrs, (++addrc + 1u) * sizeof(pvn_addr_rec_x)));
   }
@@ -69,9 +69,9 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
       for (size_t i = (profc - 1u); ; --i) {
         if (profs[profc].this_fn == profs[i].this_fn) {
           /* assumes no wrap-around of the timer */
-          profs[i].tns = (profs[profc].tns - profs[i].tns);
+          profs[i].dur = (profs[profc].tns - profs[i].tns);
           ++(addr->fof);
-          addr->tot += profs[i].tns;
+          addr->tot += profs[i].dur;
           break;
         }
         if (!i) {
@@ -90,15 +90,17 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
   profs[profc].this_fn = NULL;
   profs[profc].call_site = NULL;
   profs[profc].tns = 0l;
+  profs[profc].dur = 0l;
   profs[profc].level = (size_t)0u;
 #endif /* !NDEBUG */
   for (size_t i = 0u; i < profc; ++i) {
     if ((ssize_t)(profs[i].level) > max_level)
       max_level = (ssize_t)(profs[i].level);
+    PVN_SYSI_CALL(fprintf(tt, "%20ld ns\t", profs[i].tns) < 24);
     for (size_t j = 0u; j < profs[i].level; ++j) {
       PVN_SYSI_CALL(fputc('\t', tt) == EOF);
     }
-    PVN_SYSI_CALL(fprintf(tt, "%s%ld ns\n", (const char*)(profs[i].call_site), profs[i].tns) < 7);
+    PVN_SYSI_CALL(fprintf(tt, "%s%ld ns)\n", (const char*)(profs[i].call_site), profs[i].dur) < 8);
   }
   PVN_SYSI_CALL(fputc('\n', tt) == EOF);
  cleanup:
@@ -106,7 +108,7 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
   profs = (pvn_prof_rec_x*)NULL;
   for (size_t i = 0u; i < addrc; ++i) {
     if (max_level >= 0l) {
-      PVN_SYSI_CALL(fprintf(tt, "%s%ld\ttotal\t%ld ns\n", addrs[i].sym, addrs[i].fof, addrs[i].tot) < 15);
+      PVN_SYSI_CALL(fprintf(tt, "%s%ld)\ttotal\t%ld ns\n", addrs[i].sym, addrs[i].fof, addrs[i].tot) < 16);
     }
     free(addrs[i].sym);
     addrs[i].sym = (char*)NULL;
@@ -164,11 +166,12 @@ static pthread_mutex_t prof_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif /* ?PVN_THREAD */
 #endif /* ?PVN_PROFILE */
 static void (*on_exit_ptr)(void) = (void (*)(void))NULL;
+static long tbase = 0l;
 static void *bt_root = NULL;
 static FILE *bt_file = (FILE*)NULL;
 static FILE *st_file = (FILE*)NULL;
 static PVN_THREAD char file_name[20];
-static PVN_THREAD FILE *prof_file = (FILE*)NULL;
+static PVN_THREAD FILE *pt_file = (FILE*)NULL;
 
 #ifndef PVN_PROFILE_TIMEREF
 #ifdef CLOCK_MONOTONIC_RAW
@@ -325,12 +328,13 @@ static int PVN_NO_PROF bt_insert(void *addr)
 
 PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void *const call_site)
 {
-  if (!prof_file) {
+  bool once = false;
+  if (!pt_file) {
     if (snprintf(file_name, sizeof(file_name), "%016tx.pt", (ptrdiff_t)pthread_self()) <= 0) {
       pflerror(__FILE__, __LINE__);
       return;
     }
-    if (!(prof_file = fopen(file_name, "wb"))) {
+    if (!(pt_file = fopen(file_name, "wb"))) {
       pflerror(__FILE__, __LINE__);
       return;
     }
@@ -345,6 +349,11 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
         pflerror(__FILE__, __LINE__);
       else
         on_exit_ptr = on_prog_exit;
+      struct timespec tv;
+      if (clock_gettime(PVN_PROFILE_TIMEREF, (struct timespec*)memset(&tv, 0, sizeof(tv))))
+        pflerror(__FILE__, __LINE__);
+      tbase = pvn_t2ns(&tv);
+      once = true;
     }
 #if (PVN_PROFILE > 0u)
     if (pthread_mutex_unlock(&prof_lock))
@@ -358,12 +367,16 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
   pvn_prof_rec_t pr;
   pr.this_fn = this_fn;
   pr.call_site = call_site;
-  struct timespec tv;
-  if (clock_gettime(PVN_PROFILE_TIMEREF, (struct timespec*)memset(&tv, 0, sizeof(tv))))
-    pflerror(__FILE__, __LINE__);
-  pr.tns = pvn_t2ns(&tv);
+  if (once)
+    pr.tns = 0l;
+  else {
+    struct timespec tv;
+    if (clock_gettime(PVN_PROFILE_TIMEREF, (struct timespec*)memset(&tv, 0, sizeof(tv))))
+      pflerror(__FILE__, __LINE__);
+    pr.tns = (pvn_t2ns(&tv) - tbase);
+  }
 
-  if (fwrite(&pr, sizeof(pr), 1, prof_file) != 1)
+  if (fwrite(&pr, sizeof(pr), 1, pt_file) != 1)
     pflerror(__FILE__, __LINE__);
 }
 
@@ -375,9 +388,9 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_exit(void *const this_fn, void 
   struct timespec tv;
   if (clock_gettime(PVN_PROFILE_TIMEREF, (struct timespec*)memset(&tv, 0, sizeof(tv))))
     pflerror(__FILE__, __LINE__);
-  pr.tns = pvn_t2ns(&tv);
+  pr.tns = (pvn_t2ns(&tv) - tbase);
 
-  if (fwrite(&pr, sizeof(pr), 1, prof_file) != 1)
+  if (fwrite(&pr, sizeof(pr), 1, pt_file) != 1)
     pflerror(__FILE__, __LINE__);
 }
 #endif /* PVN_PROFILE */
