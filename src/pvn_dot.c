@@ -15,12 +15,12 @@ int main(/* int argc, char *argv[] */)
 #else /* !PVN_TEST */
 void pvn_sdot_(float *const d, const int *const m, const float *const x, const unsigned *const ix, const float *const y, const unsigned *const iy)
 {
-  assert(d);
-  assert(m);
-  assert(x);
-  assert(ix);
-  assert(y);
-  assert(iy);
+  PVN_ASSERT(d);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
+  PVN_ASSERT(y);
+  PVN_ASSERT(iy);
   unsigned n = 0u;
   if (*m >= 0) {
     *d = 0.0f;
@@ -41,17 +41,17 @@ void pvn_sdot_(float *const d, const int *const m, const float *const x, const u
 
 void pvn_cdot_(float *const zr, float *const zi, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi, const float *const yr, const unsigned *const iyr, const float *const yi, const unsigned *const iyi)
 {
-  assert(zr);
-  assert(zi);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
-  assert(yr);
-  assert(iyr);
-  assert(yi);
-  assert(iyi);
+  PVN_ASSERT(zr);
+  PVN_ASSERT(zi);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
+  PVN_ASSERT(yr);
+  PVN_ASSERT(iyr);
+  PVN_ASSERT(yi);
+  PVN_ASSERT(iyi);
   unsigned n = 0u;
   if (*m >= 0) {
     *zr = 0.0f;
@@ -77,12 +77,12 @@ void pvn_cdot_(float *const zr, float *const zi, const int *const m, const float
 
 void pvn_ddot_(double *const d, const int *const m, const double *const x, const unsigned *const ix, const double *const y, const unsigned *const iy)
 {
-  assert(d);
-  assert(m);
-  assert(x);
-  assert(ix);
-  assert(y);
-  assert(iy);
+  PVN_ASSERT(d);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
+  PVN_ASSERT(y);
+  PVN_ASSERT(iy);
   unsigned n = 0u;
   if (*m >= 0) {
     *d = 0.0;
@@ -103,17 +103,17 @@ void pvn_ddot_(double *const d, const int *const m, const double *const x, const
 
 void pvn_zdot_(double *const zr, double *const zi, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi, const double *const yr, const unsigned *const iyr, const double *const yi, const unsigned *const iyi)
 {
-  assert(zr);
-  assert(zi);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
-  assert(yr);
-  assert(iyr);
-  assert(yi);
-  assert(iyi);
+  PVN_ASSERT(zr);
+  PVN_ASSERT(zi);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
+  PVN_ASSERT(yr);
+  PVN_ASSERT(iyr);
+  PVN_ASSERT(yi);
+  PVN_ASSERT(iyi);
   unsigned n = 0u;
   if (*m >= 0) {
     *zr = 0.0;
@@ -139,12 +139,12 @@ void pvn_zdot_(double *const zr, double *const zi, const int *const m, const dou
 
 void pvn_xdot_(long double *const d, const int *const m, const long double *const x, const unsigned *const ix, const long double *const y, const unsigned *const iy)
 {
-  assert(d);
-  assert(m);
-  assert(x);
-  assert(ix);
-  assert(y);
-  assert(iy);
+  PVN_ASSERT(d);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
+  PVN_ASSERT(y);
+  PVN_ASSERT(iy);
   unsigned n = 0u;
   if (*m >= 0) {
     *d = 0.0L;
@@ -165,17 +165,17 @@ void pvn_xdot_(long double *const d, const int *const m, const long double *cons
 
 void pvn_wdot_(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi)
 {
-  assert(zr);
-  assert(zi);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
-  assert(yr);
-  assert(iyr);
-  assert(yi);
-  assert(iyi);
+  PVN_ASSERT(zr);
+  PVN_ASSERT(zi);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
+  PVN_ASSERT(yr);
+  PVN_ASSERT(iyr);
+  PVN_ASSERT(yi);
+  PVN_ASSERT(iyi);
   unsigned n = 0u;
   if (*m >= 0) {
     *zr = 0.0L;
@@ -202,12 +202,12 @@ void pvn_wdot_(long double *const zr, long double *const zi, const int *const m,
 #ifdef PVN_QUADMATH
 void pvn_qdot_(__float128 *const d, const int *const m, const __float128 *const x, const unsigned *const ix, const __float128 *const y, const unsigned *const iy)
 {
-  assert(d);
-  assert(m);
-  assert(x);
-  assert(ix);
-  assert(y);
-  assert(iy);
+  PVN_ASSERT(d);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
+  PVN_ASSERT(y);
+  PVN_ASSERT(iy);
   unsigned n = 0u;
   if (*m >= 0) {
     *d = 0.0q;
@@ -228,17 +228,17 @@ void pvn_qdot_(__float128 *const d, const int *const m, const __float128 *const 
 
 void pvn_ydot_(__float128 *const zr, __float128 *const zi, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi, const __float128 *const yr, const unsigned *const iyr, const __float128 *const yi, const unsigned *const iyi)
 {
-  assert(zr);
-  assert(zi);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
-  assert(yr);
-  assert(iyr);
-  assert(yi);
-  assert(iyi);
+  PVN_ASSERT(zr);
+  PVN_ASSERT(zi);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
+  PVN_ASSERT(yr);
+  PVN_ASSERT(iyr);
+  PVN_ASSERT(yi);
+  PVN_ASSERT(iyi);
   unsigned n = 0u;
   if (*m >= 0) {
     *zr = 0.0q;

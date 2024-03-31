@@ -61,14 +61,14 @@ int main(int argc, char *argv[])
 #else /* !PVN_TEST */
 int pvn_sljev2_(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, float *const l1, float *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21);
-  assert(cs);
-  assert(sn);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(sn);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
     return -1;
@@ -126,14 +126,14 @@ int pvn_sljev2_(const float *const a11, const float *const a22, const float *con
 
 int pvn_dljev2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const l1, double *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21);
-  assert(cs);
-  assert(sn);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(sn);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
     return -1;
@@ -191,16 +191,16 @@ int pvn_dljev2_(const double *const a11, const double *const a22, const double *
 
 int pvn_cljev2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const l1, float *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21r);
-  assert(a21i);
-  assert(cs);
-  assert(snr);
-  assert(sni);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21r);
+  PVN_ASSERT(a21i);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(snr);
+  PVN_ASSERT(sni);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
     return -1;
@@ -271,16 +271,16 @@ int pvn_cljev2_(const float *const a11, const float *const a22, const float *con
 
 int pvn_zljev2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const l1, double *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21r);
-  assert(a21i);
-  assert(cs);
-  assert(snr);
-  assert(sni);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21r);
+  PVN_ASSERT(a21i);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(snr);
+  PVN_ASSERT(sni);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
     return -1;
@@ -351,14 +351,14 @@ int pvn_zljev2_(const double *const a11, const double *const a22, const double *
 
 int pvn_xljev2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21);
-  assert(cs);
-  assert(sn);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(sn);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
     return -1;
@@ -422,16 +422,16 @@ int pvn_xljev2_(const long double *const a11, const long double *const a22, cons
 
 int pvn_wljev2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21r);
-  assert(a21i);
-  assert(cs);
-  assert(snr);
-  assert(sni);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21r);
+  PVN_ASSERT(a21i);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(snr);
+  PVN_ASSERT(sni);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
     return -1;
@@ -515,14 +515,14 @@ int pvn_wljev2_(const long double *const a11, const long double *const a22, cons
 
 int pvn_qljev2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const l1, __float128 *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21);
-  assert(cs);
-  assert(sn);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(sn);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;
@@ -586,16 +586,16 @@ int pvn_qljev2_(const __float128 *const a11, const __float128 *const a22, const 
 
 int pvn_yljev2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const l1, __float128 *const l2, int *const es)
 {
-  assert(a11);
-  assert(a22);
-  assert(a21r);
-  assert(a21i);
-  assert(cs);
-  assert(snr);
-  assert(sni);
-  assert(l1);
-  assert(l2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(a21r);
+  PVN_ASSERT(a21i);
+  PVN_ASSERT(cs);
+  PVN_ASSERT(snr);
+  PVN_ASSERT(sni);
+  PVN_ASSERT(l1);
+  PVN_ASSERT(l2);
+  PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;

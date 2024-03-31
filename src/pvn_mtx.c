@@ -148,10 +148,10 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
 
 pvn_rvis_ctx_f* pvn_rvis_start_f_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
 {
-  assert(m);
-  assert(n);
-  assert(fop);
-  assert(fnB);
+  PVN_ASSERT(m);
+  PVN_ASSERT(n);
+  PVN_ASSERT(fop);
+  PVN_ASSERT(fnB);
   pvn_rvis_ctx_f *ret = (pvn_rvis_ctx_f*)NULL;
   pvn_rop_f op = (pvn_rop_f)NULL;
   switch (*fop) {
@@ -217,10 +217,10 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
 
 pvn_rvis_ctx* pvn_rvis_start_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
 {
-  assert(m);
-  assert(n);
-  assert(fop);
-  assert(fnB);
+  PVN_ASSERT(m);
+  PVN_ASSERT(n);
+  PVN_ASSERT(fop);
+  PVN_ASSERT(fnB);
   pvn_rvis_ctx *ret = (pvn_rvis_ctx*)NULL;
   pvn_rop op = (pvn_rop)NULL;
   switch (*fop) {
@@ -286,10 +286,10 @@ int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned
 
 pvn_rvis_ctx_l *pvn_rvis_start_l_(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
 {
-  assert(m);
-  assert(n);
-  assert(fop);
-  assert(fnB);
+  PVN_ASSERT(m);
+  PVN_ASSERT(n);
+  PVN_ASSERT(fop);
+  PVN_ASSERT(fnB);
   pvn_rvis_ctx_l *ret = (pvn_rvis_ctx_l*)NULL;
   pvn_rop_l op = (pvn_rop_l)NULL;
   switch (*fop) {
@@ -338,9 +338,9 @@ int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, c
 
 int pvn_rvis_frame_f_(pvn_rvis_ctx_f *const *const ctx, const float *const restrict A, const size_t *const ldA)
 {
-  assert(ctx);
-  assert(A);
-  assert(ldA);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(A);
+  PVN_ASSERT(ldA);
   return pvn_rvis_frame_f(*ctx, A, *ldA);
 }
 
@@ -366,9 +366,9 @@ int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, cons
 
 int pvn_rvis_frame_(pvn_rvis_ctx *const *const ctx, const double *const restrict A, const size_t *const ldA)
 {
-  assert(ctx);
-  assert(A);
-  assert(ldA);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(A);
+  PVN_ASSERT(ldA);
   return pvn_rvis_frame(*ctx, A, *ldA);
 }
 
@@ -394,9 +394,9 @@ int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restric
 
 int pvn_rvis_frame_l_(pvn_rvis_ctx_l *const *const ctx, const long double *const restrict A, const size_t *const ldA)
 {
-  assert(ctx);
-  assert(A);
-  assert(ldA);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(A);
+  PVN_ASSERT(ldA);
   return pvn_rvis_frame_l(*ctx, A, *ldA);
 }
 
@@ -567,11 +567,11 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
 
 int pvn_rvis_stop_f_(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
-  assert(ctx);
-  assert(sx);
-  assert(sy);
-  assert(bppB);
-  assert(bnB);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(sx);
+  PVN_ASSERT(sy);
+  PVN_ASSERT(bppB);
+  PVN_ASSERT(bnB);
   const int r = pvn_rvis_stop_f(*ctx, *sx, *sy, *bppB, bnB);
   if (*ctx)
     free(*ctx);
@@ -745,11 +745,11 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
 
 int pvn_rvis_stop_(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
-  assert(ctx);
-  assert(sx);
-  assert(sy);
-  assert(bppB);
-  assert(bnB);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(sx);
+  PVN_ASSERT(sy);
+  PVN_ASSERT(bppB);
+  PVN_ASSERT(bnB);
   const int r = pvn_rvis_stop(*ctx, *sx, *sy, *bppB, bnB);
   if (*ctx)
     free(*ctx);
@@ -929,11 +929,11 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
 
 int pvn_rvis_stop_l_(pvn_rvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
 {
-  assert(ctx);
-  assert(sx);
-  assert(sy);
-  assert(bppB);
-  assert(bnB);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(sx);
+  PVN_ASSERT(sy);
+  PVN_ASSERT(bppB);
+  PVN_ASSERT(bnB);
   const int r = pvn_rvis_stop_l(*ctx, *sx, *sy, *bppB, bnB);
   if (*ctx)
     free(*ctx);
@@ -1256,9 +1256,9 @@ int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restr
 
 int pvn_cvis_frame_f_(pvn_cvis_ctx_f *const *const ctx, const float complex *const restrict A, const size_t *const ldA)
 {
-  assert(ctx);
-  assert(A);
-  assert(ldA);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(A);
+  PVN_ASSERT(ldA);
   return pvn_cvis_frame_f(*ctx, A, *ldA);
 }
 
@@ -1287,9 +1287,9 @@ int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict
 
 int pvn_cvis_frame_(pvn_cvis_ctx *const *const ctx, const double complex *const restrict A, const size_t *const ldA)
 {
-  assert(ctx);
-  assert(A);
-  assert(ldA);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(A);
+  PVN_ASSERT(ldA);
   return pvn_cvis_frame(*ctx, A, *ldA);
 }
 
@@ -1318,9 +1318,9 @@ int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const
 
 int pvn_cvis_frame_l_(pvn_cvis_ctx_l *const *const ctx, const long double complex *const restrict A, const size_t *const ldA)
 {
-  assert(ctx);
-  assert(A);
-  assert(ldA);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(A);
+  PVN_ASSERT(ldA);
   return pvn_cvis_frame_l(*ctx, A, *ldA);
 }
 
@@ -1368,13 +1368,13 @@ int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned
 
 int pvn_cvis_stop_f_(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
-  assert(ctx);
-  assert(sx);
-  assert(sy);
-  assert(bppB);
-  assert(bnB);
-  assert(bppC);
-  assert(bnC);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(sx);
+  PVN_ASSERT(sy);
+  PVN_ASSERT(bppB);
+  PVN_ASSERT(bnB);
+  PVN_ASSERT(bppC);
+  PVN_ASSERT(bnC);
   const int r = pvn_cvis_stop_f(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
   if (*ctx)
     free(*ctx);
@@ -1425,13 +1425,13 @@ int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy,
 
 int pvn_cvis_stop_(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
-  assert(ctx);
-  assert(sx);
-  assert(sy);
-  assert(bppB);
-  assert(bnB);
-  assert(bppC);
-  assert(bnC);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(sx);
+  PVN_ASSERT(sy);
+  PVN_ASSERT(bppB);
+  PVN_ASSERT(bnB);
+  PVN_ASSERT(bppC);
+  PVN_ASSERT(bnC);
   const int r = pvn_cvis_stop(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
   if (*ctx)
     free(*ctx);
@@ -1482,13 +1482,13 @@ int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned
 
 int pvn_cvis_stop_l_(pvn_cvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
 {
-  assert(ctx);
-  assert(sx);
-  assert(sy);
-  assert(bppB);
-  assert(bnB);
-  assert(bppC);
-  assert(bnC);
+  PVN_ASSERT(ctx);
+  PVN_ASSERT(sx);
+  PVN_ASSERT(sy);
+  PVN_ASSERT(bppB);
+  PVN_ASSERT(bnB);
+  PVN_ASSERT(bppC);
+  PVN_ASSERT(bnC);
   const int r = pvn_cvis_stop_l(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
   if (*ctx)
     free(*ctx);

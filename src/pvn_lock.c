@@ -23,7 +23,7 @@ size_t pvn_lock_size_(size_t *const a)
 
 int pvn_lock_init_(pvn_lock_t *const lock)
 {
-  assert(lock);
+  PVN_ASSERT(lock);
   pthread_mutexattr_t attr;
   PVN_SYSI_CALL(pthread_mutexattr_init(&attr));
   PVN_SYSI_CALL(pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK));
@@ -34,19 +34,19 @@ int pvn_lock_init_(pvn_lock_t *const lock)
 
 int pvn_lock_destroy_(pvn_lock_t *const lock)
 {
-  assert(lock);
+  PVN_ASSERT(lock);
   return pthread_mutex_destroy(lock);
 }
 
 int pvn_lock_(pvn_lock_t *const lock)
 {
-  assert(lock);
+  PVN_ASSERT(lock);
   return pthread_mutex_lock(lock);
 }
 
 int pvn_unlock_(pvn_lock_t *const lock)
 {
-  assert(lock);
+  PVN_ASSERT(lock);
   return pthread_mutex_unlock(lock);
 }
 #endif /* ?PVN_TEST */

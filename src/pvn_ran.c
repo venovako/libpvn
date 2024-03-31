@@ -21,13 +21,13 @@ int pvn_ran_open_()
 
 int pvn_ran_close_(const int *const u)
 {
-  assert(u);
+  PVN_ASSERT(u);
   return close(*u);
 }
 
 float pvn_ran_safe_f_(const int *const u)
 {
-  assert(u);
+  PVN_ASSERT(u);
   const float rmin = FLT_MIN;
   const float rmax = (FLT_MAX * 0.25f);
   float a = FLT_MAX, r = 0.0f;
@@ -51,7 +51,7 @@ float pvn_ran_safe_f_(const int *const u)
 
 double pvn_ran_safe_(const int *const u)
 {
-  assert(u);
+  PVN_ASSERT(u);
   const double rmin = DBL_MIN;
   const double rmax = (DBL_MAX * 0.25);
   double a = DBL_MAX, r = 0.0;
@@ -75,7 +75,7 @@ double pvn_ran_safe_(const int *const u)
 
 long double pvn_ran_safe_l_(const int *const u)
 {
-  assert(u);
+  PVN_ASSERT(u);
   const long double rmin = LDBL_MIN;
   const long double rmax = (LDBL_MAX * 0.25L);
   long double a = LDBL_MAX, r = 0.0L;
@@ -100,7 +100,7 @@ long double pvn_ran_safe_l_(const int *const u)
 #ifdef PVN_QUADMATH
 __float128 pvn_ran_safe_q_(const int *const u)
 {
-  assert(u);
+  PVN_ASSERT(u);
   const __float128 rmin = FLT128_MIN;
   const __float128 rmax = (FLT128_MAX * 0.25q);
   __float128 a = FLT128_MAX, r = 0.0q;

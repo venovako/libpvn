@@ -15,10 +15,10 @@ int main(/* int argc, char *argv[] */)
 #else /* !PVN_TEST */
 void pvn_snrm2_(float *const f, const int *const m, const float *const x, const unsigned *const ix)
 {
-  assert(f);
-  assert(m);
-  assert(x);
-  assert(ix);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0f;
@@ -37,12 +37,12 @@ void pvn_snrm2_(float *const f, const int *const m, const float *const x, const 
 
 void pvn_cnrm2_(float *const f, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi)
 {
-  assert(f);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0f;
@@ -63,10 +63,10 @@ void pvn_cnrm2_(float *const f, const int *const m, const float *const xr, const
 
 void pvn_dnrm2_(double *const f, const int *const m, const double *const x, const unsigned *const ix)
 {
-  assert(f);
-  assert(m);
-  assert(x);
-  assert(ix);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0;
@@ -85,12 +85,12 @@ void pvn_dnrm2_(double *const f, const int *const m, const double *const x, cons
 
 void pvn_znrm2_(double *const f, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi)
 {
-  assert(f);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0;
@@ -111,10 +111,10 @@ void pvn_znrm2_(double *const f, const int *const m, const double *const xr, con
 
 void pvn_xnrm2_(long double *const f, const int *const m, const long double *const x, const unsigned *const ix)
 {
-  assert(f);
-  assert(m);
-  assert(x);
-  assert(ix);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0L;
@@ -133,12 +133,12 @@ void pvn_xnrm2_(long double *const f, const int *const m, const long double *con
 
 void pvn_wnrm2_(long double *const f, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi)
 {
-  assert(f);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0L;
@@ -160,10 +160,10 @@ void pvn_wnrm2_(long double *const f, const int *const m, const long double *con
 #ifdef PVN_QUADMATH
 void pvn_qnrm2_(__float128 *const f, const int *const m, const __float128 *const x, const unsigned *const ix)
 {
-  assert(f);
-  assert(m);
-  assert(x);
-  assert(ix);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(x);
+  PVN_ASSERT(ix);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0q;
@@ -182,12 +182,12 @@ void pvn_qnrm2_(__float128 *const f, const int *const m, const __float128 *const
 
 void pvn_ynrm2_(__float128 *const f, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi)
 {
-  assert(f);
-  assert(m);
-  assert(xr);
-  assert(ixr);
-  assert(xi);
-  assert(ixi);
+  PVN_ASSERT(f);
+  PVN_ASSERT(m);
+  PVN_ASSERT(xr);
+  PVN_ASSERT(ixr);
+  PVN_ASSERT(xi);
+  PVN_ASSERT(ixi);
   unsigned n = 0u;
   if (*m >= 0) {
     *f = 0.0q;

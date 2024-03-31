@@ -25,6 +25,16 @@
 #error PVN_SAFELEN already defined
 #endif /* ?PVN_SAFELEN */
 
+#ifndef PVN_ASSUME_ALIGNED
+#if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
+#define PVN_ASSUME_ALIGNED(p,a) __assume_aligned((p),(a))
+#else /* !Intel */
+#define PVN_ASSUME_ALIGNED(p,a) (void)__builtin_assume_aligned((p),(a))
+#endif /* ?Intel */
+#else /* PVN_ASSUME_ALIGNED */
+#error PVN_ASSUME_ALIGNED already defined
+#endif /* ?PVN_ASSUME_ALIGNED */
+
 #ifndef PVN_NOT_VECALIGNED
 #define PVN_NOT_VECALIGNED(x) ((uintptr_t)(x) & ((PVN_VECLEN) - 1u))
 #else /* PVN_NOT_VECALIGNED */
@@ -32,9 +42,7 @@
 #endif /* ?PVN_NOT_VECALIGNED */
 
 PVN_EXTERN_C unsigned pvn_vec_len_();
-PVN_EXTERN_C size_t pvn_pagesize();
 PVN_EXTERN_C size_t pvn_pagesize_();
-PVN_EXTERN_C size_t pvn_alignment(const size_t a);
 PVN_EXTERN_C size_t pvn_alignment_(const size_t *const a);
 
 #endif /* !PVN_MEM_H */

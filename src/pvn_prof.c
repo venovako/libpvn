@@ -30,10 +30,10 @@ static int addr_cmp(const void *a, const void *b)
 
 static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const tt)
 {
-  assert(pt);
-  assert(bt);
-  assert(st);
-  assert(tt);
+  PVN_ASSERT(pt);
+  PVN_ASSERT(bt);
+  PVN_ASSERT(st);
+  PVN_ASSERT(tt);
   pvn_addr_rec_x *addrs = (pvn_addr_rec_x*)NULL;
   PVN_SYSP_CALL(addrs = (pvn_addr_rec_x*)calloc((size_t)1u, sizeof(pvn_addr_rec_x)));
   size_t addrc = (size_t)0u;

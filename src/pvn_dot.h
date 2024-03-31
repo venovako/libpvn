@@ -22,24 +22,24 @@ PVN_EXTERN_C void pvn_qdot_(long double *const d, const int *const m, const long
 
 static inline void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
 {
-  assert(cr);
-  assert(ci);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
   *cr = fmaf(ar, br, -ai * bi);
   *ci = fmaf(ar, bi,  ai * br);
 }
 
 static inline void pvn_zmul(double *const cr, double *const ci, const double ar, const double ai, const double br, const double bi)
 {
-  assert(cr);
-  assert(ci);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
   *cr = fma(ar, br, -ai * bi);
   *ci = fma(ar, bi,  ai * br);
 }
 
 static inline void pvn_wmul(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
 {
-  assert(cr);
-  assert(ci);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
   *cr = fmal(ar, br, -ai * bi);
   *ci = fmal(ar, bi,  ai * br);
 }
@@ -47,8 +47,8 @@ static inline void pvn_wmul(long double *const cr, long double *const ci, const 
 #ifdef PVN_QUADMATH
 static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __float128 ar, const __float128 ai, const __float128 br, const __float128 bi)
 {
-  assert(cr);
-  assert(ci);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
   *cr = fmaq(ar, br, -ai * bi);
   *ci = fmaq(ar, bi,  ai * br);
 }
@@ -65,24 +65,24 @@ static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __
 
 static inline void pvn_cfma(float *const dr, float *const di, const float ar, const float ai, const float br, const float bi, const float cr, const float ci)
 {
-  assert(dr);
-  assert(di);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
   *dr = fmaf(ar, br, fmaf(-ai, bi, cr));
   *di = fmaf(ar, bi, fmaf( ai, br, ci));
 }
 
 static inline void pvn_zfma(double *const dr, double *const di, const double ar, const double ai, const double br, const double bi, const double cr, const double ci)
 {
-  assert(dr);
-  assert(di);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
   *dr = fma(ar, br, fma(-ai, bi, cr));
   *di = fma(ar, bi, fma( ai, br, ci));
 }
 
 static inline void pvn_wfma(long double *const dr, long double *const di, const long double ar, const long double ai, const long double br, const long double bi, const long double cr, const long double ci)
 {
-  assert(dr);
-  assert(di);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
   *dr = fmal(ar, br, fmal(-ai, bi, cr));
   *di = fmal(ar, bi, fmal( ai, br, ci));
 }
@@ -90,8 +90,8 @@ static inline void pvn_wfma(long double *const dr, long double *const di, const 
 #ifdef PVN_QUADMATH
 static inline void pvn_yfma(__float128 *const dr, __float128 *const di, const __float128 ar, const __float128 ai, const __float128 br, const __float128 bi, const __float128 cr, const __float128 ci)
 {
-  assert(dr);
-  assert(di);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
   *dr = fmaq(ar, br, fmaq(-ai, bi, cr));
   *di = fmaq(ar, bi, fmaq( ai, br, ci));
 }

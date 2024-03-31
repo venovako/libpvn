@@ -11,10 +11,10 @@
 
 static inline void pvn_smm2(float *const c11, float *const c21, float *const c12, float *const c22, const float a11, const float a21, const float a12, const float a22, const float b11, const float b21, const float b12, const float b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fmaf(a11, b11, a12 * b21);
   *c21 = fmaf(a21, b11, a22 * b21);
   *c12 = fmaf(a11, b12, a12 * b22);
@@ -23,14 +23,14 @@ static inline void pvn_smm2(float *const c11, float *const c21, float *const c12
 
 static inline void pvn_cmm2(float *const c11r, float *const c11i, float *const c21r, float *const c21i, float *const c12r, float *const c12i, float *const c22r, float *const c22i, const float a11r, const float a11i, const float a21r, const float a21i, const float a12r, const float a12i, const float a22r, const float a22i, const float b11r, const float b11i, const float b21r, const float b21i, const float b12r, const float b12i, const float b22r, const float b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_cmul(c11r, c11i, a12r, a12i, b21r, b21i);
   pvn_cfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_cmul(c21r, c21i, a22r, a22i, b21r, b21i);
@@ -43,10 +43,10 @@ static inline void pvn_cmm2(float *const c11r, float *const c11i, float *const c
 
 static inline void pvn_dmm2(double *const c11, double *const c21, double *const c12, double *const c22, const double a11, const double a21, const double a12, const double a22, const double b11, const double b21, const double b12, const double b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fma(a11, b11, a12 * b21);
   *c21 = fma(a21, b11, a22 * b21);
   *c12 = fma(a11, b12, a12 * b22);
@@ -55,14 +55,14 @@ static inline void pvn_dmm2(double *const c11, double *const c21, double *const 
 
 static inline void pvn_zmm2(double *const c11r, double *const c11i, double *const c21r, double *const c21i, double *const c12r, double *const c12i, double *const c22r, double *const c22i, const double a11r, const double a11i, const double a21r, const double a21i, const double a12r, const double a12i, const double a22r, const double a22i, const double b11r, const double b11i, const double b21r, const double b21i, const double b12r, const double b12i, const double b22r, const double b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_zmul(c11r, c11i, a12r, a12i, b21r, b21i);
   pvn_zfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_zmul(c21r, c21i, a22r, a22i, b21r, b21i);
@@ -75,10 +75,10 @@ static inline void pvn_zmm2(double *const c11r, double *const c11i, double *cons
 
 static inline void pvn_xmm2(long double *const c11, long double *const c21, long double *const c12, long double *const c22, const long double a11, const long double a21, const long double a12, const long double a22, const long double b11, const long double b21, const long double b12, const long double b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fmal(a11, b11, a12 * b21);
   *c21 = fmal(a21, b11, a22 * b21);
   *c12 = fmal(a11, b12, a12 * b22);
@@ -87,14 +87,14 @@ static inline void pvn_xmm2(long double *const c11, long double *const c21, long
 
 static inline void pvn_wmm2(long double *const c11r, long double *const c11i, long double *const c21r, long double *const c21i, long double *const c12r, long double *const c12i, long double *const c22r, long double *const c22i, const long double a11r, const long double a11i, const long double a21r, const long double a21i, const long double a12r, const long double a12i, const long double a22r, const long double a22i, const long double b11r, const long double b11i, const long double b21r, const long double b21i, const long double b12r, const long double b12i, const long double b22r, const long double b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_wmul(c11r, c11i, a12r, a12i, b21r, b21i);
   pvn_wfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_wmul(c21r, c21i, a22r, a22i, b21r, b21i);
@@ -108,10 +108,10 @@ static inline void pvn_wmm2(long double *const c11r, long double *const c11i, lo
 #ifdef PVN_QUADMATH
 static inline void pvn_qmm2(__float128 *const c11, __float128 *const c21, __float128 *const c12, __float128 *const c22, const __float128 a11, const __float128 a21, const __float128 a12, const __float128 a22, const __float128 b11, const __float128 b21, const __float128 b12, const __float128 b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fmaq(a11, b11, a12 * b21);
   *c21 = fmaq(a21, b11, a22 * b21);
   *c12 = fmaq(a11, b12, a12 * b22);
@@ -120,14 +120,14 @@ static inline void pvn_qmm2(__float128 *const c11, __float128 *const c21, __floa
 
 static inline void pvn_ymm2(__float128 *const c11r, __float128 *const c11i, __float128 *const c21r, __float128 *const c21i, __float128 *const c12r, __float128 *const c12i, __float128 *const c22r, __float128 *const c22i, const __float128 a11r, const __float128 a11i, const __float128 a21r, const __float128 a21i, const __float128 a12r, const __float128 a12i, const __float128 a22r, const __float128 a22i, const __float128 b11r, const __float128 b11i, const __float128 b21r, const __float128 b21i, const __float128 b12r, const __float128 b12i, const __float128 b22r, const __float128 b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_ymul(c11r, c11i, a12r, a12i, b21r, b21i);
   pvn_yfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_ymul(c21r, c21i, a22r, a22i, b21r, b21i);
@@ -154,10 +154,10 @@ static inline void pvn_ymm2(__float128 *const c11r, __float128 *const c11i, __fl
 
 static inline void pvn_smma2(float *const c11, float *const c21, float *const c12, float *const c22, const float a11, const float a21, const float a12, const float a22, const float b11, const float b21, const float b12, const float b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fmaf(a11, b11, fmaf(a12, b21, *c11));
   *c21 = fmaf(a21, b11, fmaf(a22, b21, *c21));
   *c12 = fmaf(a11, b12, fmaf(a12, b22, *c12));
@@ -166,14 +166,14 @@ static inline void pvn_smma2(float *const c11, float *const c21, float *const c1
 
 static inline void pvn_cmma2(float *const c11r, float *const c11i, float *const c21r, float *const c21i, float *const c12r, float *const c12i, float *const c22r, float *const c22i, const float a11r, const float a11i, const float a21r, const float a21i, const float a12r, const float a12i, const float a22r, const float a22i, const float b11r, const float b11i, const float b21r, const float b21i, const float b12r, const float b12i, const float b22r, const float b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_cfma(c11r, c11i, a12r, a12i, b21r, b21i, *c11r, *c11i);
   pvn_cfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_cfma(c21r, c21i, a22r, a22i, b21r, b21i, *c21r, *c21i);
@@ -186,10 +186,10 @@ static inline void pvn_cmma2(float *const c11r, float *const c11i, float *const 
 
 static inline void pvn_dmma2(double *const c11, double *const c21, double *const c12, double *const c22, const double a11, const double a21, const double a12, const double a22, const double b11, const double b21, const double b12, const double b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fma(a11, b11, fma(a12, b21, *c11));
   *c21 = fma(a21, b11, fma(a22, b21, *c21));
   *c12 = fma(a11, b12, fma(a12, b22, *c12));
@@ -198,14 +198,14 @@ static inline void pvn_dmma2(double *const c11, double *const c21, double *const
 
 static inline void pvn_zmma2(double *const c11r, double *const c11i, double *const c21r, double *const c21i, double *const c12r, double *const c12i, double *const c22r, double *const c22i, const double a11r, const double a11i, const double a21r, const double a21i, const double a12r, const double a12i, const double a22r, const double a22i, const double b11r, const double b11i, const double b21r, const double b21i, const double b12r, const double b12i, const double b22r, const double b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_zfma(c11r, c11i, a12r, a12i, b21r, b21i, *c11r, *c11i);
   pvn_zfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_zfma(c21r, c21i, a22r, a22i, b21r, b21i, *c21r, *c21i);
@@ -218,10 +218,10 @@ static inline void pvn_zmma2(double *const c11r, double *const c11i, double *con
 
 static inline void pvn_xmma2(long double *const c11, long double *const c21, long double *const c12, long double *const c22, const long double a11, const long double a21, const long double a12, const long double a22, const long double b11, const long double b21, const long double b12, const long double b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fmal(a11, b11, fmal(a12, b21, *c11));
   *c21 = fmal(a21, b11, fmal(a22, b21, *c21));
   *c12 = fmal(a11, b12, fmal(a12, b22, *c12));
@@ -230,14 +230,14 @@ static inline void pvn_xmma2(long double *const c11, long double *const c21, lon
 
 static inline void pvn_wmma2(long double *const c11r, long double *const c11i, long double *const c21r, long double *const c21i, long double *const c12r, long double *const c12i, long double *const c22r, long double *const c22i, const long double a11r, const long double a11i, const long double a21r, const long double a21i, const long double a12r, const long double a12i, const long double a22r, const long double a22i, const long double b11r, const long double b11i, const long double b21r, const long double b21i, const long double b12r, const long double b12i, const long double b22r, const long double b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_wfma(c11r, c11i, a12r, a12i, b21r, b21i, *c11r, *c11i);
   pvn_wfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_wfma(c21r, c21i, a22r, a22i, b21r, b21i, *c21r, *c21i);
@@ -251,10 +251,10 @@ static inline void pvn_wmma2(long double *const c11r, long double *const c11i, l
 #ifdef PVN_QUADMATH
 static inline void pvn_qmma2(__float128 *const c11, __float128 *const c21, __float128 *const c12, __float128 *const c22, const __float128 a11, const __float128 a21, const __float128 a12, const __float128 a22, const __float128 b11, const __float128 b21, const __float128 b12, const __float128 b22)
 {
-  assert(c11);
-  assert(c21);
-  assert(c12);
-  assert(c22);
+  PVN_ASSERT(c11);
+  PVN_ASSERT(c21);
+  PVN_ASSERT(c12);
+  PVN_ASSERT(c22);
   *c11 = fmaq(a11, b11, fmaq(a12, b21, *c11));
   *c21 = fmaq(a21, b11, fmaq(a22, b21, *c21));
   *c12 = fmaq(a11, b12, fmaq(a12, b22, *c12));
@@ -263,14 +263,14 @@ static inline void pvn_qmma2(__float128 *const c11, __float128 *const c21, __flo
 
 static inline void pvn_ymma2(__float128 *const c11r, __float128 *const c11i, __float128 *const c21r, __float128 *const c21i, __float128 *const c12r, __float128 *const c12i, __float128 *const c22r, __float128 *const c22i, const __float128 a11r, const __float128 a11i, const __float128 a21r, const __float128 a21i, const __float128 a12r, const __float128 a12i, const __float128 a22r, const __float128 a22i, const __float128 b11r, const __float128 b11i, const __float128 b21r, const __float128 b21i, const __float128 b12r, const __float128 b12i, const __float128 b22r, const __float128 b22i)
 {
-  assert(c11r);
-  assert(c11i);
-  assert(c21r);
-  assert(c21i);
-  assert(c12r);
-  assert(c12i);
-  assert(c22r);
-  assert(c22i);
+  PVN_ASSERT(c11r);
+  PVN_ASSERT(c11i);
+  PVN_ASSERT(c21r);
+  PVN_ASSERT(c21i);
+  PVN_ASSERT(c12r);
+  PVN_ASSERT(c12i);
+  PVN_ASSERT(c22r);
+  PVN_ASSERT(c22i);
   pvn_yfma(c11r, c11i, a12r, a12i, b21r, b21i, *c11r, *c11i);
   pvn_yfma(c11r, c11i, a11r, a11i, b11r, b11i, *c11r, *c11i);
   pvn_yfma(c21r, c21i, a22r, a22i, b21r, b21i, *c21r, *c21i);

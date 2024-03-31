@@ -19,8 +19,8 @@
 #define pvn_Tswp(T,t)                                   \
 static inline void pvn_##t##swp(T *const a, T *const b) \
 {                                                       \
-  assert(a);                                            \
-  assert(b);                                            \
+  PVN_ASSERT(a);                                        \
+  PVN_ASSERT(b);                                        \
   const T c = *a;                                       \
   *a = *b;                                              \
   *b = c;                                               \

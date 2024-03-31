@@ -644,8 +644,8 @@ int main(int argc, char *argv[])
 #else /* !PVN_TEST */
 static inline void ef_mulf(int *const e, float *const f, const int e1, const float f1, const int e2, const float f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 * f2);
   *f = frexpf(*f, e);
   *e += (e1 + e2);
@@ -653,8 +653,8 @@ static inline void ef_mulf(int *const e, float *const f, const int e1, const flo
 
 static inline void ef_divf(int *const e, float *const f, const int e1, const float f1, const int e2, const float f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 / f2);
   *f = frexpf(*f, e);
   *e += (e1 - e2);
@@ -684,15 +684,15 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
 #endif /* !NDEBUG */
                    )
 {
-  assert(tf);
-  assert(cf);
-  assert(sf);
-  assert(tp);
-  assert(cp);
-  assert(sp);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(tf);
+  PVN_ASSERT(cf);
+  PVN_ASSERT(sf);
+  PVN_ASSERT(tp);
+  PVN_ASSERT(cp);
+  PVN_ASSERT(sp);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   float af = 0.0f, bf = 0.0f, abf = 0.0f, a_bf = 0.0f, df = 0.0f, nf = 0.0f, t2f = 0.0f, t2 = 0.0f;
 
@@ -825,21 +825,21 @@ int pvn_sljsv2_
  float *const v11, float *const v21, float *const v12, float *const v22,
  float *const s1, float *const s2, int *const es)
 {
-  assert(a11);
-  assert(a21);
-  assert(a12);
-  assert(a22);
-  assert(u11);
-  assert(u21);
-  assert(u12);
-  assert(u22);
-  assert(v11);
-  assert(v21);
-  assert(v12);
-  assert(v22);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(a12);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(u11);
+  PVN_ASSERT(u21);
+  PVN_ASSERT(u12);
+  PVN_ASSERT(u22);
+  PVN_ASSERT(v11);
+  PVN_ASSERT(v21);
+  PVN_ASSERT(v12);
+  PVN_ASSERT(v22);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfinite(*a11))
     return -1;
   if (!isfinite(*a21))
@@ -1632,8 +1632,8 @@ int pvn_sljsv2_
 
 static float cpolarf(const float r, const float i, float *const c, float *const s)
 {
-  assert(c);
-  assert(s);
+  PVN_ASSERT(c);
+  PVN_ASSERT(s);
   const float a = hypotf(r, i);
   *c = copysignf(fminf((fabsf(r) / a), 1.0f), r);
   *s = (i / fmaxf(a, FLT_TRUE_MIN));
@@ -1646,21 +1646,21 @@ int pvn_cljsv2_
  float *const v11r, float *const v11i, float *const v21r, float *const v21i, float *const v12r, float *const v12i, float *const v22r, float *const v22i,
  float *const s1, float *const s2, int *const es)
 {
-  assert(a11r); assert(a11i);
-  assert(a21r); assert(a21i);
-  assert(a12r); assert(a12i);
-  assert(a22r); assert(a22i);
-  assert(u11r); assert(u11i);
-  assert(u21r); assert(u21i);
-  assert(u12r); assert(u12i);
-  assert(u22r); assert(u22i);
-  assert(v11r); assert(v11i);
-  assert(v21r); assert(v21i);
-  assert(v12r); assert(v12i);
-  assert(v22r); assert(v22i);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11r); PVN_ASSERT(a11i);
+  PVN_ASSERT(a21r); PVN_ASSERT(a21i);
+  PVN_ASSERT(a12r); PVN_ASSERT(a12i);
+  PVN_ASSERT(a22r); PVN_ASSERT(a22i);
+  PVN_ASSERT(u11r); PVN_ASSERT(u11i);
+  PVN_ASSERT(u21r); PVN_ASSERT(u21i);
+  PVN_ASSERT(u12r); PVN_ASSERT(u12i);
+  PVN_ASSERT(u22r); PVN_ASSERT(u22i);
+  PVN_ASSERT(v11r); PVN_ASSERT(v11i);
+  PVN_ASSERT(v21r); PVN_ASSERT(v21i);
+  PVN_ASSERT(v12r); PVN_ASSERT(v12i);
+  PVN_ASSERT(v22r); PVN_ASSERT(v22i);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfinite(*a11r))
     return -1;
   if (!isfinite(*a11i))
@@ -2354,8 +2354,8 @@ int pvn_cljsv2_
 
 static inline void ef_mul(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 * f2);
   *f = frexp(*f, e);
   *e += (e1 + e2);
@@ -2363,8 +2363,8 @@ static inline void ef_mul(int *const e, double *const f, const int e1, const dou
 
 static inline void ef_div(int *const e, double *const f, const int e1, const double f1, const int e2, const double f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 / f2);
   *f = frexp(*f, e);
   *e += (e1 - e2);
@@ -2394,15 +2394,15 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
 #endif /* !NDEBUG */
                    )
 {
-  assert(tf);
-  assert(cf);
-  assert(sf);
-  assert(tp);
-  assert(cp);
-  assert(sp);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(tf);
+  PVN_ASSERT(cf);
+  PVN_ASSERT(sf);
+  PVN_ASSERT(tp);
+  PVN_ASSERT(cp);
+  PVN_ASSERT(sp);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   double af = 0.0, bf = 0.0, abf = 0.0, a_bf = 0.0, df = 0.0, nf = 0.0, t2f = 0.0, t2 = 0.0;
 
@@ -2535,21 +2535,21 @@ int pvn_dljsv2_
  double *const v11, double *const v21, double *const v12, double *const v22,
  double *const s1, double *const s2, int *const es)
 {
-  assert(a11);
-  assert(a21);
-  assert(a12);
-  assert(a22);
-  assert(u11);
-  assert(u21);
-  assert(u12);
-  assert(u22);
-  assert(v11);
-  assert(v21);
-  assert(v12);
-  assert(v22);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(a12);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(u11);
+  PVN_ASSERT(u21);
+  PVN_ASSERT(u12);
+  PVN_ASSERT(u22);
+  PVN_ASSERT(v11);
+  PVN_ASSERT(v21);
+  PVN_ASSERT(v12);
+  PVN_ASSERT(v22);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfinite(*a11))
     return -1;
   if (!isfinite(*a21))
@@ -3342,8 +3342,8 @@ int pvn_dljsv2_
 
 static double cpolar(const double r, const double i, double *const c, double *const s)
 {
-  assert(c);
-  assert(s);
+  PVN_ASSERT(c);
+  PVN_ASSERT(s);
   const double a = hypot(r, i);
   *c = copysign(fmin((fabs(r) / a), 1.0), r);
   *s = (i / fmax(a, DBL_TRUE_MIN));
@@ -3356,21 +3356,21 @@ int pvn_zljsv2_
  double *const v11r, double *const v11i, double *const v21r, double *const v21i, double *const v12r, double *const v12i, double *const v22r, double *const v22i,
  double *const s1, double *const s2, int *const es)
 {
-  assert(a11r); assert(a11i);
-  assert(a21r); assert(a21i);
-  assert(a12r); assert(a12i);
-  assert(a22r); assert(a22i);
-  assert(u11r); assert(u11i);
-  assert(u21r); assert(u21i);
-  assert(u12r); assert(u12i);
-  assert(u22r); assert(u22i);
-  assert(v11r); assert(v11i);
-  assert(v21r); assert(v21i);
-  assert(v12r); assert(v12i);
-  assert(v22r); assert(v22i);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11r); PVN_ASSERT(a11i);
+  PVN_ASSERT(a21r); PVN_ASSERT(a21i);
+  PVN_ASSERT(a12r); PVN_ASSERT(a12i);
+  PVN_ASSERT(a22r); PVN_ASSERT(a22i);
+  PVN_ASSERT(u11r); PVN_ASSERT(u11i);
+  PVN_ASSERT(u21r); PVN_ASSERT(u21i);
+  PVN_ASSERT(u12r); PVN_ASSERT(u12i);
+  PVN_ASSERT(u22r); PVN_ASSERT(u22i);
+  PVN_ASSERT(v11r); PVN_ASSERT(v11i);
+  PVN_ASSERT(v21r); PVN_ASSERT(v21i);
+  PVN_ASSERT(v12r); PVN_ASSERT(v12i);
+  PVN_ASSERT(v22r); PVN_ASSERT(v22i);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfinite(*a11r))
     return -1;
   if (!isfinite(*a11i))
@@ -4063,22 +4063,22 @@ int pvn_zljsv2_
 
 #ifndef XLJR2
 #define XLJR2                                                   \
-  assert(a11);                                                  \
-  assert(a21);                                                  \
-  assert(a12);                                                  \
-  assert(a22);                                                  \
-  assert(u11);                                                  \
-  assert(u21);                                                  \
-  assert(u12);                                                  \
-  assert(u22);                                                  \
-  assert(v11);                                                  \
-  assert(v21);                                                  \
-  assert(v12);                                                  \
-  assert(v22);                                                  \
-  assert(s1);                                                   \
-  assert(s2);                                                   \
-  assert(es);                                                   \
-  assert(E);                                                    \
+  PVN_ASSERT(a11);                                              \
+  PVN_ASSERT(a21);                                              \
+  PVN_ASSERT(a12);                                              \
+  PVN_ASSERT(a22);                                              \
+  PVN_ASSERT(u11);                                              \
+  PVN_ASSERT(u21);                                              \
+  PVN_ASSERT(u12);                                              \
+  PVN_ASSERT(u22);                                              \
+  PVN_ASSERT(v11);                                              \
+  PVN_ASSERT(v21);                                              \
+  PVN_ASSERT(v12);                                              \
+  PVN_ASSERT(v22);                                              \
+  PVN_ASSERT(s1);                                               \
+  PVN_ASSERT(s2);                                               \
+  PVN_ASSERT(es);                                               \
+  PVN_ASSERT(E);                                                \
   long double                                                   \
     u11l = *u11, u21l = *u21, u12l = *u12, u22l = *u22,         \
     v11l = *v11, v21l = *v21, v12l = *v12, v22l = *v22,         \
@@ -4133,22 +4133,22 @@ void pvn_dxljr2_
 
 #ifndef WLJR2
 #define WLJR2                                                        \
-  assert(a11r); assert(a11i);                                        \
-  assert(a21r); assert(a21i);                                        \
-  assert(a12r); assert(a12i);                                        \
-  assert(a22r); assert(a22i);                                        \
-  assert(u11r); assert(u11i);                                        \
-  assert(u21r); assert(u21i);                                        \
-  assert(u12r); assert(u12i);                                        \
-  assert(u22r); assert(u22i);                                        \
-  assert(v11r); assert(v11i);                                        \
-  assert(v21r); assert(v21i);                                        \
-  assert(v12r); assert(v12i);                                        \
-  assert(v22r); assert(v22i);                                        \
-  assert(s1);                                                        \
-  assert(s2);                                                        \
-  assert(es);                                                        \
-  assert(E);                                                         \
+  PVN_ASSERT(a11r); PVN_ASSERT(a11i);                                \
+  PVN_ASSERT(a21r); PVN_ASSERT(a21i);                                \
+  PVN_ASSERT(a12r); PVN_ASSERT(a12i);                                \
+  PVN_ASSERT(a22r); PVN_ASSERT(a22i);                                \
+  PVN_ASSERT(u11r); PVN_ASSERT(u11i);                                \
+  PVN_ASSERT(u21r); PVN_ASSERT(u21i);                                \
+  PVN_ASSERT(u12r); PVN_ASSERT(u12i);                                \
+  PVN_ASSERT(u22r); PVN_ASSERT(u22i);                                \
+  PVN_ASSERT(v11r); PVN_ASSERT(v11i);                                \
+  PVN_ASSERT(v21r); PVN_ASSERT(v21i);                                \
+  PVN_ASSERT(v12r); PVN_ASSERT(v12i);                                \
+  PVN_ASSERT(v22r); PVN_ASSERT(v22i);                                \
+  PVN_ASSERT(s1);                                                    \
+  PVN_ASSERT(s2);                                                    \
+  PVN_ASSERT(es);                                                    \
+  PVN_ASSERT(E);                                                     \
   long double                                                        \
     U11r = *u11r, U11i = *u11i, U21r = *u21r, U21i = *u21i,          \
     U12r = *u12r, U12i = *u12i, U22r = *u22r, U22i = *u22i,          \
@@ -4232,8 +4232,8 @@ void pvn_zwljr2_
 
 static inline void ef_mull(int *const e, long double *const f, const int e1, const long double f1, const int e2, const long double f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 * f2);
   *f = frexpl(*f, e);
   *e += (e1 + e2);
@@ -4241,8 +4241,8 @@ static inline void ef_mull(int *const e, long double *const f, const int e1, con
 
 static inline void ef_divl(int *const e, long double *const f, const int e1, const long double f1, const int e2, const long double f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 / f2);
   *f = frexpl(*f, e);
   *e += (e1 - e2);
@@ -4272,15 +4272,15 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
 #endif /* !NDEBUG */
                    )
 {
-  assert(tf);
-  assert(cf);
-  assert(sf);
-  assert(tp);
-  assert(cp);
-  assert(sp);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(tf);
+  PVN_ASSERT(cf);
+  PVN_ASSERT(sf);
+  PVN_ASSERT(tp);
+  PVN_ASSERT(cp);
+  PVN_ASSERT(sp);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   long double af = 0.0L, bf = 0.0L, abf = 0.0L, a_bf = 0.0L, df = 0.0L, nf = 0.0L, t2f = 0.0L, t2 = 0.0L;
 
@@ -4413,21 +4413,21 @@ int pvn_xljsv2_
  long double *const v11, long double *const v21, long double *const v12, long double *const v22,
  long double *const s1, long double *const s2, int *const es)
 {
-  assert(a11);
-  assert(a21);
-  assert(a12);
-  assert(a22);
-  assert(u11);
-  assert(u21);
-  assert(u12);
-  assert(u22);
-  assert(v11);
-  assert(v21);
-  assert(v12);
-  assert(v22);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(a12);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(u11);
+  PVN_ASSERT(u21);
+  PVN_ASSERT(u12);
+  PVN_ASSERT(u22);
+  PVN_ASSERT(v11);
+  PVN_ASSERT(v21);
+  PVN_ASSERT(v12);
+  PVN_ASSERT(v22);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfinite(*a11))
     return -1;
   if (!isfinite(*a21))
@@ -5223,8 +5223,8 @@ int pvn_xljsv2_
 
 static long double cpolarl(const long double r, const long double i, long double *const c, long double *const s)
 {
-  assert(c);
-  assert(s);
+  PVN_ASSERT(c);
+  PVN_ASSERT(s);
   const long double a = hypotl(r, i);
   *c = copysignl(fminl((fabsl(r) / a), 1.0L), r);
   *s = (i / fmaxl(a, LDBL_TRUE_MIN));
@@ -5237,21 +5237,21 @@ int pvn_wljsv2_
  long double *const v11r, long double *const v11i, long double *const v21r, long double *const v21i, long double *const v12r, long double *const v12i, long double *const v22r, long double *const v22i,
  long double *const s1, long double *const s2, int *const es)
 {
-  assert(a11r); assert(a11i);
-  assert(a21r); assert(a21i);
-  assert(a12r); assert(a12i);
-  assert(a22r); assert(a22i);
-  assert(u11r); assert(u11i);
-  assert(u21r); assert(u21i);
-  assert(u12r); assert(u12i);
-  assert(u22r); assert(u22i);
-  assert(v11r); assert(v11i);
-  assert(v21r); assert(v21i);
-  assert(v12r); assert(v12i);
-  assert(v22r); assert(v22i);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11r); PVN_ASSERT(a11i);
+  PVN_ASSERT(a21r); PVN_ASSERT(a21i);
+  PVN_ASSERT(a12r); PVN_ASSERT(a12i);
+  PVN_ASSERT(a22r); PVN_ASSERT(a22i);
+  PVN_ASSERT(u11r); PVN_ASSERT(u11i);
+  PVN_ASSERT(u21r); PVN_ASSERT(u21i);
+  PVN_ASSERT(u12r); PVN_ASSERT(u12i);
+  PVN_ASSERT(u22r); PVN_ASSERT(u22i);
+  PVN_ASSERT(v11r); PVN_ASSERT(v11i);
+  PVN_ASSERT(v21r); PVN_ASSERT(v21i);
+  PVN_ASSERT(v12r); PVN_ASSERT(v12i);
+  PVN_ASSERT(v22r); PVN_ASSERT(v22i);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfinite(*a11r))
     return -1;
   if (!isfinite(*a11i))
@@ -5948,22 +5948,22 @@ int pvn_wljsv2_
 #ifdef PVN_QUADMATH
 #ifndef QLJR2
 #define QLJR2                                                   \
-  assert(a11);                                                  \
-  assert(a21);                                                  \
-  assert(a12);                                                  \
-  assert(a22);                                                  \
-  assert(u11);                                                  \
-  assert(u21);                                                  \
-  assert(u12);                                                  \
-  assert(u22);                                                  \
-  assert(v11);                                                  \
-  assert(v21);                                                  \
-  assert(v12);                                                  \
-  assert(v22);                                                  \
-  assert(s1);                                                   \
-  assert(s2);                                                   \
-  assert(es);                                                   \
-  assert(E);                                                    \
+  PVN_ASSERT(a11);                                              \
+  PVN_ASSERT(a21);                                              \
+  PVN_ASSERT(a12);                                              \
+  PVN_ASSERT(a22);                                              \
+  PVN_ASSERT(u11);                                              \
+  PVN_ASSERT(u21);                                              \
+  PVN_ASSERT(u12);                                              \
+  PVN_ASSERT(u22);                                              \
+  PVN_ASSERT(v11);                                              \
+  PVN_ASSERT(v21);                                              \
+  PVN_ASSERT(v12);                                              \
+  PVN_ASSERT(v22);                                              \
+  PVN_ASSERT(s1);                                               \
+  PVN_ASSERT(s2);                                               \
+  PVN_ASSERT(es);                                               \
+  PVN_ASSERT(E);                                                \
   __float128                                                    \
     u11l = *u11, u21l = *u21, u12l = *u12, u22l = *u22,         \
     v11l = *v11, v21l = *v21, v12l = *v12, v22l = *v22,         \
@@ -6025,22 +6025,22 @@ void pvn_xqljr2_
 
 #ifndef YLJR2
 #define YLJR2                                                        \
-  assert(a11r); assert(a11i);                                        \
-  assert(a21r); assert(a21i);                                        \
-  assert(a12r); assert(a12i);                                        \
-  assert(a22r); assert(a22i);                                        \
-  assert(u11r); assert(u11i);                                        \
-  assert(u21r); assert(u21i);                                        \
-  assert(u12r); assert(u12i);                                        \
-  assert(u22r); assert(u22i);                                        \
-  assert(v11r); assert(v11i);                                        \
-  assert(v21r); assert(v21i);                                        \
-  assert(v12r); assert(v12i);                                        \
-  assert(v22r); assert(v22i);                                        \
-  assert(s1);                                                        \
-  assert(s2);                                                        \
-  assert(es);                                                        \
-  assert(E);                                                         \
+  PVN_ASSERT(a11r); PVN_ASSERT(a11i);                                \
+  PVN_ASSERT(a21r); PVN_ASSERT(a21i);                                \
+  PVN_ASSERT(a12r); PVN_ASSERT(a12i);                                \
+  PVN_ASSERT(a22r); PVN_ASSERT(a22i);                                \
+  PVN_ASSERT(u11r); PVN_ASSERT(u11i);                                \
+  PVN_ASSERT(u21r); PVN_ASSERT(u21i);                                \
+  PVN_ASSERT(u12r); PVN_ASSERT(u12i);                                \
+  PVN_ASSERT(u22r); PVN_ASSERT(u22i);                                \
+  PVN_ASSERT(v11r); PVN_ASSERT(v11i);                                \
+  PVN_ASSERT(v21r); PVN_ASSERT(v21i);                                \
+  PVN_ASSERT(v12r); PVN_ASSERT(v12i);                                \
+  PVN_ASSERT(v22r); PVN_ASSERT(v22i);                                \
+  PVN_ASSERT(s1);                                                    \
+  PVN_ASSERT(s2);                                                    \
+  PVN_ASSERT(es);                                                    \
+  PVN_ASSERT(E);                                                     \
   __float128                                                         \
     U11r = *u11r, U11i = *u11i, U21r = *u21r, U21i = *u21i,          \
     U12r = *u12r, U12i = *u12i, U22r = *u22r, U22i = *u22i,          \
@@ -6136,8 +6136,8 @@ void pvn_wyljr2_
 
 static inline void ef_mulq(int *const e, __float128 *const f, const int e1, const __float128 f1, const int e2, const __float128 f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 * f2);
   *f = frexpq(*f, e);
   *e += (e1 + e2);
@@ -6145,8 +6145,8 @@ static inline void ef_mulq(int *const e, __float128 *const f, const int e1, cons
 
 static inline void ef_divq(int *const e, __float128 *const f, const int e1, const __float128 f1, const int e2, const __float128 f2)
 {
-  assert(e);
-  assert(f);
+  PVN_ASSERT(e);
+  PVN_ASSERT(f);
   *f = (f1 / f2);
   *f = frexpq(*f, e);
   *e += (e1 - e2);
@@ -6176,15 +6176,15 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
 #endif /* !NDEBUG */
                    )
 {
-  assert(tf);
-  assert(cf);
-  assert(sf);
-  assert(tp);
-  assert(cp);
-  assert(sp);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(tf);
+  PVN_ASSERT(cf);
+  PVN_ASSERT(sf);
+  PVN_ASSERT(tp);
+  PVN_ASSERT(cp);
+  PVN_ASSERT(sp);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   int ae = 0, be = 0, abe = 0, a_be = 0, de = 0, ne = 0, t2e = 0;
   __float128 af = 0.0q, bf = 0.0q, abf = 0.0q, a_bf = 0.0q, df = 0.0q, nf = 0.0q, t2f = 0.0q, t2 = 0.0q;
 
@@ -6317,21 +6317,21 @@ int pvn_qljsv2_
  __float128 *const v11, __float128 *const v21, __float128 *const v12, __float128 *const v22,
  __float128 *const s1, __float128 *const s2, int *const es)
 {
-  assert(a11);
-  assert(a21);
-  assert(a12);
-  assert(a22);
-  assert(u11);
-  assert(u21);
-  assert(u12);
-  assert(u22);
-  assert(v11);
-  assert(v21);
-  assert(v12);
-  assert(v22);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11);
+  PVN_ASSERT(a21);
+  PVN_ASSERT(a12);
+  PVN_ASSERT(a22);
+  PVN_ASSERT(u11);
+  PVN_ASSERT(u21);
+  PVN_ASSERT(u12);
+  PVN_ASSERT(u22);
+  PVN_ASSERT(v11);
+  PVN_ASSERT(v21);
+  PVN_ASSERT(v12);
+  PVN_ASSERT(v22);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfiniteq(*a11))
     return -1;
   if (!isfiniteq(*a21))
@@ -7123,8 +7123,8 @@ int pvn_qljsv2_
 
 static __float128 cpolarq(const __float128 r, const __float128 i, __float128 *const c, __float128 *const s)
 {
-  assert(c);
-  assert(s);
+  PVN_ASSERT(c);
+  PVN_ASSERT(s);
   const __float128 a = hypotq(r, i);
   *c = copysignq(fminq((fabsq(r) / a), 1.0q), r);
   *s = (i / fmaxq(a, FLT128_TRUE_MIN));
@@ -7137,21 +7137,21 @@ int pvn_yljsv2_
  __float128 *const v11r, __float128 *const v11i, __float128 *const v21r, __float128 *const v21i, __float128 *const v12r, __float128 *const v12i, __float128 *const v22r, __float128 *const v22i,
  __float128 *const s1, __float128 *const s2, int *const es)
 {
-  assert(a11r); assert(a11i);
-  assert(a21r); assert(a21i);
-  assert(a12r); assert(a12i);
-  assert(a22r); assert(a22i);
-  assert(u11r); assert(u11i);
-  assert(u21r); assert(u21i);
-  assert(u12r); assert(u12i);
-  assert(u22r); assert(u22i);
-  assert(v11r); assert(v11i);
-  assert(v21r); assert(v21i);
-  assert(v12r); assert(v12i);
-  assert(v22r); assert(v22i);
-  assert(s1);
-  assert(s2);
-  assert(es);
+  PVN_ASSERT(a11r); PVN_ASSERT(a11i);
+  PVN_ASSERT(a21r); PVN_ASSERT(a21i);
+  PVN_ASSERT(a12r); PVN_ASSERT(a12i);
+  PVN_ASSERT(a22r); PVN_ASSERT(a22i);
+  PVN_ASSERT(u11r); PVN_ASSERT(u11i);
+  PVN_ASSERT(u21r); PVN_ASSERT(u21i);
+  PVN_ASSERT(u12r); PVN_ASSERT(u12i);
+  PVN_ASSERT(u22r); PVN_ASSERT(u22i);
+  PVN_ASSERT(v11r); PVN_ASSERT(v11i);
+  PVN_ASSERT(v21r); PVN_ASSERT(v21i);
+  PVN_ASSERT(v12r); PVN_ASSERT(v12i);
+  PVN_ASSERT(v22r); PVN_ASSERT(v22i);
+  PVN_ASSERT(s1);
+  PVN_ASSERT(s2);
+  PVN_ASSERT(es);
   if (!isfiniteq(*a11r))
     return -1;
   if (!isfiniteq(*a11i))

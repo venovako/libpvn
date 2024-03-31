@@ -82,6 +82,16 @@
 #error PVN_NO_PROF already defined
 #endif /* ?PVN_NO_PROF */
 
+#if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
+#ifdef NDEBUG
+#define PVN_ASSERT(cond) __assume(cond)
+#else /* !NDEBUG */
+#define PVN_ASSERT(cond) assert(cond)
+#endif /* ?NDEBUG */
+#else /* !Intel */
+#define PVN_ASSERT(cond) assert(cond)
+#endif /* ?Intel */
+
 /* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
 #ifdef __MATHIMF_H_INCLUDED

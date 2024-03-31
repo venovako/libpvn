@@ -304,9 +304,9 @@ int pvn_cjs_init(void *const js, const int id, const int n)
 
 int pvn_cjs_init_(void **const ret, const int *const id, const int *const n)
 {
-  assert(ret);
-  assert(id);
-  assert(n);
+  PVN_ASSERT(ret);
+  PVN_ASSERT(id);
+  PVN_ASSERT(n);
   *ret = NULL;
   switch (*id) {
   case 0:
@@ -555,8 +555,8 @@ int pvn_cjs_next(void *const js, int *const arr)
 
 int pvn_cjs_next_(void *const *const js, int *const arr)
 {
-  assert(js);
-  assert(arr);
+  PVN_ASSERT(js);
+  PVN_ASSERT(arr);
   return pvn_cjs_next(*js, arr);
 }
 
@@ -571,7 +571,7 @@ int pvn_cjs_free(void *const js)
 
 int pvn_cjs_free_(void **const js)
 {
-  assert(js);
+  PVN_ASSERT(js);
   const int i = pvn_cjs_free(*js);
   if (!i)
     free(*js);

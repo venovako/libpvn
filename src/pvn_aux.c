@@ -45,8 +45,8 @@ size_t pvn_gcd(const size_t a, const size_t b)
 
 size_t pvn_gcd_(const size_t *const a, const size_t *const b)
 {
-  assert(a);
-  assert(b);
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
   return pvn_gcd(*a, *b);
 }
 
@@ -58,8 +58,8 @@ size_t pvn_lcm(const size_t a, const size_t b)
 
 size_t pvn_lcm_(const size_t *const a, const size_t *const b)
 {
-  assert(a);
-  assert(b);
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
   return pvn_lcm(*a, *b);
 }
 
@@ -86,9 +86,9 @@ char *pvn_hexify(char *const s, const void *const x, const size_t z)
 
 size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...)
 {
-  assert(s);
-  assert(x);
-  assert(z);
+  PVN_ASSERT(s);
+  PVN_ASSERT(x);
+  PVN_ASSERT(z);
   return strlen(pvn_hexify(s, x, *z));
 }
 #endif /* ?PVN_TEST */
