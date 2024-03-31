@@ -15,7 +15,7 @@ typedef struct {
   size_t level;
 } pvn_prof_rec_x;
 
-static int addr_cmp(const void *a, const void *b)
+static int PVN_NO_PROF addr_cmp(const void *a, const void *b)
 {
   if (a == b)
     return 0;
@@ -28,7 +28,7 @@ static int addr_cmp(const void *a, const void *b)
   return 0;
 }
 
-static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const tt)
+static ssize_t PVN_NO_PROF proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const tt)
 {
   PVN_ASSERT(pt);
   PVN_ASSERT(bt);
@@ -118,7 +118,7 @@ static ssize_t proct(FILE *const pt, FILE *const bt, FILE *const st, FILE *const
   return max_level;
 }
 
-int main(int argc, char *argv[])
+int PVN_NO_PROF main(int argc, char *argv[])
 {
 #ifdef PVN_PROFILE
   (void)printf("PVN_PROFILE=%u\n", PVN_PROFILE);
@@ -167,6 +167,7 @@ static pthread_mutex_t prof_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif /* ?PVN_PROFILE */
 static void (*on_exit_ptr)(void) = (void (*)(void))NULL;
 static long tbase = 0l;
+static unsigned long thr_id = 0ul;
 static void *bt_root = NULL;
 static FILE *bt_file = (FILE*)NULL;
 static FILE *st_file = (FILE*)NULL;
@@ -296,15 +297,22 @@ static int PVN_NO_PROF bt_insert(void *addr)
         r = -4;
       }
       else {
-        ar->addr = addr = info.dli_saddr;
-        ar->fof = (long)(info.dli_sname ? strlen(info.dli_sname) : (size_t)0u);
+#ifndef NDEBUG
+        if (addr != info.dli_saddr)
+          (void)fprintf(stderr, "\n%p != %p\n", addr, info.dli_saddr);
+#endif /* !NDEBUG */
+        ar->addr = addr;
+        ar->fof = (long)(info.dli_sname ? strlen(info.dli_sname) : (size_t)18u);
         if (!(ar->sym = (char*)malloc(ar->fof + 2))) {
           free(ar);
           pflerror(__FILE__, __LINE__);
           r = -5;
         }
         else {
-          (void)strcpy(ar->sym, (info.dli_sname ? info.dli_sname : ""));
+          if (info.dli_sname)
+            (void)strcpy(ar->sym, info.dli_sname);
+          else if (sprintf(ar->sym, "0x%016lu", (uintptr_t)(info.dli_saddr ? info.dli_saddr : addr)) < 18)
+            pflerror(__FILE__, __LINE__);
           (ar->sym)[ar->fof] = '\n';
           (ar->sym)[ar->fof + 1] = '\0';
           if (!(node = (pvn_addr_rec_t**)tsearch((const void*)ar, &bt_root, bt_comp))) {
@@ -330,30 +338,40 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
 {
   bool once = false;
   if (!pt_file) {
-    if (snprintf(file_name, sizeof(file_name), "%016tx.pt", (ptrdiff_t)pthread_self()) <= 0) {
-      pflerror(__FILE__, __LINE__);
-      return;
-    }
-    if (!(pt_file = fopen(file_name, "wb"))) {
-      pflerror(__FILE__, __LINE__);
-      return;
-    }
 #if (PVN_PROFILE > 0u)
     if (pthread_mutex_lock(&prof_lock)) {
       pflerror(__FILE__, __LINE__);
       return;
     }
 #endif /* PVN_PROFILE */
-    if (!on_exit_ptr) {
-      if (atexit(on_prog_exit))
+    if (sprintf(file_name, "%016lx.pt", thr_id) < 19)
+      pflerror(__FILE__, __LINE__);
+    else {
+      if (!(pt_file = fopen(file_name, "wb")))
         pflerror(__FILE__, __LINE__);
-      else
-        on_exit_ptr = on_prog_exit;
-      struct timespec tv;
-      if (clock_gettime(PVN_PROFILE_TIMEREF, (struct timespec*)memset(&tv, 0, sizeof(tv))))
-        pflerror(__FILE__, __LINE__);
-      tbase = pvn_t2ns(&tv);
-      once = true;
+      else {
+        ++thr_id;
+#ifndef NDEBUG
+#if (PVN_PROFILE > 0u)
+        if (thr_id > PVN_PROFILE)
+#else /* PVN_PROFILE == 0u */
+        if (thr_id > 1u)
+#endif /* ?PVN_PROFILE */
+          (void)fprintf(stderr, "\nmore threads created than anticipated\n");
+#endif /* !NDEBUG */
+        if (!on_exit_ptr) {
+          if (atexit(on_prog_exit))
+            pflerror(__FILE__, __LINE__);
+          else {
+            on_exit_ptr = on_prog_exit;
+            struct timespec tv = { (time_t)0, 0l };
+            if (clock_gettime(PVN_PROFILE_TIMEREF, &tv))
+              pflerror(__FILE__, __LINE__);
+            tbase = (tv.tv_sec * 1000000000l + tv.tv_nsec);
+            once = true;
+          }
+        }
+      }
     }
 #if (PVN_PROFILE > 0u)
     if (pthread_mutex_unlock(&prof_lock))
@@ -364,34 +382,30 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
   if (bt_insert(this_fn) < 0)
     return;
 
-  pvn_prof_rec_t pr;
-  pr.this_fn = this_fn;
-  pr.call_site = call_site;
-  if (once)
-    pr.tns = 0l;
-  else {
-    struct timespec tv;
-    if (clock_gettime(PVN_PROFILE_TIMEREF, (struct timespec*)memset(&tv, 0, sizeof(tv))))
+  if (pt_file) {
+    pvn_prof_rec_t pr = { this_fn, call_site, 0l };
+    if (!once) {
+      struct timespec tv = { (time_t)0, 0l };
+      if (clock_gettime(PVN_PROFILE_TIMEREF, &tv))
+        pflerror(__FILE__, __LINE__);
+      pr.tns = ((tv.tv_sec * 1000000000l + tv.tv_nsec) - tbase);
+    }
+    if (fwrite(&pr, sizeof(pr), 1, pt_file) != 1)
       pflerror(__FILE__, __LINE__);
-    pr.tns = (pvn_t2ns(&tv) - tbase);
   }
-
-  if (fwrite(&pr, sizeof(pr), 1, pt_file) != 1)
-    pflerror(__FILE__, __LINE__);
 }
 
 PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_exit(void *const this_fn, void *const /*call_site*/)
 {
-  pvn_prof_rec_t pr;
-  pr.this_fn = this_fn;
-  pr.call_site = NULL; /* a marker for func_exit */
-  struct timespec tv;
-  if (clock_gettime(PVN_PROFILE_TIMEREF, (struct timespec*)memset(&tv, 0, sizeof(tv))))
-    pflerror(__FILE__, __LINE__);
-  pr.tns = (pvn_t2ns(&tv) - tbase);
-
-  if (fwrite(&pr, sizeof(pr), 1, pt_file) != 1)
-    pflerror(__FILE__, __LINE__);
+  if (pt_file) {
+    pvn_prof_rec_t pr = { this_fn, NULL /* a marker for func_exit */, 0l };
+    struct timespec tv = { (time_t)0, 0l };
+    if (clock_gettime(PVN_PROFILE_TIMEREF, &tv))
+      pflerror(__FILE__, __LINE__);
+    pr.tns = ((tv.tv_sec * 1000000000l + tv.tv_nsec) - tbase);
+    if (fwrite(&pr, sizeof(pr), 1, pt_file) != 1)
+      pflerror(__FILE__, __LINE__);
+  }
 }
 #endif /* PVN_PROFILE */
 #endif /* ?PVN_TEST */
