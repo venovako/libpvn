@@ -1,8 +1,8 @@
-#ifndef PVN_ERROR_H
-#define PVN_ERROR_H
+#ifndef PVN_ERR_H
+#define PVN_ERR_H
 
 #ifndef PVN_H
-#error pvn_error.h not intended for direct inclusion
+#error pvn_err.h not intended for direct inclusion
 #endif /* !PVN_H */
 
 #ifndef PVN_BTRACE_BUFSIZ
@@ -64,4 +64,4 @@ PVN_EXTERN_C const char *pvn_get_error();
 #error PVN_SYSP_CALL already defined
 #endif /* ?PVN_SYSP_CALL */
 
-#endif /* !PVN_ERROR_H */
+#endif /* !PVN_ERR_H */

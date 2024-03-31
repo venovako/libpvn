@@ -39,13 +39,13 @@ int main(int argc, char *argv[])
   pvn_rvis_ctx ctx;
   const char *dat = (const char*)NULL;
   if (c == 0)
-    dat = "../etc/pvn_mtx_r0.dat";
+    dat = "../etc/pvn_vis_r0.dat";
   else if (c == 1)
-    dat = "../etc/pvn_mtx_r1.dat";
+    dat = "../etc/pvn_vis_r1.dat";
   else if (c == 4)
-    dat = "../etc/pvn_mtx_r4.dat";
+    dat = "../etc/pvn_vis_r4.dat";
   else if (c == 8)
-    dat = "../etc/pvn_mtx_r8.dat";
+    dat = "../etc/pvn_vis_r8.dat";
   else
     return EXIT_FAILURE;
   if (pvn_rvis_start(&ctx, m, n, pvn_rop_id, dat)) {
@@ -70,13 +70,13 @@ int main(int argc, char *argv[])
   (void)fprintf(stderr, "pvn_rvis_stop... ");
   int r = 0;
   if (c == 0)
-    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_mtx_r0");
+    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_vis_r0");
   else if (c == 1)
-    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_mtx_r1");
+    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_vis_r1");
   else if (c == 4)
-    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_mtx_r4");
+    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_vis_r4");
   else if (c == 8)
-    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_mtx_r8");
+    r = pvn_rvis_stop(&ctx, sx, sy, bpp, "../etc/pvn_vis_r8");
   else
     r = 1;
   (void)fprintf(stderr, "%d\n", r);
@@ -86,24 +86,24 @@ int main(int argc, char *argv[])
   (void)system("for B in ../etc/*.bmp; do convert $B -quality 90 ../etc/`basename $B bmp`png; done");
   (void)fprintf(stderr, "Assembling the APNG animation from the PNGs with apngasm...\n");
   if (c == 0)
-    (void)system("apngasm -F -o ../etc/pvn_mtx_r0.png -d 1:6 ../etc/*-*.png");
+    (void)system("apngasm -F -o ../etc/pvn_vis_r0.png -d 1:6 ../etc/*-*.png");
   else if (c == 1)
-    (void)system("apngasm -F -o ../etc/pvn_mtx_r1.png -d 1:6 ../etc/*-*.png");
+    (void)system("apngasm -F -o ../etc/pvn_vis_r1.png -d 1:6 ../etc/*-*.png");
   else if (c == 4)
-    (void)system("apngasm -F -o ../etc/pvn_mtx_r4.png -d 1:6 ../etc/*-*.png");
+    (void)system("apngasm -F -o ../etc/pvn_vis_r4.png -d 1:6 ../etc/*-*.png");
   else if (c == 8)
-    (void)system("apngasm -F -o ../etc/pvn_mtx_r8.png -d 1:6 ../etc/*-*.png");
+    (void)system("apngasm -F -o ../etc/pvn_vis_r8.png -d 1:6 ../etc/*-*.png");
   else
     return EXIT_FAILURE;
   (void)fprintf(stderr, "Converting the APNG to the animated GIF with apng2gif...\n");
   if (c == 0)
-    (void)system("apng2gif ../etc/pvn_mtx_r0.png ../etc/pvn_mtx_r0.gif");
+    (void)system("apng2gif ../etc/pvn_vis_r0.png ../etc/pvn_vis_r0.gif");
   else if (c == 1)
-    (void)system("apng2gif ../etc/pvn_mtx_r1.png ../etc/pvn_mtx_r1.gif");
+    (void)system("apng2gif ../etc/pvn_vis_r1.png ../etc/pvn_vis_r1.gif");
   else if (c == 4)
-    (void)system("apng2gif ../etc/pvn_mtx_r4.png ../etc/pvn_mtx_r4.gif");
+    (void)system("apng2gif ../etc/pvn_vis_r4.png ../etc/pvn_vis_r4.gif");
   else if (c == 8)
-    (void)system("apng2gif ../etc/pvn_mtx_r8.png ../etc/pvn_mtx_r8.gif");
+    (void)system("apng2gif ../etc/pvn_vis_r8.png ../etc/pvn_vis_r8.gif");
   else
     return EXIT_FAILURE;
   return EXIT_SUCCESS;

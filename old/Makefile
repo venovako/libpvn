@@ -44,7 +44,7 @@ pvn_crm.c  \
 pvn_ev2.c  \
 pvn_fmt.c  \
 pvn_mem.c  \
-pvn_mtx.c
+pvn_vis.c
 OBJS=pvn.obj \
 pvn_aux.obj  \
 pvn_bmp.obj  \
@@ -53,7 +53,7 @@ pvn_crm.obj  \
 pvn_ev2.obj  \
 pvn_fmt.obj  \
 pvn_mem.obj  \
-pvn_mtx.obj
+pvn_vis.obj
 EXES=pvn.exe \
 pvn_aux.exe  \
 pvn_bmp.exe  \
@@ -62,7 +62,7 @@ pvn_crm.exe  \
 pvn_ev2.exe  \
 pvn_fmt.exe  \
 pvn_mem.exe  \
-pvn_mtx.exe
+pvn_vis.exe
 
 all: pvn.lib $(EXES)
 
