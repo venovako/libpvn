@@ -17,6 +17,8 @@ typedef struct {
 
 static int PVN_NO_PROF addr_cmp(const void *a, const void *b)
 {
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
   if (a == b)
     return 0;
   const pvn_addr_rec_x *const A = (const pvn_addr_rec_x*)a;
@@ -174,14 +176,6 @@ static FILE *st_file = (FILE*)NULL;
 static PVN_THREAD char file_name[20];
 static PVN_THREAD FILE *pt_file = (FILE*)NULL;
 
-#ifndef PVN_PROFILE_TIMEREF
-#ifdef CLOCK_MONOTONIC_RAW
-#define PVN_PROFILE_TIMEREF CLOCK_MONOTONIC_RAW
-#else /* !CLOCK_MONOTONIC_RAW */
-#define PVN_PROFILE_TIMEREF CLOCK_MONOTONIC
-#endif /* ?CLOCK_MONOTONIC_RAW */
-#endif /* !PVN_PROFILE_TIMEREF */
-
 static void PVN_NO_PROF pflerror(const char *const f, const int l)
 {
   (void)fprintf(stderr, "\n%s(%d): %s\n", f, l, strerror(errno));
@@ -190,6 +184,8 @@ static void PVN_NO_PROF pflerror(const char *const f, const int l)
 
 static int PVN_NO_PROF bt_comp(const void *a, const void *b)
 {
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
   if (a == b)
     return 0;
   const void *const *const A = (const void *const *)a;
@@ -201,18 +197,26 @@ static int PVN_NO_PROF bt_comp(const void *a, const void *b)
   return 0;
 }
 
-static void PVN_NO_PROF bt_action(const void *node, VISIT order, int /*level*/)
+static void PVN_NO_PROF bt_action(const void *node, VISIT order, int level)
 {
-  pvn_addr_rec_t *const ar = *(pvn_addr_rec_t**)node;
   if ((order == postorder) || (order == leaf)) {
-    const size_t sl = (size_t)(ar->fof + 1);
-    ar->fof = ftell(st_file);
-    if (fwrite(ar->sym, sizeof(char), sl, st_file) != sl) {
-      pflerror(__FILE__, __LINE__);
-      return;
+    if (node) {
+      pvn_addr_rec_t *const ar = *(pvn_addr_rec_t**)node;
+      if (ar) {
+        const size_t sl = (size_t)(ar->fof + 1);
+        ar->fof = ftell(st_file);
+        if (fwrite(ar->sym, sizeof(char), sl, st_file) != sl) {
+          pflerror(__FILE__, __LINE__);
+          return;
+        }
+        if (fwrite(ar, (sizeof(*ar) - sizeof(ar->sym)), (size_t)1u, bt_file) != (size_t)1u)
+          pflerror(__FILE__, __LINE__);
+      }
+      else
+        pflerror(__FILE__, -level);
     }
-    if (fwrite(ar, (sizeof(*ar) - sizeof(ar->sym)), 1, bt_file) != 1)
-      pflerror(__FILE__, __LINE__);
+    else
+      pflerror(__FILE__, -level);
   }
 }
 
@@ -352,11 +356,13 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
       else {
         ++thr_id;
 #ifndef NDEBUG
+        if (thr_id >
 #if (PVN_PROFILE > 0u)
-        if (thr_id > PVN_PROFILE)
+            PVN_PROFILE
 #else /* PVN_PROFILE == 0u */
-        if (thr_id > 1u)
+            1u
 #endif /* ?PVN_PROFILE */
+            )
           (void)fprintf(stderr, "\nmore threads created than anticipated\n");
 #endif /* !NDEBUG */
         if (!on_exit_ptr) {
@@ -365,7 +371,7 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
           else {
             on_exit_ptr = on_prog_exit;
             struct timespec tv = { (time_t)0, 0l };
-            if (clock_gettime(PVN_PROFILE_TIMEREF, &tv))
+            if (clock_gettime(PVN_CLOCK_MONOTONIC, &tv))
               pflerror(__FILE__, __LINE__);
             tbase = (tv.tv_sec * 1000000000l + tv.tv_nsec);
             once = true;
@@ -386,7 +392,7 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
     pvn_prof_rec_t pr = { this_fn, call_site, 0l };
     if (!once) {
       struct timespec tv = { (time_t)0, 0l };
-      if (clock_gettime(PVN_PROFILE_TIMEREF, &tv))
+      if (clock_gettime(PVN_CLOCK_MONOTONIC, &tv))
         pflerror(__FILE__, __LINE__);
       pr.tns = ((tv.tv_sec * 1000000000l + tv.tv_nsec) - tbase);
     }
@@ -395,12 +401,12 @@ PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_enter(void *const this_fn, void
   }
 }
 
-PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_exit(void *const this_fn, void *const /*call_site*/)
+PVN_EXTERN_C void PVN_NO_PROF __cyg_profile_func_exit(void *const this_fn, void *const call_site)
 {
   if (pt_file) {
-    pvn_prof_rec_t pr = { this_fn, NULL /* a marker for func_exit */, 0l };
+    pvn_prof_rec_t pr = { this_fn, NULL /* a marker for func_exit */, (long)call_site /* just to use the argument */};
     struct timespec tv = { (time_t)0, 0l };
-    if (clock_gettime(PVN_PROFILE_TIMEREF, &tv))
+    if (clock_gettime(PVN_CLOCK_MONOTONIC, &tv))
       pflerror(__FILE__, __LINE__);
     pr.tns = ((tv.tv_sec * 1000000000l + tv.tv_nsec) - tbase);
     if (fwrite(&pr, sizeof(pr), 1, pt_file) != 1)
