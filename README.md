@@ -14,25 +14,22 @@ The library has been successfully built using:
 | compiler | `uname` | platform |
 | -------- | ------- | -------- |
 | clang(1) | Darwin  | x86_64   |
-| clang(2) | FreeBSD | amd64    |
 | clang(2) | FreeBSD | arm64    |
 | gcc(3)   | Darwin  | x86_64   |
-| gcc(2)   | FreeBSD | amd64    |
 | gcc(2)   | FreeBSD | arm64    |
-| gcc(4)   | Linux   | aarch64  |
 | gcc(4)   | Linux   | ppc64le  |
 | gcc(5)   | Linux   | x86_64   |
 | gcc(6)   | SunOS   | i86pc    |
 | icx(7)   | Linux   | x86_64   |
 
-Recent versions of the compilers have been povided by:
-1. Apple,
-2. FreeBSD,
-3. Homebrew,
-4. openSUSE Tumbleweed,
-5. Oracle Linux,
-6. Oracle Solaris,
-7. Intel oneAPI.
+Recent versions of the compilers have been provided by or used on:
+1. Apple (clang 13.0.0),
+2. FreeBSD (clang 16.0.6 and GCC 12.2.0),
+3. Homebrew (GCC 13.2.0),
+4. openSUSE Tumbleweed (GCC 13.2.1),
+5. Oracle Linux (GCC 12.2.1 (devtoolset-12) and 13.2.1 (custom built)),
+6. Oracle Solaris (GCC 11.2.0),
+7. Intel oneAPI (2024.1).
 
 Examples of building the library:
 ```bash
