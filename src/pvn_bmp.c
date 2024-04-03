@@ -309,24 +309,24 @@ int pvn_bmp_fwrite(const pvn_bmp_t bmp, const char *const fn)
   const size_t h = (size_t)(uint32_t)abs(bmp->header.height);
   int ret = 0;
 
-  if (fwrite("BM", sizeof(uint8_t), 2u, f) < 2u) {
+  if (fwrite("BM", sizeof(uint8_t), (size_t)2u, f) < (size_t)2u) {
     ret = 2;
     goto end;
   }
-  if (fwrite(&(bmp->header), sizeof(pvn_bmp_header_t), 1u, f) < 1u) {
+  if (fwrite(&(bmp->header), sizeof(pvn_bmp_header_t), (size_t)1u, f) < (size_t)1u) {
     ret = 3;
     goto end;
   }
-  if (bmp->palette && (fwrite(bmp->palette, sizeof(pvn_bmp_palette_entry_t), bmp->header.c_palette, f) < bmp->header.c_palette)) {
+  if (bmp->palette && (fwrite(bmp->palette, sizeof(pvn_bmp_palette_entry_t), (size_t)(bmp->header.c_palette), f) < (size_t)(bmp->header.c_palette))) {
     ret = 4;
     goto end;
   }
   /* mark the bitmap as made by libpvn by writing VN into the gap */
-  if (fwrite("VN", sizeof(uint8_t), 2u, f) < 2u) {
+  if (fwrite("VN", sizeof(uint8_t), (size_t)2u, f) < (size_t)2u) {
     ret = 5;
     goto end;
   }
-  if (fwrite(bmp->image, sizeof(uint8_t) * bmp->i_ldaB, h, f) < h) {
+  if (fwrite(bmp->image, (sizeof(uint8_t) * bmp->i_ldaB), h, f) < h) {
     ret = 6;
     goto end;
   }

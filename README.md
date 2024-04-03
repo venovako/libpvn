@@ -56,7 +56,7 @@ gmake clean all
 ## Using
 
 Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.a` static library, as shown in `GNUmakefile`.
-There are no mutable global/static variables present, but some static constant lookup tables are used.
+There are no mutable global/static variables present, *unless profiling has been enabled*, but some static constant lookup tables are used.
 The functions can safely be called from multiple threads on *unrelated* data without locking.
 You might wish to tune the compiler flags to match yours, especially if you are building a dynamic library, a static executable, and/or want to use OpenMP.
 

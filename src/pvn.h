@@ -164,7 +164,6 @@ static inline int pvn_le()
   const int one = 1;
   return (int)*(const char*)&one;
 }
-
 PVN_EXTERN_C int pvn_le_();
 
 static inline int pvn_omp()
