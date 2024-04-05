@@ -77,6 +77,7 @@ SRCS=pvn.c  \
 pvn_aux.c   \
 pvn_bmp.c   \
 pvn_cjs.c   \
+pvn_cma.c   \
 pvn_crm.c   \
 pvn_dot.c   \
 pvn_err.c   \

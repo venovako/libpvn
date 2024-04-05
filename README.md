@@ -17,6 +17,7 @@ The library has been successfully built using:
 | clang(2) | FreeBSD | arm64    |
 | gcc(3)   | Darwin  | x86_64   |
 | gcc(2)   | FreeBSD | arm64    |
+| gcc(4)   | Linux   | aarch64  |
 | gcc(4)   | Linux   | ppc64le  |
 | gcc(5)   | Linux   | x86_64   |
 | gcc(6)   | SunOS   | i86pc    |
@@ -86,5 +87,7 @@ Several examples and tests are built as `*.exe` executables in the `src` subdire
 ## Documentation
 
 ...is a work in progress.
+
+Run `doxygen` in the `doc` subdirectory to generate the HTML documentation.
 
 This work has been supported in part by Croatian Science Foundation under the project IP-2014-09-3670 ([MFBDA](https://web.math.pmf.unizg.hr/mfbda/)).

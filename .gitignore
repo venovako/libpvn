@@ -65,4 +65,5 @@ dkms.conf
 *.bt
 *.pt
 *.st
+doc/html
 src/phi.mk
