@@ -3,8 +3,8 @@ A small portable C library with several utility functions.
 
 (... work in progress ...)
 
-This software is a supplementary material for the preprint
-arXiv:[2308.14222](https://arxiv.org/abs/2308.14222 "Accurate complex Jacobi rotations") \[math.NA\].
+This software is a supplementary material for:
+- the preprint arXiv:[2308.14222](https://arxiv.org/abs/2308.14222 "Accurate complex Jacobi rotations") \[math.NA\].
 
 Some functions have been adapted from those in the repositories [JACSD](https://github.com/venovako/JACSD) and [VecJac](https://github.com/venovako/VecJac).
 
@@ -41,11 +41,11 @@ make help
 # make [COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [PROFILE=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
-# a release build with icx on x86_64
+# a release build with icx on x86_64 Linux
 make COMPILER=icx NDEBUG=3 clean all
 #
-# a debug build with clang on ppc64le
-make COMPILER=clang COMPILER_PREFIX=ibm- COMPILER_SUFFIX=_r clean all
+# a release build with the Homebrew's gcc on x86_64 macOS
+make COMPILER=gcc COMPILER_SUFFIX=-13 NDEBUG=3 clean all
 #
 # a debug build with clang on FreeBSD (note the usage of gmake instead of make)
 gmake clean all
