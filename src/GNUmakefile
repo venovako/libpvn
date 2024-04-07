@@ -13,7 +13,6 @@ endif # ?SunOS
 endif # ?Linux
 endif # !COMPILER
 include $(COMPILER).mk
-
 CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifdef VECLEN
 CFLAGS += -DPVN_VECLEN=$(VECLEN)u
@@ -107,10 +106,6 @@ help:
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
-# not for Darwin
-libpvn.so: $(OBJS)
-	ld -shared -o $@ $(OBJS)
-
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -119,7 +114,6 @@ libpvn.so: $(OBJS)
 
 clean:
 	-$(RM) *.exe
-	-$(RM) *.so
 	-$(RM) *.a
 	-$(RM) *.o
 	-$(RM) ../inc/*.o
