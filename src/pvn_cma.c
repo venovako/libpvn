@@ -14,13 +14,17 @@ int main(int argc, char *argv[])
       const double ci = atof(argv[6]);
       double dr = 0.0, di = 0.0;
       pvn_zfma(&dr, &di, ar, ai, br, bi, cr, ci);
-      (void)printf("(%s,", pvn_dtoa(s, dr));
+      (void)printf("pvn_zfma=(%s,", pvn_dtoa(s, dr));
       (void)printf("%s)\n", pvn_dtoa(s, di));
     }
     else {
       double cr = 0.0, ci = 0.0;
       pvn_zmul(&cr, &ci, ar, ai, br, bi);
-      (void)printf("(%s,", pvn_dtoa(s, cr));
+#ifdef PVN_CMA_SAFE
+      (void)printf("PVN_ZMUL=(%s,", pvn_dtoa(s, cr));
+#else /* !PVN_CMA_SAFE */
+      (void)printf("pvn_zmul=(%s,", pvn_dtoa(s, cr));
+#endif /* ?PVN_CMA_SAFE */
       (void)printf("%s)\n", pvn_dtoa(s, ci));
     }
   }
@@ -31,6 +35,205 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+#ifdef PVN_CMA_SAFE
+#ifdef t_ab_cd
+#error t_ab_cd already defined
+#else /* !t_ab_cd */
+#define t_ab_cd(t,T,TYP)                                                                                                                            \
+static T t##_ab_cd(const int arbre, const int are, const T arf, const int bre, const T brf, const int aie, const T aif, const int bie, const T bif) \
+{                                                                                                                                                   \
+  const int s = (TYP##_MAX_EXP - arbre - 1);                                                                                                        \
+  int ars = are, brs = bre, ais = aie, bis = bie;                                                                                                   \
+  if (s > 0) {                                                                                                                                      \
+    if (are >= bre) {                                                                                                                               \
+      brs = (bre + s);                                                                                                                              \
+      ars = (brs - TYP##_MAX_EXP);                                                                                                                  \
+      if (ars > 0) {                                                                                                                                \
+        brs -= ars;                                                                                                                                 \
+        ars += are;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        ars = are;                                                                                                                                  \
+    }                                                                                                                                               \
+    else {                                                                                                                                          \
+      ars = (are + s);                                                                                                                              \
+      brs = (ars - TYP##_MAX_EXP);                                                                                                                  \
+      if (brs > 0) {                                                                                                                                \
+        ars -= brs;                                                                                                                                 \
+        brs += bre;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        brs = bre;                                                                                                                                  \
+    }                                                                                                                                               \
+    if (aie >= bie) {                                                                                                                               \
+      bis = (bie + s);                                                                                                                              \
+      ais = (bis - TYP##_MAX_EXP);                                                                                                                  \
+      if (ais > 0) {                                                                                                                                \
+        bis -= ais;                                                                                                                                 \
+        ais += aie;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        ais = aie;                                                                                                                                  \
+    }                                                                                                                                               \
+    else {                                                                                                                                          \
+      ais = (aie + s);                                                                                                                              \
+      bis = (ais - TYP##_MAX_EXP);                                                                                                                  \
+      if (bis > 0) {                                                                                                                                \
+        ais -= bis;                                                                                                                                 \
+        bis += bie;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        bis = bie;                                                                                                                                  \
+    }                                                                                                                                               \
+  }                                                                                                                                                 \
+  else if (s < 0) {                                                                                                                                 \
+    if (are >= bre) {                                                                                                                               \
+      ars = (are + s);                                                                                                                              \
+      brs = (ars - TYP##_MIN_EXP);                                                                                                                  \
+      if (brs < 0) {                                                                                                                                \
+        ars -= brs;                                                                                                                                 \
+        brs += bre;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        brs = bre;                                                                                                                                  \
+    }                                                                                                                                               \
+    else {                                                                                                                                          \
+      brs = (bre + s);                                                                                                                              \
+      ars = (brs - TYP##_MIN_EXP);                                                                                                                  \
+      if (ars < 0) {                                                                                                                                \
+        brs -= ars;                                                                                                                                 \
+        ars += are;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        ars = are;                                                                                                                                  \
+    }                                                                                                                                               \
+    if (aie >= bie) {                                                                                                                               \
+      ais = (aie + s);                                                                                                                              \
+      bis = (ais - TYP##_MIN_EXP);                                                                                                                  \
+      if (bis < 0) {                                                                                                                                \
+        ais -= bis;                                                                                                                                 \
+        bis += bie;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        bis = bie;                                                                                                                                  \
+    }                                                                                                                                               \
+    else {                                                                                                                                          \
+      bis = (bie + s);                                                                                                                              \
+      ais = (bis - TYP##_MIN_EXP);                                                                                                                  \
+      if (ais < 0) {                                                                                                                                \
+        bis -= ais;                                                                                                                                 \
+        ais += aie;                                                                                                                                 \
+      }                                                                                                                                             \
+      else                                                                                                                                          \
+        ais = aie;                                                                                                                                  \
+    }                                                                                                                                               \
+  }                                                                                                                                                 \
+  else /* s = 0 */                                                                                                                                  \
+    return fma##t(scalbn##t(arf, ars), scalbn##t(brf, brs), scalbn##t(aif, ais) * scalbn##t(bif, bis));                                             \
+  return scalbn##t(fma##t(scalbn##t(arf, ars), scalbn##t(brf, brs), scalbn##t(aif, ais) * scalbn##t(bif, bis)), -s);                                \
+}
+#endif /* ?t_ab_cd */
+
+t_ab_cd(f,float,FLT)
+
+void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
+{
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(isfinite(ar));
+  PVN_ASSERT(isfinite(ai));
+  PVN_ASSERT(isfinite(br));
+  PVN_ASSERT(isfinite(bi));
+  int are = 0, aie = 0, bre = 0, bie = 0;
+  const float arf = frexpf(ar, &are);
+  const float aif = frexpf(ai, &aie);
+  const float brf = frexpf(br, &bre);
+  const float bif = frexpf(bi, &bie);
+  const int arbre = (are + bre);
+  const int aibie = (aie + bie);
+  *cr = ((arbre >= aibie) ? f_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : f_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  const int arbie = (are + bie);
+  const int aibre = (aie + bre);
+  *ci = ((arbie >= aibre) ? f_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : f_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+}
+
+t_ab_cd(,double,DBL)
+
+void pvn_zmul(double *const cr, double *const ci, const double ar, const double ai, const double br, const double bi)
+{
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(isfinite(ar));
+  PVN_ASSERT(isfinite(ai));
+  PVN_ASSERT(isfinite(br));
+  PVN_ASSERT(isfinite(bi));
+  int are = 0, aie = 0, bre = 0, bie = 0;
+  const double arf = frexp(ar, &are);
+  const double aif = frexp(ai, &aie);
+  const double brf = frexp(br, &bre);
+  const double bif = frexp(bi, &bie);
+  const int arbre = (are + bre);
+  const int aibie = (aie + bie);
+  *cr = ((arbre >= aibie) ? _ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : _ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  const int arbie = (are + bie);
+  const int aibre = (aie + bre);
+  *ci = ((arbie >= aibre) ? _ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : _ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+}
+
+t_ab_cd(l,long double,LDBL)
+
+void pvn_wmul(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
+{
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(isfinite(ar));
+  PVN_ASSERT(isfinite(ai));
+  PVN_ASSERT(isfinite(br));
+  PVN_ASSERT(isfinite(bi));
+  int are = 0, aie = 0, bre = 0, bie = 0;
+  const long double arf = frexpl(ar, &are);
+  const long double aif = frexpl(ai, &aie);
+  const long double brf = frexpl(br, &bre);
+  const long double bif = frexpl(bi, &bie);
+  const int arbre = (are + bre);
+  const int aibie = (aie + bie);
+  *cr = ((arbre >= aibie) ? l_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : l_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  const int arbie = (are + bie);
+  const int aibre = (aie + bre);
+  *ci = ((arbie >= aibre) ? l_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : l_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+}
+
+#ifdef PVN_QUADMATH
+t_ab_cd(q,__float128,FLT128)
+
+void pvn_ymul(__float128 *const cr, __float128 *const ci, const __float128 ar, const __float128 ai, const __float128 br, const __float128 bi)
+{
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(isfinite(ar));
+  PVN_ASSERT(isfinite(ai));
+  PVN_ASSERT(isfinite(br));
+  PVN_ASSERT(isfinite(bi));
+  int are = 0, aie = 0, bre = 0, bie = 0;
+  const __float128 arf = frexpq(ar, &are);
+  const __float128 aif = frexpq(ai, &aie);
+  const __float128 brf = frexpq(br, &bre);
+  const __float128 bif = frexpq(bi, &bie);
+  const int arbre = (are + bre);
+  const int aibie = (aie + bie);
+  *cr = ((arbre >= aibie) ? q_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : q_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  const int arbie = (are + bie);
+  const int aibre = (aie + bre);
+  *ci = ((arbie >= aibre) ? q_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : q_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+}
+#else /* !PVN_QUADMATH */
+void pvn_ymul(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
+{
+  pvn_wmul(cr, ci, ar, ai, br, bi);
+}
+#endif /* ?PVN_QUADMATH */
+#endif /* PVN_CMA_SAFE */
+
 void pvn_cmul_(float *const cr, float *const ci, const float *const ar, const float *const ai, const float *const br, const float *const bi)
 {
   PVN_ASSERT(ar);

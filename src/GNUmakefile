@@ -14,6 +14,11 @@ endif # ?Linux
 endif # !COMPILER
 include $(COMPILER).mk
 CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
+ifdef SAFE
+ifeq ($(findstring cma,$(SAFE)),cma)
+CFLAGS += -DPVN_CMA_SAFE
+endif # cma
+endif # SAFE
 ifdef VECLEN
 CFLAGS += -DPVN_VECLEN=$(VECLEN)u
 endif # VECLEN
@@ -101,7 +106,7 @@ EXES=$(SRCS:.c=.exe)
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [PROFILE=...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [PROFILE=...] [SAFE=...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
