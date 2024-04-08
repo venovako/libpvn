@@ -128,12 +128,10 @@ static T t##_ab_cd(const int arbre, const int are, const T arf, const int bre, c
         ais = aie;                                                                                                                                  \
     }                                                                                                                                               \
   }                                                                                                                                                 \
-  else /* s = 0 */                                                                                                                                  \
-    return fma##t(scalbn##t(arf, ars), scalbn##t(brf, brs), scalbn##t(aif, ais) * scalbn##t(bif, bis));                                             \
-  return scalbn##t(fma##t(scalbn##t(arf, ars), scalbn##t(brf, brs), scalbn##t(aif, ais) * scalbn##t(bif, bis)), -s);                                \
+  const T ret = fma##t(scalbn##t(arf, ars), scalbn##t(brf, brs), scalbn##t(aif, ais) * scalbn##t(bif, bis));                                        \
+  return (s ? scalbn##t(ret, -s) : ret);                                                                                                            \
 }
 #endif /* ?t_ab_cd */
-
 t_ab_cd(f,float,FLT)
 
 void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
@@ -151,10 +149,14 @@ void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, 
   const float bif = frexpf(bi, &bie);
   const int arbre = (are + bre);
   const int aibie = (aie + bie);
-  *cr = ((arbre >= aibie) ? f_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : f_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  *cr = (((arbre > aibie) || ((arbre == aibie) && (fabsf(arf * brf) >= fabsf(aif * bif)))) ?
+         f_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) :
+         f_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
   const int arbie = (are + bie);
   const int aibre = (aie + bre);
-  *ci = ((arbie >= aibre) ? f_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : f_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+  *ci = (((arbie > aibre) || ((arbie == aibre) && (fabsf(arf * bif) >= fabsf(aif * brf)))) ?
+         f_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) :
+         f_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
 }
 
 t_ab_cd(,double,DBL)
@@ -174,10 +176,14 @@ void pvn_zmul(double *const cr, double *const ci, const double ar, const double 
   const double bif = frexp(bi, &bie);
   const int arbre = (are + bre);
   const int aibie = (aie + bie);
-  *cr = ((arbre >= aibie) ? _ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : _ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  *cr = (((arbre > aibie) || ((arbre == aibie) && (fabs(arf * brf) >= fabs(aif * bif)))) ?
+         _ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) :
+         _ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
   const int arbie = (are + bie);
   const int aibre = (aie + bre);
-  *ci = ((arbie >= aibre) ? _ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : _ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+  *ci = (((arbie > aibre) || ((arbie == aibre) && (fabs(arf * bif) >= fabs(aif * brf)))) ?
+         _ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) :
+         _ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
 }
 
 t_ab_cd(l,long double,LDBL)
@@ -197,10 +203,14 @@ void pvn_wmul(long double *const cr, long double *const ci, const long double ar
   const long double bif = frexpl(bi, &bie);
   const int arbre = (are + bre);
   const int aibie = (aie + bie);
-  *cr = ((arbre >= aibie) ? l_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : l_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  *cr = (((arbre > aibie) || ((arbre == aibie) && (fabsl(arf * brf) >= fabsl(aif * bif)))) ?
+         l_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) :
+         l_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
   const int arbie = (are + bie);
   const int aibre = (aie + bre);
-  *ci = ((arbie >= aibre) ? l_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : l_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+  *ci = (((arbie > aibre) || ((arbie == aibre) && (fabsl(arf * bif) >= fabsl(aif * brf)))) ?
+         l_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) :
+         l_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
 }
 
 #ifdef PVN_QUADMATH
@@ -221,10 +231,14 @@ void pvn_ymul(__float128 *const cr, __float128 *const ci, const __float128 ar, c
   const __float128 bif = frexpq(bi, &bie);
   const int arbre = (are + bre);
   const int aibie = (aie + bie);
-  *cr = ((arbre >= aibie) ? q_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) : q_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
+  *cr = (((arbre > aibie) || ((arbre == aibie) && (fabsq(arf * brf) >= fabsq(aif * bif)))) ?
+         q_ab_cd(arbre, are, arf, bre, brf, aie, -aif, bie, bif) :
+         q_ab_cd(aibie, aie, -aif, bie, bif, are, arf, bre, brf));
   const int arbie = (are + bie);
   const int aibre = (aie + bre);
-  *ci = ((arbie >= aibre) ? q_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) : q_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
+  *ci = (((arbie > aibre) || ((arbie == aibre) && (fabsq(arf * bif) >= fabsq(aif * brf)))) ?
+         q_ab_cd(arbie, are, arf, bie, bif, aie,  aif, bre, brf) :
+         q_ab_cd(aibre, aie,  aif, bre, brf, are, arf, bie, bif));
 }
 #else /* !PVN_QUADMATH */
 void pvn_ymul(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
