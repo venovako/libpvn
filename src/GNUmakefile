@@ -16,7 +16,7 @@ include $(COMPILER).mk
 CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifdef SAFE
 ifeq ($(findstring cma,$(SAFE)),cma)
-CFLAGS += -DPVN_CMA_SAFE
+CFLAGS += -DPVN_CMA_SAFE="\"finite_inputs\""
 endif # cma
 endif # SAFE
 ifdef VECLEN
