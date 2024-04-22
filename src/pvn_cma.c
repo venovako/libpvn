@@ -40,100 +40,105 @@ int main(int argc, char *argv[])
 }
 #else /* !PVN_TEST */
 #ifdef PVN_CMA_SAFE
+/* TODO:
+ - validate handling of zeros,
+ - handle INFs & NANs somehow.
+*/
 #ifdef t_ab_cd
 #error t_ab_cd already defined
 #else /* !t_ab_cd */
-#define t_ab_cd(t,T,TYP)                                                                                                                            \
-static T t##_ab_cd(const int arbre, const int are, const T arf, const int bre, const T brf, const int aie, const T aif, const int bie, const T bif) \
-{                                                                                                                                                   \
-  const int s = (TYP##_MAX_EXP - arbre - 1);                                                                                                        \
-  int ars = are, brs = bre, ais = aie, bis = bie;                                                                                                   \
-  if (s > 0) {                                                                                                                                      \
-    if (are >= bre) {                                                                                                                               \
-      brs = (bre + s);                                                                                                                              \
-      ars = (brs - TYP##_MAX_EXP);                                                                                                                  \
-      if (ars > 0) {                                                                                                                                \
-        brs -= ars;                                                                                                                                 \
-        ars += are;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        ars = are;                                                                                                                                  \
-    }                                                                                                                                               \
-    else {                                                                                                                                          \
-      ars = (are + s);                                                                                                                              \
-      brs = (ars - TYP##_MAX_EXP);                                                                                                                  \
-      if (brs > 0) {                                                                                                                                \
-        ars -= brs;                                                                                                                                 \
-        brs += bre;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        brs = bre;                                                                                                                                  \
-    }                                                                                                                                               \
-    if (aie >= bie) {                                                                                                                               \
-      bis = (bie + s);                                                                                                                              \
-      ais = (bis - TYP##_MAX_EXP);                                                                                                                  \
-      if (ais > 0) {                                                                                                                                \
-        bis -= ais;                                                                                                                                 \
-        ais += aie;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        ais = aie;                                                                                                                                  \
-    }                                                                                                                                               \
-    else {                                                                                                                                          \
-      ais = (aie + s);                                                                                                                              \
-      bis = (ais - TYP##_MAX_EXP);                                                                                                                  \
-      if (bis > 0) {                                                                                                                                \
-        ais -= bis;                                                                                                                                 \
-        bis += bie;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        bis = bie;                                                                                                                                  \
-    }                                                                                                                                               \
-  }                                                                                                                                                 \
-  else if (s < 0) {                                                                                                                                 \
-    if (are >= bre) {                                                                                                                               \
-      ars = (are + s);                                                                                                                              \
-      brs = (ars - TYP##_MIN_EXP);                                                                                                                  \
-      if (brs < 0) {                                                                                                                                \
-        ars -= brs;                                                                                                                                 \
-        brs += bre;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        brs = bre;                                                                                                                                  \
-    }                                                                                                                                               \
-    else {                                                                                                                                          \
-      brs = (bre + s);                                                                                                                              \
-      ars = (brs - TYP##_MIN_EXP);                                                                                                                  \
-      if (ars < 0) {                                                                                                                                \
-        brs -= ars;                                                                                                                                 \
-        ars += are;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        ars = are;                                                                                                                                  \
-    }                                                                                                                                               \
-    if (aie >= bie) {                                                                                                                               \
-      ais = (aie + s);                                                                                                                              \
-      bis = (ais - TYP##_MIN_EXP);                                                                                                                  \
-      if (bis < 0) {                                                                                                                                \
-        ais -= bis;                                                                                                                                 \
-        bis += bie;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        bis = bie;                                                                                                                                  \
-    }                                                                                                                                               \
-    else {                                                                                                                                          \
-      bis = (bie + s);                                                                                                                              \
-      ais = (bis - TYP##_MIN_EXP);                                                                                                                  \
-      if (ais < 0) {                                                                                                                                \
-        bis -= ais;                                                                                                                                 \
-        ais += aie;                                                                                                                                 \
-      }                                                                                                                                             \
-      else                                                                                                                                          \
-        ais = aie;                                                                                                                                  \
-    }                                                                                                                                               \
-  }                                                                                                                                                 \
-  const T ret = fma##t(scalbn##t(arf, ars), scalbn##t(brf, brs), scalbn##t(aif, ais) * scalbn##t(bif, bis));                                        \
-  return (s ? scalbn##t(ret, -s) : ret);                                                                                                            \
+#define t_ab_cd(t,T,TYP)                                                                                                           \
+static T t##_ab_cd(const int arbre,                                                                                                \
+                   const int are, const T arf, const int bre, const T brf, const int aie, const T aif, const int bie, const T bif) \
+{                                                                                                                                  \
+  const int s = (TYP##_MAX_EXP - arbre - 1);                                                                                       \
+  int ars = are, brs = bre, ais = aie, bis = bie;                                                                                  \
+  if (s > 0) {                                                                                                                     \
+    if (are >= bre) {                                                                                                              \
+      brs = (bre + s);                                                                                                             \
+      ars = (brs - TYP##_MAX_EXP);                                                                                                 \
+      if (ars > 0) {                                                                                                               \
+        brs -= ars;                                                                                                                \
+        ars += are;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        ars = are;                                                                                                                 \
+    }                                                                                                                              \
+    else {                                                                                                                         \
+      ars = (are + s);                                                                                                             \
+      brs = (ars - TYP##_MAX_EXP);                                                                                                 \
+      if (brs > 0) {                                                                                                               \
+        ars -= brs;                                                                                                                \
+        brs += bre;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        brs = bre;                                                                                                                 \
+    }                                                                                                                              \
+    if (aie >= bie) {                                                                                                              \
+      bis = (bie + s);                                                                                                             \
+      ais = (bis - TYP##_MAX_EXP);                                                                                                 \
+      if (ais > 0) {                                                                                                               \
+        bis -= ais;                                                                                                                \
+        ais += aie;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        ais = aie;                                                                                                                 \
+    }                                                                                                                              \
+    else {                                                                                                                         \
+      ais = (aie + s);                                                                                                             \
+      bis = (ais - TYP##_MAX_EXP);                                                                                                 \
+      if (bis > 0) {                                                                                                               \
+        ais -= bis;                                                                                                                \
+        bis += bie;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        bis = bie;                                                                                                                 \
+    }                                                                                                                              \
+  }                                                                                                                                \
+  else if (s < 0) {                                                                                                                \
+    if (are >= bre) {                                                                                                              \
+      ars = (are + s);                                                                                                             \
+      brs = (ars - TYP##_MIN_EXP);                                                                                                 \
+      if (brs < 0) {                                                                                                               \
+        ars -= brs;                                                                                                                \
+        brs += bre;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        brs = bre;                                                                                                                 \
+    }                                                                                                                              \
+    else {                                                                                                                         \
+      brs = (bre + s);                                                                                                             \
+      ars = (brs - TYP##_MIN_EXP);                                                                                                 \
+      if (ars < 0) {                                                                                                               \
+        brs -= ars;                                                                                                                \
+        ars += are;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        ars = are;                                                                                                                 \
+    }                                                                                                                              \
+    if (aie >= bie) {                                                                                                              \
+      ais = (aie + s);                                                                                                             \
+      bis = (ais - TYP##_MIN_EXP);                                                                                                 \
+      if (bis < 0) {                                                                                                               \
+        ais -= bis;                                                                                                                \
+        bis += bie;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        bis = bie;                                                                                                                 \
+    }                                                                                                                              \
+    else {                                                                                                                         \
+      bis = (bie + s);                                                                                                             \
+      ais = (bis - TYP##_MIN_EXP);                                                                                                 \
+      if (ais < 0) {                                                                                                               \
+        bis -= ais;                                                                                                                \
+        ais += aie;                                                                                                                \
+      }                                                                                                                            \
+      else                                                                                                                         \
+        ais = aie;                                                                                                                 \
+    }                                                                                                                              \
+  }                                                                                                                                \
+  const T ret = fma##t(scalbn##t(arf, ars), scalbn##t(brf, brs), scalbn##t(aif, ais) * scalbn##t(bif, bis));                       \
+  return (s ? scalbn##t(ret, -s) : ret);                                                                                           \
 }
 #endif /* ?t_ab_cd */
 t_ab_cd(f,float,FLT)
