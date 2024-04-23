@@ -8,7 +8,7 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu17 -fPIC -fexceptions -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread
+CFLAGS += -std=gnu17 -fPIC -fexceptions -fasynchronous-unwind-tables -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread
 ifdef OPENMP
 CFLAGS += -fopenmp
 ifneq ($(OPENMP),true)
