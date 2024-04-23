@@ -16,7 +16,7 @@ include $(COMPILER).mk
 CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifdef SAFE
 ifeq ($(findstring cma,$(SAFE)),cma)
-CFLAGS += -DPVN_CMA_SAFE="\"finite_inputs\""
+CFLAGS += -DPVN_CMA_SAFE="\"all_inputs\""
 endif # cma
 endif # SAFE
 ifdef VECLEN
@@ -115,7 +115,7 @@ libpvn.a: $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.exe : %.c
-	$(CC) $(CFLAGS) -DPVN_TEST $< -o $@ -L. -lpvn $(LDFLAGS)
+	$(CC) $(CFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ -L. -lpvn $(LDFLAGS)
 
 clean:
 	-$(RM) *.exe
