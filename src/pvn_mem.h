@@ -35,11 +35,17 @@
 #error PVN_ASSUME_ALIGNED already defined
 #endif /* ?PVN_ASSUME_ALIGNED */
 
-#ifndef PVN_NOT_VECALIGNED
-#define PVN_NOT_VECALIGNED(x) ((uintptr_t)(x) & ((PVN_VECLEN) - 1u))
-#else /* PVN_NOT_VECALIGNED */
-#error PVN_NOT_VECALIGNED already defined
-#endif /* ?PVN_NOT_VECALIGNED */
+#ifndef PVN_IS_VECALIGNED
+#define PVN_IS_VECALIGNED(p) !((uintptr_t)(p) & (uintptr_t)((PVN_VECLEN) - 1u))
+#else /* PVN_IS_VECALIGNED */
+#error PVN_IS_VECALIGNED already defined
+#endif /* ?PVN_IS_VECALIGNED */
+
+#ifndef PVN_ASSUME_VECALIGNED
+#define PVN_ASSUME_VECALIGNED(p) PVN_ASSUME_ALIGNED(p,PVN_VECLEN)
+#else /* PVN_ASSUME_VECALIGNED */
+#error PVN_ASSUME_VECALIGNED already defined
+#endif /* ?PVN_ASSUME_VECALIGNED */
 
 PVN_EXTERN_C unsigned pvn_vec_len_();
 PVN_EXTERN_C size_t pvn_pagesize_();
