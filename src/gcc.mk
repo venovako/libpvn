@@ -13,7 +13,7 @@ ifeq ($(OS),SunOS)
 CFLAGS += -D_LARGEFILE64_SOURCE -m64 -Wno-int-to-pointer-cast
 endif # SunOS
 endif # ?Linux
-CFLAGS += -std=gnu18 -fPIC -fexceptions -fasynchronous-unwind-tables -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 23; else echo 18; fi) -fPIC -fexceptions -fasynchronous-unwind-tables -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread
 ifdef OPENMP
 CFLAGS += -fopenmp
 ifneq ($(OPENMP),true)
