@@ -21,7 +21,7 @@ CFLAGS += $(OPENMP)
 endif # !true
 endif # OPENMP
 ifeq ($(ARCH),ppc64le)
-CFLAGS += -mcpu=native -mtraceback=full
+CFLAGS += -mcpu=native -mpower8-fusion -mtraceback=full
 else # !ppc64le
 CFLAGS += -march=native
 endif # ?ppc64le
