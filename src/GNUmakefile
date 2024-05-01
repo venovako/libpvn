@@ -79,6 +79,7 @@ endif # PROFILE
 
 SRCS=pvn.c  \
 pvn_aux.c   \
+pvn_bio.c   \
 pvn_bmp.c   \
 pvn_cjs.c   \
 pvn_cma.c   \

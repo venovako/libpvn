@@ -92,6 +92,16 @@
 #define PVN_ASSERT(cond) assert(cond)
 #endif /* ?Intel */
 
+#ifndef PVN_LF64
+#ifdef _LARGEFILE64_SOURCE
+#define PVN_LF64 O_LARGEFILE
+#else /* !_LARGEFILE64_SOURCE */
+#define PVN_LF64 0
+#endif /* ?_LARGEFILE64_SOURCE */
+#else /* PVN_LF64 */
+#error PVN_LF64 already defined
+#endif /* ?PVN_LF64 */
+
 /* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
 #ifdef __MATHIMF_H_INCLUDED

@@ -5,16 +5,6 @@
 #error pvn_aux.h not intended for direct inclusion
 #endif /* !PVN_H */
 
-#ifndef PVN_LF64
-#ifdef _LARGEFILE64_SOURCE
-#define PVN_LF64 O_LARGEFILE
-#else /* !_LARGEFILE64_SOURCE */
-#define PVN_LF64 0
-#endif /* ?_LARGEFILE64_SOURCE */
-#else /* PVN_LF64 */
-#error PVN_LF64 already defined
-#endif /* ?PVN_LF64 */
-
 #ifndef pvn_Tswp
 #define pvn_Tswp(T,t)                                   \
 static inline void pvn_##t##swp(T *const a, T *const b) \
