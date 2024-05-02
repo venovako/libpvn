@@ -152,6 +152,7 @@ static inline __float128 rsqrtq(__float128 x)
 #endif /* PVN_QUADMATH */
 
 #include "pvn_aux.h"
+#include "pvn_bio.h"
 #include "pvn_bmp.h"
 #include "pvn_cjs.h"
 #include "pvn_cma.h"

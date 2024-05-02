@@ -1,12 +1,22 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
-  return EXIT_SUCCESS;
+  if (argc != 3) {
+    (void)fprintf(stderr, "%s fn sz\n", *argv);
+    return EXIT_FAILURE;
+  }
+  off_t sz = (off_t)atol(argv[2]);
+  int fd = pvn_bopen_wo_(&sz, argv[1]);
+  (void)printf("pvn_bopen_wo_=%d, sz=%ld\n", fd, (long)sz);
+  if (fd >= 0)
+    (void)printf("pvn_bclose_=%d\n", (fd = pvn_bclose_(&fd)));
+  return ((fd >= 0) ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 #else /* !PVN_TEST */
 static const size_t GiB = ((size_t)1ul << 30u);
+static const mode_t perms = (S_IRUSR | S_IWUSR);
 
 int pvn_bopen_ro_(off_t *const sz, const char *const fn, ...)
 {
@@ -26,7 +36,7 @@ int pvn_bopen_ro_(off_t *const sz, const char *const fn, ...)
 
 int pvn_bopen_rw_(off_t *const sz, const char *const fn, ...)
 {
-  const int fd = (fn ? open(fn, (O_RDWR | O_CREAT | PVN_LF64), (S_IRUSR | S_IWUSR)) : -2);
+  const int fd = (fn ? open(fn, (O_RDWR | O_CREAT | PVN_LF64), perms) : -2);
   if (fd >= 0) {
     if (sz) {
       if (*sz >= 0) {
@@ -50,7 +60,7 @@ int pvn_bopen_rw_(off_t *const sz, const char *const fn, ...)
 
 int pvn_bopen_wo_(off_t *const sz, const char *const fn, ...)
 {
-  const int fd = (fn ? open(fn, (O_WRONLY | O_CREAT | PVN_LF64), S_IWUSR) : -2);
+  const int fd = (fn ? open(fn, (O_WRONLY | O_CREAT | PVN_LF64), perms) : -2);
   if (fd >= 0) {
     if (sz) {
       if (*sz >= 0) {
