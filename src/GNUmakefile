@@ -18,6 +18,9 @@ ifdef SAFE
 ifeq ($(findstring cma,$(SAFE)),cma)
 CFLAGS += -DPVN_CMA_SAFE="\"all_inputs\""
 endif # cma
+ifeq ($(findstring ran,$(SAFE)),ran)
+CFLAGS += -DPVN_RAN_SAFE="\"all_outputs\""
+endif # ran
 endif # SAFE
 ifdef VECLEN
 CFLAGS += -DPVN_VECLEN=$(VECLEN)u
