@@ -62,16 +62,61 @@ void pvn_cdot_(float *const zr, float *const zi, const int *const m, const float
     n = (unsigned)-*m;
   if (!n)
     return;
-  const float *xr_ = xr;
-  const float *xi_ = xi;
-  const float *yr_ = yr;
-  const float *yi_ = yi;
-  for (unsigned i = 0u; i < n; ++i) {
-    pvn_cfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
-    xr_ += *ixr;
-    xi_ += *ixi;
-    yr_ += *iyr;
-    yi_ += *iyi;
+  if (*ixi) {
+    if (*iyi) {
+      const float *xr_ = xr;
+      const float *xi_ = xi;
+      const float *yr_ = yr;
+      const float *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_cfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const float *xr_ = xr;
+      const float *xi_ = xi;
+      const float *yr_ = yr;
+      const float *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_cfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
+  }
+  else {
+    if (*iyi) {
+      const float *xr_ = xr;
+      const float *xi_ = (xi + 1);
+      const float *yr_ = yr;
+      const float *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_cfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const float *xr_ = xr;
+      const float *xi_ = (xi + 1);
+      const float *yr_ = yr;
+      const float *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_cfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
   }
 }
 
@@ -124,16 +169,61 @@ void pvn_zdot_(double *const zr, double *const zi, const int *const m, const dou
     n = (unsigned)-*m;
   if (!n)
     return;
-  const double *xr_ = xr;
-  const double *xi_ = xi;
-  const double *yr_ = yr;
-  const double *yi_ = yi;
-  for (unsigned i = 0u; i < n; ++i) {
-    pvn_zfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
-    xr_ += *ixr;
-    xi_ += *ixi;
-    yr_ += *iyr;
-    yi_ += *iyi;
+  if (*ixi) {
+    if (*iyi) {
+      const double *xr_ = xr;
+      const double *xi_ = xi;
+      const double *yr_ = yr;
+      const double *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_zfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const double *xr_ = xr;
+      const double *xi_ = xi;
+      const double *yr_ = yr;
+      const double *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_zfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
+  }
+  else {
+    if (*iyi) {
+      const double *xr_ = xr;
+      const double *xi_ = (xi + 1);
+      const double *yr_ = yr;
+      const double *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_zfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const double *xr_ = xr;
+      const double *xi_ = (xi + 1);
+      const double *yr_ = yr;
+      const double *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_zfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
   }
 }
 
@@ -186,16 +276,61 @@ void pvn_wdot_(long double *const zr, long double *const zi, const int *const m,
     n = (unsigned)-*m;
   if (!n)
     return;
-  const long double *xr_ = xr;
-  const long double *xi_ = xi;
-  const long double *yr_ = yr;
-  const long double *yi_ = yi;
-  for (unsigned i = 0u; i < n; ++i) {
-    pvn_wfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
-    xr_ += *ixr;
-    xi_ += *ixi;
-    yr_ += *iyr;
-    yi_ += *iyi;
+  if (*ixi) {
+    if (*iyi) {
+      const long double *xr_ = xr;
+      const long double *xi_ = xi;
+      const long double *yr_ = yr;
+      const long double *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_wfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const long double *xr_ = xr;
+      const long double *xi_ = xi;
+      const long double *yr_ = yr;
+      const long double *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_wfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
+  }
+  else {
+    if (*iyi) {
+      const long double *xr_ = xr;
+      const long double *xi_ = (xi + 1);
+      const long double *yr_ = yr;
+      const long double *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_wfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const long double *xr_ = xr;
+      const long double *xi_ = (xi + 1);
+      const long double *yr_ = yr;
+      const long double *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_wfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
   }
 }
 
@@ -249,16 +384,61 @@ void pvn_ydot_(__float128 *const zr, __float128 *const zi, const int *const m, c
     n = (unsigned)-*m;
   if (!n)
     return;
-  const __float128 *xr_ = xr;
-  const __float128 *xi_ = xi;
-  const __float128 *yr_ = yr;
-  const __float128 *yi_ = yi;
-  for (unsigned i = 0u; i < n; ++i) {
-    pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
-    xr_ += *ixr;
-    xi_ += *ixi;
-    yr_ += *iyr;
-    yi_ += *iyi;
+  if (*ixi) {
+    if (*iyi) {
+      const __float128 *xr_ = xr;
+      const __float128 *xi_ = xi;
+      const __float128 *yr_ = yr;
+      const __float128 *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const __float128 *xr_ = xr;
+      const __float128 *xi_ = xi;
+      const __float128 *yr_ = yr;
+      const __float128 *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixi;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
+  }
+  else {
+    if (*iyi) {
+      const __float128 *xr_ = xr;
+      const __float128 *xi_ = (xi + 1);
+      const __float128 *yr_ = yr;
+      const __float128 *yi_ = yi;
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyi;
+      }
+    }
+    else {
+      const __float128 *xr_ = xr;
+      const __float128 *xi_ = (xi + 1);
+      const __float128 *yr_ = yr;
+      const __float128 *yi_ = (yi + 1);
+      for (unsigned i = 0u; i < n; ++i) {
+        pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
+        xr_ += *ixr;
+        xi_ += *ixr;
+        yr_ += *iyr;
+        yi_ += *iyr;
+      }
+    }
   }
 }
 #else /* !PVN_QUADMATH */

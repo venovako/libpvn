@@ -52,12 +52,23 @@ void pvn_cnrm2_(float *const f, const int *const m, const float *const xr, const
     n = (unsigned)-*m;
   if (!n)
     return;
-  const float *xr_ = xr;
-  const float *xi_ = xi;
-  for (unsigned i = 0u; i < n; ++i) {
-    *f = hypotf(*f, hypotf(*xr_, *xi_));
-    xr_ += *ixr;
-    xi_ += *ixi;
+  if (*ixi) {
+    const float *xr_ = xr;
+    const float *xi_ = xi;
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypotf(*f, hypotf(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixi;
+    }
+  }
+  else {
+    const float *xr_ = xr;
+    const float *xi_ = (xi + 1);
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypotf(*f, hypotf(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixr;
+    }
   }
 }
 
@@ -100,12 +111,23 @@ void pvn_znrm2_(double *const f, const int *const m, const double *const xr, con
     n = (unsigned)-*m;
   if (!n)
     return;
-  const double *xr_ = xr;
-  const double *xi_ = xi;
-  for (unsigned i = 0u; i < n; ++i) {
-    *f = hypot(*f, hypot(*xr_, *xi_));
-    xr_ += *ixr;
-    xi_ += *ixi;
+  if (*ixi) {
+    const double *xr_ = xr;
+    const double *xi_ = xi;
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypot(*f, hypot(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixi;
+    }
+  }
+  else {
+    const double *xr_ = xr;
+    const double *xi_ = (xi + 1);
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypot(*f, hypot(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixr;
+    }
   }
 }
 
@@ -148,12 +170,23 @@ void pvn_wnrm2_(long double *const f, const int *const m, const long double *con
     n = (unsigned)-*m;
   if (!n)
     return;
-  const long double *xr_ = xr;
-  const long double *xi_ = xi;
-  for (unsigned i = 0u; i < n; ++i) {
-    *f = hypotl(*f, hypotl(*xr_, *xi_));
-    xr_ += *ixr;
-    xi_ += *ixi;
+  if (*ixi) {
+    const long double *xr_ = xr;
+    const long double *xi_ = xi;
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypotl(*f, hypotl(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixi;
+    }
+  }
+  else {
+    const long double *xr_ = xr;
+    const long double *xi_ = (xi + 1);
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypotl(*f, hypotl(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixr;
+    }
   }
 }
 
@@ -197,12 +230,23 @@ void pvn_ynrm2_(__float128 *const f, const int *const m, const __float128 *const
     n = (unsigned)-*m;
   if (!n)
     return;
-  const __float128 *xr_ = xr;
-  const __float128 *xi_ = xi;
-  for (unsigned i = 0u; i < n; ++i) {
-    *f = hypotq(*f, hypotq(*xr_, *xi_));
-    xr_ += *ixr;
-    xi_ += *ixi;
+  if (*ixi) {
+    const __float128 *xr_ = xr;
+    const __float128 *xi_ = xi;
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypotq(*f, hypotq(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixi;
+    }
+  }
+  else {
+    const __float128 *xr_ = xr;
+    const __float128 *xi_ = (xi + 1);
+    for (unsigned i = 0u; i < n; ++i) {
+      *f = hypotq(*f, hypotq(*xr_, *xi_));
+      xr_ += *ixr;
+      xi_ += *ixr;
+    }
   }
 }
 #else /* !PVN_QUADMATH */
