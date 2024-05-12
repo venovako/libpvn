@@ -1400,9 +1400,9 @@ int pvn_sljsv2_
   if (e == 3) {
     /* [ X 0 ] */
     /* [ x 0 ] */
-    /* U^T(ϑ):
-        cos(ϑ)  sin(ϑ)
-       -sin(ϑ)  cos(ϑ)
+    /* U^T(θ):
+        cos(θ)  sin(θ)
+       -sin(θ)  cos(θ)
     */
     tt = (A21 / A11);
     /* 1 / cos */
@@ -3110,9 +3110,9 @@ int pvn_dljsv2_
   if (e == 3) {
     /* [ X 0 ] */
     /* [ x 0 ] */
-    /* U^T(ϑ):
-        cos(ϑ)  sin(ϑ)
-       -sin(ϑ)  cos(ϑ)
+    /* U^T(θ):
+        cos(θ)  sin(θ)
+       -sin(θ)  cos(θ)
     */
     tt = (A21 / A11);
     /* 1 / cos */
@@ -4991,9 +4991,9 @@ int pvn_xljsv2_
   if (e == 3) {
     /* [ X 0 ] */
     /* [ x 0 ] */
-    /* U^T(ϑ):
-        cos(ϑ)  sin(ϑ)
-       -sin(ϑ)  cos(ϑ)
+    /* U^T(θ):
+        cos(θ)  sin(θ)
+       -sin(θ)  cos(θ)
     */
     tt = (A21 / A11);
     /* 1 / cos */
@@ -6891,9 +6891,9 @@ int pvn_qljsv2_
   if (e == 3) {
     /* [ X 0 ] */
     /* [ x 0 ] */
-    /* U^T(ϑ):
-        cos(ϑ)  sin(ϑ)
-       -sin(ϑ)  cos(ϑ)
+    /* U^T(θ):
+        cos(θ)  sin(θ)
+       -sin(θ)  cos(θ)
     */
     tt = (A21 / A11);
     /* 1 / cos */

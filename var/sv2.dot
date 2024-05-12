@@ -11,7 +11,7 @@ strict digraph sv2 {
         SVD [shape=doublecircle]
     }
     0124869 -> SVD [style=dashed]
-    3 -> SVD [label=<U<SUP>*</SUP>(ϑ)>]
+    3 -> SVD [label=<U<SUP>*</SUP>(θ)>]
     7111314 -> PUT [style=dashed]
     12 -> 3 [style=dashed]
     PUT -> SVD [label=< U<SUP>*</SUP>(φ)<BR/> V(ψ)>,style=bold]
