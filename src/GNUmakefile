@@ -79,6 +79,9 @@ endif # OPENMP
 ifdef PROFILE
 CFLAGS += -DPVN_PROFILE=$(PROFILE)u -fno-inline -finstrument-functions
 endif # PROFILE
+ifdef PRINTOUT
+CFLAGS += -DPVN_PRINTOUT=$(PRINTOUT)
+endif # PRINTOUT
 
 SRCS=pvn.c  \
 pvn_aux.c   \
@@ -110,7 +113,7 @@ EXES=$(SRCS:.c=.exe)
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [PROFILE=...] [SAFE=...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=stderr|stdout] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [QUADMATH=...] [PROFILE=...] [SAFE=...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
