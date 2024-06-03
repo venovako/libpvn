@@ -80,7 +80,7 @@ ifdef PROFILE
 CFLAGS += -DPVN_PROFILE=$(PROFILE)u -fno-inline -finstrument-functions
 endif # PROFILE
 ifdef PRINTOUT
-CFLAGS += -DPVN_PRINTOUT=$(PRINTOUT)
+CFLAGS += -DPVN_PRINTOUT=STD$(PRINTOUT)_FILENO
 endif # PRINTOUT
 
 SRCS=pvn.c  \
