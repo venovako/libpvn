@@ -1,3 +1,7 @@
+#ifdef PVN_SV2_SAFE
+#pragma STDC FENV_ACCESS ON
+#endif /* PVN_SV2_SAFE */
+
 #include "pvn.h"
 
 #ifdef PVN_TEST
