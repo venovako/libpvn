@@ -22,7 +22,7 @@ ifeq ($(findstring ran,$(SAFE)),ran)
 CFLAGS += -DPVN_RAN_SAFE="\"all_outputs\""
 endif # ran
 ifeq ($(findstring sv2,$(SAFE)),sv2)
-CFLAGS += -DPVN_SV2_SAFE="\"TODO\""
+CFLAGS += -DPVN_SV2_SAFE="\"precise\""
 endif # sv2
 endif # SAFE
 ifdef VECLEN

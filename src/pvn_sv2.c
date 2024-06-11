@@ -682,6 +682,7 @@ static inline int ef_cmpf(const int e1, const float f1, const int e2, const floa
   return 0;
 }
 
+/* the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
 static float sQR(float *const A11, float *const A21, float *const A12, float *const A22, float *const w1)
 {
   PVN_ASSERT(A11);
@@ -705,13 +706,12 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
         a = ((double)*A22 * d),
         b = ((double)*A12 * (double)*A21),
         c = (a - b);
-      if (*w1 == 1.0f) {
+      *A22 = (float)(c / d);
+      if (*w1 == 1.0f)
         *A12 = a12;
-        *A22 = (float)(c / d);
-      }
       else {
         *A12 = (a12 / *w1);
-        *A22 = ((float)(c / d) / *w1);
+        *A22 = (*A22 / *w1);
       }
       *A21 = 1.0f;
     }
@@ -721,12 +721,11 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
         a = ((double)*A12 * d),
         b = ((double)*A22 * (double)*A21),
         c = (a + b);
-      if (*w1 == 1.0f) {
-        *A12 = (float)(c / d);
+      *A12 = (float)(c / d);
+      if (*w1 == 1.0f)
         *A22 = a22;
-      }
       else {
-        *A12 = ((float)(c / d) / *w1);
+        *A12 = (*A12 / *w1);
         *A22 = (a22 / *w1);
       }
       *A21 = -1.0f;
@@ -2457,6 +2456,7 @@ static inline int ef_cmp(const int e1, const double f1, const int e2, const doub
   return 0;
 }
 
+/* the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
 static double dQR(double *const A11, double *const A21, double *const A12, double *const A22, double *const w1)
 {
   PVN_ASSERT(A11);
@@ -2489,13 +2489,12 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
         a = ((T)*A22 * d),
         b = ((T)*A12 * (T)*A21),
         c = (a - b);
-      if (*w1 == 1.0) {
+      *A22 = (double)(c / d);
+      if (*w1 == 1.0)
         *A12 = a12;
-        *A22 = (double)(c / d);
-      }
       else {
         *A12 = (a12 / *w1);
-        *A22 = ((double)(c / d) / *w1);
+        *A22 = (*A22 / *w1);
       }
       *A21 = 1.0;
     }
@@ -2505,12 +2504,11 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
         a = ((T)*A12 * d),
         b = ((T)*A22 * (T)*A21),
         c = (a + b);
-      if (*w1 == 1.0) {
-        *A12 = (double)(c / d);
+      *A12 = (double)(c / d);
+      if (*w1 == 1.0)
         *A22 = a22;
-      }
       else {
-        *A12 = ((double)(c / d) / *w1);
+        *A12 = (*A12 / *w1);
         *A22 = (a22 / *w1);
       }
       *A21 = -1.0;
