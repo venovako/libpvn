@@ -682,6 +682,77 @@ static inline int ef_cmpf(const int e1, const float f1, const int e2, const floa
   return 0;
 }
 
+static float sQR(float *const A11, float *const A21, float *const A12, float *const A22, float *const w1)
+{
+  PVN_ASSERT(A11);
+  PVN_ASSERT(A21);
+  PVN_ASSERT(A12);
+  PVN_ASSERT(A22);
+  PVN_ASSERT(w1);
+#ifdef PVN_SV2_SAFE
+  if (feclearexcept(FE_INEXACT))
+    return NAN;
+#endif /* PVN_SV2_SAFE */
+  const float t = (*A21 / *A11);
+#ifdef PVN_SV2_SAFE
+  if (fetestexcept(FE_INEXACT) & FE_INEXACT) {
+    const double d = (double)*A11;
+    *A11 = *w1;
+    *w1 = hypotf(t, 1.0f);
+    if (copysignf(1.0f, *A12) == copysignf(1.0f, *A22)) {
+      const float a12 = fmaf(*A22, t, *A12);
+      const double
+        a = ((double)*A22 * d),
+        b = ((double)*A12 * (double)*A21),
+        c = (a - b);
+      if (*w1 == 1.0f) {
+        *A12 = a12;
+        *A22 = (float)(c / d);
+      }
+      else {
+        *A12 = (a12 / *w1);
+        *A22 = ((float)(c / d) / *w1);
+      }
+      *A21 = 1.0f;
+    }
+    else {
+      const float a22 = fmaf(-*A12, t, *A22);
+      const double
+        a = ((double)*A12 * d),
+        b = ((double)*A22 * (double)*A21),
+        c = (a + b);
+      if (*w1 == 1.0f) {
+        *A12 = (float)(c / d);
+        *A22 = a22;
+      }
+      else {
+        *A12 = ((float)(c / d) / *w1);
+        *A22 = (a22 / *w1);
+      }
+      *A21 = -1.0f;
+    }
+    return t;
+  }
+  else /* tan exact */
+    *A21 = -0.0f;
+#else /* !PVN_SV2_SAFE */
+  *A21 = 0.0f;
+#endif /* ?PVN_SV2_SAFE */
+  *A11 = *w1;
+  *w1 = hypotf(t, 1.0f);
+  const float a12 = fmaf( *A22, t, *A12);
+  const float a22 = fmaf(-*A12, t, *A22);
+  if (*w1 == 1.0f) {
+    *A12 = a12;
+    *A22 = a22;
+  }
+  else {
+    *A12 = (a12 / *w1);
+    *A22 = (a22 / *w1);
+  }
+  return t;
+}
+
 static void slpsv2(const float A11, const float A12, const float A22, float *const tf, float *const cf, float *const sf, float *const tp, float *const cp, float *const sp, float *const s1, float *const s2, int *const es
 #ifdef PVN_PRINTOUT
                    , char *const s
@@ -1318,15 +1389,12 @@ int pvn_sljsv2_
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
     */
-    tt = (A21 / A11);
-    /* 1 / cos */
-    ct = hypotf(tt, 1.0f);
+    ct = *s1;
     /* apply the left Givens rotation to A (and maybe to U) */
+    tt = sQR(&A11, &A21, &A12, &A22, &ct);
     st = -tt;
     A21 = A12;
     if (ct == 1.0f) {
-      A12 = fmaf(tt, A22, A12);
-      A22 = fmaf(st, A21, A22);
       if ((A12 == 0.0f) || (A22 == 0.0f)) {
         A21 = *u11;
         *u11 = fmaf(tt, *u21, *u11);
@@ -1338,8 +1406,6 @@ int pvn_sljsv2_
       st = tt;
     }
     else {
-      A12 = (fmaf(tt, A22, A12) / ct);
-      A22 = (fmaf(st, A21, A22) / ct);
       if ((A12 == 0.0f) || (A22 == 0.0f)) {
         A21 = *u11;
         *u11 = (fmaf(tt, *u21, *u11) / ct);
@@ -1351,7 +1417,6 @@ int pvn_sljsv2_
       st = (tt / ct);
       ct = (1.0f / ct);
     }
-    A11 = *s1;
     A21 = 0.0f;
     if (A12 == 0.0f) {
       A12 = 0.0f;
@@ -2392,6 +2457,87 @@ static inline int ef_cmp(const int e1, const double f1, const int e2, const doub
   return 0;
 }
 
+static double dQR(double *const A11, double *const A21, double *const A12, double *const A22, double *const w1)
+{
+  PVN_ASSERT(A11);
+  PVN_ASSERT(A21);
+  PVN_ASSERT(A12);
+  PVN_ASSERT(A22);
+  PVN_ASSERT(w1);
+#ifdef PVN_SV2_SAFE
+  if (feclearexcept(FE_INEXACT))
+    return (double)NAN;
+#endif /* PVN_SV2_SAFE */
+  const double t = (*A21 / *A11);
+#ifdef PVN_SV2_SAFE
+  if (fetestexcept(FE_INEXACT) & FE_INEXACT) {
+#ifndef T
+#ifdef PVN_QUADMATH
+#define T __float128
+#else /* !PVN_QUADMATH */
+#define T long double
+#endif /* ?PVN_QUADMATH */
+#else /* T */
+#error T already defined
+#endif /* ?T */
+    const T d = (T)*A11;
+    *A11 = *w1;
+    *w1 = hypot(t, 1.0);
+    if (copysign(1.0, *A12) == copysign(1.0, *A22)) {
+      const double a12 = fma(*A22, t, *A12);
+      const T
+        a = ((T)*A22 * d),
+        b = ((T)*A12 * (T)*A21),
+        c = (a - b);
+      if (*w1 == 1.0) {
+        *A12 = a12;
+        *A22 = (double)(c / d);
+      }
+      else {
+        *A12 = (a12 / *w1);
+        *A22 = ((double)(c / d) / *w1);
+      }
+      *A21 = 1.0;
+    }
+    else {
+      const double a22 = fma(-*A12, t, *A22);
+      const T
+        a = ((T)*A12 * d),
+        b = ((T)*A22 * (T)*A21),
+        c = (a + b);
+      if (*w1 == 1.0) {
+        *A12 = (double)(c / d);
+        *A22 = a22;
+      }
+      else {
+        *A12 = ((double)(c / d) / *w1);
+        *A22 = (a22 / *w1);
+      }
+      *A21 = -1.0;
+    }
+#undef T
+    return t;
+  }
+  else /* tan exact */
+    *A21 = -0.0;
+#else /* !PVN_SV2_SAFE */
+  *A21 = 0.0;
+#endif /* ?PVN_SV2_SAFE */
+  *A11 = *w1;
+  *w1 = hypot(t, 1.0f);
+  const double a12 = fma( *A22, t, *A12);
+  const double a22 = fma(-*A12, t, *A22);
+  if (*w1 == 1.0) {
+    *A12 = a12;
+    *A22 = a22;
+  }
+  else {
+    *A12 = (a12 / *w1);
+    *A22 = (a22 / *w1);
+  }
+  return t;
+}
+
 static void dlpsv2(const double A11, const double A12, const double A22, double *const tf, double *const cf, double *const sf, double *const tp, double *const cp, double *const sp, double *const s1, double *const s2, int *const es
 #ifdef PVN_PRINTOUT
                    , char *const s
@@ -3028,15 +3174,12 @@ int pvn_dljsv2_
         cos(ϑ)  sin(ϑ)
        -sin(ϑ)  cos(ϑ)
     */
-    tt = (A21 / A11);
-    /* 1 / cos */
-    ct = hypot(tt, 1.0);
+    ct = *s1;
     /* apply the left Givens rotation to A (and maybe to U) */
+    tt = dQR(&A11, &A21, &A12, &A22, &ct);
     st = -tt;
     A21 = A12;
     if (ct == 1.0) {
-      A12 = fma(tt, A22, A12);
-      A22 = fma(st, A21, A22);
       if ((A12 == 0.0) || (A22 == 0.0)) {
         A21 = *u11;
         *u11 = fma(tt, *u21, *u11);
@@ -3048,8 +3191,6 @@ int pvn_dljsv2_
       st = tt;
     }
     else {
-      A12 = (fma(tt, A22, A12) / ct);
-      A22 = (fma(st, A21, A22) / ct);
       if ((A12 == 0.0) || (A22 == 0.0)) {
         A21 = *u11;
         *u11 = (fma(tt, *u21, *u11) / ct);
@@ -3061,7 +3202,6 @@ int pvn_dljsv2_
       st = (tt / ct);
       ct = (1.0 / ct);
     }
-    A11 = *s1;
     A21 = 0.0;
     if (A12 == 0.0) {
       A12 = 0.0;
