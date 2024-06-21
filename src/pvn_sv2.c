@@ -828,15 +828,19 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
       t2 = t2f;
   }
 #else /* !PVN_SV2_SAFE */
-  else if (A11 >= A12) {
+  else if (A11 > A12) {
     const float x = (A12 / A11);
     const float y = (A22 / A11);
     t2 = (((2.0f * x) * y) / fmaxf(fmaf((x - y), (x + y), 1.0f), 0.0f));
   }
-  else {
+  else if (A12 > A11) {
     const float x = (A11 / A12);
     const float y = (A22 / A12);
     t2 = ((2.0f * y) / fmaxf(fmaf((x - y), (x + y), 1.0f), 0.0f));
+  }
+  else {
+    const float y = (A22 / A12);
+    t2 = ((2.0f * y) / fmaxf(fmaf((1.0f - y), (1.0f + y), 1.0f), 0.0f));
   }
 #endif /* ?PVN_SV2_SAFE */
 
@@ -2618,15 +2622,19 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
       t2 = t2f;
   }
 #else /* !PVN_SV2_SAFE */
-  else if (A11 >= A12) {
+  else if (A11 > A12) {
     const double x = (A12 / A11);
     const double y = (A22 / A11);
     t2 = (((2.0 * x) * y) / fmax(fma((x - y), (x + y), 1.0), 0.0));
   }
-  else {
+  else if (A12 > A11) {
     const double x = (A11 / A12);
     const double y = (A22 / A12);
     t2 = ((2.0 * y) / fmax(fma((x - y), (x + y), 1.0), 0.0));
+  }
+  else {
+    const double y = (A22 / A12);
+    t2 = ((2.0 * y) / fmax(fma((1.0 - y), (1.0 + y), 1.0), 0.0));
   }
 #endif /* ?PVN_SV2_SAFE */
 
@@ -4496,15 +4504,19 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
       t2 = t2f;
   }
 #else /* !PVN_SV2_SAFE */
-  else if (A11 >= A12) {
+  else if (A11 > A12) {
     const long double x = (A12 / A11);
     const long double y = (A22 / A11);
     t2 = (((2.0L * x) * y) / fmaxl(fmal((x - y), (x + y), 1.0L), 0.0L));
   }
-  else {
+  else if (A12 > A11) {
     const long double x = (A11 / A12);
     const long double y = (A22 / A12);
     t2 = ((2.0L * y) / fmaxl(fmal((x - y), (x + y), 1.0L), 0.0L));
+  }
+  else {
+    const long double y = (A22 / A12);
+    t2 = ((2.0L * y) / fmaxl(fmal((1.0L - y), (1.0L + y), 1.0L), 0.0L));
   }
 #endif /* ?PVN_SV2_SAFE */
 
@@ -6406,15 +6418,19 @@ static void qlpsv2(const __float128 A11, const __float128 A12, const __float128 
       t2 = t2f;
   }
 #else /* !PVN_SV2_SAFE */
-  else if (A11 >= A12) {
+  else if (A11 > A12) {
     const __float128 x = (A12 / A11);
     const __float128 y = (A22 / A11);
     t2 = (((2.0q * x) * y) / fmaxq(fmaq((x - y), (x + y), 1.0q), 0.0q));
   }
-  else {
+  else if (A12 > A11) {
     const __float128 x = (A11 / A12);
     const __float128 y = (A22 / A12);
     t2 = ((2.0q * y) / fmaxq(fmaq((x - y), (x + y), 1.0q), 0.0q));
+  }
+  else {
+    const __float128 y = (A22 / A12);
+    t2 = ((2.0q * y) / fmaxq(fmaq((1.0q - y), (1.0q + y), 1.0q), 0.0q));
   }
 #endif /* ?PVN_SV2_SAFE */
 
