@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
   const int upper = (n < 0);
   n = abs(n);
   const int p = ((argc == 4) ? atoi(argv[3]) : 0);
+  const int *const pp = (p ? &p : (const int*)NULL);
   char s[46] = { '\0' };
   if (!n) {
 #ifdef PVN_QUADMATH
@@ -249,16 +250,16 @@ int main(int argc, char *argv[])
 #pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
-        const float a11 = pvn_ran_safe_f_(&u, &p);
+        const float a11 = pvn_ran_safe_f_(&u, pp);
         if (!(a11 != 0.0f))
           PVN_STOP("G(1,1)");
-        const float a21 = (upper ? 0.0f : pvn_ran_safe_f_(&u, &p));
+        const float a21 = (upper ? 0.0f : pvn_ran_safe_f_(&u, pp));
         if (!upper && !(a21 != 0.0f))
           PVN_STOP("G(2,1)");
-        const float a12 = pvn_ran_safe_f_(&u, &p);
+        const float a12 = pvn_ran_safe_f_(&u, pp);
         if (!(a12 != 0.0f))
           PVN_STOP("G(1,2)");
-        const float a22 = pvn_ran_safe_f_(&u, &p);
+        const float a22 = pvn_ran_safe_f_(&u, pp);
         if (!(a22 != 0.0f))
           PVN_STOP("G(2,2)");
         float u11 = -0.0f, u21 = -0.0f, u12 = -0.0f, u22 = -0.0f, v11 = -0.0f, v21 = -0.0f, v12 = -0.0f, v22 = -0.0f, s1 = -0.0f, s2 = -0.0f;
@@ -331,16 +332,16 @@ int main(int argc, char *argv[])
 #pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
-        const double a11 = pvn_ran_safe_(&u, &p);
+        const double a11 = pvn_ran_safe_(&u, pp);
         if (!(a11 != 0.0))
           PVN_STOP("G(1,1)");
-        const double a21 = (upper ? 0.0 : pvn_ran_safe_(&u, &p));
+        const double a21 = (upper ? 0.0 : pvn_ran_safe_(&u, pp));
         if (!upper && !(a21 != 0.0))
           PVN_STOP("G(2,1)");
-        const double a12 = pvn_ran_safe_(&u, &p);
+        const double a12 = pvn_ran_safe_(&u, pp);
         if (!(a12 != 0.0))
           PVN_STOP("G(1,2)");
-        const double a22 = pvn_ran_safe_(&u, &p);
+        const double a22 = pvn_ran_safe_(&u, pp);
         if (!(a22 != 0.0))
           PVN_STOP("G(2,2)");
         double u11 = -0.0, u21 = -0.0, u12 = -0.0, u22 = -0.0, v11 = -0.0, v21 = -0.0, v12 = -0.0, v22 = -0.0, s1 = -0.0, s2 = -0.0;
@@ -413,28 +414,28 @@ int main(int argc, char *argv[])
 #pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
-        const float a11r = pvn_ran_safe_f_(&u, &p);
+        const float a11r = pvn_ran_safe_f_(&u, pp);
         if (!(a11r != 0.0f))
           PVN_STOP("G(1,1)");
-        const float a11i = pvn_ran_safe_f_(&u, &p);
+        const float a11i = pvn_ran_safe_f_(&u, pp);
         if (!(a11i != 0.0f))
           PVN_STOP("G(1,1)");
-        const float a21r = (upper ? 0.0f : pvn_ran_safe_f_(&u, &p));
+        const float a21r = (upper ? 0.0f : pvn_ran_safe_f_(&u, pp));
         if (!upper && !(a21r != 0.0f))
           PVN_STOP("G(2,1)");
-        const float a21i = (upper ? 0.0f : pvn_ran_safe_f_(&u, &p));
+        const float a21i = (upper ? 0.0f : pvn_ran_safe_f_(&u, pp));
         if (!upper && !(a21i != 0.0f))
           PVN_STOP("G(2,1)");
-        const float a12r = pvn_ran_safe_f_(&u, &p);
+        const float a12r = pvn_ran_safe_f_(&u, pp);
         if (!(a12r != 0.0f))
           PVN_STOP("G(1,2)");
-        const float a12i = pvn_ran_safe_f_(&u, &p);
+        const float a12i = pvn_ran_safe_f_(&u, pp);
         if (!(a12i != 0.0f))
           PVN_STOP("G(1,2)");
-        const float a22r = pvn_ran_safe_f_(&u, &p);
+        const float a22r = pvn_ran_safe_f_(&u, pp);
         if (!(a22r != 0.0f))
           PVN_STOP("G(2,2)");
-        const float a22i = pvn_ran_safe_f_(&u, &p);
+        const float a22i = pvn_ran_safe_f_(&u, pp);
         if (!(a22i != 0.0f))
           PVN_STOP("G(2,2)");
         float
@@ -516,28 +517,28 @@ int main(int argc, char *argv[])
 #pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
-        const double a11r = pvn_ran_safe_(&u, &p);
+        const double a11r = pvn_ran_safe_(&u, pp);
         if (!(a11r != 0.0))
           PVN_STOP("G(1,1)");
-        const double a11i = pvn_ran_safe_(&u, &p);
+        const double a11i = pvn_ran_safe_(&u, pp);
         if (!(a11i != 0.0))
           PVN_STOP("G(1,1)");
-        const double a21r = (upper ? 0.0 : pvn_ran_safe_(&u, &p));
+        const double a21r = (upper ? 0.0 : pvn_ran_safe_(&u, pp));
         if (!upper && !(a21r != 0.0))
           PVN_STOP("G(2,1)");
-        const double a21i = (upper ? 0.0 : pvn_ran_safe_(&u, &p));
+        const double a21i = (upper ? 0.0 : pvn_ran_safe_(&u, pp));
         if (!upper && !(a21i != 0.0))
           PVN_STOP("G(2,1)");
-        const double a12r = pvn_ran_safe_(&u, &p);
+        const double a12r = pvn_ran_safe_(&u, pp);
         if (!(a12r != 0.0))
           PVN_STOP("G(1,2)");
-        const double a12i = pvn_ran_safe_(&u, &p);
+        const double a12i = pvn_ran_safe_(&u, pp);
         if (!(a12i != 0.0))
           PVN_STOP("G(1,2)");
-        const double a22r = pvn_ran_safe_(&u, &p);
+        const double a22r = pvn_ran_safe_(&u, pp);
         if (!(a22r != 0.0))
           PVN_STOP("G(2,2)");
-        const double a22i = pvn_ran_safe_(&u, &p);
+        const double a22i = pvn_ran_safe_(&u, pp);
         if (!(a22i != 0.0))
           PVN_STOP("G(2,2)");
         double
