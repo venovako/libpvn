@@ -81,7 +81,10 @@ The `SAFE` variable lists, as one or more comma-separated short names, the compo
 - `cma` makes the complex multiplication and FMA safe from unwarranted overflow;
 - `ran` requests that all random numbers (not only those explicitly created as such) lie in the range `[xxx_MIN*2^p,xxx_MAX/4]`, where `p=0` by default;
 - `sv2` indicates that `hypotf` and `hypot` are correctly rounded and can be used for the singular value decomposition.
+
 So, `SAFE=cma,sv2`, e.g., requests the `cma` and `sv2` safe implementations, but not the `ran` one.
+
+The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
 Also, several functions will not work on Windows, and probably on other untested systems as well.
