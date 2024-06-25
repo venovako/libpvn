@@ -25,10 +25,10 @@ The library has been successfully built using:
 
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
-2. FreeBSD (clang 16.0.6 and GCC 12.2.0),
-3. Homebrew (GCC 13.2.0),
-4. openSUSE Tumbleweed (GCC 13.2.1),
-5. Oracle Linux (GCC 12.2.1 (devtoolset-12) and 13.2.1 (custom built)),
+2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
+3. Homebrew (GCC 14.1.0),
+4. openSUSE Tumbleweed (GCC 14.1.0),
+5. Oracle Linux (GCC 12.2.1 (devtoolset-12) and 14.1.1 (custom built)),
 6. Oracle Solaris (GCC 11.2.0),
 7. Intel oneAPI (2024.1).
 
@@ -76,6 +76,12 @@ Bear in mind, however, that this will introduce a dependency on the OpenMP runti
 
 If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic, unless `COMPILER=clang` is used.
 If the autodetection fails, the relevant linker options can be set via the `QUADMATH` variable.
+
+The `SAFE` variable lists, as one or more comma-separated short names, the components for which a safe implementation is requested:
+- `cma` makes the complex multiplication and FMA safe from unwarranted overflow;
+- `ran` requests that all random numbers (not only those explicitly created as such) lie in the range `[xxx_MIN*2^p,xxx_MAX/4]`, where `p=0` by default;
+- `sv2` indicates that `hypotf` and `hypot` are correctly rounded and can be used for the singular value decomposition.
+So, `SAFE=cma,sv2`, e.g., requests the `cma` and `sv2` safe implementations, but not the `ran` one.
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
 Also, several functions will not work on Windows, and probably on other untested systems as well.
