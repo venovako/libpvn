@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
     if (t == 'S') {
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
+#pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
         const float a11 = pvn_ran_safe_f_(&u, pp);
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
     }
     else if (t == 'D') {
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
+#pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
         const double a11 = pvn_ran_safe_(&u, pp);
@@ -411,7 +411,7 @@ int main(int argc, char *argv[])
     }
     else if (t == 'C') {
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
+#pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
         const float a11r = pvn_ran_safe_f_(&u, pp);
@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
     }
     else if (t == 'Z') {
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(n,s,u,upper,T) reduction(max:EC,EU,EV,EG)
+#pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
 #endif /* _OPENMP */
       for (int i = 0u; i < n; ++i) {
         const double a11r = pvn_ran_safe_(&u, pp);
