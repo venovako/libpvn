@@ -3,30 +3,32 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (argc != 2) {
-    fprintf(stderr, "%s size_t\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-  (void)printf(" size_t      = %zu\n", pvn_atoz(argv[1]));
-
   char s[46u] = { '\0' };
   (void)printf(" FLT_TRUE_MIN=%s\n", pvn_stoa(s, FLT_TRUE_MIN));
   (void)printf(" FLT_MIN     =%s\n", pvn_stoa(s, FLT_MIN));
+  (void)printf(" FLT_MIN_EXP =%6d\n", FLT_MIN_EXP);
   (void)printf(" FLT_EPSILON =%s\n", pvn_stoa(s, FLT_EPSILON));
   (void)printf(" FLT_MAX     =%s\n", pvn_stoa(s, FLT_MAX));
+  (void)printf(" FLT_MAX_EXP =%6d\n", FLT_MAX_EXP);
   (void)printf(" DBL_TRUE_MIN=%s\n", pvn_dtoa(s, DBL_TRUE_MIN));
   (void)printf(" DBL_MIN     =%s\n", pvn_dtoa(s, DBL_MIN));
+  (void)printf(" DBL_MIN_EXP =%6d\n", DBL_MIN_EXP);
   (void)printf(" DBL_EPSILON =%s\n", pvn_dtoa(s, DBL_EPSILON));
   (void)printf(" DBL_MAX     =%s\n", pvn_dtoa(s, DBL_MAX));
+  (void)printf(" DBL_MAX_EXP =%6d\n", DBL_MAX_EXP);
   (void)printf("LDBL_TRUE_MIN=%s\n", pvn_xtoa(s, LDBL_TRUE_MIN));
   (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
+  (void)printf("LDBL_MIN_EXP =%6d\n", LDBL_MIN_EXP);
   (void)printf("LDBL_EPSILON =%s\n", pvn_xtoa(s, LDBL_EPSILON));
   (void)printf("LDBL_MAX     =%s\n", pvn_xtoa(s, LDBL_MAX));
+  (void)printf("LDBL_MAX_EXP =%6d\n", LDBL_MAX_EXP);
 #ifdef PVN_QUADMATH
   (void)printf("FLT128_TRUE_MIN=%s\n", pvn_qtoa(s, FLT128_TRUE_MIN));
   (void)printf("FLT128_MIN     =%s\n", pvn_qtoa(s, FLT128_MIN));
+  (void)printf("FLT128_MIN_EXP =%6d\n", FLT128_MIN_EXP);
   (void)printf("FLT128_EPSILON =%s\n", pvn_qtoa(s, FLT128_EPSILON));
   (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
+  (void)printf("FLT128_MAX_EXP =%6d\n", FLT128_MAX_EXP);
 #endif /* PVN_QUADMATH */
   return EXIT_SUCCESS;
 }
