@@ -1,4 +1,7 @@
 #ifdef PVN_SV2_SAFE
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#endif /* __GNUC__ && !__clang__ */
 #pragma STDC FENV_ACCESS ON
 #endif /* PVN_SV2_SAFE */
 

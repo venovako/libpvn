@@ -28,7 +28,7 @@ Recent versions of the compilers have been provided by or used on:
 2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
 3. Homebrew (GCC 14.1.0),
 4. openSUSE Tumbleweed (GCC 14.1.0),
-5. Oracle Linux (GCC 12.2.1 (devtoolset-12) and 14.1.1 (custom built)),
+5. Oracle Linux (GCC 13.2.1 and 14.1.1 (custom built)),
 6. Oracle Solaris (GCC 11.2.0),
 7. Intel oneAPI (2024.1).
 

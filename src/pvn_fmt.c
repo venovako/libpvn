@@ -1,7 +1,7 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(int argc, char *argv[])
+int main(/* int argc, char *argv[] */)
 {
   char s[46u] = { '\0' };
   (void)printf(" FLT_TRUE_MIN=%s\n", pvn_stoa(s, FLT_TRUE_MIN));
