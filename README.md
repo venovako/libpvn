@@ -30,7 +30,7 @@ Recent versions of the compilers have been provided by or used on:
 4. openSUSE Tumbleweed (GCC 14.1.0),
 5. Oracle Linux (GCC 13.2.1 and 14.1.1 (custom built)),
 6. Oracle Solaris (GCC 11.2.0),
-7. Intel oneAPI (2024.1).
+7. Intel oneAPI (2024.2).
 
 Examples of building the library:
 ```bash
