@@ -4,7 +4,8 @@ A small portable C library with several utility functions.
 (... work in progress ...)
 
 This software is a supplementary material for:
-- the paper doi:[10.1016/j.cam.2024.116003](https://doi.org/10.1016/j.cam.2024.116003 "Accurate complex Jacobi rotations").
+- the paper doi:[10.1016/j.cam.2024.116003](https://doi.org/10.1016/j.cam.2024.116003 "Accurate complex Jacobi rotations"),
+- the preprint arXiv:[2407.13116](https://arxiv.org/abs/2407.13116 "Arithmetical enhancements of the Kogbetliantz method for the SVD of order two").
 
 Some functions have been adapted from those in the repositories [JACSD](https://github.com/venovako/JACSD) and [VecJac](https://github.com/venovako/VecJac).
 
@@ -27,7 +28,7 @@ Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
 2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
 3. Homebrew (GCC 14.1.0),
-4. openSUSE Tumbleweed (GCC 14.1.0),
+4. openSUSE Tumbleweed (GCC 14.1.1),
 5. Oracle Linux (GCC 13.2.1 and 14.1.1 (custom built)),
 6. Oracle Solaris (GCC 11.2.0),
 7. Intel oneAPI (2024.2).

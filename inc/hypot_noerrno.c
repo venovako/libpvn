@@ -30,6 +30,11 @@ SOFTWARE.
 #ifndef NDEBUG
 #include <errno.h>
 #endif /* !NDEBUG */
+#include <fenv.h>
+
+#ifdef __x86_64__
+#include <x86intrin.h>
+#endif
 
 // Warning: clang also defines __GNUC__
 #if defined(__GNUC__) && !defined(__clang__)
@@ -38,11 +43,25 @@ SOFTWARE.
 
 #pragma STDC FENV_ACCESS ON
 
-#ifdef __SSE__
-#include <x86intrin.h>
-#else /* !__SSE__ */
-#include <fenv.h>
-#endif /* ?__SSE__ */
+static inline fexcept_t get_flags ()
+{
+#ifdef __x86_64__
+  return _mm_getcsr ();
+#else
+  fexcept_t flag;
+  fegetexceptflag (&flag, FE_ALL_EXCEPT);
+  return flag;
+#endif
+}
+
+static inline void set_flags (fexcept_t flag)
+{
+#ifdef __x86_64__
+  _mm_setcsr (flag);
+#else
+  fesetexceptflag (&flag, FE_ALL_EXCEPT);
+#endif
+}
 
 typedef uint64_t u64;
 typedef int64_t i64;
@@ -93,11 +112,7 @@ static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b){
    and fits in a 128-bit integer, so the approximation is squared (which
    also fits in a 128-bit integer), compared and adjusted if necessary using
    the exact value of x^2+y^2. */
-#ifdef __SSE__
-static double  __attribute__((noinline)) as_hypot_hard(double x, double y, unsigned flag){
-#else /* !__SSE__ */
-static double  __attribute__((noinline)) as_hypot_hard(double x, double y, fenv_t *flag){
-#endif /* ?__SSE__ */
+static double  __attribute__((noinline)) as_hypot_hard(double x, double y, const fexcept_t flag){
   double op = 1.0 + 0x1p-54, om = 1.0 - 0x1p-54;
   b64u64_u xi = {.f = x}, yi = {.f = y};
   u64 bm = (xi.u&(~0ul>>12))|1l<<52;
@@ -136,13 +151,7 @@ static double  __attribute__((noinline)) as_hypot_hard(double x, double y, fenv_
     D = m2 - rm2;
   } while(D>0);
   if(D==0){
-#ifdef __SSE__
-    _mm_setcsr(flag);
-#else /* !__SSE__ */
-    if (fesetenv(flag)) {
-      /* TODO: error handling */
-    }
-#endif /* ?__SSE__ */
+    set_flags(flag);
   } else {
     if(__builtin_expect(op == om, 1)){
       u64 tm = (rm << k) - (1<<(k-(rm<=(1l<<53))));
@@ -175,15 +184,7 @@ static double __attribute__((noinline)) as_hypot_overflow(){
 }
 
 double cr_hypot(double x, double y){
-#ifdef __SSE__
-  volatile unsigned flag = _mm_getcsr();
-#else /* !__SSE__ */
-  fenv_t fe;
-  fenv_t *const flag = &fe;
-  if (fegetenv(flag)) {
-    /* TODO: error handling */
-  }
-#endif /* ?__SSE__ */
+  volatile fexcept_t flag = get_flags();
   b64u64_u xi = {.f = x}, yi = {.f = y};
   u64 emsk = 0x7ffl<<52, ex = xi.u&emsk, ey = yi.u&emsk;
   /* emsk corresponds to the upper bits of NaN and Inf (apart the sign bit) */
