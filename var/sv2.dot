@@ -7,17 +7,18 @@ strict digraph sv2 {
         10 [shape=square]
         12 [shape=square]
         15 [shape=tripleoctagon]
-        PUT [shape=octagon]
+        URV [shape=octagon,label=<13<SUP>+</SUP>>]
         SVD [shape=doublecircle]
     }
     0124869 -> SVD [style=dashed]
     3 -> SVD [label=<U<SUP>*</SUP>(θ)>]
-    7111314 -> PUT [style=dashed]
+    7111314 -> URV [style=dashed]
     12 -> 3 [style=dashed]
-    PUT -> SVD [label=< U<SUP>*</SUP>(φ)<BR/> V(ψ)>,style=bold]
+    URV -> SVD [label=< U<SUP>*</SUP>(φ)<BR/> V(ψ)>,style=bold]
     5 -> SVD [label=< V(θ)>]
     10 -> 5 [style=dashed]
     15 -> 5 [label=< U<SUP>*</SUP>(ϑ)>]
     15 -> SVD [label=<U<SUP>*</SUP>(ϑ)>,style=dotted]
-    15 -> PUT [label=< U<SUP>*</SUP>(ϑ)>]
+    15 -> URV [label=< U<SUP>*</SUP>(ϑ)>]
 }
+// dot -v -Tpdf -osv2.pdf -x sv2.dot
