@@ -3,7 +3,7 @@
 
 #if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #include <mathimf.h>
-#else /* !__ICC */
+#else /* !Intel */
 #ifdef __cplusplus
 #include <complex>
 #include <cmath>
@@ -11,7 +11,7 @@
 #include <complex.h>
 #include <math.h>
 #endif /* ?__cplusplus */
-#endif /* ?__ICC */
+#endif /* ?Intel */
 
 #ifdef __cplusplus
 #include <cassert>
@@ -82,15 +82,23 @@
 #error PVN_NO_PROF already defined
 #endif /* ?PVN_NO_PROF */
 
-#if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
+#ifndef PVN_ASSERT
 #ifdef NDEBUG
+#if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #define PVN_ASSERT(cond) __assume(cond)
+#elif (defined(__GNUC__) && !defined(__clang__))
+#define PVN_ASSERT(cond) __attribute__((assume(cond)))
+#elif (defined(__clang__))
+#define PVN_ASSERT(cond) __builtin_assume(cond)
+#else /* unsupported compiler */
+#define PVN_ASSERT(cond) assert(cond)
+#endif /* ?compiler */
 #else /* !NDEBUG */
 #define PVN_ASSERT(cond) assert(cond)
 #endif /* ?NDEBUG */
-#else /* !Intel */
-#define PVN_ASSERT(cond) assert(cond)
-#endif /* ?Intel */
+#else /* PVN_ASSERT */
+#error PVN_ASSERT already defined
+#endif /* ?PVN_ASSERT */
 
 #ifndef PVN_LF64
 #ifdef _LARGEFILE64_SOURCE

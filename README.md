@@ -31,7 +31,7 @@ Recent versions of the compilers have been provided by or used on:
 4. openSUSE Tumbleweed (GCC 14.1.1),
 5. Oracle Linux (GCC 13.2.1 and 14.1.1 (custom built)),
 6. Oracle Solaris (GCC 11.2.0),
-7. Intel oneAPI (2024.2).
+7. Intel oneAPI (2024.2.1).
 
 Examples of building the library:
 ```bash
@@ -46,7 +46,7 @@ make help
 make COMPILER=icx NDEBUG=3 clean all
 #
 # a release build with the Homebrew's gcc on x86_64 macOS
-make COMPILER=gcc COMPILER_SUFFIX=-13 NDEBUG=3 clean all
+make COMPILER=gcc COMPILER_SUFFIX=-14 NDEBUG=3 clean all
 #
 # a debug build with clang on FreeBSD (note the usage of gmake instead of make)
 gmake clean all
