@@ -1,8 +1,18 @@
 OS=$(shell uname)
-ARCH=$(shell uname -m)
-ifeq ($(ARCH),amd64)
+CPU=$(shell uname -m)
+ifeq ($(CPU),amd64)
 ARCH=x86_64
-endif # amd64
+else # !amd64
+ifeq ($(CPU),i86pc)
+ARCH=x86_64
+else # !i86pc
+ifeq ($(CPU),aarch64)
+ARCH=arm64
+else # !aarch64
+ARCH=$(CPU)
+endif # ?aarch64
+endif # ?i86pc
+endif # ?amd64
 RM=rm -rfv
 ifndef COMPILER
 ifeq ($(OS),Linux)
