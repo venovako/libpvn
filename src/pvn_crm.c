@@ -16,19 +16,16 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_rsqrtf=%18p\n", cr_rsqrtf);
   (void)printf("cr_hypot =%18p\n", cr_hypot);
   (void)printf("cr_rsqrt =%18p\n", cr_rsqrt);
+  (void)printf("cr_rsqrtl=%18p\n", cr_rsqrtl);
 #endif /* PVN_CR_MATH */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-#ifdef PVN_CR_MATH
+#ifndef __x86_64__
 /* might not be correctly rounded */
 long double cr_rsqrtl(long double x)
 {
-#ifdef __MATHIMF_H_INCLUDED
-  return invsqrtl(x);
-#else /* !__MATHIMF_H_INCLUDED */
   return (1.0L / sqrtl(x));
-#endif /* ?__MATHIMF_H_INCLUDED */
 }
-#endif /* PVN_CR_MATH */
+#endif /* !__x86_64__ */
 #endif /* ?PVN_TEST */

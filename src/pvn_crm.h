@@ -19,7 +19,7 @@ PVN_EXTERN_C double cr_rsqrt(double x);
 #define rsqrt cr_rsqrt
 /* cr_hypotl is not yet present in core-math, so use the C library's hypotl instead */
 #define cabsl(z) hypotl(creall(z), cimagl(z))
-/* cr_rsqrtl is not yet present in core-math, so a dummy implementation is provided for completeness */
+/* cr_rsqrtl in core-math assumes the 80-bit double-extended arithmetic */
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl
 #else /* !PVN_CR_MATH */

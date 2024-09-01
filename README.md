@@ -27,7 +27,7 @@ The library has been successfully built using:
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
 2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
-3. Homebrew (GCC 14.1.0),
+3. Homebrew (GCC 14.2.0),
 4. openSUSE Tumbleweed (GCC 14.1.1),
 5. Oracle Linux (GCC 13.2.1 and 14.1.1 (custom built)),
 6. Oracle Solaris (GCC 11.2.0),

@@ -52,12 +52,22 @@ CR_OBJS += $(CR_MATH)/src/binary64/rsqrt/rsqrt_noerrno.o
 else
 CR_OBJS += $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
 endif
+ifeq ($(findstring 86,$(ARCH)),86)
+ifneq ($(strip $(wildcard $(CR_MATH)/src/binary80/rsqrt/rsqrtl_noerrno.o)),)
+CR_OBJS += $(CR_MATH)/src/binary80/rsqrt/rsqrtl_noerrno.o
+else
+CR_OBJS += $(CR_MATH)/src/binary80/rsqrt/rsqrtl.o
+endif
+endif # 86
 else # !NDEBUG
 CR_OBJS= \
 $(CR_MATH)/src/binary32/hypot/hypotf.o \
 $(CR_MATH)/src/binary32/rsqrt/rsqrtf.o \
 $(CR_MATH)/src/binary64/hypot/hypot.o  \
 $(CR_MATH)/src/binary64/rsqrt/rsqrt.o
+ifeq ($(findstring 86,$(ARCH)),86)
+CR_OBJS += $(CR_MATH)/src/binary80/rsqrt/rsqrtl.o
+endif # 86
 endif # ?NDEBUG
 else # !CR_MATH
 ifdef NDEBUG
@@ -70,6 +80,9 @@ CR_SRCS= \
 ../inc/rsqrtf_noerrno.c \
 ../inc/hypot_noerrno.c  \
 ../inc/rsqrt_noerrno.c
+ifeq ($(findstring 86,$(ARCH)),86)
+CR_SRCS += ../inc/rsqrtl_noerrno.c
+endif # 86
 CR_OBJS=$(CR_SRCS:.c=.o)
 endif # ?CR_MATH
 ifdef OPENMP

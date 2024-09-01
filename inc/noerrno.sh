@@ -1,7 +1,8 @@
 #!/bin/bash
-if [ `uname -m` = "ppc64le" ]
+MACHINE=`uname -m`
+echo "MACHINE=$MACHINE"
+if [ "$MACHINE" = "ppc64le" ]
 then
-	echo ppc64le
 	gcc -DNDEBUG -O3 -mcpu=native -mtraceback=full -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
 	gcc -DNDEBUG -O3 -mcpu=native -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
 	gcc -DNDEBUG -O3 -mcpu=native -mtraceback=full -fno-math-errno -W -Wall $* -c hypot_noerrno.c
@@ -11,4 +12,8 @@ else
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c hypot_noerrno.c
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
+	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" -o "$MACHINE" = "i86pc" ]
+	then
+		gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtl_noerrno.c
+	fi
 fi
