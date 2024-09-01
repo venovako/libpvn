@@ -1,5 +1,8 @@
 OS=$(shell uname)
 ARCH=$(shell uname -m)
+ifeq ($(ARCH),amd64)
+ARCH=x86_64
+endif # amd64
 RM=rm -rfv
 ifndef COMPILER
 ifeq ($(OS),Linux)

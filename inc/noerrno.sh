@@ -3,10 +3,10 @@ MACHINE=`uname -m`
 echo "MACHINE=$MACHINE"
 if [ "$MACHINE" = "ppc64le" ]
 then
-	gcc -DNDEBUG -O3 -mcpu=native -mtraceback=full -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
-	gcc -DNDEBUG -O3 -mcpu=native -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
-	gcc -DNDEBUG -O3 -mcpu=native -mtraceback=full -fno-math-errno -W -Wall $* -c hypot_noerrno.c
-	gcc -DNDEBUG -O3 -mcpu=native -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
+	gcc -DNDEBUG -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
+	gcc -DNDEBUG -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
+	gcc -DNDEBUG -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c hypot_noerrno.c
+	gcc -DNDEBUG -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
 else
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
