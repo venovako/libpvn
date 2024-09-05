@@ -29,7 +29,7 @@ Recent versions of the compilers have been provided by or used on:
 2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
 3. Homebrew (GCC 14.2.0),
 4. openSUSE Tumbleweed (GCC 14.2.0),
-5. Oracle Linux (GCC 13.2.1 and 14.1.1 (custom built)),
+5. Oracle Linux (GCC 13.2.1 and 14.2.1 (custom built)),
 6. Oracle Solaris (GCC 11.2.0),
 7. Intel oneAPI (2024.2.1).
 
@@ -63,13 +63,12 @@ Fortran (column-major) array order is assumed for the functions that operate on 
 
 A function with the name ending with an underscore (`_`) should be callable from Fortran without an explicit interface, just by declaring it `EXTERNAL` (without the underscore).
 
-The correctly-rounded `cr_hypot[f]` and `cr_rsqrt[f]` functions might optionally be used if provided by, e.g., the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project.
-If their implementation is to be linked with, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
-Note, the `hypot[f]_noerrno.c` and `rsqrt[f]_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot[f].c` and `rsqrt[f].c` files by conditionally eliminating all references to `errno` (see the `inc` subdirectory here for examples).
-Alternatively, the modified implementations provided here will be used if `CR_MATH` is not set.
+Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
+Their slightly modified implementations included here will be taken if `CR_MATH` is not set.
+Otherwise, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
+Note, the `hypot[f]_noerrno.c` and `rsqrt[fl]_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot[f].c` and `rsqrt[fl].c` files by conditionally eliminating all references to `errno` (see the `inc` subdirectory here for examples).
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
-The object files in the `inc` subdirectory will be *deleted* by `[g]make clean`, so either back them up or edit `GNUmakefile` if that is not desirable.
-Either way, the object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
+The object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.
