@@ -5,8 +5,7 @@ CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG)
 else # DEBUG
 CFLAGS=-O0 -g -Mbounds -Mchkstk
 endif # ?NDEBUG
-CFLAGS += --diag_suppress integer_sign_change -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -c11 -fpic -Kieee -Meh_frame -Mfma -Mframe -Mint128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -pthread -tp=native -traceback
-# -Minfo -Minstrument -Mm128 -nvmalloc
+CFLAGS += --diag_suppress integer_sign_change -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -c11 -fpic -Kieee -Meh_frame -Mfma -Mframe -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=native -traceback
 ifdef OPENMP
 CFLAGS += -mp
 ifneq ($(OPENMP),true)

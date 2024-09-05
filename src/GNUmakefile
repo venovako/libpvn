@@ -106,7 +106,12 @@ endif # ?PROFILE
 endif # PROFILE
 endif # OPENMP
 ifdef PROFILE
-CFLAGS += -DPVN_PROFILE=$(PROFILE)u -fno-inline -finstrument-functions
+CFLAGS += -DPVN_PROFILE=$(PROFILE)u
+ifeq ($(COMPILER),nvc)
+CFLAGS += -Minstrument
+else # !nvc
+CFLAGS += -fno-inline -finstrument-functions
+endif # ?nvc
 endif # PROFILE
 ifdef PRINTOUT
 CFLAGS += -DPVN_PRINTOUT=STD$(PRINTOUT)_FILENO

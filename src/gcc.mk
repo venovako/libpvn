@@ -5,7 +5,7 @@ CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -fvect-cost-model=unlimite
 else # DEBUG
 CFLAGS=-Og -ggdb3 -ftrapv
 endif # ?NDEBUG
-CFLAGS += -Wall -Wextra -Wno-unused-but-set-variable
+CFLAGS += -Wall -Wextra
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 else # !Linux

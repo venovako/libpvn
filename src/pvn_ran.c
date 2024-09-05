@@ -1,6 +1,6 @@
 #include "pvn.h"
 
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
 #include <immintrin.h>
 #endif /* __RDRND__ */
 
@@ -20,7 +20,7 @@ int main(/* int argc, char *argv[] */)
 #else /* !PVN_TEST */
 int pvn_ran_open_()
 {
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
   return __RDRND__;
 #else /* !__RDRND__ */
   return open("/dev/random", (O_RDONLY | PVN_LF64));
@@ -30,7 +30,7 @@ int pvn_ran_open_()
 int pvn_ran_close_(const int *const u)
 {
   PVN_ASSERT(u);
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
   return ((*u < 0) ? -1 : 0);
 #else /* !__RDRND__ */
   return close(*u);
@@ -46,7 +46,7 @@ float pvn_ran_safe_f_(const int *const u, const int *const p)
   if (*u < 0)
     return r;
   while (!(a >= rmin) || !(a <= rmax)) {
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
     while (!_rdrand32_step((unsigned*)&r)) /**/;
     a = fabsf(r);
 #else /* !__RDRND__ */
@@ -75,7 +75,7 @@ float pvn_ran_f_(const int *const u)
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   float r = ((*u < 0) ? NAN : 0.0f);
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand32_step((unsigned*)&r)) /**/;
 #else /* !__RDRND__ */
   ssize_t s = 0;
@@ -85,6 +85,8 @@ float pvn_ran_f_(const int *const u)
   {
     s = read(*u, &r, sizeof(r));
   }
+  if (s != (ssize_t)sizeof(r))
+    r = NAN;
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */
@@ -99,7 +101,7 @@ double pvn_ran_safe_(const int *const u, const int *const p)
   if (*u < 0)
     return r;
   while (!(a >= rmin) || !(a <= rmax)) {
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
     while (!_rdrand64_step((unsigned long long*)&r)) /**/;
     a = fabs(r);
 #else /* !__RDRND__ */
@@ -128,7 +130,7 @@ double pvn_ran_(const int *const u)
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   double r = ((*u < 0) ? (double)NAN : 0.0);
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
 #else /* !__RDRND__ */
   ssize_t s = 0;
@@ -138,6 +140,8 @@ double pvn_ran_(const int *const u)
   {
     s = read(*u, &r, sizeof(r));
   }
+  if (s != (ssize_t)sizeof(r))
+    r = (double)NAN;
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */
@@ -152,7 +156,7 @@ long double pvn_ran_safe_l_(const int *const u, const int *const p)
   if (*u < 0)
     return r;
   while (!(a >= rmin) || !(a <= rmax)) {
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
     while (!_rdrand64_step((unsigned long long*)&r)) /**/;
     while (!_rdrand16_step((unsigned short*)((unsigned long long*)&r + 1))) /**/;
     a = fabsl(r);
@@ -182,7 +186,7 @@ long double pvn_ran_l_(const int *const u)
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   long double r = ((*u < 0) ? (long double)NAN : 0.0L);
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
   while (!_rdrand16_step((unsigned short*)((unsigned long long*)&r + 1))) /**/;
 #else /* !__RDRND__ */
@@ -193,6 +197,8 @@ long double pvn_ran_l_(const int *const u)
   {
     s = read(*u, &r, sizeof(r));
   }
+  if (s != (ssize_t)sizeof(r))
+    r = (long double)NAN;
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */
@@ -208,7 +214,7 @@ __float128 pvn_ran_safe_q_(const int *const u, const int *const p)
   if (*u < 0)
     return r;
   while (!(a >= rmin) || !(a <= rmax)) {
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
     while (!_rdrand64_step((unsigned long long*)&r)) /**/;
     while (!_rdrand64_step((unsigned long long*)&r + 1)) /**/;
     a = fabsq(r);
@@ -238,7 +244,7 @@ __float128 pvn_ran_q_(const int *const u)
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   __float128 r = ((*u < 0) ? (__float128)NAN : 0.0q);
-#ifdef __RDRND__
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
   while (!_rdrand64_step((unsigned long long*)&r + 1)) /**/;
 #else /* !__RDRND__ */
@@ -249,6 +255,8 @@ __float128 pvn_ran_q_(const int *const u)
   {
     s = read(*u, &r, sizeof(r));
   }
+  if (s != (ssize_t)sizeof(r))
+    r = (__float128)NAN;
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */
