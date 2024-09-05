@@ -86,9 +86,9 @@
 #ifdef NDEBUG
 #if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #define PVN_ASSERT(cond) __assume(cond)
-#elif (defined(__GNUC__) && !defined(__clang__))
+#elif (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
 #define PVN_ASSERT(cond) __attribute__((assume(cond)))
-#elif (defined(__clang__))
+#elif (defined(__clang__) || defined(__NVCOMPILER))
 #define PVN_ASSERT(cond) __builtin_assume(cond)
 #else /* unsupported compiler */
 #define PVN_ASSERT(cond) assert(cond)
