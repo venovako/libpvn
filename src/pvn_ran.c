@@ -166,9 +166,17 @@ long double pvn_ran_safe_l_(const int *const u, const int *const p)
 #pragma omp critical
 #endif /* _OPENMP */
     {
+#ifdef __x86_64__
+      s = read(*u, &r, (size_t)10u);
+#else /* !__x86_64__ */
       s = read(*u, &r, sizeof(r));
+#endif /* ?__x86_64__ */
     }
+#ifdef __x86_64__
+    if (s == (ssize_t)10)
+#else /* !__x86_64__ */
     if (s == (ssize_t)sizeof(r))
+#endif /* ?__x86_64__ */
       a = fabsl(r);
     else if (s < 0)
       return -0.0L;
@@ -195,9 +203,17 @@ long double pvn_ran_l_(const int *const u)
 #pragma omp critical
 #endif /* _OPENMP */
   {
-    s = read(*u, &r, sizeof(r));
+#ifdef __x86_64__
+      s = read(*u, &r, (size_t)10u);
+#else /* !__x86_64__ */
+      s = read(*u, &r, sizeof(r));
+#endif /* ?__x86_64__ */
   }
+#ifdef __x86_64__
+  if (s != (ssize_t)10)
+#else /* !__x86_64__ */
   if (s != (ssize_t)sizeof(r))
+#endif /* ?__x86_64__ */
     r = (long double)NAN;
 #endif /* ?__RDRND__ */
   return r;
