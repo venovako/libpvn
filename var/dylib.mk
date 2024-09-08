@@ -8,10 +8,14 @@ else # Xcode
 FSYS=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks
 endif # ?Xcode
 ifeq ($(COMPILER),gcc)
-# TODO: assumes for now that $(QUADMATH) is a static library
-HIDDEN=-load_hidden $(QUADMATH) -load_hidden $(realpath $(shell $(CC) -print-file-name=libgcc.a))
+ifeq ($(QUADMATH),-lquadmath)
+GNU=-L$(dir $(realpath $(shell $(CC) -print-file-name=libquadmath.so))) -lquadmath
+else # libquadmath.a
+GNU=-load_hidden $(QUADMATH)
+endif # ?libquadmath
+GNU += -load_hidden $(realpath $(shell $(CC) -print-file-name=libgcc.a))
 endif # gcc
 endif # Darwin
 
 libpvn.dylib: libpvn.a
-	libtool -dynamic -o $@ -v $(HIDDEN) -F$(FSYS) -framework System libpvn.a
+	libtool -dynamic -o $@ -v $(GNU) -F$(FSYS) -framework System libpvn.a

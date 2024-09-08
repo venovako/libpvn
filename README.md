@@ -68,7 +68,6 @@ A function with the name ending with an underscore (`_`) should be callable from
 Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
 Their slightly modified implementations included here will be taken if `CR_MATH` is not set.
 Otherwise, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
-Note, the `hypot[f]_noerrno.c` and `rsqrt[fl]_noerrno.c` files are not provided there but can be easily modified from the corresponding `hypot[f].c` and `rsqrt[fl].c` files by conditionally eliminating all references to `errno` (see the `inc` subdirectory here for examples).
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
 The object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
 
