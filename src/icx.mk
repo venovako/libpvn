@@ -15,7 +15,7 @@ endif # !true
 endif # OPENMP
 LDFLAGS=-rdynamic -static-libgcc -ldl
 ifndef QUADMATH
-QUADMATH=$(shell gcc -print-file-name=libquadmath.a)
+QUADMATH=$(abspath $(shell gcc -print-file-name=libquadmath.a))
 ifeq ($(QUADMATH),libquadmath.a)
 QUADMATH=-lquadmath
 endif # ?QUADMATH

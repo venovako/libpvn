@@ -139,8 +139,8 @@ pvn_lock.c  \
 pvn_timer.c
 
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
-LIBS=libpvn.a
 EXES=$(SRCS:.c=.exe)
+LIBS=libpvn.a
 
 .PHONY: all help clean
 
@@ -160,6 +160,8 @@ libpvn.a: $(OBJS)
 
 clean:
 	-$(RM) *.exe
+	-$(RM) *.so
+	-$(RM) *.dylib
 	-$(RM) *.a
 	-$(RM) *.o
 	-$(RM) ../inc/*.o

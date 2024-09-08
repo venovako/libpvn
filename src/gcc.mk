@@ -33,7 +33,7 @@ LDFLAGS += -ldl
 endif # ?BSD
 ifeq ($(findstring 86,$(ARCH)),86)
 ifndef QUADMATH
-QUADMATH=$(shell $(CC) -print-file-name=libquadmath.a)
+QUADMATH=$(abspath $(shell $(CC) -print-file-name=libquadmath.a))
 ifeq ($(QUADMATH),libquadmath.a)
 QUADMATH=-lquadmath
 endif # ?QUADMATH
