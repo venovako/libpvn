@@ -110,9 +110,7 @@ pvn_timer.c
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
 EXES=$(SRCS:.c=.exe)
 LIBS=libpvn.a
-
 LNK=-L.
-
 ifeq ($(OS),Darwin)
 LIBS += libpvn.dylib
 ifeq ($(realpath /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/System.framework),)
@@ -144,7 +142,7 @@ else # !gcc
 FSYS=$(dir $(realpath $(shell gcc -print-file-name=libquadmath.so)))
 GNU += -L$(FSYS) -lquadmath $(realpath $(shell gcc -print-file-name=libgcc.a))
 endif # ?gcc
-LNK += -Wl,-rpath=$(FSYS)
+LNK += -L$(FSYS) -Wl,-rpath=$(FSYS)
 else # libquadmath.a
 ifeq ($(COMPILER),gcc)
 GNU += $(QUADMATH) $(realpath $(shell $(CC) -print-file-name=libgcc.a))
