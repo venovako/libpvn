@@ -113,6 +113,7 @@ LIBS=libpvn.a
 LNK=-L.
 ifeq ($(OS),Darwin)
 LIBS += libpvn.dylib
+LNK += -lpvn
 ifeq ($(realpath /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/System.framework),)
 FSYS=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks
 else # Xcode
@@ -125,10 +126,11 @@ else # libquadmath.a
 GNU=-load_hidden $(QUADMATH)
 endif # ?libquadmath
 GNU += -load_hidden $(realpath $(shell $(CC) -print-file-name=libgcc.a))
+LNK += $(QUADMATH)
 endif # gcc
 else # !Darwin
 LIBS += libpvn.so
-LNK += -Wl,-rpath=.
+LNK += -Wl,-rpath=. -lpvn
 ifdef NDEBUG
 GNU=-O$(NDEBUG)
 else # !NDEBUG
@@ -150,8 +152,8 @@ else # !gcc
 GNU += $(QUADMATH) $(realpath $(shell gcc -print-file-name=libgcc.a))
 endif # ?gcc
 endif # ?libquadmath
+LNK += $(QUADMATH)
 endif # ?Darwin
-LNK += -lpvn
 
 .PHONY: all help clean
 

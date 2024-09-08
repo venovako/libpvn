@@ -39,6 +39,5 @@ QUADMATH=-lquadmath
 endif # ?QUADMATH
 endif # !QUADMATH
 CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
-LDFLAGS += $(QUADMATH)
 endif # ?86
 LDFLAGS += -lm
