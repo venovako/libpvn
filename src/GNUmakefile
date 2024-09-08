@@ -111,8 +111,10 @@ OBJS=$(SRCS:.c=.o) $(CR_OBJS)
 EXES=$(SRCS:.c=.exe)
 LIBS=libpvn.a
 
+LNK=-L.
+
 ifeq ($(OS),Darwin)
-# LIBS += libpvn.dylib
+LIBS += libpvn.dylib
 ifeq ($(realpath /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/System.framework),)
 FSYS=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks
 else # Xcode
@@ -128,6 +130,7 @@ GNU += -load_hidden $(realpath $(shell $(CC) -print-file-name=libgcc.a))
 endif # gcc
 else # !Darwin
 LIBS += libpvn.so
+LNK += -Wl,-rpath=.
 ifdef NDEBUG
 GNU=-O$(NDEBUG)
 else # !NDEBUG
@@ -136,11 +139,12 @@ endif # ?NDEBUG
 ifeq ($(QUADMATH),-lquadmath)
 ifeq ($(COMPILER),gcc)
 FSYS=$(dir $(realpath $(shell $(CC) -print-file-name=libquadmath.so)))
-GNU += -L$(FSYS) -rpath=$(FSYS) -lquadmath $(realpath $(shell $(CC) -print-file-name=libgcc.a))
+GNU += -L$(FSYS) -lquadmath $(realpath $(shell $(CC) -print-file-name=libgcc.a))
 else # !gcc
 FSYS=$(dir $(realpath $(shell gcc -print-file-name=libquadmath.so)))
-GNU += -L$(FSYS) -rpath=$(FSYS) -lquadmath $(realpath $(shell gcc -print-file-name=libgcc.a))
+GNU += -L$(FSYS) -lquadmath $(realpath $(shell gcc -print-file-name=libgcc.a))
 endif # ?gcc
+LNK += -Wl,-rpath=$(FSYS)
 else # libquadmath.a
 ifeq ($(COMPILER),gcc)
 GNU += $(QUADMATH) $(realpath $(shell $(CC) -print-file-name=libgcc.a))
@@ -149,6 +153,7 @@ GNU += $(QUADMATH) $(realpath $(shell gcc -print-file-name=libgcc.a))
 endif # ?gcc
 endif # ?libquadmath
 endif # ?Darwin
+LNK += -lpvn
 
 .PHONY: all help clean
 
@@ -164,13 +169,13 @@ libpvn.dylib: libpvn.a
 	libtool -dynamic -o $@ -v $(GNU) -F$(FSYS) -framework System libpvn.a
 
 libpvn.so: libpvn.a
-	ld -shared -static -o $@ $(OBJS) $(GNU)
+	ld -shared -o $@ $(OBJS) $(GNU)
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.exe : %.c
-	$(CC) $(CFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ -L. -lpvn $(LDFLAGS)
+	$(CC) $(CFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNK) $(LDFLAGS)
 
 clean:
 	-$(RM) *.exe
