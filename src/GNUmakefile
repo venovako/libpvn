@@ -126,7 +126,29 @@ GNU=-load_hidden $(QUADMATH)
 endif # ?libquadmath
 GNU += -load_hidden $(realpath $(shell $(CC) -print-file-name=libgcc.a))
 endif # gcc
-endif # Darwin
+else # !Darwin
+LIBS += libpvn.so
+ifdef NDEBUG
+GNU=-O$(NDEBUG)
+else # !NDEBUG
+GNU=-t
+endif # ?NDEBUG
+ifeq ($(QUADMATH),-lquadmath)
+ifeq ($(COMPILER),gcc)
+FSYS=$(dir $(realpath $(shell $(CC) -print-file-name=libquadmath.so)))
+GNU += -L$(FSYS) -rpath=$(FSYS) -lquadmath $(realpath $(shell $(CC) -print-file-name=libgcc.a))
+else # !gcc
+FSYS=$(dir $(realpath $(shell gcc -print-file-name=libquadmath.so)))
+GNU += -L$(FSYS) -rpath=$(FSYS) -lquadmath $(realpath $(shell gcc -print-file-name=libgcc.a))
+endif # ?gcc
+else # libquadmath.a
+ifeq ($(COMPILER),gcc)
+GNU += $(QUADMATH) $(realpath $(shell $(CC) -print-file-name=libgcc.a))
+else # !gcc
+GNU += $(QUADMATH) $(realpath $(shell gcc -print-file-name=libgcc.a))
+endif # ?gcc
+endif # ?libquadmath
+endif # ?Darwin
 
 .PHONY: all help clean
 
@@ -140,6 +162,9 @@ libpvn.a: $(OBJS)
 
 libpvn.dylib: libpvn.a
 	libtool -dynamic -o $@ -v $(GNU) -F$(FSYS) -framework System libpvn.a
+
+libpvn.so: libpvn.a
+	ld -shared -static -o $@ $(OBJS) $(GNU)
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
