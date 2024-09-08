@@ -9,7 +9,7 @@ FSYS=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Develo
 endif # ?Xcode
 ifeq ($(COMPILER),gcc)
 ifeq ($(QUADMATH),-lquadmath)
-GNU=-L$(dir $(realpath $(shell $(CC) -print-file-name=libquadmath.so))) -lquadmath
+GNU=-L$(dir $(realpath $(shell $(CC) -print-file-name=libquadmath.dylib))) -lquadmath
 else # libquadmath.a
 GNU=-load_hidden $(QUADMATH)
 endif # ?libquadmath
