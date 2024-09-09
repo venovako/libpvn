@@ -135,7 +135,7 @@ LNK += -Wl,-rpath=. -lpvn
 ifdef NDEBUG
 GNU=-O$(NDEBUG)
 else # !NDEBUG
-GNU=-t
+GNU=--trace
 endif # ?NDEBUG
 ifeq ($(QUADMATH),-lquadmath)
 ifeq ($(COMPILER),gcc)

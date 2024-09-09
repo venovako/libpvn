@@ -15,8 +15,10 @@ The library has been successfully built using:
 | compiler | `uname` | platform |
 | -------- | ------- | -------- |
 | clang(1) | Darwin  | x86_64   |
+| clang(2) | FreeBSD | amd64    |
 | clang(2) | FreeBSD | arm64    |
 | gcc(3)   | Darwin  | x86_64   |
+| gcc(2)   | FreeBSD | amd64    |
 | gcc(2)   | FreeBSD | arm64    |
 | gcc(4)   | Linux   | aarch64  |
 | gcc(4)   | Linux   | ppc64le  |
