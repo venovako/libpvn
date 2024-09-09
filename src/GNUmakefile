@@ -112,6 +112,7 @@ EXES=$(SRCS:.c=.exe)
 LIBS=libpvn.a
 LNK=-L.
 ifdef DYNAMIC
+CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
 LIBS += libpvn.$(DYNAMIC)
 ifeq ($(OS),Darwin)
 LNK += -lpvn

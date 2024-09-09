@@ -3,7 +3,13 @@
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
-  (void)printf("libpvn built on %s with %s for %s on %s ", __DATE__, PVN_COMPILER, PVN_OS, PVN_ARCH);
+  (void)printf("libpvn.");
+#ifdef PVN_DYNAMIC
+  (void)printf("%s ", PVN_DYNAMIC);
+#else /* !PVN_DYNAMIC */
+  (void)printf("a ");
+#endif /* ?PVN_DYNAMIC */
+  (void)printf("built on %s with %s for %s on %s ", __DATE__, PVN_COMPILER, PVN_OS, PVN_ARCH);
 #ifdef NDEBUG
   (void)printf("with optimization level %d ", NDEBUG);
 #else /* !NDEBUG */
