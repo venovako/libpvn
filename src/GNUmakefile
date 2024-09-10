@@ -118,7 +118,7 @@ ifeq ($(QUADMATH),-lquadmath)
 GNU=-L$(dir $(realpath $(shell $(CC) -print-file-name=libquadmath.dylib))) -lquadmath
 else # libquadmath.a
 GNU=-load_hidden $(QUADMATH)
-endif # ?libquadmath
+endif # ?libquadmath.dylib
 GNU += -load_hidden $(realpath $(shell $(CC) -print-file-name=libgcc.a))
 LNK += $(QUADMATH)
 endif # gcc
@@ -129,6 +129,7 @@ GNU=-O$(NDEBUG)
 else # !NDEBUG
 GNU=--trace
 endif # ?NDEBUG
+ifdef QUADMATH
 ifeq ($(QUADMATH),-lquadmath)
 ifeq ($(COMPILER),gcc)
 FSYS=$(realpath $(shell $(CC) -print-file-name=libquadmath.so))
@@ -145,10 +146,22 @@ else # !gcc
 FSYS=$(QUADMATH)
 GNU += $(FSYS) $(realpath $(shell gcc -print-file-name=libgcc.a))
 endif # ?gcc
-endif # ?libquadmath
+endif # ?libquadmath.so
+endif # QUADMATH
 LNK += $(FSYS)
 endif # ?Darwin
 else # !DYNAMIC
+ifeq ($(OS),Darwin)
+ifeq ($(QUADMATH),-lquadmath)
+ifeq ($(COMPILER),gcc)
+FSYS=$(realpath $(shell $(CC) -print-file-name=libquadmath.dylib))
+else # !gcc
+FSYS=$(realpath $(shell gcc -print-file-name=libquadmath.dylib))
+endif # ?gcc
+else # libquadmath.a
+FSYS=$(QUADMATH)
+endif # ?libquadmath.dylib
+else # !Darwin
 ifeq ($(QUADMATH),-lquadmath)
 ifeq ($(COMPILER),gcc)
 FSYS=$(realpath $(shell $(CC) -print-file-name=libquadmath.so))
@@ -157,7 +170,8 @@ FSYS=$(realpath $(shell gcc -print-file-name=libquadmath.so))
 endif # ?gcc
 else # libquadmath.a
 FSYS=$(QUADMATH)
-endif # ?libquadmath
+endif # ?libquadmath.so
+endif # ?Darwin
 LNK += -lpvn $(FSYS)
 endif # ?DYNAMIC
 

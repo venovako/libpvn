@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
   if (r)
     return EXIT_FAILURE;
   (void)fprintf(stderr, "Converting the BMPs to the PNGs with ImageMagick...\n");
-  (void)system("for B in ../etc/*.bmp; do convert $B -quality 90 ../etc/`basename $B bmp`png; done");
+  (void)system("for B in ../etc/*.bmp; do magick $B -quality 90 ../etc/`basename $B bmp`png; done");
   (void)fprintf(stderr, "Assembling the APNG animation from the PNGs with apngasm...\n");
   if (c == 0)
     (void)system("apngasm -F -o ../etc/pvn_vis_r0.png -d 1:6 ../etc/*-*.png");
