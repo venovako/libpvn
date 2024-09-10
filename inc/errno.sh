@@ -12,7 +12,7 @@ else
 	gcc -Og -ggdb3 -march=native -W -Wall $* -c rsqrtf_noerrno.c -o rsqrtf.o
 	gcc -Og -ggdb3 -march=native -W -Wall $* -c hypot_noerrno.c -o hypot.o
 	gcc -Og -ggdb3 -march=native -W -Wall $* -c rsqrt_noerrno.c -o rsqrt.o
-	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" -o "$MACHINE" = "i86pc" ]
+	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" ]
 	then
 		gcc -Og -ggdb3 -march=native -W -Wall $* -c rsqrtl_noerrno.c -o rsqrtl.o
 	fi

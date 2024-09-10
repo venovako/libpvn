@@ -23,9 +23,8 @@ The library has been successfully built using:
 | gcc(4)   | Linux   | aarch64  |
 | gcc(4)   | Linux   | ppc64le  |
 | gcc(5)   | Linux   | x86_64   |
-| gcc(6)   | SunOS   | i86pc    |
-| icx(7)   | Linux   | x86_64   |
-| nvc(8)   | Linux   | x86_64   |
+| icx(6)   | Linux   | x86_64   |
+| nvc(7)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
@@ -33,9 +32,8 @@ Recent versions of the compilers have been provided by or used on:
 3. Homebrew (GCC 14.2.0),
 4. openSUSE Tumbleweed (GCC 14.2.0),
 5. Oracle Linux (GCC 13.2.1) and custom built (GCC 14.2.1),
-6. Oracle Solaris (GCC 11.2.0),
-7. Intel oneAPI (2024.2.1),
-8. NVIDIA HPC SDK (24.7).
+6. Intel oneAPI (2024.2.1),
+7. NVIDIA HPC SDK (24.7).
 
 Examples of building the library:
 ```bash

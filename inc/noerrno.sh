@@ -12,7 +12,7 @@ else
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c hypot_noerrno.c
 	gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
-	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" -o "$MACHINE" = "i86pc" ]
+	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" ]
 	then
 		gcc -DNDEBUG -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtl_noerrno.c
 	fi
