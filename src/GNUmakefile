@@ -77,6 +77,9 @@ endif # PROFILE
 ifdef PRINTOUT
 CFLAGS += -DPVN_PRINTOUT=STD$(PRINTOUT)_FILENO
 endif # PRINTOUT
+ifdef QUADMATH
+CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
+endif # QUADMATH
 
 SRCS=pvn.c  \
 pvn_aux.c   \
@@ -106,74 +109,47 @@ LNK=-L.
 ifdef DYNAMIC
 CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
 LIBS += libpvn.$(DYNAMIC)
+ifdef QUADMATH
+ifeq ($(QUADMATH),-lquadmath)
+ifeq ($(COMPILER),gcc)
+override QUADMATH=$(realpath $(shell $(CC) -print-file-name=libquadmath.$(DYNAMIC)))
+else # !gcc
+override QUADMATH=$(realpath $(shell gcc -print-file-name=libquadmath.$(DYNAMIC)))
+endif # ?gcc
+GNU=-L$(dir $(QUADMATH))
+ifneq ($(OS),Darwin)
+GNU += -rpath=$(dir $(QUADMATH))
+endif # !Darwin
+GNU += -lquadmath
+else # !-lquadmath
 ifeq ($(OS),Darwin)
-LNK += -lpvn
+GNU=-load_hidden $(QUADMATH)
+else # !Darwin
+GNU=$(QUADMATH)
+endif # ?Darwin
+endif # ?-lquadmath
+endif # QUADMATH
+ifeq ($(OS),Darwin)
+ifeq ($(COMPILER),gcc)
+GNU += -load_hidden
+endif # gcc
 ifeq ($(realpath /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/System.framework),)
 FSYS=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks
 else # Xcode
 FSYS=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks
 endif # ?Xcode
-ifeq ($(COMPILER),gcc)
-ifeq ($(QUADMATH),-lquadmath)
-GNU=-L$(dir $(realpath $(shell $(CC) -print-file-name=libquadmath.dylib))) -lquadmath
-else # libquadmath.a
-GNU=-load_hidden $(QUADMATH)
-endif # ?libquadmath.dylib
-GNU += -load_hidden $(realpath $(shell $(CC) -print-file-name=libgcc.a))
-LNK += $(QUADMATH)
-endif # gcc
 else # !Darwin
-LNK += -Wl,-rpath=. -lpvn
-ifdef NDEBUG
-GNU=-O$(NDEBUG)
-else # !NDEBUG
-GNU=--trace
-endif # ?NDEBUG
-ifdef QUADMATH
-ifeq ($(QUADMATH),-lquadmath)
-ifeq ($(COMPILER),gcc)
-FSYS=$(realpath $(shell $(CC) -print-file-name=libquadmath.so))
-GNU += $(FSYS) $(realpath $(shell $(CC) -print-file-name=libgcc.a))
-else # !gcc
-FSYS=$(realpath $(shell gcc -print-file-name=libquadmath.so))
-GNU += $(FSYS) $(realpath $(shell gcc -print-file-name=libgcc.a))
-endif # ?gcc
-else # libquadmath.a
-ifeq ($(COMPILER),gcc)
-FSYS=$(QUADMATH)
-GNU += $(FSYS) $(realpath $(shell $(CC) -print-file-name=libgcc.a))
-else # !gcc
-FSYS=$(QUADMATH)
-GNU += $(FSYS) $(realpath $(shell gcc -print-file-name=libgcc.a))
-endif # ?gcc
-endif # ?libquadmath.so
-endif # QUADMATH
-LNK += $(FSYS)
+LNK += -Wl,-rpath=.
 endif # ?Darwin
-else # !DYNAMIC
-ifeq ($(OS),Darwin)
-ifeq ($(QUADMATH),-lquadmath)
 ifeq ($(COMPILER),gcc)
-FSYS=$(realpath $(shell $(CC) -print-file-name=libquadmath.dylib))
+GNU += $(realpath $(shell $(CC) -print-file-name=libgcc.a))
 else # !gcc
-FSYS=$(realpath $(shell gcc -print-file-name=libquadmath.dylib))
+ifeq ($(COMPILER),icx)
+GNU += $(realpath $(shell gcc -print-file-name=libgcc.a))
+endif # icx
 endif # ?gcc
-else # libquadmath.a
-FSYS=$(QUADMATH)
-endif # ?libquadmath.dylib
-else # !Darwin
-ifeq ($(QUADMATH),-lquadmath)
-ifeq ($(COMPILER),gcc)
-FSYS=$(realpath $(shell $(CC) -print-file-name=libquadmath.so))
-else # !gcc
-FSYS=$(realpath $(shell gcc -print-file-name=libquadmath.so))
-endif # ?gcc
-else # libquadmath.a
-FSYS=$(QUADMATH)
-endif # ?libquadmath.so
-endif # ?Darwin
-LNK += -lpvn $(FSYS)
-endif # ?DYNAMIC
+endif # DYNAMIC
+LNK += -lpvn $(QUADMATH)
 
 .PHONY: all help clean
 
