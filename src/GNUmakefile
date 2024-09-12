@@ -116,11 +116,11 @@ override QUADMATH=$(realpath $(shell $(CC) -print-file-name=libquadmath.$(DYNAMI
 else # !gcc
 override QUADMATH=$(realpath $(shell gcc -print-file-name=libquadmath.$(DYNAMIC)))
 endif # ?gcc
-GNU=-L$(dir $(QUADMATH))
-ifneq ($(OS),Darwin)
-GNU += -rpath=$(dir $(QUADMATH))
-endif # !Darwin
-GNU += -lquadmath
+ifeq ($(OS),Darwin)
+GNU=-L$(dir $(QUADMATH)) -lquadmath
+else # !Darwin
+GNU += -rpath=$(dir $(QUADMATH)) $(QUADMATH)
+endif # ?Darwin
 else # !-lquadmath
 ifeq ($(OS),Darwin)
 GNU=-load_hidden $(QUADMATH)
