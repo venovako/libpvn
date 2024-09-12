@@ -116,10 +116,12 @@ override QUADMATH=$(realpath $(shell $(CC) -print-file-name=libquadmath.$(DYNAMI
 else # !gcc
 override QUADMATH=$(realpath $(shell gcc -print-file-name=libquadmath.$(DYNAMIC)))
 endif # ?gcc
+FSYS=$(dir $(QUADMATH))
 ifeq ($(OS),Darwin)
-GNU=-L$(dir $(QUADMATH)) -lquadmath
+GNU=-L$(FSYS) -lquadmath
 else # !Darwin
-GNU += -rpath=$(dir $(QUADMATH)) $(QUADMATH)
+XRP=-rpath=$(FSYS)
+GNU += $(XRP) $(QUADMATH)
 endif # ?Darwin
 else # !-lquadmath
 ifeq ($(OS),Darwin)
@@ -149,7 +151,11 @@ GNU += $(realpath $(shell gcc -print-file-name=libgcc.a))
 endif # icx
 endif # ?gcc
 endif # DYNAMIC
-LNK += -lpvn $(QUADMATH)
+LNK += -lpvn
+ifdef XRP
+LNK += -Wl,$(XRP)
+endif # XRP
+LNK += $(QUADMATH)
 
 .PHONY: all help clean
 
