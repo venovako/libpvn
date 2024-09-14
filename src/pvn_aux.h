@@ -149,6 +149,6 @@ PVN_EXTERN_C size_t pvn_lcm_(const size_t *const a, const size_t *const b);
 PVN_EXTERN_C char *pvn_hexify(char *const s, const void *const x, const size_t z);
 PVN_EXTERN_C size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...);
 
-PVN_EXTERN_C void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const *const c)(const void*, const void*));
+PVN_EXTERN_C void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*));
 
 #endif /* !PVN_AUX_H */

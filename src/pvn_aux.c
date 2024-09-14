@@ -92,13 +92,17 @@ size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ..
   return strlen(pvn_hexify(s, x, *z));
 }
 
-void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const *const c)(const void*, const void*))
+void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*))
 {
   PVN_ASSERT(b);
   PVN_ASSERT(n);
   PVN_ASSERT(w);
   PVN_ASSERT(c);
-  if (*c)
-    qsort(b, *n, *w, *c);
+#if (defined(_OPENMP) && defined(__APPLE__))
+  /* if threading is desired and psort(3) is available */
+  psort(b, *n, *w, c);
+#else /* !_OPENMP || !__APPLE__ */
+  qsort(b, *n, *w, c);
+#endif /* ?_OPENMP && ?__APPLE__ */
 }
 #endif /* ?PVN_TEST */
