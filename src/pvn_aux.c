@@ -91,4 +91,14 @@ size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ..
   PVN_ASSERT(z);
   return strlen(pvn_hexify(s, x, *z));
 }
+
+void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const *const c)(const void*, const void*))
+{
+  PVN_ASSERT(b);
+  PVN_ASSERT(n);
+  PVN_ASSERT(w);
+  PVN_ASSERT(c);
+  if (*c)
+    qsort(b, *n, *w, *c);
+}
 #endif /* ?PVN_TEST */
