@@ -16,6 +16,9 @@ CFLAGS += $(OPENMP)
 endif # !true
 endif # OPENMP
 LDFLAGS=-rdynamic
+ifndef CPU
+CPU=native
+endif # !CPU
 ifeq ($(findstring BSD,$(OS)),BSD)
 ifeq ($(ARCH),arm64)
 CFLAGS += -mcpu=native

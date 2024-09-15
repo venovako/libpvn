@@ -66,5 +66,4 @@ dkms.conf
 *.pt
 *.st
 doc/html
-src/phi.mk
 tmp

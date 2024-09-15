@@ -1,12 +1,12 @@
 OS=$(shell uname)
-CPU=$(shell uname -m)
-ifeq ($(CPU),amd64)
+MACHINE=$(shell uname -m)
+ifeq ($(MACHINE),amd64)
 ARCH=x86_64
 else # !amd64
-ifeq ($(CPU),aarch64)
+ifeq ($(MACHINE),aarch64)
 ARCH=arm64
 else # !aarch64
-ARCH=$(CPU)
+ARCH=$(MACHINE)
 endif # ?aarch64
 endif # ?amd64
 RM=rm -rfv
@@ -162,7 +162,7 @@ LNK += $(QUADMATH)
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [CPU=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

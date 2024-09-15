@@ -6,7 +6,11 @@ CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -inline-level=2 -qopt-repo
 else # DEBUG
 CFLAGS=-O0 -g -debug extended -debug inline-debug-info -debug pubnames -debug parallel -ftrapv
 endif # ?NDEBUG
-CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -std=gnu18 -fPIC -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -fp-model=precise -fp-speculation=safe -fprotect-parens -fma -no-ftz -fimf-precision=high -mprefer-vector-width=512 -qopenmp-simd -pthread -traceback -vec-threshold0 -xHost
+ifndef CPU
+CPU=Host
+# common-avx512 for KNLs
+endif # !CPU
+CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -std=gnu18 -fPIC -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -fp-model=precise -fp-speculation=safe -fprotect-parens -fma -no-ftz -fimf-precision=high -mprefer-vector-width=512 -qopenmp-simd -pthread -traceback -vec-threshold0 -x$(CPU)
 ifdef OPENMP
 CFLAGS += -qopenmp
 ifneq ($(OPENMP),true)
