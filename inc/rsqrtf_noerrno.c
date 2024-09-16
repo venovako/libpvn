@@ -26,6 +26,12 @@ SOFTWARE.
 
 /* modified by venovako */
 
+/* for the old icc */
+#ifdef PVN_ICC
+#include <mathimf.h>
+#define __builtin_nanf(p) nanf(p)
+#endif /* PVN_ICC */
+
 #include <stdint.h>
 #ifndef NDEBUG
 #include <errno.h>

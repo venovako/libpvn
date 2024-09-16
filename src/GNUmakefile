@@ -17,6 +17,15 @@ else # !Linux
 COMPILER=clang
 endif # ?Linux
 endif # !COMPILER
+ifeq ($(COMPILER),gcc)
+GCC=$(CC)
+else # !gcc
+ifeq ($(OS),Darwin)
+GCC=gcc-14
+else # !Darwin
+GCC=gcc
+endif # ?Darwin
+endif # ?gcc
 include $(COMPILER).mk
 CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifdef SAFE
@@ -111,11 +120,7 @@ CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
 LIBS += libpvn.$(DYNAMIC)
 ifdef QUADMATH
 ifeq ($(QUADMATH),-lquadmath)
-ifeq ($(COMPILER),gcc)
-override QUADMATH=$(realpath $(shell $(CC) -print-file-name=libquadmath.$(DYNAMIC)))
-else # !gcc
-override QUADMATH=$(realpath $(shell gcc -print-file-name=libquadmath.$(DYNAMIC)))
-endif # ?gcc
+override QUADMATH=$(realpath $(shell $(GCC) -print-file-name=libquadmath.$(DYNAMIC)))
 FSYS=$(dir $(QUADMATH))
 ifeq ($(OS),Darwin)
 GNU=-L$(FSYS) -lquadmath
@@ -143,13 +148,9 @@ endif # ?Xcode
 else # !Darwin
 LNK += -Wl,-rpath=.
 endif # ?Darwin
-ifeq ($(COMPILER),gcc)
-GNU += $(realpath $(shell $(CC) -print-file-name=libgcc.a))
-else # !gcc
-ifeq ($(COMPILER),icx)
-GNU += $(realpath $(shell gcc -print-file-name=libgcc.a))
-endif # icx
-endif # ?gcc
+ifneq ($(COMPILER),clang)
+GNU += $(realpath $(shell $(GCC) -print-file-name=libgcc.a))
+endif # !clang
 endif # DYNAMIC
 LNK += -lpvn
 ifdef XRP
