@@ -2,7 +2,10 @@ AR=xiar
 ARFLAGS=-qnoipo -lib rsv
 CC=$(COMPILER_PREFIX)icc$(COMPILER_SUFFIX)
 ifdef NDEBUG
-CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -inline-level=2 -qopt-report=5
+CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -qopt-report=5
+ifndef PROFILE
+CFLAGS += -inline-level=2
+endif # !PROFILE
 else # DEBUG
 CFLAGS=-O0 -g -debug extended -debug inline-debug-info -debug pubnames
 ifeq ($(OS),Linux)
