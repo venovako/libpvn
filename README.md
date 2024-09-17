@@ -41,7 +41,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [CPU=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc|icc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [CPU=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux
@@ -70,6 +70,9 @@ Their slightly modified implementations included here will be taken if `CR_MATH`
 Otherwise, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
 The object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
+
+The `CPU` option can be used to indicate another CPU architecture than `native` (for `clang`, `gcc`, and `nvc`) or `Host` (for `icx` and `icc`).
+It *must* be explicitly given on openSUSE since it sets the same variable in the environment!
 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.

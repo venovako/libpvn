@@ -15,7 +15,11 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu18 -diag-disable=10397,10441,15519 -fPIC -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -fp-model precise -fprotect-parens -fma -no-complex-limited-range -no-ftz -prec-div -prec-sqrt -qsimd-honor-fp-model -qsimd-serialize-fp-reduction -qopenmp-simd -qopt-multi-version-aggressive -qopt-zmm-usage=high -pthread -traceback -vec-threshold0 -xHost
+ifndef CPU
+CPU=Host
+# COMMON-AVX512 for KNLs
+endif # !CPU
+CFLAGS += -std=gnu18 -diag-disable=10397,10441,15519 -fPIC -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -fp-model precise -fprotect-parens -fma -no-complex-limited-range -no-ftz -prec-div -prec-sqrt -qsimd-honor-fp-model -qsimd-serialize-fp-reduction -qopenmp-simd -qopt-multi-version-aggressive -qopt-zmm-usage=high -pthread -traceback -vec-threshold0 -x$(CPU)
 ifdef OPENMP
 CFLAGS += -qopenmp
 ifneq ($(OPENMP),true)
