@@ -16,18 +16,18 @@ CFLAGS += $(OPENMP)
 endif # !true
 endif # OPENMP
 LDFLAGS=-rdynamic
-ifndef CPU
-CPU=native
-endif # !CPU
+ifndef MARCH
+MARCH=native
+endif # !MARCH
 ifeq ($(findstring BSD,$(OS)),BSD)
 ifeq ($(ARCH),arm64)
-CFLAGS += -mcpu=native
+CFLAGS += -mcpu=$(MARCH)
 else # !arm64
-CFLAGS += -march=native
+CFLAGS += -march=$(MARCH)
 endif # ?arm64
 LDFLAGS += -lexecinfo
 else # !BSD
-CFLAGS += -march=native
+CFLAGS += -march=$(MARCH)
 LDFLAGS += -ldl
 endif # ?BSD
 LDFLAGS += -lm

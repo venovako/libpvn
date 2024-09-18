@@ -16,13 +16,13 @@ ifneq ($(OPENMP),true)
 CFLAGS += $(OPENMP)
 endif # !true
 endif # OPENMP
-ifndef CPU
-CPU=native
-endif # !CPU
+ifndef MARCH
+MARCH=native
+endif # !MARCH
 ifeq ($(ARCH),ppc64le)
-CFLAGS += -mcpu=$(CPU) -mpower8-fusion -mtraceback=full
+CFLAGS += -mcpu=$(MARCH) -mpower8-fusion -mtraceback=full
 else # !ppc64le
-CFLAGS += -march=$(CPU)
+CFLAGS += -march=$(MARCH)
 endif # ?ppc64le
 LDFLAGS=-rdynamic -static-libgcc
 ifeq ($(findstring BSD,$(OS)),BSD)

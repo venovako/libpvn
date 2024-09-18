@@ -9,11 +9,11 @@ endif # !PROFILE
 else # DEBUG
 CFLAGS=-O0 -g -debug extended -debug inline-debug-info -debug pubnames -debug parallel -ftrapv
 endif # ?NDEBUG
-ifndef CPU
-CPU=Host
+ifndef MARCH
+MARCH=Host
 # common-avx512 for KNLs
-endif # !CPU
-CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -std=gnu18 -fPIC -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -fp-model=precise -fp-speculation=safe -fprotect-parens -fma -no-ftz -fimf-precision=high -mprefer-vector-width=512 -qopenmp-simd -pthread -traceback -vec-threshold0 -x$(CPU)
+endif # !MARCH
+CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -std=gnu18 -fPIC -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -fp-model=precise -fp-speculation=safe -fprotect-parens -fma -no-ftz -fimf-precision=high -mprefer-vector-width=512 -qopenmp-simd -pthread -traceback -vec-threshold0 -x$(MARCH)
 ifdef OPENMP
 CFLAGS += -qopenmp
 ifneq ($(OPENMP),true)
