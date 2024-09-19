@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
   (void)fprintf(stdout, "\' ");
   const long double wid = max_val - min_val;
   for (unsigned b = 16u; b >= 2u; --b) {
-    const unsigned c = (b - 1u) * 16u + 8u;
+    const unsigned c = (b - 1u) * 15u + 8u;
     const long double c_1 = (long double)(c - 1u);
     const long double val = fn(fmal(wid, (c_1 / 253.0L), min_val));
     (void)fprintf(stdout, "-annotate +%u+%u \'=", spc_x, (18u - b) * spc_by - 1u);
