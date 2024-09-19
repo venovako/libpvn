@@ -27,7 +27,7 @@ GCC=gcc
 endif # ?Darwin
 endif # ?gcc
 include $(COMPILER).mk
-CFLAGS += -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
+CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifdef SAFE
 ifeq ($(findstring cma,$(SAFE)),cma)
 CFLAGS += -DPVN_CMA_SAFE="\"all_inputs\""
@@ -112,7 +112,7 @@ pvn_lock.c  \
 pvn_timer.c
 
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
-EXES=$(SRCS:.c=.exe)
+EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
 LIBS=libpvn.a
 LNK=-L.
 ifdef DYNAMIC
@@ -179,6 +179,9 @@ libpvn.so: libpvn.a
 
 %.exe : %.c
 	$(CC) $(CFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNK) $(LDFLAGS)
+
+../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
+	$(CC) $(CFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
 
 clean:
 	-$(RM) *.exe
