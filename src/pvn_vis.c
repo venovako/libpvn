@@ -501,10 +501,8 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
           else
             *b = 1.0f;
         }
-        else if (*b == -INFINITY)
-          *b = 0.0f;
-        else if (!isfinite(*b)) /* +Inf || NaN */
-          *b = ubc;
+        else if (!isfinite(*b))
+          *b = (pvn_signbitf_(b) ? 0.0f : ubc);
         else if (wid == 0.0f)
           *b = mid;
         else
@@ -679,10 +677,8 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
           else
             *b = 1.0;
         }
-        else if (*b == -INFINITY)
-          *b = 0.0;
-        else if (!isfinite(*b)) /* +Inf || NaN */
-          *b = ubc;
+        else if (!isfinite(*b))
+          *b = (pvn_signbit_(b) ? 0.0 : ubc);
         else if (wid == 0.0)
           *b = mid;
         else
@@ -863,10 +859,8 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
           else
             *b = 1.0L;
         }
-        else if (*b == -INFINITY)
-          *b = 0.0L;
-        else if (!isfinite(*b)) /* +Inf || NaN */
-          *b = ubc;
+        else if (!isfinite(*b))
+          *b = (pvn_signbitl_(b) ? 0.0L : ubc);
         else if (wid == 0.0L)
           *b = mid;
         else

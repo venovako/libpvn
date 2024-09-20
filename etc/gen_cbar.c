@@ -19,8 +19,8 @@
    and the rest have the "=MID-VAL" type of description,
    where MID-VAL is the value of the middle color in each bar
 
-   the palette color 0 (representing -INFINITY) replaced by white,
-   the palette color 255 (+INFINITY or NaN) replaced by black;
+   the palette color 0 (representing -INFINITY or NaN) replaced by white,
+   the palette color 255 (representing +INFINITY or NaN) replaced by black;
    (expected to have a white background and a black text in bitmaps)
    demonstrated by a tiny black line at the top of colorbars
 */

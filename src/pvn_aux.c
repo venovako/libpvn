@@ -92,6 +92,41 @@ size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ..
   return strlen(pvn_hexify(s, x, *z));
 }
 
+int pvn_signbitf_(const float *const x)
+{
+  PVN_ASSERT(x);
+  return ((*(const unsigned*)x & 0x80000000u) != 0u);
+}
+
+int pvn_signbit_(const double *const x)
+{
+  PVN_ASSERT(x);
+  return ((((const unsigned*)x)[1u] & 0x80000000u) != 0u);
+}
+
+int pvn_signbitl_(const long double *const x)
+{
+  PVN_ASSERT(x);
+#ifdef __x86_64__
+  return ((((const unsigned*)x)[2u] & 0x00008000u) != 0u);
+#else /* !__x86_64__ */
+  return ((((const unsigned*)x)[3u] & 0x80000000u) != 0u);
+#endif /* ?__x86_64__ */
+}
+
+#ifdef PVN_QUADMATH
+int pvn_signbitq_(const __float128 *const x)
+{
+  PVN_ASSERT(x);
+  return ((((const unsigned*)x)[3u] & 0x80000000u) != 0u);
+}
+#else /* !PVN_QUADMATH */
+int pvn_signbitq_(const long double *const x)
+{
+  return pvn_signbitl_(x);
+}
+#endif /* ?PVN_QUADMATH */
+
 void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*))
 {
   PVN_ASSERT(b);
