@@ -22,6 +22,7 @@ PVN_EXTERN_C void pvn_yfma(long double *const dr, long double *const di, const l
 #endif /* ?PVN_QUADMATH */
 #else /* !PVN_CMA_SAFE */
 /* C = A * B */
+/* should be correctly rounded */
 
 static inline void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
 {
@@ -36,26 +37,6 @@ static inline void pvn_cmul(float *const cr, float *const ci, const float ar, co
     ci_ = fma(ar_, bi_,  ai_ * br_);
   *cr = (float)cr_;
   *ci = (float)ci_;
-}
-
-/* D = A * B + C */
-/* similar to the CUDA's complex FMA from cuComplex.h */
-
-static inline void pvn_cfma(float *const dr, float *const di, const float ar, const float ai, const float br, const float bi, const float cr, const float ci)
-{
-  PVN_ASSERT(dr);
-  PVN_ASSERT(di);
-  const double
-    ar_ = (double)ar,
-    ai_ = (double)ai,
-    br_ = (double)br,
-    bi_ = (double)bi,
-    cr_ = (double)cr,
-    ci_ = (double)ci,
-    dr_ = fma(ar_, br_, fma(-ai_, bi_, cr_)),
-    di_ = fma(ar_, bi_, fma( ai_, br_, ci_));
-  *dr = (float)dr_;
-  *di = (float)di_;
 }
 
 static inline void pvn_zmul(double *const cr, double *const ci, const double ar, const double ai, const double br, const double bi)
@@ -81,6 +62,27 @@ static inline void pvn_zmul(double *const cr, double *const ci, const double ar,
 #endif /* ?PVN_QUADMATH */
   *cr = (double)cr_;
   *ci = (double)ci_;
+}
+
+/* D = A * B + C */
+/* similar to the CUDA's complex FMA from cuComplex.h */
+/* possibly not correctly rounded */
+
+static inline void pvn_cfma(float *const dr, float *const di, const float ar, const float ai, const float br, const float bi, const float cr, const float ci)
+{
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
+  const double
+    ar_ = (double)ar,
+    ai_ = (double)ai,
+    br_ = (double)br,
+    bi_ = (double)bi,
+    cr_ = (double)cr,
+    ci_ = (double)ci,
+    dr_ = fma(ar_, br_, fma(-ai_, bi_, cr_)),
+    di_ = fma(ar_, bi_, fma( ai_, br_, ci_));
+  *dr = (float)dr_;
+  *di = (float)di_;
 }
 
 static inline void pvn_zfma(double *const dr, double *const di, const double ar, const double ai, const double br, const double bi, const double cr, const double ci)
