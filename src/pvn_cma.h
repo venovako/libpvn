@@ -21,18 +21,21 @@ PVN_EXTERN_C void pvn_ymul(long double *const cr, long double *const ci, const l
 PVN_EXTERN_C void pvn_yfma(long double *const dr, long double *const di, const long double ar, const long double ai, const long double br, const long double bi, const long double cr, const long double ci);
 #endif /* ?PVN_QUADMATH */
 #else /* !PVN_CMA_SAFE */
-/* COMPLEX MULTIPLICATION AND FMA OPERATIONS THAT */
-/* !!! DO NOT YET AVOID UNNECESSARY OVERFLOWS !!! */
-/* TO BE USED WHEN ALL PARTIAL RESULTS ARE NORMAL */
-
 /* C = A * B */
 
 static inline void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  *cr = fmaf(ar, br, -ai * bi);
-  *ci = fmaf(ar, bi,  ai * br);
+  const double
+    ar_ = (double)ar,
+    ai_ = (double)ai,
+    br_ = (double)br,
+    bi_ = (double)bi,
+    cr_ = fma(ar_, br_, -ai_ * bi_),
+    ci_ = fma(ar_, bi_,  ai_ * br_);
+  *cr = (float)cr_;
+  *ci = (float)ci_;
 }
 
 /* D = A * B + C */
@@ -42,25 +45,76 @@ static inline void pvn_cfma(float *const dr, float *const di, const float ar, co
 {
   PVN_ASSERT(dr);
   PVN_ASSERT(di);
-  *dr = fmaf(ar, br, fmaf(-ai, bi, cr));
-  *di = fmaf(ar, bi, fmaf( ai, br, ci));
+  const double
+    ar_ = (double)ar,
+    ai_ = (double)ai,
+    br_ = (double)br,
+    bi_ = (double)bi,
+    cr_ = (double)cr,
+    ci_ = (double)ci,
+    dr_ = fma(ar_, br_, fma(-ai_, bi_, cr_)),
+    di_ = fma(ar_, bi_, fma( ai_, br_, ci_));
+  *dr = (float)dr_;
+  *di = (float)di_;
 }
 
 static inline void pvn_zmul(double *const cr, double *const ci, const double ar, const double ai, const double br, const double bi)
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  *cr = fma(ar, br, -ai * bi);
-  *ci = fma(ar, bi,  ai * br);
+#ifdef PVN_QUADMATH
+  const __float128
+    ar_ = (__float128)ar,
+    ai_ = (__float128)ai,
+    br_ = (__float128)br,
+    bi_ = (__float128)bi,
+    cr_ = fmaq(ar_, br_, -ai_ * bi_),
+    ci_ = fmaq(ar_, bi_,  ai_ * br_);
+#else /* !PVN_QUADMATH */
+  const long double
+    ar_ = (long double)ar,
+    ai_ = (long double)ai,
+    br_ = (long double)br,
+    bi_ = (long double)bi,
+    cr_ = fmal(ar_, br_, -ai_ * bi_),
+    ci_ = fmal(ar_, bi_,  ai_ * br_);
+#endif /* ?PVN_QUADMATH */
+  *cr = (double)cr_;
+  *ci = (double)ci_;
 }
 
 static inline void pvn_zfma(double *const dr, double *const di, const double ar, const double ai, const double br, const double bi, const double cr, const double ci)
 {
   PVN_ASSERT(dr);
   PVN_ASSERT(di);
-  *dr = fma(ar, br, fma(-ai, bi, cr));
-  *di = fma(ar, bi, fma( ai, br, ci));
+#ifdef PVN_QUADMATH
+  const __float128
+    ar_ = (__float128)ar,
+    ai_ = (__float128)ai,
+    br_ = (__float128)br,
+    bi_ = (__float128)bi,
+    cr_ = (__float128)cr,
+    ci_ = (__float128)ci,
+    dr_ = fmaq(ar_, br_, fmaq(-ai_, bi_, cr_)),
+    di_ = fmaq(ar_, bi_, fmaq( ai_, br_, ci_));
+#else /* !PVN_QUADMATH */
+  const long double
+    ar_ = (long double)ar,
+    ai_ = (long double)ai,
+    br_ = (long double)br,
+    bi_ = (long double)bi,
+    cr_ = (long double)cr,
+    ci_ = (long double)ci,
+    dr_ = fmal(ar_, br_, fmal(-ai_, bi_, cr_)),
+    di_ = fmal(ar_, bi_, fmal( ai_, br_, ci_));
+#endif /* ?PVN_QUADMATH */
+  *dr = (double)dr_;
+  *di = (double)di_;
 }
+
+/* COMPLEX MULTIPLICATION AND FMA OPERATIONS THAT */
+/* !!! DO NOT YET AVOID UNNECESSARY OVERFLOWS !!! */
+/* TO BE USED WHEN ALL PARTIAL RESULTS ARE NORMAL */
 
 static inline void pvn_wmul(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
 {
