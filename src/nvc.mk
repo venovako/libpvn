@@ -15,4 +15,4 @@ ifneq ($(OPENMP),true)
 CFLAGS += $(OPENMP)
 endif # !true
 endif # OPENMP
-LDFLAGS=-Wl,-E -ldl -lm
+LDFLAGS=-Wl,-E -static-nvidia -ldl -lm
