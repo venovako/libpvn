@@ -33,10 +33,12 @@ static long double id(long double x)
 }
 
 #ifndef _GNU_SOURCE
+#ifndef __ICC
 static long double exp10l(long double x)
 {
   return powl(10.0L, x);
 }
+#endif /* !__ICC */
 #endif /* !_GNU_SOURCE */
 
 int main(int argc, char *argv[])
