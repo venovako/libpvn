@@ -52,10 +52,10 @@ float cr_rsqrtf(float x){
   double xd = x;
   b32u32_u ix = {.f = x};
   if(__builtin_expect(ix.u >= 0xff<<23 || ix.u==0, 0)){
-    if(!(ix.u << 1)) return 1.0f/x;
+    if(!(ix.u << 1)) return 1.0f/x; // +/-0
     if(ix.u >> 31){
       ix.u &= ~0u>>1;
-      if(ix.u > 0xff<<23) return x;
+      if(ix.u > 0xff<<23) return x + x; // nan
 #ifndef NDEBUG
       errno = EDOM;
 #endif /* !NDEBUG */
@@ -63,7 +63,7 @@ float cr_rsqrtf(float x){
       return __builtin_nanf("<0");
     }
     if(!(ix.u<<9)) return 0.0f;
-    return x;
+    return x + x; // nan
   }
   unsigned m = ix.u<<8;
   if(__builtin_expect(ix.u == 0x2f7e2au || m == 0xbdf8a800u || m == 0x55b7bd00u, 0)){

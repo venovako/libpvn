@@ -43,9 +43,47 @@ SOFTWARE.
 
 #pragma STDC FENV_ACCESS ON
 
+// This code emulates the _mm_getcsr SSE intrinsic by reading the FPCR register.
+// fegetexceptflag accesses the FPSR register, which seems to be much slower
+// than accessing FPCR, so it should be avoided if possible.
+// Adapted from sse2neon: https://github.com/DLTcollab/sse2neon
+#if defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+#if defined(_MSC_VER)
+#include <arm64intr.h>
+#endif
+
+typedef struct
+{
+  uint16_t res0;
+  uint8_t  res1  : 6;
+  uint8_t  bit22 : 1;
+  uint8_t  bit23 : 1;
+  uint8_t  bit24 : 1;
+  uint8_t  res2  : 7;
+  uint32_t res3;
+} fpcr_bitfield;
+
+inline static unsigned int _mm_getcsr()
+{
+  union
+  {
+    fpcr_bitfield field;
+    uint64_t value;
+  } r;
+
+#if defined(_MSC_VER) && !defined(__clang__)
+  r.value = _ReadStatusReg(ARM64_FPCR);
+#else
+  __asm__ __volatile__("mrs %0, FPCR" : "=r"(r.value));
+#endif
+  static const unsigned int lut[2][2] = {{0x0000, 0x2000}, {0x4000, 0x6000}};
+  return lut[r.field.bit22][r.field.bit23];
+}
+#endif  // defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+
 static inline fexcept_t get_flags (void)
 {
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
   return _mm_getcsr ();
 #else
   fexcept_t flag;
@@ -56,7 +94,7 @@ static inline fexcept_t get_flags (void)
 
 static inline void set_flags (fexcept_t flag)
 {
-#ifdef __x86_64__
+#if defined(__x86_64__)
   _mm_setcsr (flag);
 #else
   fesetexceptflag (&flag, FE_ALL_EXCEPT);
@@ -65,7 +103,12 @@ static inline void set_flags (fexcept_t flag)
 
 typedef uint64_t u64;
 typedef int64_t i64;
+
+#if (defined(__clang__) && __clang_major__ >= 14) || (defined(__GNUC__) && __GNUC__ >= 14 && __BITINT_MAXWIDTH__ && __BITINT_MAXWIDTH__ >= 128)
+typedef unsigned _BitInt(128) u128;
+#else
 typedef unsigned __int128 u128;
+#endif
 typedef union {double f; u64 u;} b64u64_u;
 
 static inline double fasttwosum(double x, double y, double *e){
@@ -115,17 +158,17 @@ static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b){
 static double  __attribute__((noinline)) as_hypot_hard(double x, double y, const fexcept_t flag){
   double op = 1.0 + 0x1p-54, om = 1.0 - 0x1p-54;
   b64u64_u xi = {.f = x}, yi = {.f = y};
-  u64 bm = (xi.u&(~0ul>>12))|1l<<52;
-  u64 lm = (yi.u&(~0ul>>12))|1l<<52;
+  u64 bm = (xi.u&(~0ull>>12))|1ll<<52;
+  u64 lm = (yi.u&(~0ull>>12))|1ll<<52;
   int be = xi.u>>52;
   int le = yi.u>>52;
   b64u64_u ri = {.f = __builtin_sqrt(x*x + y*y)};
   const int bs = 2;
-  u64 rm = (ri.u&(~0ul>>12)); int re = (ri.u>>52)-0x3ff;
-  rm |= 1l<<52;
+  u64 rm = (ri.u&(~0ull>>12)); int re = (ri.u>>52)-0x3ff;
+  rm |= 1ll<<52;
   for(int i=0;i<3;i++){
-    if(__builtin_expect(rm == 1l<<52,1)){
-      rm = ~0ul>>11;
+    if(__builtin_expect(rm == 1ll<<52,1)){
+      rm = ~0ull>>11;
       re--;
     } else
       rm--;
@@ -146,7 +189,7 @@ static double  __attribute__((noinline)) as_hypot_hard(double x, double y, const
   int k = bs+re;
   i64 D;
   do {
-    rm += 1 + (rm>=(1l<<53));
+    rm += 1 + (rm>=(1ll<<53));
     u64 tm = rm << k, rm2 = tm*tm;
     D = m2 - rm2;
   } while(D>0);
@@ -154,17 +197,17 @@ static double  __attribute__((noinline)) as_hypot_hard(double x, double y, const
     set_flags(flag);
   } else {
     if(__builtin_expect(op == om, 1)){
-      u64 tm = (rm << k) - (1<<(k-(rm<=(1l<<53))));
+      u64 tm = (rm << k) - (1<<(k-(rm<=(1ll<<53))));
       D = m2 - tm*tm;
       if(__builtin_expect(D != 0, 1))
 	rm += D>>63;
       else
 	rm -= rm&1;
     } else {
-      rm -= (op==1)<<(rm>(1l<<53));
+      rm -= (op==1)<<(rm>(1ll<<53));
     }
   }
-  if(rm>=(1ul<<53)){
+  if(rm>=(1ull<<53)){
     rm >>= 1;
     re ++;
   }
@@ -186,7 +229,7 @@ static double __attribute__((noinline)) as_hypot_overflow (void){
 double cr_hypot(double x, double y){
   volatile fexcept_t flag = get_flags();
   b64u64_u xi = {.f = x}, yi = {.f = y};
-  u64 emsk = 0x7ffl<<52, ex = xi.u&emsk, ey = yi.u&emsk;
+  u64 emsk = 0x7ffll<<52, ex = xi.u&emsk, ey = yi.u&emsk;
   /* emsk corresponds to the upper bits of NaN and Inf (apart the sign bit) */
   x = __builtin_fabs(x), y = __builtin_fabs(y);
   if(__builtin_expect(ex==emsk||ey==emsk, 0)){
@@ -212,14 +255,14 @@ double cr_hypot(double x, double y){
     }
     int nz = __builtin_clzll(ey);
     ey <<= nz-11;
-    ey &= ~0ul>>12;
-    ey -= (nz-12l)<<52;
+    ey &= ~0ull>>12;
+    ey -= (nz-12ll)<<52;
     b64u64_u t = {.u = ey};
     yd.f = t.f;
   }
   u64 de = xd.u - yd.u;
-  if(__builtin_expect(de>(27l<<52),0)) return __builtin_fma(0x1p-27, v, u);
-  i64 off = (0x3ffl<<52) - (xd.u & emsk);
+  if(__builtin_expect(de>(27ll<<52),0)) return __builtin_fma(0x1p-27, v, u);
+  i64 off = (0x3ffll<<52) - (xd.u & emsk);
   xd.u += off;
   yd.u += off;
   x = xd.f;
@@ -233,12 +276,12 @@ double cr_hypot(double x, double y){
   b64u64_u thd = {.f = th}, tld = {.f = __builtin_fabs(tl)};
   ex = thd.u;
   ey = tld.u;
-  ex &= 0x7ffl<<52;
-  u64 aidr = ey + (0x3fel<<52) - ex;
+  ex &= 0x7ffll<<52;
+  u64 aidr = ey + (0x3fell<<52) - ex;
   u64 mid = (aidr - 0x3c90000000000000 + 16)>>5;
-  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000ul || aidr>0x3c9fffffffffff80ul, 0))
+  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000ull || aidr>0x3c9fffffffffff80ull, 0))
     thd.f = as_hypot_hard(x,y,flag);
   thd.u -= off;
-  if(__builtin_expect(thd.u>=(0x7fful<<52), 0)) return as_hypot_overflow();
+  if(__builtin_expect(thd.u>=(0x7ffull<<52), 0)) return as_hypot_overflow();
   return thd.f;
 }

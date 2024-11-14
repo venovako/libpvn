@@ -49,7 +49,7 @@ float cr_hypotf(float x, float y){
   double r = __builtin_sqrt(r2);
   b64u64_u t = {.f = r};
   float c = r;
-  if(t.u>(uint64_t)0x47efffffe0000000ul){
+  if(t.u>(uint64_t)0x47efffffe0000000ull){
 #ifndef NDEBUG
     if(c>0x1.fffffep127f) errno = ERANGE;
 #endif /* !NDEBUG */

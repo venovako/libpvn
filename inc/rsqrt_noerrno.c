@@ -36,6 +36,7 @@ SOFTWARE.
 #include <errno.h>
 #endif /* !NDEBUG */
 #include <fenv.h>
+#include <stdint.h>
 #ifdef __x86_64__
 #include <x86intrin.h>
 #endif
@@ -47,9 +48,49 @@ SOFTWARE.
 
 #pragma STDC FENV_ACCESS ON
 
+// This code emulates the _mm_getcsr SSE intrinsic by reading the FPCR register.
+// fegetexceptflag accesses the FPSR register, which seems to be much slower
+// than accessing FPCR, so it should be avoided if possible.
+// Adapted from sse2neon: https://github.com/DLTcollab/sse2neon
+#if defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+#if defined(_MSC_VER)
+#include <arm64intr.h>
+#endif
+
+typedef struct
+{
+  uint16_t res0;
+  uint8_t  res1  : 6;
+  uint8_t  bit22 : 1;
+  uint8_t  bit23 : 1;
+  uint8_t  bit24 : 1;
+  uint8_t  res2  : 7;
+  uint32_t res3;
+} fpcr_bitfield;
+
+inline static unsigned int _mm_getcsr()
+{
+  union
+  {
+    fpcr_bitfield field;
+    uint64_t value;
+  } r;
+
+#if defined(_MSC_VER) && !defined(__clang__)
+  r.value = _ReadStatusReg(ARM64_FPCR);
+#else
+  __asm__ __volatile__("mrs %0, FPCR" : "=r"(r.value));
+#endif
+  static const unsigned int lut[2][2] = {{0x0000, 0x2000}, {0x4000, 0x6000}};
+  return lut[r.field.bit22][r.field.bit23];
+}
+#endif  // defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+
 static inline int get_rounding_mode (void)
 {
-#ifdef __x86_64__
+  /* Warning: on __aarch64__ (for example cfarm103), FE_UPWARD=0x400000
+     instead of 0x800. */
+#if defined(__x86_64__) || defined(__arm64__) || defined(_M_ARM64)
   const unsigned flagp = _mm_getcsr ();
   return (flagp&(3<<13))>>3;
 #else
@@ -58,26 +99,26 @@ static inline int get_rounding_mode (void)
 }
 
 typedef unsigned __int128 u128;
-typedef unsigned long u64;
-typedef long i64;
-typedef union {double f; unsigned long u;} b64u64_u;
+typedef uint64_t u64;
+typedef int64_t i64;
+typedef union {double f; uint64_t u;} b64u64_u;
 
 static double __attribute__((noinline)) as_rsqrt_refine(double rf, double a){
   b64u64_u ir = {.f = rf}, ia = {.f = a};
-  if(ia.u < 1l<<52){
+  if(ia.u < 1ll<<52){
     i64 nz = __builtin_clzll(ia.u);
     ia.u <<= nz - 11;
-    ia.u &= ~0ul>>12;
+    ia.u &= ~0ull>>12;
     i64 e = nz - 12;
     ia.u |= e<<52;
   }
-  if(ia.u<<11 == 1ul<<63){
+  if(ia.u<<11 == 1ull<<63){
   } else {
     unsigned mode = get_rounding_mode ();
     int e = (ia.u>>52)&1;
     u64 rm, am;
-    rm = (ir.u<<11|1l<<63)>>11;
-    am = ((ia.u&(~0ul>>12))|1l<<52)<<(5-e);
+    rm = (ir.u<<11|1ll<<63)>>11;
+    am = ((ia.u&(~0ull>>12))|1ll<<52)<<(5-e);
     u128 rt = (u128)rm*am;
     u64 rth = rt>>64, rtl = rt;
     u128 rrt = (u128)rtl*rm;
@@ -97,7 +138,7 @@ static double __attribute__((noinline)) as_rsqrt_refine(double rf, double a){
     ir.u += (rrt>>127)?0:dd;
     rrt = (rrt>>127)?rrt:prrt;
     if(__builtin_expect(mode==FE_TONEAREST, 1)){
-      rm = (ir.u<<11|1l<<63)>>11;
+      rm = (ir.u<<11|1ll<<63)>>11;
       rt = (u128)rm*am;
       rrt += am>>2;
       rrt += rt;
@@ -114,15 +155,15 @@ static double __attribute__((noinline)) as_rsqrt_refine(double rf, double a){
 double cr_rsqrt(double x){
   b64u64_u ix = {.f = x};
   double r;
-  if(__builtin_expect(ix.u < 1l<<52, 0)){
+  if(__builtin_expect(ix.u < 1ll<<52, 0)){
     if(__builtin_expect(ix.u, 1)){
       r = __builtin_sqrt(x)/x;
     } else {
       return __builtin_inf();
     }
-  } else if(__builtin_expect(ix.u >= 0x7fful<<52, 0)){
+  } else if(__builtin_expect(ix.u >= 0x7ffull<<52, 0)){
     if(!(ix.u<<1)) return -__builtin_inf(); // x=-0
-    if(ix.u > 0xfff0000000000000ul) return x;
+    if(ix.u > 0xfff0000000000000ull) return x + x; // nan
     if(ix.u >> 63){
 #ifndef NDEBUG
       errno = EDOM;
@@ -130,8 +171,8 @@ double cr_rsqrt(double x){
       feraiseexcept (FE_INVALID);
       return __builtin_nan("<0");
     }
-    if(!(ix.u<<12)) return 0.0;
-    return x;
+    if(!(ix.u<<12)) return 0.0; // +Inf
+    return x + x; // nan
   } else {
     r = (1/x)*__builtin_sqrt(x);
   }
@@ -140,8 +181,8 @@ double cr_rsqrt(double x){
   double rf = r - dr;
   dr -= r - rf;
   b64u64_u idr = {.f = dr}, ir = {.f = rf};
-  u64 aidr = (idr.u&(~0ul>>1)) - (ir.u & (0x7ffl<<52)) + (0x3fel<<52), mid = (aidr - 0x3c90000000000000 + 16)>>5;
-  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000l || aidr>0x3c9fffffffffff80l, 0))
+  u64 aidr = (idr.u&(~0ull>>1)) - (ir.u & (0x7ffll<<52)) + (0x3fell<<52), mid = (aidr - 0x3c90000000000000 + 16)>>5;
+  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000ll || aidr>0x3c9fffffffffff80ll, 0))
     rf = as_rsqrt_refine(rf, x);
   return rf;
 }
