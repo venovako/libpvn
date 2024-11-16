@@ -35,8 +35,14 @@
 #error PVN_ASSUME_ALIGNED already defined
 #endif /* ?PVN_ASSUME_ALIGNED */
 
+#ifndef PVN_IS_ALIGNED
+#define PVN_IS_ALIGNED(p,a) !((uintptr_t)(p) & (uintptr_t)((unsigned)(a) - 1u))
+#else /* PVN_IS_ALIGNED */
+#error PVN_IS_ALIGNED already defined
+#endif /* ?PVN_IS_ALIGNED */
+
 #ifndef PVN_IS_VECALIGNED
-#define PVN_IS_VECALIGNED(p) !((uintptr_t)(p) & (uintptr_t)((PVN_VECLEN) - 1u))
+#define PVN_IS_VECALIGNED(p) PVN_IS_ALIGNED(p,PVN_VECLEN)
 #else /* PVN_IS_VECALIGNED */
 #error PVN_IS_VECALIGNED already defined
 #endif /* ?PVN_IS_VECALIGNED */
