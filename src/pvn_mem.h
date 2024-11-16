@@ -36,7 +36,7 @@
 #endif /* ?PVN_ASSUME_ALIGNED */
 
 #ifndef PVN_IS_VECALIGNED
-#define PVN_IS_VECALIGNED(p) !((uintptr_t)(p) & (uintptr_t)((PVN_VECLEN) - 1u))
+#define PVN_IS_VECALIGNED(p) (p && !((uintptr_t)(p) & (uintptr_t)((PVN_VECLEN) - 1u)))
 #else /* PVN_IS_VECALIGNED */
 #error PVN_IS_VECALIGNED already defined
 #endif /* ?PVN_IS_VECALIGNED */
