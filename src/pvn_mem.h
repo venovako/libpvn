@@ -11,7 +11,7 @@
 #define PVN_VECLEN 64u
 #else /* !__AVX512F__ */
 #ifdef __x86_64__
-/* assume AVX */
+/* assume AVX2 */
 #define PVN_VECLEN 32u
 #else /* !__x86_64__ */
 #define PVN_VECLEN 16u
@@ -36,7 +36,7 @@
 #endif /* ?PVN_ASSUME_ALIGNED */
 
 #ifndef PVN_IS_VECALIGNED
-#define PVN_IS_VECALIGNED(p) (p && !((uintptr_t)(p) & (uintptr_t)((PVN_VECLEN) - 1u)))
+#define PVN_IS_VECALIGNED(p) !((uintptr_t)(p) & (uintptr_t)((PVN_VECLEN) - 1u))
 #else /* PVN_IS_VECALIGNED */
 #error PVN_IS_VECALIGNED already defined
 #endif /* ?PVN_IS_VECALIGNED */
