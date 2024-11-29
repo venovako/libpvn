@@ -2,7 +2,7 @@
 #define PVN_FMT_H
 
 #ifndef PVN_H
-#error pvn_cvt.h not intended for direct inclusion
+#error pvn_fmt.h not intended for direct inclusion
 #endif /* !PVN_H */
 
 PVN_EXTERN_C size_t pvn_atoz(const char *const s);

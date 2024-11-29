@@ -106,6 +106,7 @@ pvn_mm2.c   \
 pvn_nrm.c   \
 pvn_ran.c   \
 pvn_sv2.c   \
+pvn_tar.c   \
 pvn_vis.c   \
 pvn_prof.c  \
 pvn_lock.c  \
