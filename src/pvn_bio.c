@@ -158,4 +158,66 @@ ssize_t pvn_bread_(const int *const fd, void *const buf, const size_t *const nB,
   ret += ret1;
   return ret;
 }
+
+#ifdef __x86_64__
+ssize_t pvn_bwrite80_(const int *const fd, const long double *const buf, const size_t *const n, const off_t *const off)
+{
+  if (!fd || (*fd < 0))
+    return -1;
+  if (!n)
+    return -3;
+  if (*n && !buf)
+    return -2;
+  if (!off || (*off < 0))
+    return -4;
+  if (!*n)
+    return 0;
+
+  const long double *_buf = buf;
+  size_t _n = *n;
+  off_t _off = *off;
+  ssize_t ret = 0;
+  for (size_t i = 0u; i < _n; ++i) {
+    const ssize_t ret1 = pwrite(*fd, _buf++, (size_t)10u, _off);
+    if (ret1 != (ssize_t)10)
+      return -5;
+#ifndef NDEBUG
+    if (fsync(*fd) < 0)
+      return -6;
+#endif /* !NDEBUG */
+    _off += (off_t)ret1;
+    ret += ret1;
+  }
+  if (fsync(*fd) < 0)
+    return -8;
+  return ret;
+}
+
+ssize_t pvn_bread80_(const int *const fd, long double *const buf, const size_t *const n, const off_t *const off)
+{
+  if (!fd || (*fd < 0))
+    return -1;
+  if (!n)
+    return -3;
+  if (*n && !buf)
+    return -2;
+  if (!off || (*off < 0))
+    return -4;
+  if (!*n)
+    return 0;
+
+  long double *_buf = buf;
+  size_t _n = *n;
+  off_t _off = *off;
+  ssize_t ret = 0;
+  for (size_t i = 0u; i < _n; ++i) {
+    const ssize_t ret1 = pread(*fd, _buf++, (size_t)10u, _off);
+    if (ret1 != (ssize_t)10)
+      return -5;
+    _off += (off_t)ret1;
+    ret += ret1;
+  }
+  return ret;
+}
+#endif /* __x86_64__ */
 #endif /* ?PVN_TEST */
