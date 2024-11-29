@@ -62,6 +62,7 @@ dkms.conf
 *.png
 
 # Other
+.DS_Store
 *.bt
 *.pt
 *.st

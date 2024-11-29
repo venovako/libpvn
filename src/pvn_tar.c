@@ -3,7 +3,13 @@
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
-  const int fd = STDOUT_FILENO;
+  (void)fprintf(stderr, "A tar.gz stream is to be written to stdout.\n");
+  FILE *const p = popen("gzip -9cq -", "w");
+  if (!p)
+    return EXIT_FAILURE;
+  const int fd = fileno(p);
+  if (fd < 0)
+    return EXIT_FAILURE;
   const unsigned sz = 4u;
   int r = EXIT_SUCCESS, ret = 0;
   if ((ret = pvn_tar_add_file_(&fd, "foo", &sz, "bar\n")) < 0)
@@ -18,6 +24,8 @@ int main(/* int argc, char *argv[] */)
   if ((ret = pvn_tar_terminate_(&fd)) < 0)
     r = EXIT_FAILURE;
   (void)fprintf(stderr, "pvn_tar_terminate_=%d\n", ret);
+  if (pclose(p) < 0)
+    r = EXIT_FAILURE;
   return r;
 }
 #else /* !PVN_TEST */
