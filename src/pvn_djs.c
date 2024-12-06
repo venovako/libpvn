@@ -15,6 +15,11 @@ int main(int argc, char *argv[])
   char s[46] = { '\0' };
   (void)fprintf(stdout, "d=%s\n", pvn_dtoa(s, d));
   d = 0.0;
+#ifdef __x86_64__
+  long double x = 0.0L;
+  pvn_djs_xenc_(&x, &d, &p, &q);
+  (void)fprintf(stdout, "x=%s\n", pvn_xtoa(s, x));
+#endif /* __x86_64__ */
 #ifdef PVN_QUADMATH
   __float128 e = 0.0q;
 #else /* !PVN_QUADMATH */
@@ -31,8 +36,10 @@ void pvn_djs_denc_(double *const e, const float *const f, const unsigned *const 
   PVN_ASSERT(f);
   PVN_ASSERT(p);
   PVN_ASSERT(q);
-  const double x = (double)*f;
-  *(unsigned long*)e = (*(const unsigned long*)&x | ((unsigned long)((*p - 1u) & 16383u) << 14u) | (unsigned long)((*q - 1u) & 16383u));
+  PVN_ASSERT(*p);
+  PVN_ASSERT(*q);
+  *e = (double)*f;
+  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)((*p - 1u) & 16383u) << 14u) | (unsigned long)((*q - 1u) & 16383u));
 }
 
 void pvn_djs_ddec_(const double *const e, unsigned *const p, unsigned *const q)
@@ -45,6 +52,30 @@ void pvn_djs_ddec_(const double *const e, unsigned *const p, unsigned *const q)
   u >>= 14u;
   *p = ((unsigned)(u & 16383ul) + 1u);
 }
+#ifdef __x86_64__
+void pvn_djs_xenc_(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q)
+{
+  PVN_ASSERT(e);
+  PVN_ASSERT(d);
+  PVN_ASSERT(p);
+  PVN_ASSERT(q);
+  PVN_ASSERT(*p);
+  PVN_ASSERT(*q);
+  *e = (long double)*d;
+  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)((*p - 1u) & 31u) << 5u) | (unsigned long)((*q - 1u) & 31u));
+}
+
+void pvn_djs_xdec_(const long double *const e, unsigned *const p, unsigned *const q)
+{
+  PVN_ASSERT(e);
+  PVN_ASSERT(p);
+  PVN_ASSERT(q);
+  unsigned long u = *(const unsigned long*)e;
+  *q = ((unsigned)(u & 31ul) + 1u);
+  u >>= 5u;
+  *p = ((unsigned)(u & 31ul) + 1u);
+}
+#endif /* __x86_64__ */
 #ifdef PVN_QUADMATH
 void pvn_djs_qenc_(__float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q)
 {
@@ -52,8 +83,10 @@ void pvn_djs_qenc_(__float128 *const e, const double *const d, const unsigned *c
   PVN_ASSERT(d);
   PVN_ASSERT(p);
   PVN_ASSERT(q);
-  const __float128 x = (__float128)*d;
-  *(unsigned __int128*)e = (*(const unsigned __int128*)&x | ((unsigned __int128)((*p - 1u) & 1073741823u) << 30u) | (unsigned __int128)((*q - 1u) & 1073741823u));
+  PVN_ASSERT(*p);
+  PVN_ASSERT(*q);
+  *e = (__float128)*d;
+  *(unsigned __int128*)e = (*(const unsigned __int128*)e | ((unsigned __int128)((*p - 1u) & 1073741823u) << 30u) | (unsigned __int128)((*q - 1u) & 1073741823u));
 }
 
 void pvn_djs_qdec_(const __float128 *const e, unsigned *const p, unsigned *const q)
@@ -73,8 +106,10 @@ void pvn_djs_qenc_(long double *const e, const double *const d, const unsigned *
   PVN_ASSERT(d);
   PVN_ASSERT(p);
   PVN_ASSERT(q);
-  const long double x = (long double)*d;
-  *(unsigned __int128*)e = (*(const unsigned __int128*)&x | ((unsigned __int128)((*p - 1u) & 1073741823u) << 30u) | ((unsigned __int128)((*q - 1u) & 1073741823u) << 30u));
+  PVN_ASSERT(*p);
+  PVN_ASSERT(*q);
+  *e = (long double)*d;
+  *(unsigned __int128*)e = (*(const unsigned __int128*)e | ((unsigned __int128)((*p - 1u) & 1073741823u) << 30u) | ((unsigned __int128)((*q - 1u) & 1073741823u) << 30u));
 }
 
 void pvn_djs_qdec_(const long double *const e, unsigned *const p, unsigned *const q)
