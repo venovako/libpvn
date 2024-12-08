@@ -162,6 +162,7 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
   const unsigned b = (*n >> 1u);
   if (l) {
     for (unsigned a = 0u; a < b; ++a) {
+      ++*info;
       unsigned p = 0u;
       unsigned q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
@@ -190,13 +191,14 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
               d[k] = -1.0L;
           }
         }
-        if (*info || (w <= 0.0L))
+        if ((*info < 0) || (w <= 0.0L))
           break;
       }
     }
   }
   else {
     for (unsigned a = 0u; a < b; ++a) {
+      ++*info;
       unsigned p = 0u;
       unsigned q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
@@ -222,7 +224,7 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
               d[k] = -1.0L;
           }
         }
-        if (*info || (w <= 0.0L))
+        if ((*info < 0) || (w <= 0.0L))
           break;
       }
     }
@@ -315,6 +317,7 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
   const unsigned b = (*n >> 1u);
   if (l) {
     for (unsigned a = 0u; a < b; ++a) {
+      ++*info;
       unsigned p = 0u;
       unsigned q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
@@ -343,13 +346,14 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
               d[k] = -1.0L;
           }
         }
-        if (*info || (w <= 0.0L))
+        if ((*info < 0) || (w <= 0.0L))
           break;
       }
     }
   }
   else {
     for (unsigned a = 0u; a < b; ++a) {
+      ++*info;
       unsigned p = 0u;
       unsigned q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
@@ -375,7 +379,7 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
               d[k] = -1.0L;
           }
         }
-        if (*info || (w <= 0.0L))
+        if ((*info < 0) || (w <= 0.0L))
           break;
       }
     }
