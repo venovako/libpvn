@@ -76,7 +76,7 @@ void pvn_djs_xdec_(const long double *const e, unsigned *const p, unsigned *cons
   *p = ((unsigned)(u & 31ul) + 1u);
 }
 
-void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, unsigned (*const o)[2u], int *const info)
+void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(g);
@@ -105,8 +105,9 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
 #pragma omp parallel for default(none) shared(g,d,o,m,n,ldg,info) reduction(max:w)
 #endif /* _OPENMP */
     for (unsigned k = 0u; k < m; ++k) {
-      const unsigned p = o[k][0u];
-      const unsigned q = o[k][1u];
+      const unsigned k_ = (k << 1u);
+      const unsigned p = o[k_];
+      const unsigned q = o[k_ + 1u];
       if (!p || (p > *n) || !q || (q > *n))
         *info = -5;
       else {
@@ -130,8 +131,9 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
   }
   else {
     for (unsigned k = 0u; k < m; ++k) {
-      const unsigned p = o[k][0u];
-      const unsigned q = o[k][1u];
+      const unsigned k_ = (k << 1u);
+      const unsigned p = o[k_];
+      const unsigned q = o[k_ + 1u];
       if (!p || (p > *n) || !q || (q > *n))
         *info = -5;
       else {
@@ -167,9 +169,9 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
         *info = -4;
         return;
       }
-      const unsigned k_ = (m + a);
-      o[k_][0u] = p;
-      o[k_][1u] = q;
+      const unsigned k_ = ((m + a) << 1u);
+      o[k_] = p;
+      o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
 #ifdef _OPENMP
@@ -202,9 +204,9 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
         *info = -4;
         return;
       }
-      const unsigned k_ = (m + a);
-      o[k_][0u] = p;
-      o[k_][1u] = q;
+      const unsigned k_ = ((m + a) << 1u);
+      o[k_] = p;
+      o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
         for (unsigned k = 0u; k < m; ++k) {
@@ -227,7 +229,7 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
   }
 }
 
-void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned (*const o)[2u], int *const info)
+void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(g);
@@ -256,8 +258,9 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
 #pragma omp parallel for default(none) shared(g,d,o,m,n,ldg,info) reduction(max:w)
 #endif /* _OPENMP */
     for (unsigned k = 0u; k < m; ++k) {
-      const unsigned p = o[k][0u];
-      const unsigned q = o[k][1u];
+      const unsigned k_ = (k << 1u);
+      const unsigned p = o[k_];
+      const unsigned q = o[k_ + 1u];
       if (!p || (p > *n) || !q || (q > *n))
         *info = -5;
       else {
@@ -281,8 +284,9 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
   }
   else {
     for (unsigned k = 0u; k < m; ++k) {
-      const unsigned p = o[k][0u];
-      const unsigned q = o[k][1u];
+      const unsigned k_ = (k << 1u);
+      const unsigned p = o[k_];
+      const unsigned q = o[k_ + 1u];
       if (!p || (p > *n) || !q || (q > *n))
         *info = -5;
       else {
@@ -318,9 +322,9 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
         *info = -4;
         return;
       }
-      const unsigned k_ = (m + a);
-      o[k_][0u] = p;
-      o[k_][1u] = q;
+      const unsigned k_ = ((m + a) << 1u);
+      o[k_] = p;
+      o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
 #ifdef _OPENMP
@@ -353,9 +357,9 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
         *info = -4;
         return;
       }
-      const unsigned k_ = (m + a);
-      o[k_][0u] = p;
-      o[k_][1u] = q;
+      const unsigned k_ = ((m + a) << 1u);
+      o[k_] = p;
+      o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
         for (unsigned k = 0u; k < m; ++k) {
