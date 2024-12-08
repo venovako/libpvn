@@ -75,6 +75,308 @@ void pvn_djs_xdec_(const long double *const e, unsigned *const p, unsigned *cons
   u >>= 5u;
   *p = ((unsigned)(u & 31ul) + 1u);
 }
+
+void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, unsigned (*const o)[2u], int *const info)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(g);
+  PVN_ASSERT(ldg);
+  PVN_ASSERT(d);
+  PVN_ASSERT(o);
+  PVN_ASSERT(info);
+
+  const int l = *info;
+  *info = 0;
+  if (*ldg < *n)
+    *info = -3;
+  if (*n > 32u)
+    *info = -1;
+  if (*info)
+    return;
+  if (!*n)
+    return;
+
+  const unsigned m = ((*n * (*n - 1u)) >> 1u);
+
+  /* build D and determine its largest element */
+  long double w = -1.0L;
+  if (l) {
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(g,d,o,m,n,ldg,info) reduction(max:w)
+#endif /* _OPENMP */
+    for (unsigned k = 0u; k < m; ++k) {
+      const unsigned p = o[k][0u];
+      const unsigned q = o[k][1u];
+      if (!p || (p > *n) || !q || (q > *n))
+        *info = -5;
+      else {
+        const unsigned p_ = (p - 1u);
+        const unsigned q_ = (q - 1u);
+        const unsigned p_ldg = (*ldg * p_);
+        const unsigned q_ldg = (*ldg * q_);
+        const double gpp = g[p_ldg + p_];
+        const double gqp = g[p_ldg + q_];
+        const double gpq = g[q_ldg + p_];
+        const double gqq = g[q_ldg + q_];
+        const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
+        if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
+          pvn_djs_xenc_((d + k), &h, &p, &q);
+          w = fmaxl(w, d[k]);
+        }
+        else /* no transformation */
+          d[k] = -1.0L;
+      }
+    }
+  }
+  else {
+    for (unsigned k = 0u; k < m; ++k) {
+      const unsigned p = o[k][0u];
+      const unsigned q = o[k][1u];
+      if (!p || (p > *n) || !q || (q > *n))
+        *info = -5;
+      else {
+        const unsigned p_ = (p - 1u);
+        const unsigned q_ = (q - 1u);
+        const unsigned p_ldg = (*ldg * p_);
+        const unsigned q_ldg = (*ldg * q_);
+        const double gpp = g[p_ldg + p_];
+        const double gqp = g[p_ldg + q_];
+        const double gpq = g[q_ldg + p_];
+        const double gqq = g[q_ldg + q_];
+        const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
+        if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
+          pvn_djs_xenc_((d + k), &h, &p, &q);
+          w = fmaxl(w, d[k]);
+        }
+        else /* no transformation */
+          d[k] = -1.0L;
+      }
+    }
+  }
+  if (*info || (w <= 0.0L))
+    return;
+
+  /* find the remaining pivots */
+  const unsigned b = (*n >> 1u);
+  if (l) {
+    for (unsigned a = 0u; a < b; ++a) {
+      unsigned p = 0u;
+      unsigned q = 0u;
+      pvn_djs_xdec_(&w, &p, &q);
+      if (!p || (p > *n) || !q || (q > *n)) {
+        *info = -4;
+        return;
+      }
+      const unsigned k_ = (m + a);
+      o[k_][0u] = p;
+      o[k_][1u] = q;
+      if ((a + 1u) < b) {
+        w = -1.0L;
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(d,m,n,p,q,info) reduction(max:w)
+#endif /* _OPENMP */
+        for (unsigned k = 0u; k < m; ++k) {
+          if (d[k] > 0.0L) {
+            unsigned i = 0u;
+            unsigned j = 0u;
+            pvn_djs_xdec_((d + k), &i, &j);
+            if (!i || (i > *n) || !j || (j > *n))
+              *info = -4;
+            else if ((i != p) && (i != q) && (j != p) && (j != q))
+              w = fmaxl(w, d[k]);
+            else /* colliding */
+              d[k] = -1.0L;
+          }
+        }
+        if (*info || (w <= 0.0L))
+          break;
+      }
+    }
+  }
+  else {
+    for (unsigned a = 0u; a < b; ++a) {
+      unsigned p = 0u;
+      unsigned q = 0u;
+      pvn_djs_xdec_(&w, &p, &q);
+      if (!p || (p > *n) || !q || (q > *n)) {
+        *info = -4;
+        return;
+      }
+      const unsigned k_ = (m + a);
+      o[k_][0u] = p;
+      o[k_][1u] = q;
+      if ((a + 1u) < b) {
+        w = -1.0L;
+        for (unsigned k = 0u; k < m; ++k) {
+          if (d[k] > 0.0L) {
+            unsigned i = 0u;
+            unsigned j = 0u;
+            pvn_djs_xdec_((d + k), &i, &j);
+            if (!i || (i > *n) || !j || (j > *n))
+              *info = -4;
+            else if ((i != p) && (i != q) && (j != p) && (j != q))
+              w = fmaxl(w, d[k]);
+            else /* colliding */
+              d[k] = -1.0L;
+          }
+        }
+        if (*info || (w <= 0.0L))
+          break;
+      }
+    }
+  }
+}
+
+void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned (*const o)[2u], int *const info)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(g);
+  PVN_ASSERT(ldg);
+  PVN_ASSERT(d);
+  PVN_ASSERT(o);
+  PVN_ASSERT(info);
+
+  const int l = *info;
+  *info = 0;
+  if (*ldg < *n)
+    *info = -3;
+  if (*n > 32u)
+    *info = -1;
+  if (*info)
+    return;
+  if (!*n)
+    return;
+
+  const unsigned m = ((*n * (*n - 1u)) >> 1u);
+
+  /* build D and determine its largest element */
+  long double w = -1.0L;
+  if (l) {
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(g,d,o,m,n,ldg,info) reduction(max:w)
+#endif /* _OPENMP */
+    for (unsigned k = 0u; k < m; ++k) {
+      const unsigned p = o[k][0u];
+      const unsigned q = o[k][1u];
+      if (!p || (p > *n) || !q || (q > *n))
+        *info = -5;
+      else {
+        const unsigned p_ = (p - 1u);
+        const unsigned q_ = (q - 1u);
+        const unsigned p_ldg = (*ldg * p_);
+        const unsigned q_ldg = (*ldg * q_);
+        const double complex gpp = g[p_ldg + p_];
+        const double complex gqp = g[p_ldg + q_];
+        const double complex gpq = g[q_ldg + p_];
+        const double complex gqq = g[q_ldg + q_];
+        const double h = hypot(cabs(gqp), cabs(gpq));
+        if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
+          pvn_djs_xenc_((d + k), &h, &p, &q);
+          w = fmaxl(w, d[k]);
+        }
+        else /* no transformation */
+          d[k] = -1.0L;
+      }
+    }
+  }
+  else {
+    for (unsigned k = 0u; k < m; ++k) {
+      const unsigned p = o[k][0u];
+      const unsigned q = o[k][1u];
+      if (!p || (p > *n) || !q || (q > *n))
+        *info = -5;
+      else {
+        const unsigned p_ = (p - 1u);
+        const unsigned q_ = (q - 1u);
+        const unsigned p_ldg = (*ldg * p_);
+        const unsigned q_ldg = (*ldg * q_);
+        const double complex gpp = g[p_ldg + p_];
+        const double complex gqp = g[p_ldg + q_];
+        const double complex gpq = g[q_ldg + p_];
+        const double complex gqq = g[q_ldg + q_];
+        const double h = hypot(cabs(gqp), cabs(gpq));
+        if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
+          pvn_djs_xenc_((d + k), &h, &p, &q);
+          w = fmaxl(w, d[k]);
+        }
+        else /* no transformation */
+          d[k] = -1.0L;
+      }
+    }
+  }
+  if (*info || (w <= 0.0L))
+    return;
+
+  /* find the remaining pivots */
+  const unsigned b = (*n >> 1u);
+  if (l) {
+    for (unsigned a = 0u; a < b; ++a) {
+      unsigned p = 0u;
+      unsigned q = 0u;
+      pvn_djs_xdec_(&w, &p, &q);
+      if (!p || (p > *n) || !q || (q > *n)) {
+        *info = -4;
+        return;
+      }
+      const unsigned k_ = (m + a);
+      o[k_][0u] = p;
+      o[k_][1u] = q;
+      if ((a + 1u) < b) {
+        w = -1.0L;
+#ifdef _OPENMP
+#pragma omp parallel for default(none) shared(d,m,n,p,q,info) reduction(max:w)
+#endif /* _OPENMP */
+        for (unsigned k = 0u; k < m; ++k) {
+          if (d[k] > 0.0L) {
+            unsigned i = 0u;
+            unsigned j = 0u;
+            pvn_djs_xdec_((d + k), &i, &j);
+            if (!i || (i > *n) || !j || (j > *n))
+              *info = -4;
+            else if ((i != p) && (i != q) && (j != p) && (j != q))
+              w = fmaxl(w, d[k]);
+            else /* colliding */
+              d[k] = -1.0L;
+          }
+        }
+        if (*info || (w <= 0.0L))
+          break;
+      }
+    }
+  }
+  else {
+    for (unsigned a = 0u; a < b; ++a) {
+      unsigned p = 0u;
+      unsigned q = 0u;
+      pvn_djs_xdec_(&w, &p, &q);
+      if (!p || (p > *n) || !q || (q > *n)) {
+        *info = -4;
+        return;
+      }
+      const unsigned k_ = (m + a);
+      o[k_][0u] = p;
+      o[k_][1u] = q;
+      if ((a + 1u) < b) {
+        w = -1.0L;
+        for (unsigned k = 0u; k < m; ++k) {
+          if (d[k] > 0.0L) {
+            unsigned i = 0u;
+            unsigned j = 0u;
+            pvn_djs_xdec_((d + k), &i, &j);
+            if (!i || (i > *n) || !j || (j > *n))
+              *info = -4;
+            else if ((i != p) && (i != q) && (j != p) && (j != q))
+              w = fmaxl(w, d[k]);
+            else /* colliding */
+              d[k] = -1.0L;
+          }
+        }
+        if (*info || (w <= 0.0L))
+          break;
+      }
+    }
+  }
+}
 #endif /* __x86_64__ */
 #ifdef PVN_QUADMATH
 void pvn_djs_qenc_(__float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q)
