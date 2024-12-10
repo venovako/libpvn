@@ -107,10 +107,11 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
     return;
 
   const unsigned m = ((*n * (*n - 1u)) >> 1u);
+  const unsigned b = (*n >> 1u);
   long double w = -1.0L;
 
-  /* build D and determine its largest element */
   if (l) {
+    /* build D and determine its largest element */
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(g,d,o,m,n,ldg,info) reduction(max:w)
 #endif /* _OPENMP */
@@ -142,47 +143,14 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
       }
 #endif /* !NDEBUG */
     }
-  }
-  else {
-    for (unsigned k = 0u; k < m; ++k) {
-      const unsigned k_ = (k << 1u);
-      const unsigned p = o[k_];
-      const unsigned q = o[k_ + 1u];
 #ifndef NDEBUG
-      if (!p || (p > *n) || !q || (q > *n))
-        *info = -5;
-      else {
-#endif /* !NDEBUG */
-        const unsigned p_ = (p - 1u);
-        const unsigned q_ = (q - 1u);
-        const unsigned p_ldg = (*ldg * p_);
-        const unsigned q_ldg = (*ldg * q_);
-        const double gpp = g[p_ldg + p_];
-        const double gqp = g[p_ldg + q_];
-        const double gpq = g[q_ldg + p_];
-        const double gqq = g[q_ldg + q_];
-        const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
-        if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
-          pvn_djs_xenc_((d + k), &h, &p, &q);
-          w = fmaxl(w, d[k]);
-        }
-        else /* no transformation */
-          d[k] = -1.0L;
-#ifndef NDEBUG
-      }
-#endif /* !NDEBUG */
-    }
-  }
-#ifndef NDEBUG
-  if ((w <= 0.0L) || *info)
+    if ((w <= 0.0L) || *info)
 #else /* NDEBUG */
-  if (w <= 0.0L)
+    if (w <= 0.0L)
 #endif /* ?NDEBUG */
-    return;
+      return;
 
-  /* find the remaining pivots */
-  const unsigned b = (*n >> 1u);
-  if (l) {
+    /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
       unsigned p
@@ -245,6 +213,42 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
     }
   }
   else {
+    unsigned K = 0u;
+    /* build D and determine its largest element */
+    for (unsigned k = 0u; k < m; ++k) {
+      const unsigned k_ = (k << 1u);
+      const unsigned p = o[k_];
+      const unsigned q = o[k_ + 1u];
+#ifndef NDEBUG
+      if (!p || (p > *n) || !q || (q > *n))
+        *info = -5;
+      else {
+#endif /* !NDEBUG */
+        const unsigned p_ = (p - 1u);
+        const unsigned q_ = (q - 1u);
+        const unsigned p_ldg = (*ldg * p_);
+        const unsigned q_ldg = (*ldg * q_);
+        const double gpp = g[p_ldg + p_];
+        const double gqp = g[p_ldg + q_];
+        const double gpq = g[q_ldg + p_];
+        const double gqq = g[q_ldg + q_];
+        const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
+        if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
+          pvn_djs_xenc_((d + K), &h, &p, &q);
+          w = fmaxl(w, d[K++]);
+        }
+#ifndef NDEBUG
+      }
+#endif /* !NDEBUG */
+    }
+#ifndef NDEBUG
+    if (!K || *info)
+#else /* NDEBUG */
+    if (!K)
+#endif /* ?NDEBUG */
+      return;
+
+    /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
       unsigned p
@@ -269,30 +273,28 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
       o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
-        for (unsigned k = 0u; k < m; ++k) {
-          if (d[k] > 0.0L) {
-            unsigned i
+        for (int k = 0; k < (int)K; ++k) {
+          unsigned i
 #ifndef NDEBUG
-              = 0u
+            = 0u
 #endif /* !NDEBUG */
-              ;
-            unsigned j
+            ;
+          unsigned j
 #ifndef NDEBUG
-              = 0u
+            = 0u
 #endif /* !NDEBUG */
-              ;
-            pvn_djs_xdec_((d + k), &i, &j);
+            ;
+          pvn_djs_xdec_((d + k), &i, &j);
 #ifndef NDEBUG
-            if (!i || (i > *n) || !j || (j > *n))
-              *info = -4;
-            else if ((i != p) && (i != q) && (j != p) && (j != q))
+          if (!i || (i > *n) || !j || (j > *n))
+            *info = -4;
+          else if ((i != p) && (i != q) && (j != p) && (j != q))
 #else /* NDEBUG */
-            if ((i != p) && (i != q) && (j != p) && (j != q))
+          if ((i != p) && (i != q) && (j != p) && (j != q))
 #endif /* ?NDEBUG */
-              w = fmaxl(w, d[k]);
-            else /* colliding */
-              d[k] = -1.0L;
-          }
+            w = fmaxl(w, d[k]);
+          else /* colliding */
+            d[k--] = d[--K];
         }
 #ifndef NDEBUG
         if ((w <= 0.0L) || (*info < 0))
@@ -326,10 +328,11 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
     return;
 
   const unsigned m = ((*n * (*n - 1u)) >> 1u);
+  const unsigned b = (*n >> 1u);
   long double w = -1.0L;
 
-  /* build D and determine its largest element */
   if (l) {
+      /* build D and determine its largest element */
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(g,d,o,m,n,ldg,info) reduction(max:w)
 #endif /* _OPENMP */
@@ -361,47 +364,14 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
       }
 #endif /* !NDEBUG */
     }
-  }
-  else {
-    for (unsigned k = 0u; k < m; ++k) {
-      const unsigned k_ = (k << 1u);
-      const unsigned p = o[k_];
-      const unsigned q = o[k_ + 1u];
 #ifndef NDEBUG
-      if (!p || (p > *n) || !q || (q > *n))
-        *info = -5;
-      else {
-#endif /* !NDEBUG */
-        const unsigned p_ = (p - 1u);
-        const unsigned q_ = (q - 1u);
-        const unsigned p_ldg = (*ldg * p_);
-        const unsigned q_ldg = (*ldg * q_);
-        const double complex gpp = g[p_ldg + p_];
-        const double complex gqp = g[p_ldg + q_];
-        const double complex gpq = g[q_ldg + p_];
-        const double complex gqq = g[q_ldg + q_];
-        const double h = hypot(cabs(gqp), cabs(gpq));
-        if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
-          pvn_djs_xenc_((d + k), &h, &p, &q);
-          w = fmaxl(w, d[k]);
-        }
-        else /* no transformation */
-          d[k] = -1.0L;
-#ifndef NDEBUG
-      }
-#endif /* !NDEBUG */
-    }
-  }
-#ifndef NDEBUG
-  if ((w <= 0.0L) || *info)
+    if ((w <= 0.0L) || *info)
 #else /* NDEBUG */
-  if (w <= 0.0L)
+    if (w <= 0.0L)
 #endif /* ?NDEBUG */
-    return;
+      return;
 
-  /* find the remaining pivots */
-  const unsigned b = (*n >> 1u);
-  if (l) {
+    /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
       unsigned p
@@ -464,6 +434,42 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
     }
   }
   else {
+    unsigned K = 0u;
+    /* build D and determine its largest element */
+    for (unsigned k = 0u; k < m; ++k) {
+      const unsigned k_ = (k << 1u);
+      const unsigned p = o[k_];
+      const unsigned q = o[k_ + 1u];
+#ifndef NDEBUG
+      if (!p || (p > *n) || !q || (q > *n))
+        *info = -5;
+      else {
+#endif /* !NDEBUG */
+        const unsigned p_ = (p - 1u);
+        const unsigned q_ = (q - 1u);
+        const unsigned p_ldg = (*ldg * p_);
+        const unsigned q_ldg = (*ldg * q_);
+        const double complex gpp = g[p_ldg + p_];
+        const double complex gqp = g[p_ldg + q_];
+        const double complex gpq = g[q_ldg + p_];
+        const double complex gqq = g[q_ldg + q_];
+        const double h = hypot(cabs(gqp), cabs(gpq));
+        if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
+          pvn_djs_xenc_((d + K), &h, &p, &q);
+          w = fmaxl(w, d[K++]);
+        }
+#ifndef NDEBUG
+      }
+#endif /* !NDEBUG */
+    }
+#ifndef NDEBUG
+    if (!K || *info)
+#else /* NDEBUG */
+    if (!K)
+#endif /* ?NDEBUG */
+      return;
+
+    /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
       unsigned p
@@ -488,30 +494,28 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
       o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
-        for (unsigned k = 0u; k < m; ++k) {
-          if (d[k] > 0.0L) {
-            unsigned i
+        for (int k = 0; k < (int)K; ++k) {
+          unsigned i
 #ifndef NDEBUG
-              = 0u
+            = 0u
 #endif /* !NDEBUG */
-              ;
-            unsigned j
+            ;
+          unsigned j
 #ifndef NDEBUG
-              = 0u
+            = 0u
 #endif /* !NDEBUG */
-              ;
-            pvn_djs_xdec_((d + k), &i, &j);
+            ;
+          pvn_djs_xdec_((d + k), &i, &j);
 #ifndef NDEBUG
-            if (!i || (i > *n) || !j || (j > *n))
-              *info = -4;
-            else if ((i != p) && (i != q) && (j != p) && (j != q))
+          if (!i || (i > *n) || !j || (j > *n))
+            *info = -4;
+          else if ((i != p) && (i != q) && (j != p) && (j != q))
 #else /* NDEBUG */
-            if ((i != p) && (i != q) && (j != p) && (j != q))
+          if ((i != p) && (i != q) && (j != p) && (j != q))
 #endif /* ?NDEBUG */
-              w = fmaxl(w, d[k]);
-            else /* colliding */
-              d[k] = -1.0L;
-          }
+            w = fmaxl(w, d[k]);
+          else /* colliding */
+            d[k--] = d[--K];
         }
 #ifndef NDEBUG
         if ((w <= 0.0L) || (*info < 0))

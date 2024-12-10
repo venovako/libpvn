@@ -9,13 +9,15 @@ CFLAGS += -Wall -Wextra
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 23; else echo 18; fi) -fPIC -fexceptions -fasynchronous-unwind-tables -ffp-contract=fast -fno-omit-frame-pointer -fopenmp-simd -pthread
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 23; else echo 18; fi) -fPIC -fexceptions -fasynchronous-unwind-tables -ffp-contract=fast -fno-omit-frame-pointer -pthread
 ifdef OPENMP
 CFLAGS += -fopenmp
 ifneq ($(OPENMP),true)
 CFLAGS += $(OPENMP)
 endif # !true
-endif # OPENMP
+else # !OPENMP
+CFLAGS += -fopenmp-simd
+endif # ?OPENMP
 ifndef MARCH
 MARCH=native
 endif # !MARCH
