@@ -58,7 +58,7 @@ void pvn_djs_ddec_(const double *const e, unsigned *const p, unsigned *const q)
   u >>= 14u;
   *p = ((unsigned)(u & 16383ul) + 1u);
 }
-#ifdef __x86_64__
+
 void pvn_djs_xenc_(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q)
 {
   PVN_ASSERT(e);
@@ -68,11 +68,19 @@ void pvn_djs_xenc_(long double *const e, const double *const d, const unsigned *
   PVN_ASSERT(*p);
   PVN_ASSERT(*q);
   *e = (long double)*d;
+#ifdef __x86_64__
 #ifdef NDEBUG
   *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)(*p - 1u) << 5u) | (unsigned long)(*q - 1u));
 #else /* !NDEBUG */
   *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)((*p - 1u) & 31u) << 5u) | (unsigned long)((*q - 1u) & 31u));
 #endif /* ?NDEBUG */
+#else /* !__x86_64__ */
+#ifdef NDEBUG
+  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)(*p - 1u) << 30u) | (unsigned long)(*q - 1u));
+#else /* !NDEBUG */
+  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)((*p - 1u) & 1073741823u) << 30u) | (unsigned long)((*q - 1u) & 1073741823u));
+#endif /* ?NDEBUG */
+#endif /* ?__x86_64__ */
 }
 
 void pvn_djs_xdec_(const long double *const e, unsigned *const p, unsigned *const q)
@@ -81,10 +89,55 @@ void pvn_djs_xdec_(const long double *const e, unsigned *const p, unsigned *cons
   PVN_ASSERT(p);
   PVN_ASSERT(q);
   unsigned long u = *(const unsigned long*)e;
+#ifdef __x86_64__
   *q = ((unsigned)(u & 31ul) + 1u);
   u >>= 5u;
   *p = ((unsigned)(u & 31ul) + 1u);
+#else /* !__x86_64__ */
+  *q = ((unsigned)(u & 1073741823ul) + 1u);
+  u >>= 30u;
+  *p = ((unsigned)(u & 1073741823ul) + 1u);
+#endif /* ?__x86_64__ */
 }
+
+#ifdef PVN_QUADMATH
+void pvn_djs_qenc_(__float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q)
+{
+  PVN_ASSERT(e);
+  PVN_ASSERT(d);
+  PVN_ASSERT(p);
+  PVN_ASSERT(q);
+  PVN_ASSERT(*p);
+  PVN_ASSERT(*q);
+  *e = (__float128)*d;
+#ifdef NDEBUG
+  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)(*p - 1u) << 30u) | (unsigned long)(*q - 1u));
+#else /* !NDEBUG */
+  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)((*p - 1u) & 1073741823u) << 30u) | (unsigned long)((*q - 1u) & 1073741823u));
+#endif /* ?NDEBUG */
+}
+
+void pvn_djs_qdec_(const __float128 *const e, unsigned *const p, unsigned *const q)
+{
+  PVN_ASSERT(e);
+  PVN_ASSERT(p);
+  PVN_ASSERT(q);
+  unsigned long u = *(const unsigned long*)e;
+  *q = ((unsigned)(u & 1073741823ul) + 1u);
+  u >>= 30u;
+  *p = ((unsigned)(u & 1073741823ul) + 1u);
+}
+#else /* !PVN_QUADMATH */
+void pvn_djs_qenc_(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q)
+{
+  pvn_djs_xenc_(e, d, p, q);
+}
+
+void pvn_djs_qdec_(const long double *const e, unsigned *const p, unsigned *const q)
+{
+  pvn_djs_xdec_(e, p, q);
+}
+#endif /* ?PVN_QUADMATH */
 
 void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info)
 {
@@ -99,14 +152,18 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
   *info = 0;
   if (*ldg < *n)
     *info = -3;
+#ifdef __x86_64__
   if (*n > 32u)
+#else /* !__x86_64__ */
+  if (*n > 1073741824u)
+#endif /* ?__x86_64__ */
     *info = -1;
   if (*info)
     return;
   if (!*n)
     return;
 
-  const unsigned m = ((*n * (*n - 1u)) >> 1u);
+  const unsigned m = ((*n & 1u) ? (*n * ((*n - 1u) >> 1u)) : ((*n >> 1u) * (*n - 1u)));
   const unsigned b = (*n >> 1u);
   long double w = -1.0L;
 
@@ -320,14 +377,18 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
   *info = 0;
   if (*ldg < *n)
     *info = -3;
+#ifdef __x86_64__
   if (*n > 32u)
+#else /* !__x86_64__ */
+  if (*n > 1073741824u)
+#endif /* ?__x86_64__ */
     *info = -1;
   if (*info)
     return;
   if (!*n)
     return;
 
-  const unsigned m = ((*n * (*n - 1u)) >> 1u);
+  const unsigned m = ((*n & 1u) ? (*n * ((*n - 1u) >> 1u)) : ((*n >> 1u) * (*n - 1u)));
   const unsigned b = (*n >> 1u);
   long double w = -1.0L;
 
@@ -527,60 +588,4 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
     }
   }
 }
-#endif /* __x86_64__ */
-#ifdef PVN_QUADMATH
-void pvn_djs_qenc_(__float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q)
-{
-  PVN_ASSERT(e);
-  PVN_ASSERT(d);
-  PVN_ASSERT(p);
-  PVN_ASSERT(q);
-  PVN_ASSERT(*p);
-  PVN_ASSERT(*q);
-  *e = (__float128)*d;
-#ifdef NDEBUG
-  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)(*p - 1u) << 30u) | (unsigned long)(*q - 1u));
-#else /* !NDEBUG */
-  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)((*p - 1u) & 1073741823u) << 30u) | (unsigned long)((*q - 1u) & 1073741823u));
-#endif /* ?NDEBUG */
-}
-
-void pvn_djs_qdec_(const __float128 *const e, unsigned *const p, unsigned *const q)
-{
-  PVN_ASSERT(e);
-  PVN_ASSERT(p);
-  PVN_ASSERT(q);
-  unsigned long u = *(const unsigned long*)e;
-  *q = ((unsigned)(u & 1073741823ul) + 1u);
-  u >>= 30u;
-  *p = ((unsigned)(u & 1073741823ul) + 1u);
-}
-#else /* !PVN_QUADMATH */
-void pvn_djs_qenc_(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q)
-{
-  PVN_ASSERT(e);
-  PVN_ASSERT(d);
-  PVN_ASSERT(p);
-  PVN_ASSERT(q);
-  PVN_ASSERT(*p);
-  PVN_ASSERT(*q);
-  *e = (long double)*d;
-#ifdef NDEBUG
-  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)(*p - 1u) << 30u) | (unsigned long)(*q - 1u));
-#else /* !NDEBUG */
-  *(unsigned long*)e = (*(const unsigned long*)e | ((unsigned long)((*p - 1u) & 1073741823u) << 30u) | (unsigned long)((*q - 1u) & 1073741823u));
-#endif /* ?NDEBUG */
-}
-
-void pvn_djs_qdec_(const long double *const e, unsigned *const p, unsigned *const q)
-{
-  PVN_ASSERT(e);
-  PVN_ASSERT(p);
-  PVN_ASSERT(q);
-  unsigned long u = *(const unsigned long*)e;
-  *q = ((unsigned)(u & 1073741823ul) + 1u);
-  u >>= 30u;
-  *p = ((unsigned)(u & 1073741823ul) + 1u);
-}
-#endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */
