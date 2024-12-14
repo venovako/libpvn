@@ -11,7 +11,7 @@ int main(/* int argc, char *argv[] */)
 #endif /* ?PVN_DYNAMIC */
   (void)printf("built on %s with %s for %s on %s ", __DATE__, PVN_COMPILER, PVN_OS, PVN_ARCH);
 #ifdef NDEBUG
-  (void)printf("with optimization level %d ", NDEBUG);
+  (void)printf("with optimizations ");
 #else /* !NDEBUG */
   (void)printf("for debugging ");
 #endif /* ?NDEBUG */
