@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   const long double max_val = strtold(argv[2], &endptr);
 #ifndef NDEBUG
-  (void)fprintf(stdout, "max_val = %s\n", pvn_xtoa(max_val));
+  (void)fprintf(stdout, "max_val = %s\n", pvn_xtoa(s, max_val));
 #endif /* !NDEBUG */
   if (*endptr || !isfinite(max_val))
     return EXIT_FAILURE;
