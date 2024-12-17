@@ -29,10 +29,10 @@ The library has been successfully built using:
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
 2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
-3. Homebrew (GCC 14.2.0),
-4. openSUSE Tumbleweed (GCC 14.2.0),
+3. Homebrew (GCC 14.2.0_1),
+4. openSUSE Tumbleweed (GCC 14.2.1),
 5. Intel oneAPI (2025.0.0),
-6. NVIDIA HPC SDK (24.9).
+6. NVIDIA HPC SDK (24.11).
 
 Examples of building the library:
 ```bash
@@ -43,11 +43,11 @@ make help
 # make [COMPILER=clang|gcc|icx|nvc|icc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
-# a release build with icx on x86_64 Linux
+# a release build with icx on x86_64 Linux with a high optimization level
 make COMPILER=icx NDEBUG=3 clean all
 #
-# a release build with the Homebrew's gcc on x86_64 macOS
-make COMPILER=gcc COMPILER_SUFFIX=-14 NDEBUG=3 clean all
+# a release build with the Homebrew's gcc on x86_64 macOS with a low optimization level
+make COMPILER=gcc COMPILER_SUFFIX=-14 NDEBUG=g clean all
 #
 # a debug build with clang on FreeBSD (note the usage of gmake instead of make)
 gmake clean all
