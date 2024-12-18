@@ -176,11 +176,13 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-#ifndef NDEBUG
-      if (!p || (p > *n) || !q || (q > *n))
+      if (!p || (p > *n) || !q || (q > *n)) {
+#ifdef _OPENMP
+#pragma omp atomic write
+#endif /* _OPENMP */
         *info = -5;
+      }
       else {
-#endif /* !NDEBUG */
         const unsigned p_ = (p - 1u);
         const unsigned q_ = (q - 1u);
         const unsigned p_ldg = (*ldg * p_);
@@ -196,37 +198,20 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
         }
         else /* no transformation */
           d[k] = -1.0L;
-#ifndef NDEBUG
       }
-#endif /* !NDEBUG */
     }
-#ifndef NDEBUG
     if ((w <= 0.0L) || *info)
-#else /* NDEBUG */
-    if (w <= 0.0L)
-#endif /* ?NDEBUG */
       return;
 
     /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
-      unsigned p
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
-      unsigned q
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
+      unsigned p = 0u, q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
-#ifndef NDEBUG
       if (!p || (p > *n) || !q || (q > *n)) {
         *info = -4;
         return;
       }
-#endif /* !NDEBUG */
       const unsigned k_ = ((m + a) << 1u);
       o[k_] = p;
       o[k_ + 1u] = q;
@@ -237,34 +222,21 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
 #endif /* _OPENMP */
         for (unsigned k = 0u; k < m; ++k) {
           if (d[k] > 0.0L) {
-            unsigned i
-#ifndef NDEBUG
-              = 0u
-#endif /* !NDEBUG */
-              ;
-            unsigned j
-#ifndef NDEBUG
-              = 0u
-#endif /* !NDEBUG */
-              ;
+            unsigned i = 0u, j = 0u;
             pvn_djs_xdec_((d + k), &i, &j);
-#ifndef NDEBUG
-            if (!i || (i > *n) || !j || (j > *n))
+            if (!i || (i > *n) || !j || (j > *n)) {
+#ifdef _OPENMP
+#pragma omp atomic write
+#endif /* _OPENMP */
               *info = -4;
+            }
             else if ((i != p) && (i != q) && (j != p) && (j != q))
-#else /* NDEBUG */
-            if ((i != p) && (i != q) && (j != p) && (j != q))
-#endif /* !NDEBUG */
               w = fmaxl(w, d[k]);
             else /* colliding */
               d[k] = -1.0L;
           }
         }
-#ifndef NDEBUG
         if ((w <= 0.0L) || (*info < 0))
-#else /* NDEBUG */
-        if (w <= 0.0L)
-#endif /* ?NDEBUG */
           break;
       }
     }
@@ -276,11 +248,9 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-#ifndef NDEBUG
       if (!p || (p > *n) || !q || (q > *n))
         *info = -5;
       else {
-#endif /* !NDEBUG */
         const unsigned p_ = (p - 1u);
         const unsigned q_ = (q - 1u);
         const unsigned p_ldg = (*ldg * p_);
@@ -294,70 +264,36 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
           pvn_djs_xenc_((d + K), &h, &p, &q);
           w = fmaxl(w, d[K++]);
         }
-#ifndef NDEBUG
       }
-#endif /* !NDEBUG */
     }
-#ifndef NDEBUG
     if (!K || *info)
-#else /* NDEBUG */
-    if (!K)
-#endif /* ?NDEBUG */
       return;
 
     /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
-      unsigned p
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
-      unsigned q
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
+      unsigned p = 0u, q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
-#ifndef NDEBUG
       if (!p || (p > *n) || !q || (q > *n)) {
         *info = -4;
         return;
       }
-#endif /* !NDEBUG */
       const unsigned k_ = ((m + a) << 1u);
       o[k_] = p;
       o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
         for (int k = 0; k < (int)K; ++k) {
-          unsigned i
-#ifndef NDEBUG
-            = 0u
-#endif /* !NDEBUG */
-            ;
-          unsigned j
-#ifndef NDEBUG
-            = 0u
-#endif /* !NDEBUG */
-            ;
+          unsigned i = 0u, j = 0u;
           pvn_djs_xdec_((d + k), &i, &j);
-#ifndef NDEBUG
           if (!i || (i > *n) || !j || (j > *n))
             *info = -4;
           else if ((i != p) && (i != q) && (j != p) && (j != q))
-#else /* NDEBUG */
-          if ((i != p) && (i != q) && (j != p) && (j != q))
-#endif /* ?NDEBUG */
             w = fmaxl(w, d[k]);
           else /* colliding */
             d[k--] = d[--K];
         }
-#ifndef NDEBUG
         if ((w <= 0.0L) || (*info < 0))
-#else /* NDEBUG */
-        if (w <= 0.0L)
-#endif /* ?NDEBUG */
           break;
       }
     }
@@ -401,11 +337,13 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-#ifndef NDEBUG
-      if (!p || (p > *n) || !q || (q > *n))
+      if (!p || (p > *n) || !q || (q > *n)) {
+#ifdef _OPENMP
+#pragma omp atomic write
+#endif /* _OPENMP */
         *info = -5;
+      }
       else {
-#endif /* !NDEBUG */
         const unsigned p_ = (p - 1u);
         const unsigned q_ = (q - 1u);
         const unsigned p_ldg = (*ldg * p_);
@@ -421,37 +359,20 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
         }
         else /* no transformation */
           d[k] = -1.0L;
-#ifndef NDEBUG
       }
-#endif /* !NDEBUG */
     }
-#ifndef NDEBUG
     if ((w <= 0.0L) || *info)
-#else /* NDEBUG */
-    if (w <= 0.0L)
-#endif /* ?NDEBUG */
       return;
 
     /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
-      unsigned p
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
-      unsigned q
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
+      unsigned p = 0u, q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
-#ifndef NDEBUG
       if (!p || (p > *n) || !q || (q > *n)) {
         *info = -4;
         return;
       }
-#endif /* !NDEBUG */
       const unsigned k_ = ((m + a) << 1u);
       o[k_] = p;
       o[k_ + 1u] = q;
@@ -462,34 +383,21 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
 #endif /* _OPENMP */
         for (unsigned k = 0u; k < m; ++k) {
           if (d[k] > 0.0L) {
-            unsigned i
-#ifndef NDEBUG
-              = 0u
-#endif /* !NDEBUG */
-              ;
-            unsigned j
-#ifndef NDEBUG
-              = 0u
-#endif /* !NDEBUG */
-              ;
+            unsigned i = 0u, j = 0u;
             pvn_djs_xdec_((d + k), &i, &j);
-#ifndef NDEBUG
-            if (!i || (i > *n) || !j || (j > *n))
+            if (!i || (i > *n) || !j || (j > *n)) {
+#ifdef _OPENMP
+#pragma omp atomic write
+#endif /* _OPENMP */
               *info = -4;
+            }
             else if ((i != p) && (i != q) && (j != p) && (j != q))
-#else /* NDEBUG */
-            if ((i != p) && (i != q) && (j != p) && (j != q))
-#endif /* ?NDEBUG */
               w = fmaxl(w, d[k]);
             else /* colliding */
               d[k] = -1.0L;
           }
         }
-#ifndef NDEBUG
         if ((w <= 0.0L) || (*info < 0))
-#else /* NDEBUG */
-        if (w <= 0.0L)
-#endif /* ?NDEBUG */
           break;
       }
     }
@@ -501,11 +409,9 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-#ifndef NDEBUG
       if (!p || (p > *n) || !q || (q > *n))
         *info = -5;
       else {
-#endif /* !NDEBUG */
         const unsigned p_ = (p - 1u);
         const unsigned q_ = (q - 1u);
         const unsigned p_ldg = (*ldg * p_);
@@ -519,70 +425,36 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
           pvn_djs_xenc_((d + K), &h, &p, &q);
           w = fmaxl(w, d[K++]);
         }
-#ifndef NDEBUG
       }
-#endif /* !NDEBUG */
     }
-#ifndef NDEBUG
     if (!K || *info)
-#else /* NDEBUG */
-    if (!K)
-#endif /* ?NDEBUG */
       return;
 
     /* find the remaining pivots */
     for (unsigned a = 0u; a < b; ++a) {
       ++*info;
-      unsigned p
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
-      unsigned q
-#ifndef NDEBUG
-        = 0u
-#endif /* !NDEBUG */
-        ;
+      unsigned p = 0u, q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
-#ifndef NDEBUG
       if (!p || (p > *n) || !q || (q > *n)) {
         *info = -4;
         return;
       }
-#endif /* !NDEBUG */
       const unsigned k_ = ((m + a) << 1u);
       o[k_] = p;
       o[k_ + 1u] = q;
       if ((a + 1u) < b) {
         w = -1.0L;
         for (int k = 0; k < (int)K; ++k) {
-          unsigned i
-#ifndef NDEBUG
-            = 0u
-#endif /* !NDEBUG */
-            ;
-          unsigned j
-#ifndef NDEBUG
-            = 0u
-#endif /* !NDEBUG */
-            ;
+          unsigned i = 0u, j = 0u;
           pvn_djs_xdec_((d + k), &i, &j);
-#ifndef NDEBUG
           if (!i || (i > *n) || !j || (j > *n))
             *info = -4;
           else if ((i != p) && (i != q) && (j != p) && (j != q))
-#else /* NDEBUG */
-          if ((i != p) && (i != q) && (j != p) && (j != q))
-#endif /* ?NDEBUG */
             w = fmaxl(w, d[k]);
           else /* colliding */
             d[k--] = d[--K];
         }
-#ifndef NDEBUG
         if ((w <= 0.0L) || (*info < 0))
-#else /* NDEBUG */
-        if (w <= 0.0L)
-#endif /* !NDEBUG */
           break;
       }
     }
