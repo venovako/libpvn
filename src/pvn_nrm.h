@@ -12,8 +12,8 @@ PVN_EXTERN_C void pvn_znrm2_(double *const f, const int *const m, const double *
 PVN_EXTERN_C void pvn_xnrm2_(long double *const f, const int *const m, const long double *const x, const unsigned *const ix);
 PVN_EXTERN_C void pvn_wnrm2_(long double *const f, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi);
 /* an estimate of ||off(G)||_F without hypot */
-PVN_EXTERN_C float pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *const g, const unsigned *const ldg);
-PVN_EXTERN_C double pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double *const g, const unsigned *const ldg);
+PVN_EXTERN_C float pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *const g, const unsigned *const ldg, int *const info);
+PVN_EXTERN_C double pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double *const g, const unsigned *const ldg, int *const info);
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C void pvn_qnrm2_(__float128 *const f, const int *const m, const __float128 *const x, const unsigned *const ix);
 PVN_EXTERN_C void pvn_ynrm2_(__float128 *const f, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi);

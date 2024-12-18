@@ -190,12 +190,13 @@ void pvn_wnrm2_(long double *const f, const int *const m, const long double *con
   }
 }
 
-float pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *const g, const unsigned *const ldg)
+float pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *const g, const unsigned *const ldg, int *const info)
 {
   PVN_ASSERT(m);
   PVN_ASSERT(n);
   PVN_ASSERT(g);
   PVN_ASSERT(ldg);
+  PVN_ASSERT(info);
   PVN_ASSERT(*ldg >= *m);
   double ssq = 0.0;
   for (unsigned j = 0u; j < *n; ++j) {
@@ -209,16 +210,16 @@ float pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float 
       ssq = fma(gij, gij, ssq);
     }
   }
-  ssq = sqrt(ssq);
-  return (float)ssq;
+  return (float)frexp(sqrt(ssq), info);
 }
 
-double pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double *const g, const unsigned *const ldg)
+double pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double *const g, const unsigned *const ldg, int *const info)
 {
   PVN_ASSERT(m);
   PVN_ASSERT(n);
   PVN_ASSERT(g);
   PVN_ASSERT(ldg);
+  PVN_ASSERT(info);
   PVN_ASSERT(*ldg >= *m);
   long double ssq = 0.0L;
   for (unsigned j = 0u; j < *n; ++j) {
@@ -241,8 +242,7 @@ double pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const doubl
 #endif /* ?PVN_QUADMATH */
     }
   }
-  ssq = sqrtl(ssq);
-  return (double)ssq;
+  return (double)frexpl(sqrtl(ssq), info);
 }
 
 #ifdef PVN_QUADMATH
