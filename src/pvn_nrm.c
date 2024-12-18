@@ -190,6 +190,61 @@ void pvn_wnrm2_(long double *const f, const int *const m, const long double *con
   }
 }
 
+float pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *const g, const unsigned *const ldg)
+{
+  PVN_ASSERT(m);
+  PVN_ASSERT(n);
+  PVN_ASSERT(g);
+  PVN_ASSERT(ldg);
+  PVN_ASSERT(*ldg >= *m);
+  double ssq = 0.0;
+  for (unsigned j = 0u; j < *n; ++j) {
+    const float *const gj = (g + *ldg * j);
+    for (unsigned i = 0u; i < j; ++i) {
+      const double gij = (double)(gj[i]);
+      ssq = fma(gij, gij, ssq);
+    }
+    for (unsigned i = (j + 1u); i < *m; ++i) {
+      const double gij = (double)(gj[i]);
+      ssq = fma(gij, gij, ssq);
+    }
+  }
+  ssq = sqrt(ssq);
+  return (float)ssq;
+}
+
+double pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double *const g, const unsigned *const ldg)
+{
+  PVN_ASSERT(m);
+  PVN_ASSERT(n);
+  PVN_ASSERT(g);
+  PVN_ASSERT(ldg);
+  PVN_ASSERT(*ldg >= *m);
+  long double ssq = 0.0L;
+  for (unsigned j = 0u; j < *n; ++j) {
+    const double *const gj = (g + *ldg * j);
+    for (unsigned i = 0u; i < j; ++i) {
+      /* assumes that fmal is too slow in extended precision, but not in quadruple if natively supported */
+      const long double gij = (long double)(gj[i]);
+#ifdef PVN_QUADMATH
+      ssq += (gij * gij);
+#else /* !PVN_QUADMATH */
+      ssq = fmal(gij, gij, ssq);
+#endif /* ?PVN_QUADMATH */
+    }
+    for (unsigned i = (j + 1u); i < *m; ++i) {
+      const long double gij = (long double)(gj[i]);
+#ifdef PVN_QUADMATH
+      ssq += (gij * gij);
+#else /* !PVN_QUADMATH */
+      ssq = fmal(gij, gij, ssq);
+#endif /* ?PVN_QUADMATH */
+    }
+  }
+  ssq = sqrtl(ssq);
+  return (double)ssq;
+}
+
 #ifdef PVN_QUADMATH
 void pvn_qnrm2_(__float128 *const f, const int *const m, const __float128 *const x, const unsigned *const ix)
 {
