@@ -190,7 +190,7 @@ void pvn_wnrm2_(long double *const f, const int *const m, const long double *con
   }
 }
 
-void pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *const g, const unsigned *const ldg, double *const ssq, int *const info)
+void pvn_snrm2o_(const unsigned *const m, const unsigned *const n, float *const g, const unsigned *const ldg, double *const ssq, int *const info)
 {
   PVN_ASSERT(m);
   PVN_ASSERT(n);
@@ -198,10 +198,6 @@ void pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *
   PVN_ASSERT(ldg);
   PVN_ASSERT(ssq);
   PVN_ASSERT(info);
-  if (*ldg < *m) {
-    *info = -4;
-    return;
-  }
   /* assumes that fmal is too slow in extended precision, but not in quadruple if natively supported */
   if (!*info)
     *ssq = 0.0;
@@ -227,13 +223,15 @@ void pvn_snrm2o_(const unsigned *const m, const unsigned *const n, const float *
       }
     }
   }
-  else if (*info == 5)
-    *ssq = (double)(float)sqrt(*ssq);
+  else if (*info == 5) {
+    *g = (float)sqrt(*ssq);
+    pvn_djs_denc_(ssq, g, m, n);
+  }
   else
     *info = -6;
 }
 
-void pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const ssq, int *const info)
+void pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, double *const g, const unsigned *const ldg, long double *const ssq, int *const info)
 {
   PVN_ASSERT(m);
   PVN_ASSERT(n);
@@ -241,10 +239,6 @@ void pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double 
   PVN_ASSERT(ldg);
   PVN_ASSERT(ssq);
   PVN_ASSERT(info);
-  if (*ldg < *m) {
-    *info = -4;
-    return;
-  }
   /* assumes that fmal is too slow in extended precision, but not in quadruple if natively supported */
   if (!*info)
     *ssq = 0.0L;
@@ -282,8 +276,14 @@ void pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, const double 
       }
     }
   }
-  else if (*info == 5)
-    *ssq = (long double)(double)sqrtl(*ssq);
+  else if (*info == 5) {
+    *g = (double)sqrtl(*ssq);
+#ifdef PVN_QUADMATH
+    pvn_djs_qenc_((__float128*)ssq, g, m, n);
+#else /* !PVN_QUADMATH */
+    pvn_djs_xenc_(ssq, g, m, n);
+#endif /* ?PVN_QUADMATH */
+  }
   else
     *info = -6;
 }
