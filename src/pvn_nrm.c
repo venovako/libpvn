@@ -279,7 +279,10 @@ void pvn_dnrm2o_(const unsigned *const m, const unsigned *const n, double *const
   else if (*info == 5) {
     *g = (double)sqrtl(*ssq);
 #ifdef PVN_QUADMATH
-    pvn_djs_qenc_((__float128*)ssq, g, m, n);
+    if (*ldg)
+      pvn_djs_qenc_((__float128*)ssq, g, m, n);
+    else
+      pvn_djs_xenc_(ssq, g, m, n);
 #else /* !PVN_QUADMATH */
     pvn_djs_xenc_(ssq, g, m, n);
 #endif /* ?PVN_QUADMATH */
