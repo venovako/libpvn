@@ -169,10 +169,11 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
 
   if (l) {
     if (l < 0) {
+      const unsigned l_ = (unsigned)-l;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(d,m) reduction(max:w)
+#pragma omp parallel for default(none) shared(d,l_) reduction(max:w)
 #endif /* _OPENMP */
-      for (unsigned k = 0u; k < m; ++k)
+      for (unsigned k = 0u; k < l_; ++k)
         w = fmaxl(w, d[k]);
     }
     else {
@@ -321,10 +322,11 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
 
   if (l) {
     if (l < 0) {
+      const unsigned l_ = (unsigned)-l;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(d,m) reduction(max:w)
+#pragma omp parallel for default(none) shared(d,l_) reduction(max:w)
 #endif /* _OPENMP */
-      for (unsigned k = 0u; k < m; ++k)
+      for (unsigned k = 0u; k < l_; ++k)
         w = fmaxl(w, d[k]);
     }
     else {
