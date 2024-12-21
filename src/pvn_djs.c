@@ -168,8 +168,11 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
   long double w = -1.0L;
 
   if (l) {
-    if (l < 0)
-      w = d[-(l + 1)];
+    unsigned s = m;
+    if (l < 0) {
+      s = (unsigned)-(l + 1);
+      w = d[s];
+    }
     else {
       /* build D and determine its largest element */
 #ifdef _OPENMP
@@ -215,9 +218,9 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
         if ((a + 1u) < b) {
           w = -1.0L;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(d,m,n,p,q) reduction(max:w)
+#pragma omp parallel for default(none) shared(d,s,n,p,q) reduction(max:w)
 #endif /* _OPENMP */
-          for (unsigned k = 0u; k < m; ++k) {
+          for (unsigned k = 0u; k < s; ++k) {
             if (d[k] > 0.0L) {
               unsigned i = 0u, j = 0u;
               pvn_djs_xdec_((d + k), &i, &j);
@@ -315,8 +318,11 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
   long double w = -1.0L;
 
   if (l) {
-    if (l < 0)
-      w = d[-(l + 1)];
+    unsigned s = m;
+    if (l < 0) {
+      s = (unsigned)-(l + 1);
+      w = d[s];
+    }
     else {
       /* build D and determine its largest element */
 #ifdef _OPENMP
@@ -362,9 +368,9 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
         if ((a + 1u) < b) {
           w = -1.0L;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(d,m,n,p,q) reduction(max:w)
+#pragma omp parallel for default(none) shared(d,s,n,p,q) reduction(max:w)
 #endif /* _OPENMP */
-          for (unsigned k = 0u; k < m; ++k) {
+          for (unsigned k = 0u; k < s; ++k) {
             if (d[k] > 0.0L) {
               unsigned i = 0u, j = 0u;
               pvn_djs_xdec_((d + k), &i, &j);
