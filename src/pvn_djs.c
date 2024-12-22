@@ -329,7 +329,8 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const unsigned *const m, long doub
 
   /* find the remaining pivots */
   const unsigned b = (*n >> 1u);
-  long double w = d[*m];
+  unsigned K = *m;
+  long double w = d[K];
   if (w <= 0.0L)
     return;
   if (l) {
@@ -343,7 +344,6 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const unsigned *const m, long doub
         o[k_ + 1u] = q;
         if ((a + 1u) < b) {
           w = 0.0L;
-          const unsigned K = *m;
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(d,K,n,p,q) reduction(max:w)
 #endif /* _OPENMP */
@@ -374,7 +374,6 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const unsigned *const m, long doub
         o[k_ + 1u] = q;
         if ((a + 1u) < b) {
           w = 0.0L;
-          unsigned K = *m;
           for (int k = 0; k < (int)K; ++k) {
             unsigned i = 0u, j = 0u;
             pvn_djs_xdec_((d + k), &i, &j);
