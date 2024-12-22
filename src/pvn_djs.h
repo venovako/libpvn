@@ -16,7 +16,8 @@ PVN_EXTERN_C void pvn_djs_qdec_(const __float128 *const e, unsigned *const p, un
 PVN_EXTERN_C void pvn_djs_qenc_(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q);
 PVN_EXTERN_C void pvn_djs_qdec_(const long double *const e, unsigned *const p, unsigned *const q);
 #endif /* ?PVN_QUADMATH */
-PVN_EXTERN_C void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info);
-PVN_EXTERN_C void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info);
+PVN_EXTERN_C void pvn_djs_xmkd_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info);
+PVN_EXTERN_C void pvn_djs_wmkd_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info);
+PVN_EXTERN_C void pvn_djs_xmkdpq_(const unsigned *const n, const unsigned *const m, long double *const d, unsigned *const o, int *const info);
 
 #endif /* !PVN_DJS_H */
