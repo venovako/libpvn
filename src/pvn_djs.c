@@ -139,7 +139,7 @@ void pvn_djs_qdec_(const long double *const e, unsigned *const p, unsigned *cons
 }
 #endif /* ?PVN_QUADMATH */
 
-void pvn_djs_xmkd_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info)
+void pvn_djs_xmkd_(const unsigned *const n, const double *const g, const unsigned *const ldg, long double *const d, const unsigned *const o, int *const info)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(g);
@@ -174,25 +174,21 @@ void pvn_djs_xmkd_(const unsigned *const n, const double *const g, const unsigne
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-      if (p && (p <= *n) && q && (q <= *n)) {
-        const unsigned p_ = (p - 1u);
-        const unsigned q_ = (q - 1u);
-        const unsigned p_ldg = (*ldg * p_);
-        const unsigned q_ldg = (*ldg * q_);
-        const double gpp = g[p_ldg + p_];
-        const double gqp = g[p_ldg + q_];
-        const double gpq = g[q_ldg + p_];
-        const double gqq = g[q_ldg + q_];
-        const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
-        if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
-          pvn_djs_xenc_((d + k), &h, &p, &q);
-          w = fmaxl(w, d[k]);
-        }
-        else /* no transformation */
-          d[k] = (long double)-h;
+      const unsigned p_ = (p - 1u);
+      const unsigned q_ = (q - 1u);
+      const unsigned p_ldg = (*ldg * p_);
+      const unsigned q_ldg = (*ldg * q_);
+      const double gpp = g[p_ldg + p_];
+      const double gqp = g[p_ldg + q_];
+      const double gpq = g[q_ldg + p_];
+      const double gqq = g[q_ldg + q_];
+      const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
+      if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
+        pvn_djs_xenc_((d + k), &h, &p, &q);
+        w = fmaxl(w, d[k]);
       }
-      else
-        d[k] = -HUGE_VALL;
+      else /* no transformation */
+        d[k] = (long double)-h;
     }
     d[*info = (int)m] = w;
   }
@@ -202,27 +198,25 @@ void pvn_djs_xmkd_(const unsigned *const n, const double *const g, const unsigne
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-      if (p && (p <= *n) && q && (q <= *n)) {
-        const unsigned p_ = (p - 1u);
-        const unsigned q_ = (q - 1u);
-        const unsigned p_ldg = (*ldg * p_);
-        const unsigned q_ldg = (*ldg * q_);
-        const double gpp = g[p_ldg + p_];
-        const double gqp = g[p_ldg + q_];
-        const double gpq = g[q_ldg + p_];
-        const double gqq = g[q_ldg + q_];
-        const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
-        if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
-          pvn_djs_xenc_((d + K), &h, &p, &q);
-          w = fmaxl(w, d[K++]);
-        }
+      const unsigned p_ = (p - 1u);
+      const unsigned q_ = (q - 1u);
+      const unsigned p_ldg = (*ldg * p_);
+      const unsigned q_ldg = (*ldg * q_);
+      const double gpp = g[p_ldg + p_];
+      const double gqp = g[p_ldg + q_];
+      const double gpq = g[q_ldg + p_];
+      const double gqq = g[q_ldg + q_];
+      const double h = ((gqp == 0.0) ? fabs(gpq) : ((gpq == 0.0) ? fabs(gqp) : hypot(gqp, gpq)));
+      if ((h > 0.0) || (gpp < gqq) || (copysign(1.0, gpp) != 1.0) || (copysign(1.0, gqq) != 1.0)) {
+        pvn_djs_xenc_((d + K), &h, &p, &q);
+        w = fmaxl(w, d[K++]);
       }
     }
     d[*info = (int)K] = w;
   }
 }
 
-void pvn_djs_wmkd_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info)
+void pvn_djs_wmkd_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, const unsigned *const o, int *const info)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(g);
@@ -257,25 +251,21 @@ void pvn_djs_wmkd_(const unsigned *const n, const double complex *const g, const
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-      if (p && (p <= *n) && q && (q <= *n)) {
-        const unsigned p_ = (p - 1u);
-        const unsigned q_ = (q - 1u);
-        const unsigned p_ldg = (*ldg * p_);
-        const unsigned q_ldg = (*ldg * q_);
-        const double complex gpp = g[p_ldg + p_];
-        const double complex gqp = g[p_ldg + q_];
-        const double complex gpq = g[q_ldg + p_];
-        const double complex gqq = g[q_ldg + q_];
-        const double h = hypot(cabs(gqp), cabs(gpq));
-        if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
-          pvn_djs_xenc_((d + k), &h, &p, &q);
-          w = fmaxl(w, d[k]);
-        }
-        else /* no transformation */
-          d[k] = (long double)-h;
+      const unsigned p_ = (p - 1u);
+      const unsigned q_ = (q - 1u);
+      const unsigned p_ldg = (*ldg * p_);
+      const unsigned q_ldg = (*ldg * q_);
+      const double complex gpp = g[p_ldg + p_];
+      const double complex gqp = g[p_ldg + q_];
+      const double complex gpq = g[q_ldg + p_];
+      const double complex gqq = g[q_ldg + q_];
+      const double h = hypot(cabs(gqp), cabs(gpq));
+      if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
+        pvn_djs_xenc_((d + k), &h, &p, &q);
+        w = fmaxl(w, d[k]);
       }
-      else
-        d[k] = -HUGE_VALL;
+      else /* no transformation */
+        d[k] = (long double)-h;
     }
     d[*info = (int)m] = w;
   }
@@ -286,20 +276,18 @@ void pvn_djs_wmkd_(const unsigned *const n, const double complex *const g, const
       const unsigned k_ = (k << 1u);
       const unsigned p = o[k_];
       const unsigned q = o[k_ + 1u];
-      if (p && (p <= *n) && q && (q <= *n)) {
-        const unsigned p_ = (p - 1u);
-        const unsigned q_ = (q - 1u);
-        const unsigned p_ldg = (*ldg * p_);
-        const unsigned q_ldg = (*ldg * q_);
-        const double complex gpp = g[p_ldg + p_];
-        const double complex gqp = g[p_ldg + q_];
-        const double complex gpq = g[q_ldg + p_];
-        const double complex gqq = g[q_ldg + q_];
-        const double h = hypot(cabs(gqp), cabs(gpq));
-        if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
-          pvn_djs_xenc_((d + K), &h, &p, &q);
-          w = fmaxl(w, d[K++]);
-        }
+      const unsigned p_ = (p - 1u);
+      const unsigned q_ = (q - 1u);
+      const unsigned p_ldg = (*ldg * p_);
+      const unsigned q_ldg = (*ldg * q_);
+      const double complex gpp = g[p_ldg + p_];
+      const double complex gqp = g[p_ldg + q_];
+      const double complex gpq = g[q_ldg + p_];
+      const double complex gqq = g[q_ldg + q_];
+      const double h = hypot(cabs(gqp), cabs(gpq));
+      if ((h > 0.0) || (creal(gpp) < creal(gqq)) || (cimag(gpp) != 0.0) || (cimag(gqq) != 0.0) || (copysign(1.0, creal(gpp)) != 1.0) || (copysign(1.0, creal(gqq)) != 1.0)) {
+        pvn_djs_xenc_((d + K), &h, &p, &q);
+        w = fmaxl(w, d[K++]);
       }
     }
     d[*info = (int)K] = w;
@@ -326,66 +314,65 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const unsigned *const m, long doub
     return;
   if (!*n)
     return;
+  if (!*m)
+    return;
 
   /* find the remaining pivots */
   const unsigned b = (*n >> 1u);
-  unsigned K = *m;
-  long double w = d[K];
+  long double w = d[*m];
   if (w <= 0.0L)
     return;
   if (l) {
-    for (unsigned a = 0u; a < b; ++a) {
+    const unsigned K = *m;
+    for (unsigned a = 0u; a < b; ) {
       ++*info;
       unsigned p = 0u, q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
-      if (p && (p <= *n) && q && (q <= *n)) {
-        const unsigned k_ = (a << 1u);
-        o[k_] = p;
-        o[k_ + 1u] = q;
-        if ((a + 1u) < b) {
-          w = 0.0L;
+      const unsigned k_ = (a << 1u);
+      o[k_] = p;
+      o[k_ + 1u] = q;
+      if (++a >= b)
+        break;
+      w = 0.0L;
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(d,K,n,p,q) reduction(max:w)
+#pragma omp parallel for default(none) shared(d,n,K,p,q) reduction(max:w)
 #endif /* _OPENMP */
-          for (unsigned k = 0u; k < K; ++k) {
-            if (d[k] > 0.0L) {
-              unsigned i = 0u, j = 0u;
-              pvn_djs_xdec_((d + k), &i, &j);
-              if (i && (i <= *n) && j && (j <= *n) && (i != p) && (i != q) && (j != p) && (j != q))
-                w = fmaxl(w, d[k]);
-              else /* colliding */
-                d[k] = -d[k];
-            }
-          }
-          if (w <= 0.0L)
-            break;
+      for (unsigned k = 0u; k < K; ++k) {
+        if (d[k] > 0.0L) {
+          unsigned i = 0u, j = 0u;
+          pvn_djs_xdec_((d + k), &i, &j);
+          if ((i != p) && (i != q) && (j != p) && (j != q))
+            w = fmaxl(w, d[k]);
+          else /* colliding */
+            d[k] = -d[k];
         }
       }
+      if (w <= 0.0L)
+        break;
     }
   }
   else {
-    for (unsigned a = 0u; a < b; ++a) {
+    unsigned K = *m;
+    for (unsigned a = 0u; a < b; ) {
       ++*info;
       unsigned p = 0u, q = 0u;
       pvn_djs_xdec_(&w, &p, &q);
-      if (p && (p <= *n) && q && (q <= *n)) {
-        const unsigned k_ = (a << 1u);
-        o[k_] = p;
-        o[k_ + 1u] = q;
-        if ((a + 1u) < b) {
-          w = 0.0L;
-          for (int k = 0; k < (int)K; ++k) {
-            unsigned i = 0u, j = 0u;
-            pvn_djs_xdec_((d + k), &i, &j);
-            if (i && (i <= *n) && j && (j <= *n) && (i != p) && (i != q) && (j != p) && (j != q))
-              w = fmaxl(w, d[k]);
-            else /* colliding */
-              d[k--] = d[--K];
-          }
-          if (w <= 0.0L)
-            break;
-        }
+      const unsigned k_ = (a << 1u);
+      o[k_] = p;
+      o[k_ + 1u] = q;
+      if (++a >= b)
+        break;
+      w = 0.0L;
+      for (int k = 0; k < (int)K; ++k) {
+        unsigned i = 0u, j = 0u;
+        pvn_djs_xdec_((d + k), &i, &j);
+        if ((i != p) && (i != q) && (j != p) && (j != q))
+          w = fmaxl(w, d[k]);
+        else /* colliding */
+          d[k--] = d[--K];
       }
+      if (w <= 0.0L)
+        break;
     }
   }
 }
