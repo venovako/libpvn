@@ -227,7 +227,7 @@ void pvn_djs_xmkdpq_(const unsigned *const n, const double *const g, const unsig
               if (i && (i <= *n) && j && (j <= *n) && (i != p) && (i != q) && (j != p) && (j != q))
                 w = fmaxl(w, d[k]);
               else /* colliding */
-                d[k] = -1.0L;
+                d[k] = -d[k];
             }
           }
           if (w <= 0.0L)
@@ -377,7 +377,7 @@ void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, con
               if (i && (i <= *n) && j && (j <= *n) && (i != p) && (i != q) && (j != p) && (j != q))
                 w = fmaxl(w, d[k]);
               else /* colliding */
-                d[k] = -1.0L;
+                d[k] = -d[k];
             }
           }
           if (w <= 0.0L)
