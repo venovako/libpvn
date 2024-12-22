@@ -222,7 +222,7 @@ void pvn_djs_xmkd_(const unsigned *const n, const double *const g, const unsigne
   }
 }
 
-void pvn_djs_wmkdpq_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info)
+void pvn_djs_wmkd_(const unsigned *const n, const double complex *const g, const unsigned *const ldg, long double *const d, unsigned *const o, int *const info)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(g);
