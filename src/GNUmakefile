@@ -26,6 +26,37 @@ else # !Darwin
 GCC=gcc
 endif # ?Darwin
 endif # ?gcc
+
+SRCS=pvn.c  \
+pvn_aux.c   \
+pvn_bio.c   \
+pvn_bmp.c   \
+pvn_cjs.c   \
+pvn_cma.c   \
+pvn_crm.c   \
+pvn_djs.c   \
+pvn_dot.c   \
+pvn_err.c   \
+pvn_ev2.c   \
+pvn_fmt.c   \
+pvn_mem.c   \
+pvn_mm2.c   \
+pvn_nrm.c   \
+pvn_ran.c   \
+pvn_sv2.c   \
+pvn_tar.c   \
+pvn_prof.c  \
+pvn_lock.c  \
+pvn_timer.c
+
+ifeq ($(COMPILER),icx)
+ifndef MARCH
+SRCS += pvn_vis.c
+endif # !MARCH
+else # !icx
+SRCS += pvn_vis.c
+endif # ?icx
+
 include $(COMPILER).mk
 CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifdef SAFE
@@ -89,29 +120,6 @@ endif # PRINTOUT
 ifdef QUADMATH
 CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 endif # QUADMATH
-
-SRCS=pvn.c  \
-pvn_aux.c   \
-pvn_bio.c   \
-pvn_bmp.c   \
-pvn_cjs.c   \
-pvn_cma.c   \
-pvn_crm.c   \
-pvn_djs.c   \
-pvn_dot.c   \
-pvn_err.c   \
-pvn_ev2.c   \
-pvn_fmt.c   \
-pvn_mem.c   \
-pvn_mm2.c   \
-pvn_nrm.c   \
-pvn_ran.c   \
-pvn_sv2.c   \
-pvn_tar.c   \
-pvn_vis.c   \
-pvn_prof.c  \
-pvn_lock.c  \
-pvn_timer.c
 
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
 EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
