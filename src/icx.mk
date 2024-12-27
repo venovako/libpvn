@@ -22,7 +22,7 @@ endif # !true
 else # !OPENMP
 CFLAGS += -qopenmp-simd
 endif # ?OPENMP
-LDFLAGS=-rdynamic -static-libgcc -ldl
+LDFLAGS=-pie -rdynamic -static-libgcc -ldl
 ifndef QUADMATH
 QUADMATH=$(abspath $(shell gcc -print-file-name=libquadmath.a))
 ifeq ($(QUADMATH),libquadmath.a)
