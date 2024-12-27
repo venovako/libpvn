@@ -167,6 +167,7 @@ ifdef XRP
 LNK += -Wl,$(XRP)
 endif # XRP
 LNK += $(QUADMATH)
+CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
 
 .PHONY: all help clean
 
@@ -188,10 +189,10 @@ libpvn.so: libpvn.a
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.exe : %.c
-	$(CC) $(CFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNK) $(LDFLAGS)
 
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
-	$(CC) $(CFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
 
 clean:
 	-$(RM) *.exe
