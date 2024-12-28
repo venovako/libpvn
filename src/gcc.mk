@@ -26,7 +26,7 @@ CFLAGS += -mcpu=$(MARCH) -mpower8-fusion -mtraceback=full
 else # !ppc64le
 CFLAGS += -march=$(MARCH)
 endif # ?ppc64le
-LDFLAGS=-pie -rdynamic -static-libgcc
+LDFLAGS=-rdynamic -static-libgcc #-pie
 ifeq ($(findstring BSD,$(OS)),BSD)
 LDFLAGS += -lexecinfo
 else # !BSD
