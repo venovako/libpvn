@@ -32,9 +32,9 @@ SOFTWARE.
 #define __builtin_nan(p) nan(p)
 #endif /* PVN_ICC */
 
-#ifndef NDEBUG
+#ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* !NDEBUG */
+#endif /* CORE_MATH_SUPPORT_ERRNO */
 #include <fenv.h>
 #include <stdint.h>
 #ifdef __x86_64__
@@ -165,9 +165,9 @@ double cr_rsqrt(double x){
     if(!(ix.u<<1)) return -__builtin_inf(); // x=-0
     if(ix.u > 0xfff0000000000000ull) return x + x; // nan
     if(ix.u >> 63){
-#ifndef NDEBUG
+#ifdef CORE_MATH_SUPPORT_ERRNO
       errno = EDOM;
-#endif /* !NDEBUG */
+#endif /* CORE_MATH_SUPPORT_ERRNO */
       feraiseexcept (FE_INVALID);
       return __builtin_nan("<0");
     }

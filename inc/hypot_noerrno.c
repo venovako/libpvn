@@ -27,9 +27,9 @@ SOFTWARE.
 /* modified by venovako */
 
 #include <stdint.h>
-#ifndef NDEBUG
+#ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* !NDEBUG */
+#endif /* CORE_MATH_SUPPORT_ERRNO */
 #include <fenv.h>
 
 #ifdef __x86_64__
@@ -183,7 +183,7 @@ static double  __attribute__((noinline)) as_hypot_hard(double x, double y, const
   } else {
     u128 lm2 = (u128)lm*lm;
     ls *= 2;
-    m2 += lm2 >> -ls;
+    m2 += lm2 >> -ls; // since ls < 0, the shift by -ls is legitimate
     m2 |= !!(lm2 << (128 + ls));
   }
   int k = bs+re;
@@ -220,9 +220,9 @@ static double  __attribute__((noinline)) as_hypot_hard(double x, double y, const
 static double __attribute__((noinline)) as_hypot_overflow (void){
   volatile double z = 0x1.fffffffffffffp1023;
   double f = z + z;
-#ifndef NDEBUG
+#ifdef CORE_MATH_SUPPORT_ERRNO
   if(f>z) errno = ERANGE;
-#endif /* !NDEBUG */
+#endif /* CORE_MATH_SUPPORT_ERRNO */
   return f;
 }
 

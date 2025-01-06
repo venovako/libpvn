@@ -27,9 +27,9 @@ SOFTWARE.
 /* modified by venovako */
 
 #include <stdint.h>
-#ifndef NDEBUG
+#ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* !NDEBUG */
+#endif /* CORE_MATH_SUPPORT_ERRNO */
 
 typedef union {float f; uint32_t u;} b32u32_u;
 typedef union {double f; uint64_t u;} b64u64_u;
@@ -50,9 +50,9 @@ float cr_hypotf(float x, float y){
   b64u64_u t = {.f = r};
   float c = r;
   if(t.u>(uint64_t)0x47efffffe0000000ull){
-#ifndef NDEBUG
+#ifdef CORE_MATH_SUPPORT_ERRNO
     if(c>0x1.fffffep127f) errno = ERANGE;
-#endif /* !NDEBUG */
+#endif /* CORE_MATH_SUPPORT_ERRNO */
     return c;
   }
   if(__builtin_expect(((t.u + 1)&0xfffffff) > 2, 1)) return c;
