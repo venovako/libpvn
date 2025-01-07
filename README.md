@@ -31,7 +31,7 @@ Recent versions of the compilers have been provided by or used on:
 2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
 3. Homebrew (GCC 14.2.0_1),
 4. openSUSE Tumbleweed (GCC 14.2.1),
-5. Intel oneAPI (2025.0.0),
+5. Intel oneAPI (2025.0.4),
 6. NVIDIA HPC SDK (24.11).
 
 Examples of building the library:
