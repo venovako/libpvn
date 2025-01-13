@@ -87,7 +87,7 @@ else # !CR_MATH
 ifdef NDEBUG
 CFLAGS += -DPVN_CR_MATH="\"bundled_noerrno\""
 else # !NDEBUG
-CFLAGS += -DPVN_CR_MATH="\"bundled\""
+CFLAGS += -DPVN_CR_MATH="\"bundled\"" -DCORE_MATH_SUPPORT_ERRNO
 endif # ?NDEBUG
 CR_SRCS= \
 ../inc/hypotf_noerrno.c \
