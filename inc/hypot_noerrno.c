@@ -1,6 +1,6 @@
 /* Correctly-rounded Euclidean distance function (hypot) for binary64 values.
 
-Copyright (c) 2022 Alexei Sibidanov.
+Copyright (c) 2022-2025 Alexei Sibidanov.
 
 This file is part of the CORE-MATH project
 (https://core-math.gitlabpages.inria.fr/).
@@ -148,6 +148,7 @@ static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b){
     }
   }
   b64u64_u xi = {.u = rm};
+  // FIXME: we should raise underflow if needed
   return xi.f;
 }
 
@@ -236,7 +237,7 @@ double cr_hypot(double x, double y){
     /* Either x or y is NaN or Inf */
     u64 wx = xi.u<<1, wy = yi.u<<1, wm = emsk<<1;
     int ninf = (wx==wm) ^ (wy==wm);
-    int nqnn = ((wx>>52)==0xfff) ^ ((wy>>52)==0xfff);
+    int nqnn = (wx==(0xfffull<<52)) ^ (wy==(0xfffull<<52));
     /* ninf is 1 when only one of x and y is +/-Inf
        nqnn is 1 when only one of x and y is qNaN
        IEEE 754 says that hypot(+/-Inf,qNaN)=hypot(qNaN,+/-Inf)=+Inf. */
