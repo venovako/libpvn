@@ -119,7 +119,7 @@ static inline double fasttwosum(double x, double y, double *e){
 }
 
 static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b){
-  double op = 1.0 + 0x1p-54, om = 1.0 - 0x1p-54;
+  double op = 1.0 + 0x1p-54, om = 1.0 - 0x1p-54; // FIXME: will cause the inexact exception for an exact result
   double af = (i64)a, bf = (i64)b;
   a <<= 1;
   b <<= 1;
@@ -146,9 +146,12 @@ static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b){
     } else {
       rm += op>1.0;
     }
+    if(!(rm>>52)){ // trigger underflow exception _after_ rounding for inexact results
+      volatile double trig_uf = 0x1p-1022;
+      trig_uf *= trig_uf;
+    }
   }
   b64u64_u xi = {.u = rm};
-  // FIXME: we should raise underflow if needed
   return xi.f;
 }
 
@@ -237,7 +240,7 @@ double cr_hypot(double x, double y){
     /* Either x or y is NaN or Inf */
     u64 wx = xi.u<<1, wy = yi.u<<1, wm = emsk<<1;
     int ninf = (wx==wm) ^ (wy==wm);
-    int nqnn = (wx==(0xfffull<<52)) ^ (wy==(0xfffull<<52));
+    int nqnn = ((wx>>52)==0xfff) ^ ((wy>>52)==0xfff);
     /* ninf is 1 when only one of x and y is +/-Inf
        nqnn is 1 when only one of x and y is qNaN
        IEEE 754 says that hypot(+/-Inf,qNaN)=hypot(qNaN,+/-Inf)=+Inf. */
@@ -280,7 +283,7 @@ double cr_hypot(double x, double y){
   ex &= 0x7ffll<<52;
   u64 aidr = ey + (0x3fell<<52) - ex;
   u64 mid = (aidr - 0x3c90000000000000 + 16)>>5;
-  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000ull || aidr>0x3c9fffffffffff80ull, 0))
+  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000ull || aidr>0x3c9fffffffffff80ull, 0)) 
     thd.f = as_hypot_hard(x,y,flag);
   thd.u -= off;
   if(__builtin_expect(thd.u>=(0x7ffull<<52), 0)) return as_hypot_overflow();
