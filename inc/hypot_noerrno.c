@@ -118,8 +118,8 @@ static inline double fasttwosum(double x, double y, double *e){
   return s;
 }
 
-static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b){
-  double op = 1.0 + 0x1p-54, om = 1.0 - 0x1p-54; // FIXME: will cause the inexact exception for an exact result
+static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b, const fexcept_t flag){
+  double op = 1.0 + 0x1p-54, om = 1.0 - 0x1p-54;
   double af = (i64)a, bf = (i64)b;
   a <<= 1;
   b <<= 1;
@@ -150,6 +150,8 @@ static double __attribute__((noinline)) as_hypot_denorm(u64 a, u64 b){
       volatile double trig_uf = 0x1p-1022;
       trig_uf *= trig_uf;
     }
+  } else {
+    set_flags(flag);
   }
   b64u64_u xi = {.u = rm};
   return xi.f;
@@ -255,7 +257,7 @@ double cr_hypot(double x, double y){
     ex = xd.u;
     if(__builtin_expect(!(ex>>52),0)){
       if(!ex) return 0;
-      return as_hypot_denorm(ex,ey);
+      return as_hypot_denorm(ex,ey,flag);
     }
     int nz = __builtin_clzll(ey);
     ey <<= nz-11;
@@ -283,7 +285,7 @@ double cr_hypot(double x, double y){
   ex &= 0x7ffll<<52;
   u64 aidr = ey + (0x3fell<<52) - ex;
   u64 mid = (aidr - 0x3c90000000000000 + 16)>>5;
-  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000ull || aidr>0x3c9fffffffffff80ull, 0)) 
+  if(__builtin_expect( mid==0 || aidr<0x39b0000000000000ull || aidr>0x3c9fffffffffff80ull, 0))
     thd.f = as_hypot_hard(x,y,flag);
   thd.u -= off;
   if(__builtin_expect(thd.u>=(0x7ffull<<52), 0)) return as_hypot_overflow();
