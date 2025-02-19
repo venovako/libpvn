@@ -26,7 +26,7 @@
 #endif /* ?PVN_SAFELEN */
 
 #ifndef PVN_ASSUME_ALIGNED
-#if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #define PVN_ASSUME_ALIGNED(p,a) __assume_aligned((p),(a))
 #else /* !Intel */
 #define PVN_ASSUME_ALIGNED(p,a) (void)__builtin_assume_aligned((p),(a))

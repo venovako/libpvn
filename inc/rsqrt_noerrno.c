@@ -26,12 +26,6 @@ SOFTWARE.
 
 /* modified by venovako */
 
-/* for the old icc */
-#ifdef PVN_ICC
-#include <mathimf.h>
-#define __builtin_nan(p) nan(p)
-#endif /* PVN_ICC */
-
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif /* CORE_MATH_SUPPORT_ERRNO */
@@ -159,10 +153,18 @@ double cr_rsqrt(double x){
     if(__builtin_expect(ix.u, 1)){ // x <> +0
       r = __builtin_sqrt(x)/x;
     } else {
+#ifdef CORE_MATH_SUPPORT_ERRNO
+      errno = ERANGE; // pole error
+#endif /* CORE_MATH_SUPPORT_ERRNO */
       return __builtin_inf(); // case x = +0
     }
   } else if(__builtin_expect(ix.u >= 0x7ffull<<52, 0)){ // NaN, Inf, x <= 0
-    if(!(ix.u<<1)) return -__builtin_inf(); // x=-0
+    if(!(ix.u<<1)) {
+#ifdef CORE_MATH_SUPPORT_ERRNO
+      errno = ERANGE; // pole error
+#endif /* CORE_MATH_SUPPORT_ERRNO */
+      return -__builtin_inf(); // x=-0
+    }
     if(ix.u > 0xfff0000000000000ull) return x + x; // -NaN
     if(ix.u >> 63){ // x < 0
 #ifdef CORE_MATH_SUPPORT_ERRNO

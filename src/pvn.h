@@ -1,7 +1,7 @@
 #ifndef PVN_H
 #define PVN_H
 
-#if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #include <mathimf.h>
 #else /* !Intel */
 #ifdef __cplusplus
@@ -84,7 +84,7 @@
 
 #ifndef PVN_ASSERT
 #ifdef NDEBUG
-#if (defined(__ICC) || defined(__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
 #define PVN_ASSERT(cond) __assume(cond)
 #elif (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
 #define PVN_ASSERT(cond) __attribute__((assume(cond)))

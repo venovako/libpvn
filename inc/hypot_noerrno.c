@@ -223,11 +223,12 @@ static double  __attribute__((noinline)) as_hypot_hard(double x, double y, const
   return xi.f;
 }
 
+// case hypot(x,y) >= 2^1024
 static double __attribute__((noinline)) as_hypot_overflow (void){
   volatile double z = 0x1.fffffffffffffp1023;
   double f = z + z;
 #ifdef CORE_MATH_SUPPORT_ERRNO
-  if(f>z) errno = ERANGE;
+  errno = ERANGE; // always overflow, whatever the rounding mode
 #endif /* CORE_MATH_SUPPORT_ERRNO */
   return f;
 }
@@ -267,7 +268,13 @@ double cr_hypot(double x, double y){
     yd.f = t.f;
   }
   u64 de = xd.u - yd.u;
-  if(__builtin_expect(de>(27ll<<52),0)) return __builtin_fma(0x1p-27, v, u);
+  if(__builtin_expect(de>(27ll<<52),0)) {
+    double r = __builtin_fma(0x1p-27, v, u);
+#ifdef CORE_MATH_SUPPORT_ERRNO
+    if (r > 0x1.fffffffffffffp+1023) errno = ERANGE; // overflow
+#endif /* CORE_MATH_SUPPORT_ERRNO */
+    return r;
+  }
   i64 off = (0x3ffll<<52) - (xd.u & emsk);
   xd.u += off;
   yd.u += off;
