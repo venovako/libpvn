@@ -23,6 +23,9 @@ int main(/* int argc, char *argv[] */)
 }
 #else /* !PVN_TEST */
 #ifndef __x86_64__
+#ifdef hypotl
+#undef hypotl
+#endif /* hypotl */
 /* might not be correctly rounded */
 long double cr_hypotl(long double x, long double y)
 {
