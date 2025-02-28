@@ -95,7 +95,9 @@ CR_SRCS= \
 ../inc/hypot_noerrno.c  \
 ../inc/rsqrt_noerrno.c
 ifeq ($(findstring 86,$(ARCH)),86)
-CR_SRCS += ../inc/rsqrtl_noerrno.c
+CR_SRCS += \
+../inc/hypotl_noerrno.c \
+../inc/rsqrtl_noerrno.c
 endif # 86
 endif # ?CR_MATH
 CR_OBJS=$(CR_SRCS:.c=.o)
