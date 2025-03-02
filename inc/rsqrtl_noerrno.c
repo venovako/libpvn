@@ -1,6 +1,6 @@
 /* Correctly rounded reciprocal square root for long-double values.
 
-Copyright (c) 2024 Alexei Sibidanov and Paul Zimmermann
+Copyright (c) 2024-2025 Alexei Sibidanov and Paul Zimmermann
 
 This file is part of the CORE-MATH project
 (https://core-math.gitlabpages.inria.fr/).
@@ -34,6 +34,9 @@ SOFTWARE.
 #define TRACE 0x8.000000000000001p-5L
 
 #include <stdint.h>
+#ifdef CORE_MATH_SUPPORT_ERRNO
+#include <errno.h>
+#endif /* CORE_MATH_SUPPORT_ERRNO */
 
 // Warning: clang also defines __GNUC__
 #if defined(__GNUC__) && !defined(__clang__)
@@ -60,19 +63,27 @@ long double cr_rsqrtl (long double x){
   int e = v.e & 0x7fff;
   // check NaN, Inf, 0 and normalize subnormals
   if (__builtin_expect (v.e >= 0x7fff || v.e == 0, 0)){
-    if (e == 0 ){
-      if(!v.m)
+    // case x subnormal or NaN or Inf
+    if (e == 0) { // subnormal case
+      if(!v.m) { // x = 0
+#ifdef CORE_MATH_SUPPORT_ERRNO
+	errno = ERANGE; // pole error
+#endif /* CORE_MATH_SUPPORT_ERRNO */
 	return 1.0L / x;   // x=+0 and x=-0
-      else {
-	if(!v.e){
+      }
+      else { // non-zero subnormal
+	if(!v.e){ // positive subnormal
 	  int cnt = __builtin_clzll (v.m);
 	  v.m <<= cnt;
 	  e -= cnt - 1;
-	} else {
+	} else { // negative subnormal
+#ifdef CORE_MATH_SUPPORT_ERRNO
+	  errno = EDOM; // domain error
+#endif /* CORE_MATH_SUPPORT_ERRNO */
 	  return 0.0L / 0.0L; // x<0: rsqrt(x)=NaN
 	}
       }
-    } else {
+    } else { // NaN or Inf
       if (v.e > 0x8000) return 0.0L / 0.0L; // x<0: rsqrt(x)=NaN
       if (e == 0x7fff && !(v.m<<1)) return +0L;         // x=Inf
       return x;                      // x=NaN
