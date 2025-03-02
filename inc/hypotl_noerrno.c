@@ -30,6 +30,9 @@ SOFTWARE.
 
 #include <stdint.h>
 #include <fenv.h>
+#ifdef CORE_MATH_SUPPORT_ERRNO
+#include <errno.h>
+#endif /* CORE_MATH_SUPPORT_ERRNO */
 
 #if (defined(__clang__) && __clang_major__ >= 14) || (defined(__GNUC__) && __GNUC__ >= 14 && __BITINT_MAXWIDTH__ && __BITINT_MAXWIDTH__ >= 128)
 typedef unsigned _BitInt(128) u128;
@@ -188,6 +191,9 @@ cr_hypotl (long double x, long double y)
         // in case sx.e = 0x7ffe, this will round to +Inf as wanted
         sx.e ++;
         sx.m = 0x8000000000000000ull;
+#ifdef CORE_MATH_SUPPORT_ERRNO
+	errno = ERANGE; // overflow
+#endif /* CORE_MATH_SUPPORT_ERRNO */
       }
     }
     return sx.f;
@@ -209,16 +215,30 @@ cr_hypotl (long double x, long double y)
 
   if (__builtin_expect (x_exp >= 0x3fff, 0)) { // potential overflow
 #define HUGE 0x1.fffffffffffffffep+16383L
-    if (x_exp >= 0x4000) // sure overflow
+    if (x_exp >= 0x4000) { // sure overflow
+#ifdef CORE_MATH_SUPPORT_ERRNO
+      errno = ERANGE; // overflow
+#endif /* CORE_MATH_SUPPORT_ERRNO */
       return HUGE + HUGE;
+    }
     // x_exp = 0x3fff
     // overflow for RNDN iff hh + ll/2^128 > (2^64-1/2)^2
 #define HT (((u128) 0xffffffffffffffffull) << 64) // 2^128-2^64
 #define LT (((u128) 0x4000000000000000ull) << 64) // 2^126 (thus 1/4)
     // in the midpoint case hh + ll/2^128 = (2^64-1/2)^2, we get overflow
     // since 2^64-1 is odd
-    if (hh > HT || (hh == HT && ll > 0))
-      return HUGE + 0x1p+16319L; // add 1/2 ulp(HUGE)
+    if (hh > HT || (hh == HT && ll > 0)) {
+      long double res = HUGE + 0x1p+16319L; // add 1/2 ulp(HUGE)
+#ifdef CORE_MATH_SUPPORT_ERRNO
+      /* We have overflow:
+       * for RNDZ or RNDD: never
+       * for RNDN: when res = +Inf
+       * for RNDU: always */
+      if (res > 0x1.fffffffffffffffep+16383L)
+	errno = ERANGE; // overflow
+#endif /* CORE_MATH_SUPPORT_ERRNO */
+      return res;
+    }
   }
 
   // now sqrt(x^2 + y^2) < 2^16384*(1-2^-65)
@@ -290,5 +310,13 @@ cr_hypotl (long double x, long double y)
       res.m = (uint64_t) 1 << 63;
     }
   }
+
+  if (res.e == 0 && !exact) {
+    feraiseexcept (FE_UNDERFLOW);
+#ifdef CORE_MATH_SUPPORT_ERRNO
+    errno = ERANGE; // underflow
+#endif /* CORE_MATH_SUPPORT_ERRNO */
+  }
+
   return res.f;
 }
