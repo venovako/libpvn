@@ -3,9 +3,9 @@ A small portable C library with several utility functions.
 
 (... work in progress ...)
 
-This software is a supplementary material for:
-- the paper doi:[10.1016/j.cam.2024.116003](https://doi.org/10.1016/j.cam.2024.116003 "Accurate complex Jacobi rotations"),
-- the preprint arXiv:[2407.13116](https://arxiv.org/abs/2407.13116 "Arithmetical enhancements of the Kogbetliantz method for the SVD of order two").
+This software is a supplementary material for the papers:
+- doi:[10.1016/j.cam.2024.116003](https://doi.org/10.1016/j.cam.2024.116003 "Accurate complex Jacobi rotations"),
+- doi:[10.1007/s11075-025-02035-7](https://doi.org/10.1007/s11075-025-02035-7 "Arithmetical enhancements of the Kogbetliantz method for the SVD of order two").
 
 Some functions have been adapted from those in the repositories [JACSD](https://github.com/venovako/JACSD) and [VecJac](https://github.com/venovako/VecJac).
 
@@ -15,24 +15,20 @@ The library has been successfully built using:
 | compiler | `uname` | platform |
 | -------- | ------- | -------- |
 | clang(1) | Darwin  | x86_64   |
-| clang(2) | FreeBSD | amd64    |
-| clang(2) | FreeBSD | arm64    |
-| gcc(3)   | Darwin  | x86_64   |
-| gcc(2)   | FreeBSD | amd64    |
-| gcc(2)   | FreeBSD | arm64    |
-| gcc(4)   | Linux   | aarch64  |
+| gcc(2)   | Darwin  | x86_64   |
+| gcc(3)   | Linux   | aarch64  |
 | gcc(4)   | Linux   | ppc64le  |
-| gcc(4)   | Linux   | x86_64   |
+| gcc(3,4) | Linux   | x86_64   |
 | icx(5)   | Linux   | x86_64   |
 | nvc(6)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
-2. FreeBSD (clang 18.1.5 and GCC 13.2.0),
-3. Homebrew (GCC 14.2.0_1),
+2. Homebrew (GCC 14.2.0_1),
+3. Oracle Linux (GCC 14.2.1-1),
 4. openSUSE Tumbleweed (GCC 14.2.1),
 5. Intel oneAPI (2025.0.4),
-6. NVIDIA HPC SDK (24.11).
+6. NVIDIA HPC SDK (25.1).
 
 Examples of building the library:
 ```bash
@@ -48,9 +44,6 @@ make COMPILER=icx NDEBUG=3 clean all
 #
 # a release build with the Homebrew's gcc on x86_64 macOS with a low optimization level
 make COMPILER=gcc COMPILER_SUFFIX=-14 NDEBUG=g clean all
-#
-# a debug build with clang on FreeBSD (note the usage of gmake instead of make)
-gmake clean all
 ```
 
 ## Using
