@@ -78,10 +78,12 @@ CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
 CR_SRCS= \
 $(realpath $(CR_MATH)/src/binary32/hypot/hypotf.c) \
 $(realpath $(CR_MATH)/src/binary32/rsqrt/rsqrtf.c) \
-$(realpath $(CR_MATH)/src/binary64/hypot/hypot.c)  
+$(realpath $(CR_MATH)/src/binary64/hypot/hypot.c)  \
 $(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c)
 ifeq ($(findstring 86,$(ARCH)),86)
-CR_SRCS += $(realpath $(CR_MATH)/src/binary80/rsqrt/rsqrtl.c)
+CR_SRCS += \
+$(realpath $(CR_MATH)/src/binary80/hypot/hypotl.c) \
+$(realpath $(CR_MATH)/src/binary80/rsqrt/rsqrtl.c)
 endif # 86
 else # !CR_MATH
 ifdef NDEBUG
