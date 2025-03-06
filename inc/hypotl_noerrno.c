@@ -32,7 +32,7 @@ SOFTWARE.
 #include <fenv.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
 
 #if (defined(__clang__) && __clang_major__ >= 14) || (defined(__GNUC__) && __GNUC__ >= 14 && __BITINT_MAXWIDTH__ && __BITINT_MAXWIDTH__ >= 128)
 typedef unsigned _BitInt(128) u128;
@@ -194,7 +194,7 @@ cr_hypotl (long double x, long double y)
 	feraiseexcept (FE_OVERFLOW);
 #ifdef CORE_MATH_SUPPORT_ERRNO
 	errno = ERANGE; // overflow
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       }
     }
     return sx.f;
@@ -219,7 +219,7 @@ cr_hypotl (long double x, long double y)
     if (x_exp >= 0x4000) { // sure overflow
 #ifdef CORE_MATH_SUPPORT_ERRNO
       errno = ERANGE; // overflow
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       return HUGE + HUGE;
     }
     // x_exp = 0x3fff
@@ -237,7 +237,7 @@ cr_hypotl (long double x, long double y)
        * for RNDU: always */
       if (res > 0x1.fffffffffffffffep+16383L)
 	errno = ERANGE; // overflow
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       return res;
     }
   }
@@ -316,7 +316,7 @@ cr_hypotl (long double x, long double y)
     feraiseexcept (FE_UNDERFLOW);
 #ifdef CORE_MATH_SUPPORT_ERRNO
     errno = ERANGE; // underflow
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
   }
 
   return res.f;

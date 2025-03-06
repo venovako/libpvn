@@ -29,7 +29,7 @@ SOFTWARE.
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
 
 typedef union {float f; uint32_t u;} b32u32_u;
 typedef union {double f; uint64_t u;} b64u64_u;
@@ -62,7 +62,7 @@ float cr_hypotf(float x, float y){
        the test fails with gcc 14.2.0 under Debian Linux. */
     b32u32_u v = {.f = c};
     if(v.u > 0x7f7fffffu) errno = ERANGE; // overflow
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
     return c;
   }
   double r = __builtin_sqrt(r2);
@@ -74,14 +74,14 @@ float cr_hypotf(float x, float y){
     /* Same trick as above, but here overflow also happens when r >= 2^128
        and rounding towards zero or downwards. */
     if(v.u > 0x7f7fffffu || r >= 0x1p128) errno = ERANGE; // overflow
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
     return c;
   }
   if(__builtin_expect(((t.u + 1)&0xfffffff) > 2, 1)) {
 #ifdef CORE_MATH_SUPPORT_ERRNO
     if (t.f < 0x1p-126)
       errno = ERANGE; // underflow
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
     return c;
   }
   double cd = c;

@@ -28,7 +28,7 @@ SOFTWARE.
 
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
 #include <fenv.h>
 #include <stdint.h>
 #ifdef __x86_64__
@@ -155,21 +155,21 @@ double cr_rsqrt(double x){
     } else {
 #ifdef CORE_MATH_SUPPORT_ERRNO
       errno = ERANGE; // pole error
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       return __builtin_inf(); // case x = +0
     }
   } else if(__builtin_expect(ix.u >= 0x7ffull<<52, 0)){ // NaN, Inf, x <= 0
     if(!(ix.u<<1)) {
 #ifdef CORE_MATH_SUPPORT_ERRNO
       errno = ERANGE; // pole error
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       return -__builtin_inf(); // x=-0
     }
     if(ix.u > 0xfff0000000000000ull) return x + x; // -NaN
     if(ix.u >> 63){ // x < 0
 #ifdef CORE_MATH_SUPPORT_ERRNO
       errno = EDOM;
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       feraiseexcept (FE_INVALID);
       return __builtin_nan("<0");
     }

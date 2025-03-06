@@ -29,7 +29,7 @@ SOFTWARE.
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
 #include <fenv.h>
 
 // Warning: clang also defines __GNUC__
@@ -50,7 +50,7 @@ float cr_rsqrtf(float x){
     {
 #ifdef CORE_MATH_SUPPORT_ERRNO
       errno = ERANGE;
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       return 1.0f/x; // +/-0
     }
     if(ix.u >> 31){
@@ -58,7 +58,7 @@ float cr_rsqrtf(float x){
       if(ix.u > 0xff<<23) return x + x; // nan
 #ifdef CORE_MATH_SUPPORT_ERRNO
       errno = EDOM;
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
       feraiseexcept (FE_INVALID);
       return __builtin_nanf("<0");
     }

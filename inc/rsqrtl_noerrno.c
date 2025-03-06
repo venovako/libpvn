@@ -36,7 +36,7 @@ SOFTWARE.
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
 
 // Warning: clang also defines __GNUC__
 #if defined(__GNUC__) && !defined(__clang__)
@@ -68,7 +68,7 @@ long double cr_rsqrtl (long double x){
       if(!v.m) { // x = 0
 #ifdef CORE_MATH_SUPPORT_ERRNO
 	errno = ERANGE; // pole error
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
 	return 1.0L / x;   // x=+0 and x=-0
       }
       else { // non-zero subnormal
@@ -79,7 +79,7 @@ long double cr_rsqrtl (long double x){
 	} else { // negative subnormal
 #ifdef CORE_MATH_SUPPORT_ERRNO
 	  errno = EDOM; // domain error
-#endif /* CORE_MATH_SUPPORT_ERRNO */
+#endif
 	  return 0.0L / 0.0L; // x<0: rsqrt(x)=NaN
 	}
       }
