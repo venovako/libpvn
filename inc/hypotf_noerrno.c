@@ -1,6 +1,6 @@
 /* Correctly-rounded Euclidean distance function (hypot) for binary32 values.
 
-Copyright (c) 2022 Alexei Sibidanov.
+Copyright (c) 2022-2025 Alexei Sibidanov.
 
 This file is part of the CORE-MATH project
 (https://core-math.gitlabpages.inria.fr/).
@@ -29,6 +29,14 @@ SOFTWARE.
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
+#include <fenv.h>
+
+// Warning: clang also defines __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#endif
+
+#pragma STDC FENV_ACCESS ON
 #endif
 
 typedef union {float f; uint32_t u;} b32u32_u;
@@ -79,7 +87,13 @@ float cr_hypotf(float x, float y){
   }
   if(__builtin_expect(((t.u + 1)&0xfffffff) > 2, 1)) {
 #ifdef CORE_MATH_SUPPORT_ERRNO
-    if (t.f < 0x1p-126)
+    // For RNDN, we have underflow when hypot(x,y) < 2^-126*(1-2^-25)
+    // FOR RNDZ/RNDD, we have underflow when hypot(x,y) < 2^-126
+    // For RNDU, we have underflow when hypot(x,y) < 2^-126*(1-2^-24)
+    double thres = (fegetround () == FE_TONEAREST) ? 0x1.ffffffp-127
+      : (fegetround () == FE_UPWARD) ? 0x1.fffffep-127
+      : 0x1p-126;
+    if (t.f < thres)
       errno = ERANGE; // underflow
 #endif
     return c;
