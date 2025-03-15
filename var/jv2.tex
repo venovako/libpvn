@@ -1,0 +1,171 @@
+\documentclass[a4paper,12pt,twoside]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{url}
+\title{Complex hyperbolic $2\times 2$ rotations}
+\author{Vedran Novakovi\'{c}}
+\begin{document}
+\maketitle
+Let $V$ be $J$-unitary, $H=GJG^{\ast}$ (Hermitian), and $A=G^{\ast}G$, where
+\begin{equation}
+  A=\begin{bmatrix}
+  a_{11} & \overline{a_{21}}\\
+  a_{21} & a_{22}
+  \end{bmatrix},\quad
+  J=\begin{bmatrix}
+  1 & \hphantom{-}0\\
+  0 & -1
+  \end{bmatrix},\quad
+  V=\begin{bmatrix}
+  \hphantom{\mathrm{e}^{\mathrm{i}\beta}}\cosh\phi & \mathrm{e}^{-\mathrm{i}\beta}\sinh\phi\\
+  \mathrm{e}^{\mathrm{i}\beta}\sinh\phi & \hphantom{\mathrm{e}^{-\mathrm{i}\beta}}\cosh\phi
+  \end{bmatrix}.
+  \label{e:1}
+\end{equation}
+Then, $V^{\ast}=V$ and $V^{\ast}JV=VJV^{\ast}=J$.  Find $\beta$ and
+$\phi$ such that $V^{\ast}AV=\Xi$,
+\begin{equation}
+  \Xi\!=\!\begin{bmatrix}
+  \xi_1 & \!\!0\\
+  0 & \!\!\xi_2
+  \end{bmatrix}\!=\!\begin{bmatrix}
+  \hphantom{\mathrm{e}^{\mathrm{i}\beta}}\cosh\phi & \!\mathrm{e}^{-\mathrm{i}\beta}\sinh\phi\\
+  \mathrm{e}^{\mathrm{i}\beta}\sinh\phi & \!\hphantom{\mathrm{e}^{-\mathrm{i}\beta}}\cosh\phi
+  \end{bmatrix}\!\!\begin{bmatrix}
+  a_{11} & \!\overline{a_{21}}\\
+  a_{21} & \!a_{22}
+  \end{bmatrix}\!\!\begin{bmatrix}
+  \hphantom{\mathrm{e}^{\mathrm{i}\beta}}\cosh\phi & \!\mathrm{e}^{-\mathrm{i}\beta}\sinh\phi\\
+  \mathrm{e}^{\mathrm{i}\beta}\sinh\phi & \!\hphantom{\mathrm{e}^{-\mathrm{i}\beta}}\cosh\phi
+  \end{bmatrix}.
+  \label{l:2}
+\end{equation}
+Dividing~\eqref{l:2} by $\cosh^2\phi>0$ gives, with
+$\xi_i'=\xi_i^{}/\cosh^2\phi$,
+\begin{equation}
+  \begin{bmatrix}
+  \hphantom{\mathrm{e}^{\mathrm{i}\beta}}1 & \!\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi\\
+  \mathrm{e}^{\mathrm{i}\beta}\tanh\phi & \!\hphantom{\mathrm{e}^{-\mathrm{i}\beta}}1
+  \end{bmatrix}\!\!\begin{bmatrix}
+  a_{11}^{} & \!\overline{a_{21}^{}}\\
+  a_{21}^{} & \!a_{22}^{}
+  \end{bmatrix}\!\!\begin{bmatrix}
+  \hphantom{\mathrm{e}^{\mathrm{i}\beta}}1 & \!\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi\\
+  \mathrm{e}^{\mathrm{i}\beta}\tanh\phi & \!\hphantom{\mathrm{e}^{-\mathrm{i}\beta}}1
+  \end{bmatrix}\!=\!\begin{bmatrix}
+  \xi_1' & \!0\\
+  0 & \!\xi_2'
+  \end{bmatrix}.
+  \label{l:3}
+\end{equation}
+Multiplying the first two matrices in~\eqref{l:3} gives
+\begin{displaymath}
+  \Xi'=\begin{bmatrix}
+  a_{11}^{}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi & \overline{a_{21}^{}}+a_{22}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi\\
+  a_{11}^{}\mathrm{e}^{\mathrm{i}\beta}\tanh\phi+a_{21}^{} & \overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh\phi+a_{22}^{}
+  \end{bmatrix}\!\!\begin{bmatrix}
+  \hphantom{\mathrm{e}^{\mathrm{i}\beta}}1 & \!\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi\\
+  \mathrm{e}^{\mathrm{i}\beta}\tanh\phi & \!\hphantom{\mathrm{e}^{-\mathrm{i}\beta}}1
+  \end{bmatrix},
+\end{displaymath}
+with the final multiplication producing, elementwise,
+\begin{eqnarray}
+    \xi_1'=&a_{11}^{}+(2\Re(a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta})+a_{22}^{}\tanh\phi)\tanh\phi,\label{l:4}\\
+    0=&\overline{a_{21}^{}}+(a_{11}^{}+a_{22}^{}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi)\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi,\label{l:5}\\
+    0=&a_{21}^{}+(a_{11}^{}+a_{22}^{}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh\phi)\mathrm{e}^{\mathrm{i}\beta}\tanh\phi,\label{l:6}\\
+    \xi_2'=&a_{22}^{}+(2\Re(a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta})+a_{11}^{}\tanh\phi)\tanh\phi,\label{l:7}
+\end{eqnarray}
+since $z+\bar{z}=2\Re{z}$.  Evidently, $\xi_i\in\mathbb{R}$.  If
+$a_{21}=0$ then $\tanh\phi=0$, and vice versa, if $\tanh\phi=0$, then
+from~\eqref{l:5} (or~\eqref{l:6}, which is the complex conjugate
+of~\eqref{l:5}) it follows $a_{21}=0$.  Therefore, assume in the
+following that $\tanh\phi\ne 0$.
+
+Multiplying~\eqref{l:5} by $\mathrm{e}^{\mathrm{i}\beta}$
+and~\eqref{l:6} by $\mathrm{e}^{-\mathrm{i}\beta}$, it follows
+\begin{eqnarray}
+  0=&\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+(a_{11}^{}+a_{22}^{})\tanh\phi+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi,\label{l:8}\\
+  0=&a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+(a_{11}^{}+a_{22}^{})\tanh\phi+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi.\label{l:9}
+\end{eqnarray}
+By extracting the common middle term on the right hand sides of~\eqref{l:8} and~\eqref{l:9},
+\begin{eqnarray}
+  -(a_{11}^{}+a_{22}^{})\tanh\phi=\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi,\label{l:10}\\
+  -(a_{11}^{}+a_{22}^{})\tanh\phi=a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi,\label{l:11}
+\end{eqnarray}
+it follows that the right hand sides of~\eqref{l:10} and~\eqref{l:11}
+have to be equal,
+\begin{equation}
+  \overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi=a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi,
+  \label{l:12}
+\end{equation}
+while at the same time being the complex conjugates of one another.
+Therefore, both sides in~\eqref{l:12} are real, what~\eqref{l:10}
+and~\eqref{l:11} also suggest.  With
+\begin{equation}
+  \beta=\arg(a_{21}),\quad\text{i.e.,}\quad\mathrm{e}^{\mathrm{i}\beta}=\frac{a_{21}}{|a_{21}|},\quad(a_{21}=0\implies\beta=0),
+  \label{l:13}
+\end{equation}
+this condition is always fulfilled.  Specifically, if $a_{21}$ is
+real, then $\mathrm{e}^{\mathrm{i}\beta}=\mathop{\mathrm{sign}}{a_{21}}$.
+
+Now, \eqref{l:8} and~\eqref{l:9} become
+\begin{equation}
+  |a_{21}|(1+\tanh^2\phi)=-(a_{11}+a_{22})\tanh\phi,
+  \label{l:14}
+\end{equation}
+or, after rearranging~\eqref{l:14},
+\begin{equation}
+  \frac{-|a_{21}|}{a_{11}+a_{22}}=\frac{\tanh\phi}{1+\tanh^2\phi}=\frac{1}{2}\tanh(2\phi).
+  \label{l:15}
+\end{equation}
+Note that $a_{11}\ge 0$ and $a_{22}\ge 0$ by definition, so
+$a_{11}+a_{22}=0$ if and only if $a_{11}=0$ and $a_{22}=0$, in which
+case $a_{21}=0$ (since $A$ is a Grammian), and thus~\eqref{l:15} does
+not even have to be evaluated in this degenerate case to compute
+$\tanh\phi=0$.  Another issue occurs if somehow
+$2|a_{21}|\ge(a_{11}+a_{22})$, i.e., if the computed
+$\tanh(2\phi)\le-1$.
+
+Alternatively, the hyperbolic cotangent of twice the angle might be
+computed as:
+\begin{equation}
+  \coth(2\phi)=\frac{a_{11}+a_{22}}{-2|a_{21}|},
+  \label{l:16}
+\end{equation}
+but this can easily cause overflow for small $|a_{21}|$.  On the other
+hand, underflow of $\tanh(2\phi)$, as long as it is not exactly zero,
+will cause no trouble in the further computation, and might preserve
+at least some information, possibly resulting in a non-zero
+$\tanh\phi$ as well.
+
+There are two solutions for the quadratic equation for $\tanh\phi$
+from~\eqref{l:15}, only one of which obeys $|\tanh\phi|<1$,
+\begin{equation}
+  \tanh\phi=\frac{1-\sqrt{1-\tanh^2(2\phi)}}{\tanh(2\phi)}.
+  \label{l:17}
+\end{equation}
+However, if the numerator and the denominator in~\eqref{l:17} are
+multiplied by $1+\sqrt{1-\tanh^2(2\phi)}$, a more stable form emerges
+\begin{equation}
+  \begin{aligned}
+    \tanh\phi&=\frac{1-\sqrt{1-\tanh^2(2\phi)}}{\tanh(2\phi)}\cdot\frac{1+\sqrt{1-\tanh^2(2\phi)}}{1+\sqrt{1-\tanh^2(2\phi)}}\\
+    &=\frac{1-(1-\tanh^2(2\phi))}{\tanh(2\phi)\left(1+\sqrt{1-\tanh^2(2\phi)}\right)}\\
+    &=\frac{\tanh(2\phi)}{1+\sqrt{1-\tanh^2(2\phi)}}\approx\frac{\tanh(2\phi)}{1+\sqrt{\mathop{\mathrm{fma}}(-\tanh(2\phi),\tanh(2\phi),1)}}.
+  \end{aligned}
+  \label{l:18}
+\end{equation}
+
+Having computed $\tanh\phi$, it follows that
+\begin{equation}
+  \begin{aligned}
+    \cosh\phi&=\frac{1}{\sqrt{1-\tanh^2\phi}}\\
+    &\approx\mathop{\mathrm{rsqrt}}(\mathop{\mathrm{fma}}(-\tanh\phi,\tanh\phi,1)),\\
+    \sinh\phi&=\tanh\phi\cdot\cosh\phi.
+  \end{aligned}
+  \label{l:19}
+\end{equation}
+
+\textbf{TODO}: Scaling of $A$ and the accurate computation of
+$\mathrm{e}^{\mathrm{i}\beta}$ similarly to
+\url{https://doi.org/10.1016/j.cam.2024.116003}
+\end{document}

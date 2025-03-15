@@ -61,6 +61,19 @@ dkms.conf
 *.gif
 *.png
 
+# TeX
+*.aux
+*.bbl
+*.blg
+*.bst
+*.cls
+*.fdb_latexmk
+*.fls
+*.log
+*.thm
+*.spl
+*.sty
+
 # Other
 .DS_Store
 *.bt
