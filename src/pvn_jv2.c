@@ -31,11 +31,9 @@ int main(int argc, char *argv[])
   const double a21i = ((5 == argc) ? atof(argv[4]) : 0.0);
   double cs = 1.0, snr = 0.0, sni = 0.0;
   int es = 0, lc = 0;
-  char s[46u] = { '\0' };
   if (4 == argc) {
     lc = pvn_dljv2_(&a11, &a22, &a21r, &cs, &snr, &es);
     (void)printf("pvn_dljv2_ = %d, es = %d\n", lc, es);
-    sni = 0.0;
   }
   else {
     lc = pvn_zljv2_(&a11, &a22, &a21r, &a21i, &cs, &snr, &sni, &es);
@@ -43,6 +41,7 @@ int main(int argc, char *argv[])
   }
   if (lc < 0)
     return EXIT_FAILURE;
+  char s[46u] = { '\0' };
   if (4 == argc) {
 #ifdef PVN_QUADMATH
     __float128 c[2][2];
@@ -188,7 +187,7 @@ int pvn_sljv2_(const float *const a11, const float *const a22, const float *cons
         t2 = (an / ad);
       if (t2 <= -1.0f) {
         *cs = t2;
-        return -9;
+        return -7;
       }
       t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
       /* tangent underflows */
@@ -261,7 +260,7 @@ int pvn_dljv2_(const double *const a11, const double *const a22, const double *c
         t2 = (an / ad);
       if (t2 <= -1.0) {
         *cs = t2;
-        return -9;
+        return -7;
       }
       t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
       /* tangent underflows */
@@ -508,7 +507,7 @@ int pvn_xljv2_(const long double *const a11, const long double *const a22, const
         t2 = (an / ad);
       if (t2 <= -1.0L) {
         *cs = t2;
-        return -9;
+        return -7;
       }
       t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
       /* tangent underflows */
@@ -675,7 +674,7 @@ int pvn_qljv2_(const __float128 *const a11, const __float128 *const a22, const _
         t2 = (an / ad);
       if (t2 <= -1.0q) {
         *cs = t2;
-        return -9;
+        return -7;
       }
       t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
       /* tangent underflows */
