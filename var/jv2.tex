@@ -3,10 +3,12 @@
 \usepackage{amssymb}
 \usepackage{url}
 \title{Complex hyperbolic $2\times 2$ rotations}
-\author{Vedran Novakovi\'{c}}
+\author{Vedran Novakovi\'{c}\footnote{with suggestions from Vjeran Hari}}
 \begin{document}
 \maketitle
-Let $V$ be $J$-unitary, $H=GJG^{\ast}$ (Hermitian), and $A=G^{\ast}G$, where
+Let $V\in\mathbb{C}^{2\times 2}$ be $J$-unitary and let
+$A\in\mathbb{C}^{2\times 2}$ be a Hermitian positive semidefinite
+matrix, where
 \begin{equation}
   A=\begin{bmatrix}
   a_{11} & \overline{a_{21}}\\
@@ -120,14 +122,23 @@ or, after rearranging~\eqref{l:14},
 \end{equation}
 Note that $a_{11}\ge 0$ and $a_{22}\ge 0$ by definition, so
 $a_{11}+a_{22}=0$ if and only if $a_{11}=0$ and $a_{22}=0$, in which
-case $a_{21}=0$ (since $A$ is a Grammian), and thus~\eqref{l:15} does
-not even have to be evaluated in this degenerate case to compute
-$\tanh\phi=0$.  Another issue occurs if somehow
-$2|a_{21}|\ge(a_{11}+a_{22})$, i.e., if the computed
-$\tanh(2\phi)\le-1$.
+case $a_{21}=0$, and thus~\eqref{l:15} does not even have to be
+evaluated in this degenerate case to compute $\tanh\phi=0$.
 
-Alternatively, the hyperbolic cotangent of twice the angle might be
-computed as:
+The proper sequence of checks on the inputs $a_{11}$, $a_{22}$, and
+$a_{21}$ is thus
+\begin{enumerate}
+\item if $a_{11}<0$ then ERROR; else
+\item if $a_{22}<0$ then ERROR; else
+\item if $a_{21}'=0$ then $\tanh\phi=0$,
+\end{enumerate}
+where $a_{21}'$ is $a_{21}^{}$ scaled as described below.  Else,
+proceed to compute $\tanh(2\phi)$.  If it is detected that the
+computed $\tanh(2\phi)\le-1$, then ERROR, since the input does not
+define a positive semidefinite matrix.
+
+Alternatively, the hyperbolic cotangent of $2\phi$ might be computed
+as:
 \begin{equation}
   \coth(2\phi)=\frac{a_{11}+a_{22}}{-2|a_{21}|},
   \label{l:16}
@@ -145,7 +156,7 @@ from~\eqref{l:15}, only one of which obeys $|\tanh\phi|<1$,
   \label{l:17}
 \end{equation}
 However, if the numerator and the denominator in~\eqref{l:17} are
-multiplied by $1+\sqrt{1-\tanh^2(2\phi)}$, a more stable form emerges
+multiplied by $1+\sqrt{1-\tanh^2(2\phi)}$, a more stable form emerges,
 \begin{equation}
   \begin{aligned}
     \tanh\phi&=\frac{1-\sqrt{1-\tanh^2(2\phi)}}{\tanh(2\phi)}\cdot\frac{1+\sqrt{1-\tanh^2(2\phi)}}{1+\sqrt{1-\tanh^2(2\phi)}}\\
@@ -154,18 +165,40 @@ multiplied by $1+\sqrt{1-\tanh^2(2\phi)}$, a more stable form emerges
   \end{aligned}
   \label{l:18}
 \end{equation}
-
-Having computed $\tanh\phi$, it follows that
+Since $|\tanh(2\phi)|<1$, from~\eqref{l:18} it follows that
+$|\tanh\phi|<1$ as well.  Now,
 \begin{equation}
   \begin{aligned}
-    \cosh\phi&=\frac{1}{\sqrt{1-\tanh^2\phi}}\\
-    &\approx\mathop{\mathrm{rsqrt}}(\mathop{\mathrm{fma}}(-\tanh\phi,\tanh\phi,1)),\\
+    \cosh\phi&=\frac{1}{\sqrt{1-\tanh^2\phi}}\approx\mathop{\mathrm{rsqrt}}(\mathop{\mathrm{fma}}(-\tanh\phi,\tanh\phi,1)),\\
     \sinh\phi&=\tanh\phi\cdot\cosh\phi.
   \end{aligned}
   \label{l:19}
 \end{equation}
+If $\tanh\phi$ is regarded as a computed, floating-point value, then
+$|\tanh\phi|\le 1^-$,\\where $1^-$ is the first floating-point
+predecessor of unity.  Otherwise, the computed $|\tanh(2\phi)|$ would
+have to be unity, what has already been ruled out.  Thus,
+\begin{displaymath}
+  \tanh^2\phi<|\tanh\phi|\le 1^-\implies 1-\tanh^2\phi\ge 1-1^-.
+\end{displaymath}
+Since $1-1^-$ is a floating-point value in the normal range, its
+square root is as well, so $\cosh\phi$ cannot overflow
+in~\eqref{l:19}, and neither can $\sinh\phi$.
 
-\textbf{TODO}: Scaling of $A$ and the accurate computation of
-$\mathrm{e}^{\mathrm{i}\beta}$ similarly to
-\url{https://doi.org/10.1016/j.cam.2024.116003}
+The input data has to be prescaled by the highest possible power of
+two, $2^s$, to get $a_{11}'=2^s a_{11}^{}$, $a_{22}'=2^s a_{22}^{}$,
+and $a_{21}'=2^s a_{21}^{}$, such that
+\begin{equation}
+  \max\{a_{11}',a_{22}'\}\le\nu/2,\quad
+  \max\{|\Re{a_{21}'}|,|\Im{a_{21}'}|\}\le\nu/2,
+  \label{l:20}
+\end{equation}
+where $\nu$ is the largest finite floating-point value.  This way no
+quantity in~\eqref{l:15} will overflow\footnote{not even $2|a_{21}'|$,
+since $A$ is positive semidefinite, so
+$2|a_{21}'|\le 2\sqrt{a_{11}'a_{22}'}\le\nu$, but the upper bound of
+$\nu/4$ instead of $\nu/2$ in~\eqref{l:20} might be safer}, and the
+chances of dealing with subnormal values will be minimized.  See the
+scaling of $A$ and the computation of $\mathrm{e}^{\mathrm{i}\beta}$
+in:\\\url{https://doi.org/10.1016/j.cam.2024.116003}
 \end{document}
