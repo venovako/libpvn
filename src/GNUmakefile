@@ -39,6 +39,7 @@ pvn_dot.c   \
 pvn_err.c   \
 pvn_ev2.c   \
 pvn_fmt.c   \
+pvn_jv2.c   \
 pvn_mem.c   \
 pvn_mm2.c   \
 pvn_nrm.c   \

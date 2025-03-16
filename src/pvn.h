@@ -170,6 +170,7 @@ static inline __float128 rsqrtq(__float128 x)
 #include "pvn_err.h"
 #include "pvn_ev2.h"
 #include "pvn_fmt.h"
+#include "pvn_jv2.h"
 #include "pvn_mem.h"
 #include "pvn_mm2.h"
 #include "pvn_nrm.h"
