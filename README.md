@@ -79,6 +79,7 @@ If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` 
 
 The `SAFE` variable lists, as one or more comma-separated short names, the components for which a safe implementation is requested:
 - `cma` makes the complex multiplication and FMA safe from unwarranted overflow;
+- `jv2` lowers the upper bound on the magnitudes of scaled input elements;
 - `ran` requests that all random numbers (not only those explicitly created as such) lie in the range `[xxx_MIN*2^p,xxx_MAX/4]`, where `p=0` by default;
 - `sv2` indicates that `hypotf` and `hypot` are correctly rounded and can be used for the singular value decomposition.
 

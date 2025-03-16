@@ -64,6 +64,9 @@ ifdef SAFE
 ifeq ($(findstring cma,$(SAFE)),cma)
 CFLAGS += -DPVN_CMA_SAFE="\"all_inputs\""
 endif # cma
+ifeq ($(findstring jv2,$(SAFE)),jv2)
+CFLAGS += -DPVN_JV2_SAFE="\"scal_1\""
+endif # jv2
 ifeq ($(findstring ran,$(SAFE)),ran)
 CFLAGS += -DPVN_RAN_SAFE="\"all_outputs\""
 endif # ran

@@ -1,21 +1,31 @@
 #include "pvn.h"
 
+#ifdef SUB_MAX_EXP
+#error SUM_MAX_EXP already defined
+#else /* !SUB_MAX_EXP */
+#ifdef PVN_JV2_SAFE
+#define SUB_MAX_EXP 3
+#else /* !PVN_JV2_SAFE */
+#define SUB_MAX_EXP 2
+#endif /* ?PVN_JV2_SAFE */
+#endif /* ?SUB_MAX_EXP */
+
 #ifdef FLT_BIG_EXP
 #error FLT_BIG_EXP already defined
 #else /* !FLT_BIG_EXP */
-#define FLT_BIG_EXP (FLT_MAX_EXP - 2)
+#define FLT_BIG_EXP (FLT_MAX_EXP - SUB_MAX_EXP)
 #endif /* ?FLT_BIG_EXP */
 
 #ifdef DBL_BIG_EXP
 #error DBL_BIG_EXP already defined
 #else /* !DBL_BIG_EXP */
-#define DBL_BIG_EXP (DBL_MAX_EXP - 2)
+#define DBL_BIG_EXP (DBL_MAX_EXP - SUB_MAX_EXP)
 #endif /* ?DBL_BIG_EXP */
 
 #ifdef LDBL_BIG_EXP
 #error LDBL_BIG_EXP already defined
 #else /* !LDBL_BIG_EXP */
-#define LDBL_BIG_EXP (LDBL_MAX_EXP - 2)
+#define LDBL_BIG_EXP (LDBL_MAX_EXP - SUB_MAX_EXP)
 #endif /* ?LDBL_BIG_EXP */
 
 #ifdef PVN_TEST
