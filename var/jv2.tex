@@ -40,9 +40,9 @@ $\phi$ such that $V^{\ast}AV=\Xi$,
   \hphantom{\mathrm{e}^{\mathrm{i}\beta}}\cosh\phi & \!\mathrm{e}^{-\mathrm{i}\beta}\sinh\phi\\
   \mathrm{e}^{\mathrm{i}\beta}\sinh\phi & \!\hphantom{\mathrm{e}^{-\mathrm{i}\beta}}\cosh\phi
   \end{bmatrix}.
-  \label{l:2}
+  \label{e:2}
 \end{equation}
-Dividing~\eqref{l:2} by $\cosh^2\phi>0$ gives, with
+Dividing~\eqref{e:2} by $\cosh^2\phi>0$ gives, with
 $\xi_i'=\xi_i^{}/\cosh^2\phi$,
 \begin{equation}
   \begin{bmatrix}
@@ -58,9 +58,9 @@ $\xi_i'=\xi_i^{}/\cosh^2\phi$,
   \xi_1' & \!0\\
   0 & \!\xi_2'
   \end{bmatrix}.
-  \label{l:3}
+  \label{e:3}
 \end{equation}
-Multiplying the first two matrices in~\eqref{l:3} gives
+Multiplying the first two matrices in~\eqref{e:3} gives
 \begin{displaymath}
   \Xi'=\begin{bmatrix}
   a_{11}^{}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi & \overline{a_{21}^{}}+a_{22}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi\\
@@ -72,57 +72,58 @@ Multiplying the first two matrices in~\eqref{l:3} gives
 \end{displaymath}
 with the final multiplication producing, elementwise,
 \begin{eqnarray}
-    \xi_1'=&a_{11}^{}+(2\Re(a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta})+a_{22}^{}\tanh\phi)\tanh\phi,\label{l:4}\\
-    0=&\overline{a_{21}^{}}+(a_{11}^{}+a_{22}^{}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi)\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi,\label{l:5}\\
-    0=&a_{21}^{}+(a_{11}^{}+a_{22}^{}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh\phi)\mathrm{e}^{\mathrm{i}\beta}\tanh\phi,\label{l:6}\\
-    \xi_2'=&a_{22}^{}+(2\Re(a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta})+a_{11}^{}\tanh\phi)\tanh\phi,\label{l:7}
+    \xi_1'=&a_{11}^{}+(2\Re(a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta})+a_{22}^{}\tanh\phi)\tanh\phi,\label{e:4}\\
+    0=&\overline{a_{21}^{}}+(a_{11}^{}+a_{22}^{}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi)\mathrm{e}^{-\mathrm{i}\beta}\tanh\phi,\label{e:5}\\
+    0=&a_{21}^{}+(a_{11}^{}+a_{22}^{}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh\phi)\mathrm{e}^{\mathrm{i}\beta}\tanh\phi,\label{e:6}\\
+    \xi_2'=&a_{22}^{}+(2\Re(a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta})+a_{11}^{}\tanh\phi)\tanh\phi,\label{e:7}
 \end{eqnarray}
 since $z+\bar{z}=2\Re{z}$.  Evidently, $\xi_i\in\mathbb{R}$.  If
 $a_{21}=0$ then $\tanh\phi=0$, and vice versa, if $\tanh\phi=0$, then
-from~\eqref{l:5} (or~\eqref{l:6}, which is the complex conjugate
-of~\eqref{l:5}) it follows $a_{21}=0$.  Therefore, assume in the
+from~\eqref{e:5} (or~\eqref{e:6}, which is the complex conjugate
+of~\eqref{e:5}) it follows $a_{21}=0$.  Therefore, assume in the
 following that $\tanh\phi\ne 0$.
 
-Multiplying~\eqref{l:5} by $\mathrm{e}^{\mathrm{i}\beta}$
-and~\eqref{l:6} by $\mathrm{e}^{-\mathrm{i}\beta}$, it follows
+Multiplying~\eqref{e:5} by $\mathrm{e}^{\mathrm{i}\beta}$
+and~\eqref{e:6} by $\mathrm{e}^{-\mathrm{i}\beta}$, it follows
 \begin{eqnarray}
-  0=&\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+(a_{11}^{}+a_{22}^{})\tanh\phi+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi,\label{l:8}\\
-  0=&a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+(a_{11}^{}+a_{22}^{})\tanh\phi+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi.\label{l:9}
+  0=&\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+(a_{11}^{}+a_{22}^{})\tanh\phi+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi,\label{e:8}\\
+  0=&a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+(a_{11}^{}+a_{22}^{})\tanh\phi+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi.\label{e:9}
 \end{eqnarray}
-By extracting the common middle term on the right hand sides of~\eqref{l:8} and~\eqref{l:9},
+By extracting the common middle term on the right hand sides of~\eqref{e:8} and~\eqref{e:9},
 \begin{eqnarray}
-  -(a_{11}^{}+a_{22}^{})\tanh\phi=\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi,\label{l:10}\\
-  -(a_{11}^{}+a_{22}^{})\tanh\phi=a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi,\label{l:11}
+  -(a_{11}^{}+a_{22}^{})\tanh\phi=\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi,\label{e:10}\\
+  -(a_{11}^{}+a_{22}^{})\tanh\phi=a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi,\label{e:11}
 \end{eqnarray}
-it follows that the right hand sides of~\eqref{l:10} and~\eqref{l:11}
+it follows that the right hand sides of~\eqref{e:10} and~\eqref{e:11}
 have to be equal,
 \begin{equation}
   \overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}+a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}\tanh^2\phi=a_{21}^{}\mathrm{e}^{-\mathrm{i}\beta}+\overline{a_{21}^{}}\mathrm{e}^{\mathrm{i}\beta}\tanh^2\phi,
-  \label{l:12}
+  \label{e:12}
 \end{equation}
 while at the same time being the complex conjugates of one another.
-Therefore, both sides in~\eqref{l:12} are real, what~\eqref{l:10}
-and~\eqref{l:11} also suggest.  With
+Therefore, both sides in~\eqref{e:12} are real, what~\eqref{e:10}
+and~\eqref{e:11} also suggest.  With
 \begin{equation}
   \beta=\arg(a_{21}),\quad\text{i.e.,}\quad\mathrm{e}^{\mathrm{i}\beta}=\frac{a_{21}}{|a_{21}|},\quad(a_{21}=0\implies\beta=0),
-  \label{l:13}
+  \label{e:13}
 \end{equation}
-this condition is always fulfilled.  Specifically, if $a_{21}$ is
-real, then $\mathrm{e}^{\mathrm{i}\beta}=\mathop{\mathrm{sign}}{a_{21}}$.
+this condition is always fulfilled.  If $a_{21}$ is real
+in~\eqref{e:1}, then
+$\mathrm{e}^{\mathrm{i}\beta}=\mathop{\mathrm{sign}}{a_{21}}$.
 
-Now, \eqref{l:8} and~\eqref{l:9} become
+Now, \eqref{e:8} and~\eqref{e:9} become
 \begin{equation}
   |a_{21}|(1+\tanh^2\phi)=-(a_{11}+a_{22})\tanh\phi,
-  \label{l:14}
+  \label{e:14}
 \end{equation}
-or, after rearranging~\eqref{l:14},
+or, after rearranging~\eqref{e:14},
 \begin{equation}
   \frac{-|a_{21}|}{a_{11}+a_{22}}=\frac{\tanh\phi}{1+\tanh^2\phi}=\frac{1}{2}\tanh(2\phi).
-  \label{l:15}
+  \label{e:15}
 \end{equation}
 Note that $a_{11}\ge 0$ and $a_{22}\ge 0$ by definition, so
 $a_{11}+a_{22}=0$ if and only if $a_{11}=0$ and $a_{22}=0$, in which
-case $a_{21}=0$, and thus~\eqref{l:15} does not even have to be
+case $a_{21}=0$, and thus~\eqref{e:15} does not even have to be
 evaluated in this degenerate case to compute $\tanh\phi=0$.
 
 The proper sequence of checks on the inputs $a_{11}$, $a_{22}$, and
@@ -132,7 +133,7 @@ $a_{21}$ is thus
 \item if $a_{22}<0$ then ERROR; else
 \item if $a_{21}'=0$ then $\tanh\phi=0$,
 \end{enumerate}
-where $a_{21}'$ is $a_{21}^{}$ scaled as described below.  Else,
+where $a_{21}'$ is $a_{21}^{}$, scaled as in~\eqref{e:20}.  Else,
 proceed to compute $\tanh(2\phi)$.  If it is detected that the
 computed $\tanh(2\phi)\le-1$, then ERROR, since the input does not
 define a positive semidefinite matrix.
@@ -141,7 +142,7 @@ Alternatively, the hyperbolic cotangent of $2\phi$ might be computed
 as:
 \begin{equation}
   \coth(2\phi)=\frac{a_{11}+a_{22}}{-2|a_{21}|},
-  \label{l:16}
+  \label{e:16}
 \end{equation}
 but this can easily cause overflow for small $|a_{21}|$.  On the other
 hand, underflow of $\tanh(2\phi)$, as long as it is not exactly zero,
@@ -149,13 +150,14 @@ will cause no trouble in the further computation, and might preserve
 at least some information, possibly resulting in a non-zero
 $\tanh\phi$ as well.
 
+\looseness=-1
 There are two solutions for the quadratic equation for $\tanh\phi$
-from~\eqref{l:15}, only one of which obeys $|\tanh\phi|<1$,
+from~\eqref{e:15}, only one of which obeys $|\tanh\phi|<1$,
 \begin{equation}
   \tanh\phi=\frac{1-\sqrt{1-\tanh^2(2\phi)}}{\tanh(2\phi)}.
-  \label{l:17}
+  \label{e:17}
 \end{equation}
-However, if the numerator and the denominator in~\eqref{l:17} are
+However, if the numerator and the denominator in~\eqref{e:17} are
 multiplied by $1+\sqrt{1-\tanh^2(2\phi)}$, a more stable form emerges,
 \begin{equation}
   \begin{aligned}
@@ -163,19 +165,19 @@ multiplied by $1+\sqrt{1-\tanh^2(2\phi)}$, a more stable form emerges,
     &=\frac{1-(1-\tanh^2(2\phi))}{\tanh(2\phi)\left(1+\sqrt{1-\tanh^2(2\phi)}\right)}\\
     &=\frac{\tanh(2\phi)}{1+\sqrt{1-\tanh^2(2\phi)}}\approx\frac{\tanh(2\phi)}{1+\sqrt{\mathop{\mathrm{fma}}(-\tanh(2\phi),\tanh(2\phi),1)}}.
   \end{aligned}
-  \label{l:18}
+  \label{e:18}
 \end{equation}
-Since $|\tanh(2\phi)|<1$, from~\eqref{l:18} it follows that
+Since $|\tanh(2\phi)|<1$, from~\eqref{e:18} it follows that
 $|\tanh\phi|<1$ as well.  Now,
 \begin{equation}
   \begin{aligned}
     \cosh\phi&=\frac{1}{\sqrt{1-\tanh^2\phi}}\approx\mathop{\mathrm{rsqrt}}(\mathop{\mathrm{fma}}(-\tanh\phi,\tanh\phi,1)),\\
     \sinh\phi&=\tanh\phi\cdot\cosh\phi.
   \end{aligned}
-  \label{l:19}
+  \label{e:19}
 \end{equation}
-If $\tanh\phi$ is regarded as a computed, floating-point value, then
-$|\tanh\phi|\le 1^-$,\\where $1^-$ is the first floating-point
+If $\tanh\phi$ is regarded as a computed floating-point value, then
+$|\tanh\phi|\le 1^-$, where $1^-$ is the first floating-point
 predecessor of unity.  Otherwise, the computed $|\tanh(2\phi)|$ would
 have to be unity, what has already been ruled out.  Thus,
 \begin{displaymath}
@@ -183,7 +185,7 @@ have to be unity, what has already been ruled out.  Thus,
 \end{displaymath}
 Since $1-1^-$ is a floating-point value in the normal range, its
 square root is as well, so $\cosh\phi$ cannot overflow
-in~\eqref{l:19}, and neither can $\sinh\phi$.
+in~\eqref{e:19}, and neither can $\sinh\phi$.
 
 The input data has to be prescaled by the highest possible power of
 two, $2^s$, to get $a_{11}'=2^s a_{11}^{}$, $a_{22}'=2^s a_{22}^{}$,
@@ -191,13 +193,13 @@ and $a_{21}'=2^s a_{21}^{}$, such that
 \begin{equation}
   \max\{a_{11}',a_{22}'\}\le\nu/2,\quad
   \max\{|\Re{a_{21}'}|,|\Im{a_{21}'}|\}\le\nu/2,
-  \label{l:20}
+  \label{e:20}
 \end{equation}
 where $\nu$ is the largest finite floating-point value.  This way no
-quantity in~\eqref{l:15} will overflow\footnote{not even $2|a_{21}'|$,
+quantity in~\eqref{e:15} will overflow\footnote{not even $2|a_{21}'|$,
 since $A$ is positive semidefinite, so
 $2|a_{21}'|\le 2\sqrt{a_{11}'a_{22}'}\le\nu$, but the upper bound of
-$\nu/4$ instead of $\nu/2$ in~\eqref{l:20} might be safer}, and the
+$\nu/4$ instead of $\nu/2$ in~\eqref{e:20} might be safer}, and the
 chances of dealing with subnormal values will be minimized.  See the
 scaling of $A$ and the computation of $\mathrm{e}^{\mathrm{i}\beta}$
 in:\\\url{https://doi.org/10.1016/j.cam.2024.116003}
