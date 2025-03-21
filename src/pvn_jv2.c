@@ -344,11 +344,11 @@ int pvn_cljv2_(const float *const a11, const float *const a22, const float *cons
       const float
         ar_ = fabsf(ar),
         ai_ = fabsf(ai),
-        aa = hypotf(ar_, ai_);
+        aa = hypotf(ar_, ai_); /* aa cannot be zero here if hypotf is correctly rounded */
       /* a non-zero element underflows due to scaling */
       e1 = ((((e2 & 1) && (a1 < FLT_MIN)) || ((e2 & 2) && (a2 < FLT_MIN)) || ((e2 & 4) && (ar_ < FLT_MIN)) || ((e2 & 8) && (ai_ < FLT_MIN))) << 1);
-      ar = copysignf(fminf((ar_ / aa), 1.0f), ar);
-      ai = (ai / fmaxf(aa, FLT_TRUE_MIN));
+      ar = (ar / aa);
+      ai = (ai / aa);
       const float
         an = (-2.0f * aa),
         ad = (a1 + a2),
@@ -431,11 +431,11 @@ int pvn_zljv2_(const double *const a11, const double *const a22, const double *c
       const double
         ar_ = fabs(ar),
         ai_ = fabs(ai),
-        aa = hypot(ar_, ai_);
+        aa = hypot(ar_, ai_); /* aa cannot be zero here if hypot is correctly rounded */
       /* a non-zero element underflows due to scaling */
       e1 = ((((e2 & 1) && (a1 < DBL_MIN)) || ((e2 & 2) && (a2 < DBL_MIN)) || ((e2 & 4) && (ar_ < DBL_MIN)) || ((e2 & 8) && (ai_ < DBL_MIN))) << 1);
-      ar = copysign(fmin((ar_ / aa), 1.0), ar);
-      ai = (ai / fmax(aa, DBL_TRUE_MIN));
+      ar = (ar / aa);
+      ai = (ai / aa);
       const double
         an = (-2.0 * aa),
         ad = (a1 + a2),
@@ -591,11 +591,11 @@ int pvn_wljv2_(const long double *const a11, const long double *const a22, const
       const long double
         ar_ = fabsl(ar),
         ai_ = fabsl(ai),
-        aa = hypotl(ar_, ai_);
+        aa = hypotl(ar_, ai_); /* aa cannot be zero here if hypotl is correctly rounded */
       /* a non-zero element underflows due to scaling */
       e1 = ((((e2 & 1) && (a1 < LDBL_MIN)) || ((e2 & 2) && (a2 < LDBL_MIN)) || ((e2 & 4) && (ar_ < LDBL_MIN)) || ((e2 & 8) && (ai_ < LDBL_MIN))) << 1);
-      ar = copysignl(fminl((ar_ / aa), 1.0L), ar);
-      ai = (ai / fmaxl(aa, LDBL_TRUE_MIN));
+      ar = (ar / aa);
+      ai = (ai / aa);
       const long double
         an = (-2.0L * aa),
         ad = (a1 + a2),
@@ -759,10 +759,16 @@ int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const _
         ar_ = fabsq(ar),
         ai_ = fabsq(ai),
         aa = hypotq(ar_, ai_);
+#ifdef PVN_JV2_SAFE
+      if ((aa == 0.0q) || !isfiniteq(aa)) {
+        *cs = aa;
+        return -10;
+      }
+#endif /* PVN_JV2_SAFE */
       /* a non-zero element underflows due to scaling */
       e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (ar_ < FLT128_MIN)) || ((e2 & 8) && (ai_ < FLT128_MIN))) << 1);
-      ar = copysignq(fminq((ar_ / aa), 1.0q), ar);
-      ai = (ai / fmaxq(aa, FLT128_TRUE_MIN));
+      ar = (ar / aa);
+      ai = (ai / aa);
       const __float128
         an = (-2.0q * aa),
         ad = (a1 + a2),

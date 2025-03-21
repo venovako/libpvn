@@ -1,11 +1,15 @@
 \documentclass[a4paper,12pt,twoside]{article}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsthm}
 \usepackage{url}
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}{Lemma}
 \title{Complex hyperbolic $2\times 2$ rotations}
 \author{Vedran Novakovi\'{c}\footnote{with suggestions from Vjeran Hari}}
 \begin{document}
 \maketitle
+\section{Formulas}
 Let $V\in\mathbb{C}^{2\times 2}$ be $J$-unitary and let
 $A\in\mathbb{C}^{2\times 2}$ be a Hermitian positive semidefinite
 matrix, where
@@ -160,11 +164,11 @@ from~\eqref{e:15}, only one of which obeys $|\tanh\phi|<1$,
 However, if the numerator and the denominator in~\eqref{e:17} are
 multiplied by $1+\sqrt{1-\tanh^2(2\phi)}$, a more stable form emerges,
 \begin{equation}
-  \begin{aligned}
+  \begin{split}
     \tanh\phi&=\frac{1-\sqrt{1-\tanh^2(2\phi)}}{\tanh(2\phi)}\cdot\frac{1+\sqrt{1-\tanh^2(2\phi)}}{1+\sqrt{1-\tanh^2(2\phi)}}\\
     &=\frac{1-(1-\tanh^2(2\phi))}{\tanh(2\phi)\left(1+\sqrt{1-\tanh^2(2\phi)}\right)}\\
-    &=\frac{\tanh(2\phi)}{1+\sqrt{1-\tanh^2(2\phi)}}\approx\frac{\tanh(2\phi)}{1+\sqrt{\mathop{\mathrm{fma}}(-\tanh(2\phi),\tanh(2\phi),1)}}.
-  \end{aligned}
+    &=\frac{\tanh(2\phi)}{1+\sqrt{1-\tanh^2(2\phi)}}\approx\frac{\tanh(2\phi)}{1+\mathop{\mathrm{sqrt}}(\mathop{\mathrm{fma}}(-\tanh(2\phi),\tanh(2\phi),1))}.
+  \end{split}
   \label{e:18}
 \end{equation}
 Since $|\tanh(2\phi)|<1$, from~\eqref{e:18} it follows that
@@ -203,4 +207,237 @@ $\nu/4$ instead of $\nu/2$ in~\eqref{e:20} might be safer}, and the
 chances of dealing with subnormal values will be minimized.  See the
 scaling of $A$ and the computation of $\mathrm{e}^{\mathrm{i}\beta}$
 in:\\\url{https://doi.org/10.1016/j.cam.2024.116003}
+\section{Accuracy}
+Let the computed values, unlike the exact ones, be
+\underline{underlined} in the following, let $\varepsilon$ be the
+machine precision, and assume $\mathrm{hypot}$ is correctly rounded.
+
+Also, assume that all inputs have been scaled exactly to $a_{11}'$,
+$a_{22}'$, $a_{21}'$.
+
+\begin{lem}\label{l:1}
+  If $|\tanh(2\phi)|\le 40/41$ then $|\tanh\phi|\le 4/5$, and vice
+  versa.
+\end{lem}
+\begin{proof}
+  From~\eqref{e:15},
+  \begin{displaymath}
+    |\tanh(2\phi)|=\frac{2|\tanh\phi|}{1+\tanh^2\phi}\le\frac{40}{41}\implies
+    40\tanh^2\phi-82|\tanh\phi|+40\ge 0.
+  \end{displaymath}
+  This inequality is valid for $|\tanh\phi|\le 4/5$.
+\end{proof}
+
+\begin{lem}\label{l:2}
+  Barring inexact underflow,
+  \underline{$|a_{21}'|$}=$|a_{21}'|(1+\epsilon_1^{})|$,
+  $|\epsilon_1^{}|\le\varepsilon$.
+\end{lem}
+\begin{proof}
+  From the assumption that $\mathrm{hypot}$ is correctly rounded.
+\end{proof}
+
+\begin{lem}\label{l:3}
+  With $|\epsilon_2|\le\varepsilon$, $|\epsilon_3|\le\varepsilon$, and
+  $\epsilon_4$ such that
+  \begin{displaymath}
+    1+\epsilon_4=\frac{1+\epsilon_1}{1+\epsilon_2}(1+\epsilon_3),
+  \end{displaymath}
+  barring inexact underflow it holds
+  \begin{displaymath}
+    \underline{\tanh(2\phi)}=\frac{-2|a_{21}'|(1+\epsilon_1^{})}{(a_{11}'+a_{22}')(1+\epsilon_2^{})}(1+\epsilon_3^{})=\tanh(2\phi)(1+\epsilon_4^{}).
+  \end{displaymath}
+\end{lem}
+\begin{proof}
+  From Lemma~\ref{l:2}.  Note that
+  \begin{equation}
+    \frac{(1-\varepsilon)^{\gamma}}{1+\varepsilon}\le 1+\epsilon_4\le\frac{(1+\varepsilon)^{\gamma}}{1-\varepsilon},
+    \label{e:21}
+  \end{equation}
+  where $\gamma=2$ if $a_{21}'$ is complex, and $\gamma=1$ if
+  $a_{21}'$ is real (since then $\epsilon_1^{}=0$).
+\end{proof}
+
+\begin{lem}\label{l:4}
+  Assume that $|\tanh(2\phi)|\le 40/41$.  Then
+  \begin{displaymath}
+    1-(\underline{\tanh(2\phi)})^2=(1-\tanh^2(2\phi))(1+\epsilon_5),
+  \end{displaymath}
+  where
+  \begin{equation}
+    |\epsilon_5^{}|\le\frac{1600}{81}|\epsilon_4'|,\quad\epsilon_4'=(2+\epsilon_4^{})\epsilon_4^{}.
+    \label{e:22}
+  \end{equation}
+\end{lem}
+\begin{proof}
+  Let $y=1-\tanh^2(2\phi)\ge 81/1681$.  Then, from Lemma~\ref{l:3},
+  \begin{displaymath}
+    1-(\underline{\tanh(2\phi)})^2=1-\tanh^2(2\phi)(1+\epsilon_4^{})^2=y-\tanh^2(2\phi)\epsilon_4',
+  \end{displaymath}
+  where $(1+\epsilon_4^{})^2=1+\epsilon_4'$, i.e.,
+  $\epsilon_4'=(2+\epsilon_4^{})\epsilon_4^{}$.
+
+  Using the definition of $y$, find $\epsilon_5$ such that
+  \begin{displaymath}
+    y(1+\epsilon_5^{})=y+y\epsilon_5^{}=y-\tanh^2(2\phi)\epsilon_4'=y+(y-1)\epsilon_4'.
+  \end{displaymath}
+  Therefore, by subtracting $y$ from these equalities,
+  \begin{displaymath}
+    y\epsilon_5^{}=(y-1)\epsilon_4'\implies\epsilon_5^{}=\frac{y-1}{y}\epsilon_4'.
+  \end{displaymath}
+  By taking the lower bound for $y$, and thus the upper bound for
+  $|y-1|/|y|$, it follows that
+  \begin{displaymath}
+    |\epsilon_5^{}|\le\frac{1600}{81}|\epsilon_4'|,
+  \end{displaymath}
+  i.e., $|\epsilon_5^{}|\lessapprox 19.753|\epsilon_4'|$.
+\end{proof}
+
+\begin{lem}\label{l:5}
+  With $|\epsilon_6|\le\varepsilon$ and $|\epsilon_7|\le\varepsilon$,
+  \begin{displaymath}
+    \mathop{\mathrm{sqrt}}(\mathop{\mathrm{fma}}(-\underline{\tanh(2\phi)},\underline{\tanh(2\phi)},1))=\sqrt{1-\tanh^2(2\phi)}(1+\epsilon_8),
+  \end{displaymath}
+  where
+  \begin{displaymath}
+    1+\epsilon_8=\sqrt{(1+\epsilon_5)(1+\epsilon_6)}(1+\epsilon_7).
+  \end{displaymath}
+\end{lem}
+\begin{proof}
+  From Lemma~\ref{l:4} and the definition of $\mathrm{fma}$,
+  \begin{displaymath}
+    \mathop{\mathrm{fma}}(-\underline{\tanh(2\phi)},\underline{\tanh(2\phi)},1)=(1-(\underline{\tanh(2\phi)})^2)(1+\epsilon_6).
+  \end{displaymath}
+\end{proof}
+
+\begin{lem}\label{l:6}
+  Let $x=1+\sqrt{1-\tanh^2(2\phi)}$.  Then,
+  \begin{displaymath}
+    1+\mathop{\mathrm{sqrt}}(\mathop{\mathrm{fma}}(-\underline{\tanh(2\phi)},\underline{\tanh(2\phi)},1))=x(1+\epsilon_9),
+  \end{displaymath}
+  where $|\epsilon_9|\le|\epsilon_8|/2$.
+\end{lem}
+\begin{proof}
+  From Lemma~\ref{l:5} it follows
+  \begin{displaymath}
+    1+\mathop{\mathrm{sqrt}}(\mathop{\mathrm{fma}}(-\underline{\tanh(2\phi)},\underline{\tanh(2\phi)},1))=1+(x-1)(1+\epsilon_8)=x+\epsilon_8(x-1).
+  \end{displaymath}
+  Using $50/41\le x\le 2$, since $1-\tanh^2(2\phi)\ge 81/1681$, find
+  $\epsilon_9$ such that
+  \begin{displaymath}
+    x(1+\epsilon_9)=x+x\epsilon_9=x+\epsilon_8(x-1).
+  \end{displaymath}
+  From the last two equalities subtraction of $x$ gives
+  \begin{displaymath}
+    \epsilon_9=\frac{x-1}{x}\epsilon_8.
+  \end{displaymath}
+  Therefore,
+  \begin{displaymath}
+    \frac{9}{50}|\epsilon_8|\le|\epsilon_9|\le\frac{1}{2}|\epsilon_8|.
+  \end{displaymath}
+\end{proof}
+
+\begin{lem}\label{l:7}
+  The denominator in~\eqref{e:18} is computed as
+  \begin{displaymath}
+    (1+\sqrt{1-\tanh^2(2\phi)})(1+\epsilon_{11}),
+  \end{displaymath}
+  where, with $|\epsilon_{10}|\le\varepsilon$ due to the rounding in the
+  final addition,
+  \begin{displaymath}
+    1+\epsilon_{11}=(1+\epsilon_9)(1+\epsilon_{10}).
+  \end{displaymath}
+\end{lem}
+\begin{proof}
+  From Lemma~\ref{l:6}.
+\end{proof}
+
+\begin{thm}\label{t:1}
+  With $|\epsilon_{12}|\le\varepsilon$,
+  \begin{equation}
+    \underline{\tanh\phi}=\tanh\phi(1+\epsilon_t),\quad
+    1+\epsilon_t=\frac{1+\epsilon_4}{1+\epsilon_{11}}(1+\epsilon_{12}).
+    \label{e:23}
+  \end{equation}
+\end{thm}
+\begin{proof}
+  From~\eqref{e:18}, Lemma~\eqref{l:3}, and Lemma~\eqref{l:7}.
+\end{proof}
+
+\begin{lem}\label{l:8}
+  With $\tanh\phi\le 4/5$ due to Lemma~\ref{l:1},
+  \begin{displaymath}
+    1-(\underline{\tanh\phi})^2=(1-\tanh^2\phi)(1+\epsilon_{13}),
+  \end{displaymath}
+  where
+  \begin{equation}
+    |\epsilon_{13}^{}|\le\frac{16}{9}|\epsilon_t'|,\quad
+    \epsilon_t'=(2+\epsilon_t^{})\epsilon_t^{}.
+    \label{e:24}
+  \end{equation}
+\end{lem}
+\begin{proof}
+  As for Lemma~\ref{l:4}, using $z=1-\tanh^2\phi\ge 9/25$ instead of
+  $y$.
+\end{proof}
+
+\begin{thm}\label{t:2}
+  With $|\epsilon_{14}|\le\varepsilon$ and $|\epsilon_{15}|\le\varepsilon$,
+  \begin{displaymath}
+    \underline{\cosh\phi}=\cosh\phi(1+\epsilon_c),
+  \end{displaymath}
+  where, since $\mathrm{rsqrt}$ is assumed to be correctly rounded,
+  \begin{equation}
+    1+\epsilon_c=\frac{1+\epsilon_{15}}{\sqrt{(1+\epsilon_{13})(1+\epsilon_{14})}}.
+    \label{e:25}
+  \end{equation}
+\end{thm}
+\begin{proof}
+  From~\eqref{e:19}, Lemma~\ref{l:8}, and the definition of $\mathrm{fma}$,
+  \begin{displaymath}
+    \mathop{\mathrm{fma}}(-\underline{\tanh\phi},\underline{\tanh\phi},1)=(1-(\underline{\tanh\phi})^2)(1+\epsilon_{14}).
+  \end{displaymath}
+\end{proof}
+
+\begin{thm}\label{t:3}
+  With $|\epsilon_{16}|\le\varepsilon$,
+  \begin{equation}
+    \underline{\sinh\phi}=\sinh\phi(1+\epsilon_s),\quad
+    1+\epsilon_s=(1+\epsilon_t)(1+\epsilon_c)(1+\epsilon_{16}).
+    \label{e:26}
+  \end{equation}
+\end{thm}
+\begin{proof}
+  From~\eqref{e:19}, Lemma~\ref{l:8}, and Theorem~\ref{t:2}.
+\end{proof}
+
+This completes the analysis if $a_{21}'$ is real.  Otherwise, with
+$|\epsilon_{17}|\le\varepsilon$ and $|\epsilon_{18}|\le\varepsilon$,
+and barring inexact underflow,
+\begin{displaymath}
+  \underline{\Re{e^{\mathrm{i}\beta}}}=\frac{\Re{a_{21}'}(1+\epsilon_{17}^{})}{|a_{21}'|(1+\epsilon_1^{})}=\Re{e^{\mathrm{i}\beta}}(1+\epsilon_{\Re}'),\quad
+  \underline{\Im{e^{\mathrm{i}\beta}}}=\frac{\Re{a_{21}'}(1+\epsilon_{18}^{})}{|a_{21}'|(1+\epsilon_1^{})}=\Im{e^{\mathrm{i}\beta}}(1+\epsilon_{\Im}').
+\end{displaymath}
+
+\begin{thm}\label{t:4}
+  With $|\epsilon_{19}|\le\varepsilon$ and
+  $|\epsilon_{20}|\le\varepsilon$,
+  \begin{displaymath}
+    \underline{\Re{e^{\mathrm{i}\beta}}\sinh\phi}=\Re{e^{\mathrm{i}\beta}}\sinh\phi(1+\epsilon_{\Re}^{}),\quad
+    \underline{\Im{e^{\mathrm{i}\beta}}\sinh\phi}=\Im{e^{\mathrm{i}\beta}}\sinh\phi(1+\epsilon_{\Im}^{}),
+  \end{displaymath}
+  where
+  \begin{equation}
+    1+\epsilon_{\Re}^{}=(1+\epsilon_{\Re}')(1+\epsilon_s^{})(1+\epsilon_{19}),\quad
+    1+\epsilon_{\Im}^{}=(1+\epsilon_{\Im}')(1+\epsilon_s^{})(1+\epsilon_{20}).
+    \label{e:27}
+  \end{equation}
+\end{thm}
+\begin{proof}
+  From Theorem~\ref{t:3}.
+\end{proof}
+
+\textbf{TODO}: Upper bounds on $|\epsilon_t|$, $|\epsilon_c|$,
+$|\epsilon_s|$, $|\epsilon_{\Re}|$, and $|\epsilon_{\Im}|$ can be
+obtained symbolically in the terms of $\epsilon$ and $\gamma$.
 \end{document}
