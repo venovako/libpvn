@@ -192,13 +192,9 @@ int pvn_sljv2_(const float *const a11, const float *const a22, const float *cons
       e1 = ((((e2 & 1) && (a1 < FLT_MIN)) || ((e2 & 2) && (a2 < FLT_MIN)) || ((e2 & 4) && (aa < FLT_MIN))) << 1);
       ar = copysignf(1.0f, ar);
       const float
-        an = (-2.0f * aa),
+        an = (2.0f * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0f) {
-        *cs = t2;
-        return -7;
-      }
+        t2 = -((an >= ad) ? 1.0f : (an / ad));
       t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
       /* tangent underflows */
       e2 = ((fabsf(t1) < FLT_MIN) << 2);
@@ -265,13 +261,9 @@ int pvn_dljv2_(const double *const a11, const double *const a22, const double *c
       e1 = ((((e2 & 1) && (a1 < DBL_MIN)) || ((e2 & 2) && (a2 < DBL_MIN)) || ((e2 & 4) && (aa < DBL_MIN))) << 1);
       ar = copysign(1.0, ar);
       const double
-        an = (-2.0 * aa),
+        an = (2.0 * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0) {
-        *cs = t2;
-        return -7;
-      }
+        t2 = -((an >= ad) ? 1.0 : (an / ad));
       t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
       /* tangent underflows */
       e2 = ((fabs(t1) < DBL_MIN) << 2);
@@ -350,13 +342,9 @@ int pvn_cljv2_(const float *const a11, const float *const a22, const float *cons
       ar = (ar / aa);
       ai = (ai / aa);
       const float
-        an = (-2.0f * aa),
+        an = (2.0f * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0f) {
-        *cs = t2;
-        return -9;
-      }
+        t2 = -((an >= ad) ? 1.0f : (an / ad));
       t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
       /* tangent underflows */
       e2 = ((fabsf(t1) < FLT_MIN) << 2);
@@ -437,13 +425,9 @@ int pvn_zljv2_(const double *const a11, const double *const a22, const double *c
       ar = (ar / aa);
       ai = (ai / aa);
       const double
-        an = (-2.0 * aa),
+        an = (2.0 * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0) {
-        *cs = t2;
-        return -9;
-      }
+        t2 = -((an >= ad) ? 1.0 : (an / ad));
       t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
       /* tangent underflows */
       e2 = ((fabs(t1) < DBL_MIN) << 2);
@@ -512,13 +496,9 @@ int pvn_xljv2_(const long double *const a11, const long double *const a22, const
       e1 = ((((e2 & 1) && (a1 < LDBL_MIN)) || ((e2 & 2) && (a2 < LDBL_MIN)) || ((e2 & 4) && (aa < LDBL_MIN))) << 1);
       ar = copysignl(1.0L, ar);
       const long double
-        an = (-2.0L * aa),
+        an = (2.0L * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0L) {
-        *cs = t2;
-        return -7;
-      }
+        t2 = -((an >= ad) ? 1.0L : (an / ad));
       t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
       /* tangent underflows */
       e2 = ((fabsl(t1) < LDBL_MIN) << 2);
@@ -597,13 +577,9 @@ int pvn_wljv2_(const long double *const a11, const long double *const a22, const
       ar = (ar / aa);
       ai = (ai / aa);
       const long double
-        an = (-2.0L * aa),
+        an = (2.0L * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0L) {
-        *cs = t2;
-        return -9;
-      }
+        t2 = -((an >= ad) ? 1.0L : (an / ad));
       t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
       /* tangent underflows */
       e2 = ((fabsl(t1) < LDBL_MIN) << 2);
@@ -679,13 +655,9 @@ int pvn_qljv2_(const __float128 *const a11, const __float128 *const a22, const _
       e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (aa < FLT128_MIN))) << 1);
       ar = copysignq(1.0q, ar);
       const __float128
-        an = (-2.0q * aa),
+        an = (2.0q * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0q) {
-        *cs = t2;
-        return -7;
-      }
+        t2 = -((an >= ad) ? 1.0q : (an / ad));
       t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
       /* tangent underflows */
       e2 = ((fabsq(t1) < FLT128_MIN) << 2);
@@ -770,13 +742,9 @@ int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const _
       ar = (ar / aa);
       ai = (ai / aa);
       const __float128
-        an = (-2.0q * aa),
+        an = (2.0q * aa),
         ad = (a1 + a2),
-        t2 = (an / ad);
-      if (t2 <= -1.0q) {
-        *cs = t2;
-        return -9;
-      }
+        t2 = -((an >= ad) ? 1.0q : (an / ad));
       t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
       /* tangent underflows */
       e2 = ((fabsq(t1) < FLT128_MIN) << 2);
