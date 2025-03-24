@@ -734,7 +734,7 @@ int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const _
 #ifdef PVN_JV2_SAFE
       if ((aa == 0.0q) || !isfiniteq(aa)) {
         *cs = aa;
-        return -10;
+        return -9;
       }
 #endif /* PVN_JV2_SAFE */
       /* a non-zero element underflows due to scaling */

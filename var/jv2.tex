@@ -11,8 +11,8 @@
 \maketitle
 \section{Formulas}
 Let $V\in\mathbb{C}^{2\times 2}$ be $J$-unitary and let
-$A\in\mathbb{C}^{2\times 2}$ be a Hermitian positive definite matrix,
-where
+$A\in\mathbb{C}^{2\times 2}$ be a Hermitian positive semidefinite
+matrix such that $2|a_{21}|<a_{11}+a_{22}$, where
 \begin{equation}
   A=\begin{bmatrix}
   a_{11} & \overline{a_{21}}\\
@@ -203,12 +203,9 @@ and $a_{21}'=2^s a_{21}^{}$, such that
   \label{e:20}
 \end{equation}
 where $\nu$ is the largest finite floating-point value.  This way no
-quantity in~\eqref{e:15} will overflow\footnote{not even $2|a_{21}'|$,
-since $A$ is positive definite, so
-$2|a_{21}'|\le 2\sqrt{a_{11}'a_{22}'}\le\nu$, but the upper bound of
-$\nu/4$ instead of $\nu/2$ in~\eqref{e:20} might be safer}, and the
-chances of dealing with subnormal values will be minimized.  See the
-scaling of $A$ and the computation of $\mathrm{e}^{\mathrm{i}\beta}$
+quantity in~\eqref{e:15} will overflow, and the chances of dealing
+with subnormal values will be minimized.  See the scaling of $A$ and
+the computation of $\mathrm{e}^{\mathrm{i}\beta}$
 in:\\\url{https://doi.org/10.1016/j.cam.2024.116003}
 \section{Accuracy}
 Let the computed values, unlike the exact ones, be
