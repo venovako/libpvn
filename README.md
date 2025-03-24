@@ -39,7 +39,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc|icc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux with a high optimization level
@@ -75,7 +75,7 @@ The `OPENMP` option enables OpenMP and its content is appended to the compiler's
 Set it to `true` if no additional compiler flags are desired.
 Bear in mind, however, that this will introduce a dependency on the OpenMP runtime library!
 
-If `long double` is not the 128-bit floating-point datatype, the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic, unless `COMPILER=clang` is used.
+If `long double` is not the 128-bit floating-point datatype (e.g., on Intel-compatible hardware), the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic, unless `COMPILER=clang` is used.
 
 The `SAFE` variable lists, as one or more comma-separated short names, the components for which a safe implementation is requested:
 - `cma` makes the complex multiplication and FMA safe from unwarranted overflow;
@@ -99,5 +99,7 @@ Several examples and tests are built as `*.exe` executables in the `src` and the
 ...is a work in progress.
 
 Run `doxygen` in the `doc` subdirectory to generate the HTML documentation.
+
+Some documentation can also be found in the `var` subdirectory.
 
 This work has been supported in part by Croatian Science Foundation under the project IP-2014-09-3670 ([MFBDA](https://web.math.pmf.unizg.hr/mfbda/)).
