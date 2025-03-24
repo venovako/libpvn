@@ -11,8 +11,8 @@
 \maketitle
 \section{Formulas}
 Let $V\in\mathbb{C}^{2\times 2}$ be $J$-unitary and let
-$A\in\mathbb{C}^{2\times 2}$ be a Hermitian positive semidefinite
-matrix, where
+$A\in\mathbb{C}^{2\times 2}$ be a Hermitian positive definite matrix,
+where
 \begin{equation}
   A=\begin{bmatrix}
   a_{11} & \overline{a_{21}}\\
@@ -138,9 +138,12 @@ $a_{21}$ is thus
 \item if $a_{21}'=0$ then $\tanh\phi=0$,
 \end{enumerate}
 where $a_{21}'$ is $a_{21}^{}$, scaled as in~\eqref{e:20}.  Else,
-proceed to compute $\tanh(2\phi)$.  If it is detected that the
-computed $\tanh(2\phi)\le-1$, then ERROR, since the input does not
-define a positive semidefinite matrix.
+proceed to compute $\tanh(2\phi)$.
+
+If the computed $\tanh(2\phi)\le-1$, then setting $\tanh(2\phi)=-1$
+allows the computation to proceed, to get $\cosh\phi=\infty$ and
+$|\sinh\phi|=\infty$.  The input in this case is invalid, and then it
+is up to the caller to provide a remedy.
 
 Alternatively, the hyperbolic cotangent of $2\phi$ might be computed
 as:
@@ -201,7 +204,7 @@ and $a_{21}'=2^s a_{21}^{}$, such that
 \end{equation}
 where $\nu$ is the largest finite floating-point value.  This way no
 quantity in~\eqref{e:15} will overflow\footnote{not even $2|a_{21}'|$,
-since $A$ is positive semidefinite, so
+since $A$ is positive definite, so
 $2|a_{21}'|\le 2\sqrt{a_{11}'a_{22}'}\le\nu$, but the upper bound of
 $\nu/4$ instead of $\nu/2$ in~\eqref{e:20} might be safer}, and the
 chances of dealing with subnormal values will be minimized.  See the
@@ -437,8 +440,7 @@ and barring inexact underflow,
   From Theorem~\ref{t:3}.
 \end{proof}
 
-\textbf{TODO}: Upper bounds on $|\epsilon_d|$, $|\epsilon_t|$,
-$|\epsilon_c|$, $|\epsilon_s|$, $|\epsilon_{\Re}|$, and
-$|\epsilon_{\Im}|$ can be obtained symbolically in the terms of
-$\varepsilon$ and $\gamma$.
+Upper bounds on $|\epsilon_d|$, $|\epsilon_t|$, $|\epsilon_c|$,
+$|\epsilon_s|$, $|\epsilon_{\Re}|$, and $|\epsilon_{\Im}|$ can be
+obtained symbolically in the terms of $\varepsilon$ and $\gamma$.
 \end{document}
