@@ -202,6 +202,9 @@ libpvn.so: libpvn.a
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
 	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
 
+../etc/jv2ld.exe: ../etc/jv2ld.c $(LIBS)
+	$(CC) $(CLFLAGS) -I$(MPFR)/include -I$(GMP)/include $< -o $@ $(LNK) -L$(MPFR)/lib -lmpfr -L$(GMP)/lib -lgmp $(LDFLAGS)
+
 clean:
 	-$(RM) *.exe
 	-$(RM) *.so
