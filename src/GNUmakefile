@@ -177,6 +177,22 @@ endif # XRP
 LNK += $(QUADMATH)
 CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
 
+ifeq ($(OS),Linux)
+ifndef GMP
+GMP=/usr
+endif # !GMP
+ifndef MPFR
+MPFR=/usr
+endif # !MPFR
+else # !Linux
+ifndef GMP
+GMP=/usr/local
+endif # !GMP
+ifndef MPFR
+MPFR=/usr/local
+endif # !MPFR
+endif # ?Linux
+
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)

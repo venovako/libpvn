@@ -10,7 +10,7 @@
 
 static mpfr_t A1, A2, AR, AI, CS, SNR, SNI, AA, AN, AD, T2, T1;
 
-int init_mpfr(const mpfr_prec_t *const p)
+static int init_mpfr(const mpfr_prec_t *const p)
 {
 #ifndef NDEBUG
   assert(p);
@@ -54,50 +54,7 @@ int init_mpfr(const mpfr_prec_t *const p)
   return 0;
 }
 
-void init_mpfr_(int *const info)
-{
-#ifndef NDEBUG
-  assert(info);
-#endif /* !NDEBUG */
-  const mpfr_prec_t p = 256;
-  *info = init_mpfr(&p);
-}
-
-/* __float128 ndetm1_(const __float128 *const cs1, const __float128 *const sn1, const __float128 *const e) */
-/* { */
-/* #ifndef NDEBUG */
-/*   assert(cs1); */
-/*   assert(sn1); */
-/*   assert(e); */
-/* #endif /\* !NDEBUG *\/ */
-/*   (void)mpfr_set_float128(sr, *sn1, MPFR_RNDN); */
-/*   (void)mpfr_fma(sr, sr, sr, mo, MPFR_RNDN); */
-/*   (void)mpfr_set_float128(c, *cs1, MPFR_RNDN); */
-/*   (void)mpfr_fma(c, c, c, sr, MPFR_RNDN); */
-/*   (void)mpfr_set_float128(si, *e, MPFR_RNDN); */
-/*   (void)mpfr_div(sr, c, si, MPFR_RNDN); */
-/*   return mpfr_get_float128(sr, MPFR_RNDN); */
-/* } */
-
-/* __float128 mdetm1_(const __float128 *const cs1, const __float128 *const sn1, const __float128 *const e) */
-/* { */
-/* #ifndef NDEBUG */
-/*   assert(cs1); */
-/*   assert(sn1); */
-/*   assert(e); */
-/* #endif /\* !NDEBUG *\/ */
-/*   (void)mpfr_set_float128(si, sn1[1], MPFR_RNDN); */
-/*   (void)mpfr_fma(si, si, si, mo, MPFR_RNDN); */
-/*   (void)mpfr_set_float128(sr, sn1[0], MPFR_RNDN); */
-/*   (void)mpfr_fma(sr, sr, sr, si, MPFR_RNDN); */
-/*   (void)mpfr_set_float128(c, *cs1, MPFR_RNDN); */
-/*   (void)mpfr_fma(c, c, c, sr, MPFR_RNDN); */
-/*   (void)mpfr_set_float128(si, *e, MPFR_RNDN); */
-/*   (void)mpfr_div(sr, c, si, MPFR_RNDN); */
-/*   return mpfr_get_float128(sr, MPFR_RNDN); */
-/* } */
-
-void fini_mpfr_()
+static void fini_mpfr()
 {
   mpfr_clear(T1);
   mpfr_clear(T2);
@@ -114,6 +71,7 @@ void fini_mpfr_()
   mpfr_free_cache();
 }
 
+/* e.g., ./jv2ld.exe 1024 4.895968119607223484400E-01 6.543925533503869600887E-01 -5.231534659497175174378E-01 1.309017422649569065629E-01 */
 int main(int argc, char *argv[])
 {
   if (argc != 6) {
@@ -121,13 +79,17 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   const mpfr_prec_t p = (mpfr_prec_t)atoi(argv[1]);
+#ifndef NDEBUG
   (void)printf("MPFR_PREC_MIN=%zu\n", (size_t)MPFR_PREC_MIN);
   (void)printf("MPFR_PREC_MAX=%zu\n", (size_t)MPFR_PREC_MAX);
   (void)printf("mpfr_get_emin=%zd\n", (ssize_t)mpfr_get_emin());
   (void)printf("mpfr_get_emax=%zd\n", (ssize_t)mpfr_get_emax());
+#endif /* !NDEBUG */
   (void)printf("init_mpfr=%d\n", init_mpfr(&p));
+#ifndef NDEBUG
   (void)printf("mpfr_get_emin=%zd\n", (ssize_t)mpfr_get_emin());
   (void)printf("mpfr_get_emax=%zd\n", (ssize_t)mpfr_get_emax());
+#endif /* !NDEBUG */
   char s[31] = { '\0' };
   long double a1 = strtold(argv[2], (char**)NULL);
   if (!isfinite(a1))
@@ -175,30 +137,30 @@ int main(int argc, char *argv[])
       (void)mpfr_set_ld(A2, a2, MPFR_RNDN);
       (void)mpfr_set_ld(AR, ar, MPFR_RNDN);
       (void)mpfr_set_ld(AI, ai, MPFR_RNDN);
-      (void)printf("a11  =%s\n", pvn_xtoa(s, a1));
-      (void)printf("a22  =%s\n", pvn_xtoa(s, a2));
-      (void)printf("a21r =%s\n", pvn_xtoa(s, ar));
-      (void)printf("a21i =%s\n", pvn_xtoa(s, ai));
+      (void)printf("a11   =%s\n", pvn_xtoa(s, a1));
+      (void)printf("a22   =%s\n", pvn_xtoa(s, a2));
+      (void)printf("a21r  =%s\n", pvn_xtoa(s, ar));
+      (void)printf("a21i  =%s\n", pvn_xtoa(s, ai));
       const long double
         ar_ = fabsl(ar),
         ai_ = fabsl(ai),
         aa = hypotl(ar_, ai_); /* aa cannot be zero here if hypotl is correctly rounded */
-      (void)printf("|a21|=%s\n", pvn_xtoa(s, aa));
+      (void)printf("|a21| =%s\n", pvn_xtoa(s, aa));
       (void)mpfr_hypot(AA, AR, AI, MPFR_RNDN);
-      (void)printf("|A21|=%s\n", pvn_xtoa(s, mpfr_get_ld(AA, MPFR_RNDN)));
+      (void)printf("|A21| =%s\n", pvn_xtoa(s, mpfr_get_ld(AA, MPFR_RNDN)));
       /* a non-zero element underflows due to scaling */
       e1 = ((((e2 & 1) && (a1 < LDBL_MIN)) || ((e2 & 2) && (a2 < LDBL_MIN)) || ((e2 & 4) && (ar_ < LDBL_MIN)) || ((e2 & 8) && (ai_ < LDBL_MIN))) << 1);
       ar = (ar / aa);
-      (void)printf("a21r'=%s\n", pvn_xtoa(s, ar));
+      (void)printf("a21r' =%s\n", pvn_xtoa(s, ar));
       (void)mpfr_div(AR, AR, AA, MPFR_RNDN);
       ai = (ai / aa);
-      (void)printf("a21i'=%s\n", pvn_xtoa(s, ai));
+      (void)printf("a21i' =%s\n", pvn_xtoa(s, ai));
       (void)mpfr_div(AI, AI, AA, MPFR_RNDN);
       const long double
         an = (2.0L * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0L : (an / ad));
-      (void)printf("t2   =%s\n", pvn_xtoa(s, t2));
+      (void)printf("t2    =%s\n", pvn_xtoa(s, t2));
       (void)mpfr_set_ld(AN, an, MPFR_RNDN);
       (void)mpfr_add(AD, A1, A2, MPFR_RNDN);
       if (an >= ad)
@@ -206,14 +168,14 @@ int main(int argc, char *argv[])
       else
         (void)mpfr_div(T2, AN, AD, MPFR_RNDN);
       t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
-      (void)printf("t1   =%s\n", pvn_xtoa(s, t1));
+      (void)printf("t1    =%s\n", pvn_xtoa(s, t1));
       (void)mpfr_neg(T1, T2, MPFR_RNDN);
       (void)mpfr_set_ld(CS, 1.0L, MPFR_RNDN);
       (void)mpfr_fma(T1, T1, T2, CS, MPFR_RNDN);
       (void)mpfr_sqrt(T1, T1, MPFR_RNDN);
       (void)mpfr_add(T1, CS, T1, MPFR_RNDN);
       (void)mpfr_div(T1, T2, T1, MPFR_RNDN);
-      (void)printf("T1   =%s\n", pvn_xtoa(s, mpfr_get_ld(T1, MPFR_RNDN)));
+      (void)printf("T1    =%s\n", pvn_xtoa(s, mpfr_get_ld(T1, MPFR_RNDN)));
       /* tangent underflows */
       e2 = ((fabsl(t1) < LDBL_MIN) << 2);
     }
@@ -223,17 +185,17 @@ int main(int argc, char *argv[])
   else
     es = e2 = e1 = 0;
   cs = fmal(-t1, t1, 1.0L);
-  (void)printf("cs'  =%s\n", pvn_xtoa(s, cs));
+  (void)printf("t1^2+1=%s\n", pvn_xtoa(s, cs));
   (void)mpfr_neg(SNR, T1, MPFR_RNDN);
   (void)mpfr_fma(CS, SNR, T1, CS, MPFR_RNDN);
-  (void)printf("CS'  =%s\n", pvn_xtoa(s, mpfr_get_ld(CS, MPFR_RNDN)));
-  (void)printf("cs'' =%s\n", pvn_xtoa(s, 1.0L / sqrtl(cs)));
+  (void)printf("T1^2+1=%s\n", pvn_xtoa(s, mpfr_get_ld(CS, MPFR_RNDN)));
+  (void)printf("cs'   =%s\n", pvn_xtoa(s, 1.0L / sqrtl(cs)));
   cs = rsqrtl(cs);
-  (void)printf("cs   =%s\n", pvn_xtoa(s, cs));
+  (void)printf("cs    =%s\n", pvn_xtoa(s, cs));
   (void)mpfr_rec_sqrt(CS, CS, MPFR_RNDN);
-  (void)printf("CS   =%s\n", pvn_xtoa(s, mpfr_get_ld(CS, MPFR_RNDN)));
+  (void)printf("CS    =%s\n", pvn_xtoa(s, mpfr_get_ld(CS, MPFR_RNDN)));
   const long double s1 = (cs * t1);
-  (void)printf("sn   =%s\n", pvn_xtoa(s, s1));
+  (void)printf("s1    =%s\n", pvn_xtoa(s, s1));
   (void)mpfr_mul(SNI, CS, T1, MPFR_RNDN);
   snr = (ar * s1);
   (void)mpfr_mul(SNR, AR, SNI, MPFR_RNDN);
@@ -242,6 +204,6 @@ int main(int argc, char *argv[])
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsl(snr) < LDBL_MIN)) << 3);
   ei = ((ei && (fabsl(sni) < LDBL_MIN)) << 4);
-  fini_mpfr_();
+  fini_mpfr();
   return EXIT_SUCCESS;
 }
