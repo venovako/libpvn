@@ -8,7 +8,7 @@
 #define LDBL_BIG_EXP (LDBL_MAX_EXP - 2)
 #endif /* ?LDBL_BIG_EXP */
 
-static mpfr_t A1, A2, AR, AI, CS, SNR, SNI, AA, AN, AD, T2, T1;
+static mpfr_t A1, A2, AR, AI, CH, SHR, SHI, AA, AN, AD, T2, T1;
 
 static int init_mpfr(const mpfr_prec_t *const p)
 {
@@ -35,11 +35,11 @@ static int init_mpfr(const mpfr_prec_t *const p)
     return 5;
   if (mpfr_init_set_ld(AI, 0.0L, MPFR_RNDN))
     return 6;
-  if (mpfr_init_set_ld(CS, 1.0L, MPFR_RNDN))
+  if (mpfr_init_set_ld(CH, 1.0L, MPFR_RNDN))
     return 7;
-  if (mpfr_init_set_ld(SNR, 0.0L, MPFR_RNDN))
+  if (mpfr_init_set_ld(SHR, 0.0L, MPFR_RNDN))
     return 8;
-  if (mpfr_init_set_ld(SNI, 0.0L, MPFR_RNDN))
+  if (mpfr_init_set_ld(SHI, 0.0L, MPFR_RNDN))
     return 9;
   if (mpfr_init_set_ld(AA, 0.0L, MPFR_RNDN))
     return 10;
@@ -61,9 +61,9 @@ static void fini_mpfr()
   mpfr_clear(AD);
   mpfr_clear(AN);
   mpfr_clear(AA);
-  mpfr_clear(SNI);
-  mpfr_clear(SNR);
-  mpfr_clear(CS);
+  mpfr_clear(SHI);
+  mpfr_clear(SHR);
+  mpfr_clear(CH);
   mpfr_clear(AI);
   mpfr_clear(AR);
   mpfr_clear(A2);
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     er = (ar != 0.0L),
     ei = (ai != 0.0L),
     es = 0;
-  long double cs = 0.0L, snr = 0.0L, sni = 0.0L, t1 = 0.0L;
+  long double ch = 0.0L, shr = 0.0L, shi = 0.0L, t1 = 0.0L;
   if (er || ei) {
     es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
     if (es) {
@@ -170,10 +170,10 @@ int main(int argc, char *argv[])
       t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
       (void)printf("t1    =%s\n", pvn_xtoa(s, t1));
       (void)mpfr_neg(T1, T2, MPFR_RNDN);
-      (void)mpfr_set_ld(CS, 1.0L, MPFR_RNDN);
-      (void)mpfr_fma(T1, T1, T2, CS, MPFR_RNDN);
+      (void)mpfr_set_ld(CH, 1.0L, MPFR_RNDN);
+      (void)mpfr_fma(T1, T1, T2, CH, MPFR_RNDN);
       (void)mpfr_sqrt(T1, T1, MPFR_RNDN);
-      (void)mpfr_add(T1, CS, T1, MPFR_RNDN);
+      (void)mpfr_add(T1, CH, T1, MPFR_RNDN);
       (void)mpfr_div(T1, T2, T1, MPFR_RNDN);
       (void)printf("T1    =%s\n", pvn_xtoa(s, mpfr_get_ld(T1, MPFR_RNDN)));
       /* tangent underflows */
@@ -184,26 +184,26 @@ int main(int argc, char *argv[])
   }
   else
     es = e2 = e1 = 0;
-  cs = fmal(-t1, t1, 1.0L);
-  (void)printf("t1^2+1=%s\n", pvn_xtoa(s, cs));
-  (void)mpfr_neg(SNR, T1, MPFR_RNDN);
-  (void)mpfr_fma(CS, SNR, T1, CS, MPFR_RNDN);
-  (void)printf("T1^2+1=%s\n", pvn_xtoa(s, mpfr_get_ld(CS, MPFR_RNDN)));
-  (void)printf("cs'   =%s\n", pvn_xtoa(s, 1.0L / sqrtl(cs)));
-  cs = rsqrtl(cs);
-  (void)printf("cs    =%s\n", pvn_xtoa(s, cs));
-  (void)mpfr_rec_sqrt(CS, CS, MPFR_RNDN);
-  (void)printf("CS    =%s\n", pvn_xtoa(s, mpfr_get_ld(CS, MPFR_RNDN)));
-  const long double s1 = (cs * t1);
+  ch = fmal(-t1, t1, 1.0L);
+  (void)printf("t1^2+1=%s\n", pvn_xtoa(s, ch));
+  (void)mpfr_neg(SHR, T1, MPFR_RNDN);
+  (void)mpfr_fma(CH, SHR, T1, CH, MPFR_RNDN);
+  (void)printf("T1^2+1=%s\n", pvn_xtoa(s, mpfr_get_ld(CH, MPFR_RNDN)));
+  (void)printf("ch'   =%s\n", pvn_xtoa(s, 1.0L / sqrtl(ch)));
+  ch = rsqrtl(ch);
+  (void)printf("ch    =%s\n", pvn_xtoa(s, ch));
+  (void)mpfr_rec_sqrt(CH, CH, MPFR_RNDN);
+  (void)printf("CH    =%s\n", pvn_xtoa(s, mpfr_get_ld(CH, MPFR_RNDN)));
+  const long double s1 = (ch * t1);
   (void)printf("s1    =%s\n", pvn_xtoa(s, s1));
-  (void)mpfr_mul(SNI, CS, T1, MPFR_RNDN);
-  snr = (ar * s1);
-  (void)mpfr_mul(SNR, AR, SNI, MPFR_RNDN);
-  sni = (ai * s1);
-  (void)mpfr_mul(SNI, AI, SNI, MPFR_RNDN);
+  (void)mpfr_mul(SHI, CH, T1, MPFR_RNDN);
+  shr = (ar * s1);
+  (void)mpfr_mul(SHR, AR, SHI, MPFR_RNDN);
+  shi = (ai * s1);
+  (void)mpfr_mul(SHI, AI, SHI, MPFR_RNDN);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsl(snr) < LDBL_MIN)) << 3);
-  ei = ((ei && (fabsl(sni) < LDBL_MIN)) << 4);
+  er = ((er && (fabsl(shr) < LDBL_MIN)) << 3);
+  ei = ((ei && (fabsl(shi) < LDBL_MIN)) << 4);
   fini_mpfr();
   return EXIT_SUCCESS;
 }

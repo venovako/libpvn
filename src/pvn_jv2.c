@@ -39,14 +39,14 @@ int main(int argc, char *argv[])
   const double a22 = atof(argv[2]);
   const double a21r = atof(argv[3]);
   const double a21i = ((5 == argc) ? atof(argv[4]) : 0.0);
-  double cs = 1.0, snr = 0.0, sni = 0.0;
+  double ch = 1.0, shr = 0.0, shi = 0.0;
   int es = 0, lc = 0;
   if (4 == argc) {
-    lc = pvn_dljv2_(&a11, &a22, &a21r, &cs, &snr, &es);
+    lc = pvn_dljv2_(&a11, &a22, &a21r, &ch, &shr, &es);
     (void)printf("pvn_dljv2_ = %d, es = %d\n", lc, es);
   }
   else {
-    lc = pvn_zljv2_(&a11, &a22, &a21r, &a21i, &cs, &snr, &sni, &es);
+    lc = pvn_zljv2_(&a11, &a22, &a21r, &a21i, &ch, &shr, &shi, &es);
     (void)printf("pvn_zljv2_ = %d, es = %d\n", lc, es);
   }
   if (lc < 0)
@@ -64,13 +64,13 @@ int main(int argc, char *argv[])
     (void)printf("[%s,", pvn_dtoa(s, a21r));
     (void)printf("%s]\n", pvn_dtoa(s, a22));
     (void)printf("V =\n");
-    (void)printf("[%s,", pvn_dtoa(s, cs));
-    (void)printf("%s]\n", pvn_dtoa(s, snr));
-    (void)printf("[%s,", pvn_dtoa(s, snr));
-    (void)printf("%s]\n", pvn_dtoa(s, cs));
+    (void)printf("[%s,", pvn_dtoa(s, ch));
+    (void)printf("%s]\n", pvn_dtoa(s, shr));
+    (void)printf("[%s,", pvn_dtoa(s, shr));
+    (void)printf("%s]\n", pvn_dtoa(s, ch));
     (void)printf("V^T A V =\n");
-    pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), cs, snr, snr, cs, a11, a21r, a21r, a22);
-    pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), c[0][0], c[1][0], c[0][1], c[1][1], cs, snr, snr, cs);
+    pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), ch, shr, shr, ch, a11, a21r, a21r, a22);
+    pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), c[0][0], c[1][0], c[0][1], c[1][1], ch, shr, shr, ch);
     (void)printf("[%s,", pvn_qtoa(s, c[0][0]));
     (void)printf("%s]\n", pvn_qtoa(s, c[0][1]));
     (void)printf("[%s,", pvn_qtoa(s, c[1][0]));
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     c[1][0] =  0.0;
     c[1][1] =  1.0;
     (void)printf("V^T J V - J =\n");
-    pvn_qmma2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), cs, snr, -snr, -cs, cs, snr, snr, cs);
+    pvn_qmma2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), ch, shr, -shr, -ch, ch, shr, shr, ch);
     (void)printf("[%s,", pvn_qtoa(s, c[0][0]));
     (void)printf("%s]\n", pvn_qtoa(s, c[0][1]));
     (void)printf("[%s,", pvn_qtoa(s, c[1][0]));
@@ -102,16 +102,16 @@ int main(int argc, char *argv[])
     (void)printf("(%s,", pvn_dtoa(s, a22));
     (void)printf("%s)]\n", pvn_dtoa(s, 0.0));
     (void)printf("V =\n");
-    (void)printf("[(%s,", pvn_dtoa(s, cs));
+    (void)printf("[(%s,", pvn_dtoa(s, ch));
     (void)printf("%s),", pvn_dtoa(s, 0.0));
-    (void)printf("(%s,", pvn_dtoa(s, snr));
-    (void)printf("%s)]\n", pvn_dtoa(s, -sni));
-    (void)printf("[(%s,", pvn_dtoa(s, snr));
-    (void)printf("%s),", pvn_dtoa(s, sni));
-    (void)printf("(%s,", pvn_dtoa(s, cs));
+    (void)printf("(%s,", pvn_dtoa(s, shr));
+    (void)printf("%s)]\n", pvn_dtoa(s, -shi));
+    (void)printf("[(%s,", pvn_dtoa(s, shr));
+    (void)printf("%s),", pvn_dtoa(s, shi));
+    (void)printf("(%s,", pvn_dtoa(s, ch));
     (void)printf("%s)]\n", pvn_dtoa(s, 0.0));
-    pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), cs, 0.0, snr, sni, snr, -sni, cs, 0.0, a11, 0.0, a21r, a21i, a21r, -a21i, a22, 0.0);
-    pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), c[0][0], c[0][1], c[1][0], c[1][1], c[0][2], c[0][3], c[1][2], c[1][3], cs, 0.0, snr, sni, snr, -sni, cs, 0.0);
+    pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), ch, 0.0, shr, shi, shr, -shi, ch, 0.0, a11, 0.0, a21r, a21i, a21r, -a21i, a22, 0.0);
+    pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), c[0][0], c[0][1], c[1][0], c[1][1], c[0][2], c[0][3], c[1][2], c[1][3], ch, 0.0, shr, shi, shr, -shi, ch, 0.0);
     (void)printf("V^H A V =\n");
     (void)printf("[(%s,", pvn_qtoa(s, c[0][0]));
     (void)printf("%s),", pvn_qtoa(s, c[0][1]));
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     c[1][1] =  0.0;
     c[1][2] =  1.0;
     c[1][3] =  0.0;
-    pvn_ymma2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), cs, 0.0, snr, sni, -snr, sni, -cs, -0.0, cs, 0.0, snr, sni, snr, -sni, cs, 0.0);
+    pvn_ymma2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), ch, 0.0, shr, shi, -shr, shi, -ch, -0.0, ch, 0.0, shr, shi, shr, -shi, ch, 0.0);
     (void)printf("V^H J V - J =\n");
     (void)printf("[(%s,", pvn_qtoa(s, c[0][0]));
     (void)printf("%s),", pvn_qtoa(s, c[0][1]));
@@ -143,13 +143,13 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_sljv2_(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, int *const es)
+int pvn_sljv2_(const float *const a11, const float *const a22, const float *const a21, float *const ch, float *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(sn);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(sh);
   PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
@@ -204,21 +204,21 @@ int pvn_sljv2_(const float *const a11, const float *const a22, const float *cons
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrtf(fmaf(-t1, t1, 1.0f));
-  const float s1 = (wt ? t1 : (*cs * t1));
-  *sn = (ar * s1);
+  *ch = rsqrtf(fmaf(-t1, t1, 1.0f));
+  const float s1 = (wt ? t1 : (*ch * t1));
+  *sh = (ar * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsf(*sn) < FLT_MIN)) << 3);
+  er = ((er && (fabsf(*sh) < FLT_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
-int pvn_dljv2_(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, int *const es)
+int pvn_dljv2_(const double *const a11, const double *const a22, const double *const a21, double *const ch, double *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(sn);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(sh);
   PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
@@ -273,23 +273,23 @@ int pvn_dljv2_(const double *const a11, const double *const a22, const double *c
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrt(fma(-t1, t1, 1.0));
-  const double s1 = (wt ? t1 : (*cs * t1));
-  *sn = (ar * s1);
+  *ch = rsqrt(fma(-t1, t1, 1.0));
+  const double s1 = (wt ? t1 : (*ch * t1));
+  *sh = (ar * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabs(*sn) < DBL_MIN)) << 3);
+  er = ((er && (fabs(*sh) < DBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
-int pvn_cljv2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, int *const es)
+int pvn_cljv2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const ch, float *const shr, float *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21r);
   PVN_ASSERT(a21i);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(snr);
-  PVN_ASSERT(sni);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(shr);
+  PVN_ASSERT(shi);
   PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
@@ -354,25 +354,25 @@ int pvn_cljv2_(const float *const a11, const float *const a22, const float *cons
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrtf(fmaf(-t1, t1, 1.0f));
-  const float s1 = (wt ? t1 : (*cs * t1));
-  *snr = (ar * s1);
-  *sni = (ai * s1);
+  *ch = rsqrtf(fmaf(-t1, t1, 1.0f));
+  const float s1 = (wt ? t1 : (*ch * t1));
+  *shr = (ar * s1);
+  *shi = (ai * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsf(*snr) < FLT_MIN)) << 3);
-  ei = ((ei && (fabsf(*sni) < FLT_MIN)) << 4);
+  er = ((er && (fabsf(*shr) < FLT_MIN)) << 3);
+  ei = ((ei && (fabsf(*shi) < FLT_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 
-int pvn_zljv2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, int *const es)
+int pvn_zljv2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const ch, double *const shr, double *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21r);
   PVN_ASSERT(a21i);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(snr);
-  PVN_ASSERT(sni);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(shr);
+  PVN_ASSERT(shi);
   PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
@@ -437,23 +437,23 @@ int pvn_zljv2_(const double *const a11, const double *const a22, const double *c
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrt(fma(-t1, t1, 1.0));
-  const double s1 = (wt ? t1 : (*cs * t1));
-  *snr = (ar * s1);
-  *sni = (ai * s1);
+  *ch = rsqrt(fma(-t1, t1, 1.0));
+  const double s1 = (wt ? t1 : (*ch * t1));
+  *shr = (ar * s1);
+  *shi = (ai * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabs(*snr) < DBL_MIN)) << 3);
-  ei = ((ei && (fabs(*sni) < DBL_MIN)) << 4);
+  er = ((er && (fabs(*shr) < DBL_MIN)) << 3);
+  ei = ((ei && (fabs(*shi) < DBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 
-int pvn_xljv2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, int *const es)
+int pvn_xljv2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(sn);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(sh);
   PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
@@ -508,23 +508,23 @@ int pvn_xljv2_(const long double *const a11, const long double *const a22, const
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrtl(fmal(-t1, t1, 1.0L));
-  const long double s1 = (wt ? t1 : (*cs * t1));
-  *sn = (ar * s1);
+  *ch = rsqrtl(fmal(-t1, t1, 1.0L));
+  const long double s1 = (wt ? t1 : (*ch * t1));
+  *sh = (ar * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsl(*sn) < LDBL_MIN)) << 3);
+  er = ((er && (fabsl(*sh) < LDBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
-int pvn_wljv2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, int *const es)
+int pvn_wljv2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21r);
   PVN_ASSERT(a21i);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(snr);
-  PVN_ASSERT(sni);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(shr);
+  PVN_ASSERT(shi);
   PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
@@ -589,13 +589,13 @@ int pvn_wljv2_(const long double *const a11, const long double *const a22, const
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrtl(fmal(-t1, t1, 1.0L));
-  const long double s1 = (wt ? t1 : (*cs * t1));
-  *snr = (ar * s1);
-  *sni = (ai * s1);
+  *ch = rsqrtl(fmal(-t1, t1, 1.0L));
+  const long double s1 = (wt ? t1 : (*ch * t1));
+  *shr = (ar * s1);
+  *shi = (ai * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsl(*snr) < LDBL_MIN)) << 3);
-  ei = ((ei && (fabsl(*sni) < LDBL_MIN)) << 4);
+  er = ((er && (fabsl(*shr) < LDBL_MIN)) << 3);
+  ei = ((ei && (fabsl(*shi) < LDBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 
@@ -606,13 +606,13 @@ int pvn_wljv2_(const long double *const a11, const long double *const a22, const
 #define FLT128_BIG_EXP (FLT128_MAX_EXP - 3)
 #endif /* ?FLT128_BIG_EXP */
 
-int pvn_qljv2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, int *const es)
+int pvn_qljv2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(sn);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(sh);
   PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
@@ -667,23 +667,23 @@ int pvn_qljv2_(const __float128 *const a11, const __float128 *const a22, const _
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrtq(fmaq(-t1, t1, 1.0q));
-  const __float128 s1 = (wt ? t1 : (*cs * t1));
-  *sn = (ar * s1);
+  *ch = rsqrtq(fmaq(-t1, t1, 1.0q));
+  const __float128 s1 = (wt ? t1 : (*ch * t1));
+  *sh = (ar * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsq(*sn) < FLT128_MIN)) << 3);
+  er = ((er && (fabsq(*sh) < FLT128_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
-int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, int *const es)
+int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21r);
   PVN_ASSERT(a21i);
-  PVN_ASSERT(cs);
-  PVN_ASSERT(snr);
-  PVN_ASSERT(sni);
+  PVN_ASSERT(ch);
+  PVN_ASSERT(shr);
+  PVN_ASSERT(shi);
   PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
@@ -733,7 +733,7 @@ int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const _
         aa = hypotq(ar_, ai_);
 #ifdef PVN_JV2_SAFE
       if ((aa == 0.0q) || !isfiniteq(aa)) {
-        *cs = aa;
+        *ch = aa;
         return -9;
       }
 #endif /* PVN_JV2_SAFE */
@@ -754,24 +754,24 @@ int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const _
   }
   else
     *es = e2 = e1 = 0;
-  *cs = rsqrtq(fmaq(-t1, t1, 1.0q));
-  const __float128 s1 = (wt ? t1 : (*cs * t1));
-  *snr = (ar * s1);
-  *sni = (ai * s1);
+  *ch = rsqrtq(fmaq(-t1, t1, 1.0q));
+  const __float128 s1 = (wt ? t1 : (*ch * t1));
+  *shr = (ar * s1);
+  *shi = (ai * s1);
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsq(*snr) < FLT128_MIN)) << 3);
-  ei = ((ei && (fabsq(*sni) < FLT128_MIN)) << 4);
+  er = ((er && (fabsq(*shr) < FLT128_MIN)) << 3);
+  ei = ((ei && (fabsq(*shi) < FLT128_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 #else /* !PVN_QUADMATH */
-int pvn_qljv2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, int *const es)
+int pvn_qljv2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
 {
-  return pvn_xljv2_(a11, a22, a21, cs, sn, es);
+  return pvn_xljv2_(a11, a22, a21, ch, sh, es);
 }
 
-int pvn_yljv2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, int *const es)
+int pvn_yljv2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
 {
-  return pvn_wljv2_(a11, a22, a21r, a21i, cs, snr, sni, es);
+  return pvn_wljv2_(a11, a22, a21r, a21i, ch, shr, shi, es);
 }
 #endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */
