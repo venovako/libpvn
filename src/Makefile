@@ -8,7 +8,7 @@ MARCH=Host
 !IFNDEF NDEBUG
 NDEBUG=d
 !ENDIF # NDEBUG
-CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x86_64\"" /DPVN_COMPILER="\"icx\"" /DPVN_SV2_SAFE="\"precise\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /MT /O$(NDEBUG) /Qx$(MARCH) /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0
+CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDEBUG=$(NDEBUG) /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x86_64\"" /DPVN_COMPILER="\"icx\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /MT /O$(NDEBUG) /Qx$(MARCH) /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /Wno-deprecated-declarations /Wno-overriding-option
 SRCS= \
 pvn.c \
 pvn_aux.c \
@@ -95,7 +95,7 @@ pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
 
 .c.obj:
-	$(CC) $(CFLAGS) /c $<
+	$(CC) $(CFLAGS) /c $< /Fo$@
 
 .c.exe:
 	$(CC) $(CFLAGS) /DPVN_TEST="\"static_exe\"" $< /link /RELEASE /LIBPATH:. $(LIBS)
@@ -105,5 +105,4 @@ clean:
 	-$(RM) *.lib
 	-$(RM) *.obj
 	-$(RM) ..\inc\*.obj
-	-$(RM) *.opt.yaml
-	-$(RM) ..\inc\*.opt.yaml
+	-$(RM) *.optrpt

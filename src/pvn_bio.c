@@ -16,7 +16,11 @@ int main(int argc, char *argv[])
 }
 #else /* !PVN_TEST */
 static const size_t GiB = (size_t)(1ull << 30u);
+#ifdef _WIN32
+static const int perms = (_S_IREAD | _S_IWRITE);
+#else /* !_WIN32 */
 static const mode_t perms = (S_IRUSR | S_IWUSR);
+#endif /* ?_WIN32 */
 
 int PVN_FABI(pvn_bopen_ro,PVN_BOPEN_RO)(off_t *const sz, const char *const fn, ...)
 {

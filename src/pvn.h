@@ -183,9 +183,6 @@ static inline __float128 rsqrtq(__float128 x)
 #ifndef off_t
 #define off_t ssize_t
 #endif /* !off_t */
-#ifndef mode_t
-#define mode_t int
-#endif /* !mode_t */
 #endif /* _WIN32 */
 
 #include "pvn_aux.h"
