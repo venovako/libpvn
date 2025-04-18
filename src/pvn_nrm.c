@@ -7,13 +7,13 @@ int main(/* int argc, char *argv[] */)
   double f = 0.0;
   const int m = 4;
   const unsigned i = 2u;
-  pvn_znrm2_(&f, &m, &(x[0][0]), &i, &(x[0][1]), &i);
+  PVN_FABI(pvn_znrm2,PVN_ZNRM2)(&f, &m, &(x[0][0]), &i, &(x[0][1]), &i);
   /* expected output: 4.472136 */
   (void)printf("%#F\n", f);
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-void pvn_snrm2_(float *const f, const int *const m, const float *const x, const unsigned *const ix)
+void PVN_FABI(pvn_snrm2,PVN_SNRM2)(float *const f, const int *const m, const float *const x, const unsigned *const ix)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -35,7 +35,7 @@ void pvn_snrm2_(float *const f, const int *const m, const float *const x, const 
   }
 }
 
-void pvn_cnrm2_(float *const f, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi)
+void PVN_FABI(pvn_cnrm2,PVN_CNRM2)(float *const f, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -72,7 +72,7 @@ void pvn_cnrm2_(float *const f, const int *const m, const float *const xr, const
   }
 }
 
-void pvn_dnrm2_(double *const f, const int *const m, const double *const x, const unsigned *const ix)
+void PVN_FABI(pvn_dnrm2,PVN_DNRM2)(double *const f, const int *const m, const double *const x, const unsigned *const ix)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -94,7 +94,7 @@ void pvn_dnrm2_(double *const f, const int *const m, const double *const x, cons
   }
 }
 
-void pvn_znrm2_(double *const f, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi)
+void PVN_FABI(pvn_znrm2,PVN_ZNRM2)(double *const f, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -131,7 +131,7 @@ void pvn_znrm2_(double *const f, const int *const m, const double *const xr, con
   }
 }
 
-void pvn_xnrm2_(long double *const f, const int *const m, const long double *const x, const unsigned *const ix)
+void PVN_FABI(pvn_xnrm2,PVN_XNRM2)(long double *const f, const int *const m, const long double *const x, const unsigned *const ix)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -153,7 +153,7 @@ void pvn_xnrm2_(long double *const f, const int *const m, const long double *con
   }
 }
 
-void pvn_wnrm2_(long double *const f, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi)
+void PVN_FABI(pvn_wnrm2,PVN_WNRM2)(long double *const f, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -191,7 +191,7 @@ void pvn_wnrm2_(long double *const f, const int *const m, const long double *con
 }
 
 #ifdef PVN_QUADMATH
-void pvn_qnrm2_(__float128 *const f, const int *const m, const __float128 *const x, const unsigned *const ix)
+void PVN_FABI(pvn_qnrm2,PVN_QNRM2)(__float128 *const f, const int *const m, const __float128 *const x, const unsigned *const ix)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -213,7 +213,7 @@ void pvn_qnrm2_(__float128 *const f, const int *const m, const __float128 *const
   }
 }
 
-void pvn_ynrm2_(__float128 *const f, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi)
+void PVN_FABI(pvn_ynrm2,PVN_YNRM2)(__float128 *const f, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi)
 {
   PVN_ASSERT(f);
   PVN_ASSERT(m);
@@ -250,14 +250,14 @@ void pvn_ynrm2_(__float128 *const f, const int *const m, const __float128 *const
   }
 }
 #else /* !PVN_QUADMATH */
-void pvn_qnrm2_(long double *const f, const int *const m, const long double *const x, const unsigned *const ix)
+void PVN_FABI(pvn_qnrm2,PVN_QNRM2)(long double *const f, const int *const m, const long double *const x, const unsigned *const ix)
 {
-  pvn_xnrm2_(f, m, x, ix);
+  PVN_FABI(pvn_xnrm2,PVN_XNRM2)(f, m, x, ix);
 }
 
-void pvn_ynrm2_(long double *const f, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi)
+void PVN_FABI(pvn_ynrm2,PVN_YNRM2)(long double *const f, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi)
 {
-  pvn_wnrm2_(f, m, xr, ixr, xi, ixi);
+  PVN_FABI(pvn_wnrm2,PVN_WNRM2)(f, m, xr, ixr, xi, ixi);
 }
 #endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */

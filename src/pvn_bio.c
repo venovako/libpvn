@@ -8,19 +8,23 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   off_t sz = (off_t)atol(argv[2]);
-  int fd = pvn_bopen_wo_(&sz, argv[1]);
-  (void)printf("pvn_bopen_wo_=%d, sz=%ld\n", fd, (long)sz);
+  int fd = PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(&sz, argv[1]);
+  (void)printf("pvn_bopen_wo=%d, sz=%ld\n", fd, (long)sz);
   if (fd >= 0)
-    (void)printf("pvn_bclose_=%d\n", (fd = pvn_bclose_(&fd)));
+    (void)printf("pvn_bclose=%d\n", (fd = PVN_FABI(pvn_bclose,PVN_BCLOSE)(&fd)));
   return ((fd >= 0) ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 #else /* !PVN_TEST */
-static const size_t GiB = ((size_t)1ul << 30u);
+static const size_t GiB = (size_t)(1ull << 30u);
 static const mode_t perms = (S_IRUSR | S_IWUSR);
 
-int pvn_bopen_ro_(off_t *const sz, const char *const fn, ...)
+int PVN_FABI(pvn_bopen_ro,PVN_BOPEN_RO)(off_t *const sz, const char *const fn, ...)
 {
+#ifdef _WIN32
+  const int fd = (fn ? open(fn, _O_RDONLY) : -2);
+#else /* !_WIN32 */
   const int fd = (fn ? open(fn, (O_RDONLY | PVN_LF64)) : -2);
+#endif /* ?_WIN32 */
   if (fd >= 0) {
     if (sz) {
       struct stat buf;
@@ -34,13 +38,23 @@ int pvn_bopen_ro_(off_t *const sz, const char *const fn, ...)
   return fd;
 }
 
-int pvn_bopen_rw_(off_t *const sz, const char *const fn, ...)
+int PVN_FABI(pvn_bopen_rw,PVN_BOPEN_RW)(off_t *const sz, const char *const fn, ...)
 {
+#ifdef _WIN32
+  const int fd = (fn ? open(fn, (_O_RDWR | _O_CREAT), perms) : -2);
+#else /* !_WIN32 */
   const int fd = (fn ? open(fn, (O_RDWR | O_CREAT | PVN_LF64), perms) : -2);
+#endif /* ?_WIN32 */
   if (fd >= 0) {
     if (sz) {
       if (*sz >= 0) {
-        if ((ftruncate(fd, *sz) < 0) || (fsync(fd) < 0)) {
+        if (
+#ifdef _WIN32
+            _chsize(fd, (long)*sz) < 0
+#else /* !_WIN32 */
+            (ftruncate(fd, *sz) < 0) || (fsync(fd) < 0)
+#endif /* ?_WIN32 */
+            ) {
           *sz = close(fd);
           return -1;
         }
@@ -58,13 +72,23 @@ int pvn_bopen_rw_(off_t *const sz, const char *const fn, ...)
   return fd;
 }
 
-int pvn_bopen_wo_(off_t *const sz, const char *const fn, ...)
+int PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(off_t *const sz, const char *const fn, ...)
 {
+#ifdef _WIN32
+  const int fd = (fn ? open(fn, (_O_WRONLY | _O_CREAT), perms) : -2);
+#else /* !_WIN32 */
   const int fd = (fn ? open(fn, (O_WRONLY | O_CREAT | PVN_LF64), perms) : -2);
+#endif /* ?_WIN32 */
   if (fd >= 0) {
     if (sz) {
       if (*sz >= 0) {
-        if ((ftruncate(fd, *sz) < 0) || (fsync(fd) < 0)) {
+        if (
+#ifdef _WIN32
+            _chsize(fd, (long)*sz) < 0
+#else /* !_WIN32 */
+            (ftruncate(fd, *sz) < 0) || (fsync(fd) < 0)
+#endif /* ?_WIN32 */
+            ) {
           *sz = close(fd);
           return -1;
         }
@@ -82,12 +106,13 @@ int pvn_bopen_wo_(off_t *const sz, const char *const fn, ...)
   return fd;
 }
 
-int pvn_bclose_(const int *const fd)
+int PVN_FABI(pvn_bclose,PVN_BCLOSE)(const int *const fd)
 {
   return (fd ? ((*fd < 0) ? -3 : close(*fd)) : -2);
 }
 
-ssize_t pvn_bwrite_(const int *const fd, const void *const buf, const size_t *const nB, const off_t *const off)
+#ifndef _WIN32
+ssize_t PVN_FABI(pvn_bwrite,PVN_BWRITE)(const int *const fd, const void *const buf, const size_t *const nB, const off_t *const off)
 {
   if (!fd || (*fd < 0))
     return -1;
@@ -125,7 +150,7 @@ ssize_t pvn_bwrite_(const int *const fd, const void *const buf, const size_t *co
   return ret;
 }
 
-ssize_t pvn_bread_(const int *const fd, void *const buf, const size_t *const nB, const off_t *const off)
+ssize_t PVN_FABI(pvn_bread,PVN_BREAD)(const int *const fd, void *const buf, const size_t *const nB, const off_t *const off)
 {
   if (!fd || (*fd < 0))
     return -1;
@@ -160,7 +185,7 @@ ssize_t pvn_bread_(const int *const fd, void *const buf, const size_t *const nB,
 }
 
 #ifdef __x86_64__
-ssize_t pvn_bwrite80_(const int *const fd, const long double *const buf, const size_t *const n, const off_t *const off)
+ssize_t PVN_FABI(pvn_bwrite80,PVN_BWRITE80)(const int *const fd, const long double *const buf, const size_t *const n, const off_t *const off)
 {
   if (!fd || (*fd < 0))
     return -1;
@@ -193,7 +218,7 @@ ssize_t pvn_bwrite80_(const int *const fd, const long double *const buf, const s
   return ret;
 }
 
-ssize_t pvn_bread80_(const int *const fd, long double *const buf, const size_t *const n, const off_t *const off)
+ssize_t PVN_FABI(pvn_bread80,PVN_BREAD80)(const int *const fd, long double *const buf, const size_t *const n, const off_t *const off)
 {
   if (!fd || (*fd < 0))
     return -1;
@@ -220,4 +245,5 @@ ssize_t pvn_bread80_(const int *const fd, long double *const buf, const size_t *
   return ret;
 }
 #endif /* __x86_64__ */
+#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */

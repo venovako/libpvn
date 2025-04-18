@@ -5,6 +5,20 @@
 #error pvn_err.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+#ifdef _WIN32
+#ifndef PVN_STOP
+#define PVN_STOP(msg) {                                                   \
+    if (msg)                                                              \
+      (void)fprintf(stderr, "\n%s(%d): %s\n", __FILE__, __LINE__, (msg)); \
+    else                                                                  \
+      (void)fprintf(stderr, "\n%s(%d)\n", __FILE__, __LINE__);            \
+    (void)fflush(stderr);                                                 \
+    exit(EXIT_FAILURE);                                                   \
+  }
+#else /* PVN_STOP */
+#error PVN_STOP already defined
+#endif /* ?PVN_STOP */
+#else /* !_WIN32 */
 #ifndef PVN_BTRACE_BUFSIZ
 #define PVN_BTRACE_BUFSIZ 128
 #endif /* ?PVN_BTRACE_BUFSIZ */
@@ -39,6 +53,7 @@
 #else /* PVN_STOP */
 #error PVN_STOP already defined
 #endif /* ?PVN_STOP */
+#endif /* ?_WIN32 */
 
 PVN_EXTERN_C const char *pvn_get_error();
 

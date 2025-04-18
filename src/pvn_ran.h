@@ -5,20 +5,20 @@
 #error pvn_ran.h not intended for direct inclusion
 #endif /* !PVN_H */
 
-PVN_EXTERN_C int pvn_ran_open_();
-PVN_EXTERN_C int pvn_ran_close_(const int *const u);
+PVN_EXTERN_C int PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
+PVN_EXTERN_C int PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(const int *const u);
 
-PVN_EXTERN_C float pvn_ran_safe_f_(const int *const u, const int *const p);
-PVN_EXTERN_C float pvn_ran_f_(const int *const u);
-PVN_EXTERN_C double pvn_ran_safe_(const int *const u, const int *const p);
-PVN_EXTERN_C double pvn_ran_(const int *const u);
-PVN_EXTERN_C long double pvn_ran_safe_l_(const int *const u, const int *const p);
-PVN_EXTERN_C long double pvn_ran_l_(const int *const u);
+PVN_EXTERN_C float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *const p);
+PVN_EXTERN_C float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u);
+PVN_EXTERN_C double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const p);
+PVN_EXTERN_C double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u);
+PVN_EXTERN_C long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const int *const p);
+PVN_EXTERN_C long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C __float128 pvn_ran_safe_q_(const int *const u, const int *const p);
-PVN_EXTERN_C __float128 pvn_ran_q_(const int *const u);
+PVN_EXTERN_C __float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p);
+PVN_EXTERN_C __float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u);
 #else /* !PVN_QUADMATH */
-PVN_EXTERN_C long double pvn_ran_safe_q_(const int *const u, const int *const p);
-PVN_EXTERN_C long double pvn_ran_q_(const int *const u);
+PVN_EXTERN_C long double PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p);
+PVN_EXTERN_C long double PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u);
 #endif /* ?PVN_QUADMATH */
 #endif /* !PVN_RAN_H */

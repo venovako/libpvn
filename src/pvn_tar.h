@@ -26,8 +26,8 @@ typedef struct {
     char pad[12];
 } header_posix_ustar;
 
-PVN_EXTERN_C int pvn_tar_add_file_(const int *const fd, const char *const fn, const unsigned *const sz, const void *const buf);
-PVN_EXTERN_C int pvn_tar_add_dir_(const int *const fd, const char *const dn);
-PVN_EXTERN_C int pvn_tar_terminate_(const int *const fd);
+PVN_EXTERN_C int PVN_FABI(pvn_tar_add_file,PVN_TAR_ADD_FILE)(const int *const fd, const char *const fn, const unsigned *const sz, const void *const buf);
+PVN_EXTERN_C int PVN_FABI(pvn_tar_add_dir,PVN_TAR_ADD_DIR)(const int *const fd, const char *const dn);
+PVN_EXTERN_C int PVN_FABI(pvn_tar_terminate,PVN_TAR_TERMINATE)(const int *const fd);
 
 #endif /* !PVN_TAR_H */

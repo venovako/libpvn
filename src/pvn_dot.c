@@ -7,13 +7,13 @@ int main(/* int argc, char *argv[] */)
   double zr = 0.0, zi = 0.0;
   const int m = 4;
   const unsigned i = 2u;
-  pvn_zdot_(&zr, &zi, &m, &(x[0][0]), &i, &(x[0][1]), &i, &(x[0][0]), &i, &(x[0][1]), &i);
+  PVN_FABI(pvn_zdot,PVN_ZDOT)(&zr, &zi, &m, &(x[0][0]), &i, &(x[0][1]), &i, &(x[0][0]), &i, &(x[0][1]), &i);
   /* expected output: ( 20.0,  0.0) */
   (void)printf("(%# 5.1F,%# 5.1F)\n", zr, zi);
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-void pvn_sdot_(float *const d, const int *const m, const float *const x, const unsigned *const ix, const float *const y, const unsigned *const iy)
+void PVN_FABI(pvn_sdot,PVN_SDOT)(float *const d, const int *const m, const float *const x, const unsigned *const ix, const float *const y, const unsigned *const iy)
 {
   PVN_ASSERT(d);
   PVN_ASSERT(m);
@@ -39,7 +39,7 @@ void pvn_sdot_(float *const d, const int *const m, const float *const x, const u
   }
 }
 
-void pvn_cdot_(float *const zr, float *const zi, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi, const float *const yr, const unsigned *const iyr, const float *const yi, const unsigned *const iyi)
+void PVN_FABI(pvn_cdot,PVN_CDOT)(float *const zr, float *const zi, const int *const m, const float *const xr, const unsigned *const ixr, const float *const xi, const unsigned *const ixi, const float *const yr, const unsigned *const iyr, const float *const yi, const unsigned *const iyi)
 {
   PVN_ASSERT(zr);
   PVN_ASSERT(zi);
@@ -120,7 +120,7 @@ void pvn_cdot_(float *const zr, float *const zi, const int *const m, const float
   }
 }
 
-void pvn_ddot_(double *const d, const int *const m, const double *const x, const unsigned *const ix, const double *const y, const unsigned *const iy)
+void PVN_FABI(pvn_ddot,PVN_DDOT)(double *const d, const int *const m, const double *const x, const unsigned *const ix, const double *const y, const unsigned *const iy)
 {
   PVN_ASSERT(d);
   PVN_ASSERT(m);
@@ -146,7 +146,7 @@ void pvn_ddot_(double *const d, const int *const m, const double *const x, const
   }
 }
 
-void pvn_zdot_(double *const zr, double *const zi, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi, const double *const yr, const unsigned *const iyr, const double *const yi, const unsigned *const iyi)
+void PVN_FABI(pvn_zdot,PVN_ZDOT)(double *const zr, double *const zi, const int *const m, const double *const xr, const unsigned *const ixr, const double *const xi, const unsigned *const ixi, const double *const yr, const unsigned *const iyr, const double *const yi, const unsigned *const iyi)
 {
   PVN_ASSERT(zr);
   PVN_ASSERT(zi);
@@ -227,7 +227,7 @@ void pvn_zdot_(double *const zr, double *const zi, const int *const m, const dou
   }
 }
 
-void pvn_xdot_(long double *const d, const int *const m, const long double *const x, const unsigned *const ix, const long double *const y, const unsigned *const iy)
+void PVN_FABI(pvn_xdot,PVN_XDOT)(long double *const d, const int *const m, const long double *const x, const unsigned *const ix, const long double *const y, const unsigned *const iy)
 {
   PVN_ASSERT(d);
   PVN_ASSERT(m);
@@ -253,7 +253,7 @@ void pvn_xdot_(long double *const d, const int *const m, const long double *cons
   }
 }
 
-void pvn_wdot_(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi)
+void PVN_FABI(pvn_wdot,PVN_WDOT)(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi)
 {
   PVN_ASSERT(zr);
   PVN_ASSERT(zi);
@@ -335,7 +335,7 @@ void pvn_wdot_(long double *const zr, long double *const zi, const int *const m,
 }
 
 #ifdef PVN_QUADMATH
-void pvn_qdot_(__float128 *const d, const int *const m, const __float128 *const x, const unsigned *const ix, const __float128 *const y, const unsigned *const iy)
+void PVN_FABI(pvn_qdot,PVN_QDOT)(__float128 *const d, const int *const m, const __float128 *const x, const unsigned *const ix, const __float128 *const y, const unsigned *const iy)
 {
   PVN_ASSERT(d);
   PVN_ASSERT(m);
@@ -361,7 +361,7 @@ void pvn_qdot_(__float128 *const d, const int *const m, const __float128 *const 
   }
 }
 
-void pvn_ydot_(__float128 *const zr, __float128 *const zi, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi, const __float128 *const yr, const unsigned *const iyr, const __float128 *const yi, const unsigned *const iyi)
+void PVN_FABI(pvn_ydot,PVN_YDOT)(__float128 *const zr, __float128 *const zi, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi, const __float128 *const yr, const unsigned *const iyr, const __float128 *const yi, const unsigned *const iyi)
 {
   PVN_ASSERT(zr);
   PVN_ASSERT(zi);
@@ -442,14 +442,14 @@ void pvn_ydot_(__float128 *const zr, __float128 *const zi, const int *const m, c
   }
 }
 #else /* !PVN_QUADMATH */
-void pvn_qdot_(long double *const d, const int *const m, const long double *const x, const unsigned *const ix, const long double *const y, const unsigned *const iy)
+void PVN_FABI(pvn_qdot,PVN_QDOT)(long double *const d, const int *const m, const long double *const x, const unsigned *const ix, const long double *const y, const unsigned *const iy)
 {
-  pvn_xdot_(d, m, x, ix, y, iy);
+  PVN_FABI(pvn_xdot,PVN_XDOT)(d, m, x, ix, y, iy);
 }
 
-void pvn_ydot_(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi)
+void PVN_FABI(pvn_ydot,PVN_YDOT)(long double *const zr, long double *const zi, const int *const m, const long double *const xr, const unsigned *const ixr, const long double *const xi, const unsigned *const ixi, const long double *const yr, const unsigned *const iyr, const long double *const yi, const unsigned *const iyi)
 {
-  pvn_wdot_(zr, zi, m, xr, ixr, xi, ixi, yr, iyr, yi, iyi);
+  PVN_FABI(pvn_wdot,PVN_WDOT)(zr, zi, m, xr, ixr, xi, ixi, yr, iyr, yi, iyi);
 }
 #endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */

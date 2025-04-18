@@ -7,18 +7,20 @@
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
-  const int u = pvn_ran_open_();
-  (void)printf("open=%d\n", pvn_ran_open_());
+  const int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
+  (void)printf("open=%d\n", u);
   char s[46] = { '\0' };
-  (void)printf("safe_f=%s\n", pvn_stoa(s, pvn_ran_safe_f_(&u, (const int*)NULL)));
-  (void)printf("safe_d=%s\n", pvn_dtoa(s, pvn_ran_safe_(&u, (const int*)NULL)));
-  (void)printf("safe_l=%s\n", pvn_xtoa(s, pvn_ran_safe_l_(&u, (const int*)NULL)));
-  (void)printf("safe_q=%s\n", pvn_qtoa(s, pvn_ran_safe_q_(&u, (const int*)NULL)));
-  (void)printf("close=%d\n", pvn_ran_close_(&u));
+  (void)printf("safe_f=%s\n", pvn_stoa(s, PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(&u, (const int*)NULL)));
+  (void)printf("safe_d=%s\n", pvn_dtoa(s, PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL)));
+#ifndef _WIN32
+  (void)printf("safe_l=%s\n", pvn_xtoa(s, PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(&u, (const int*)NULL)));
+  (void)printf("safe_q=%s\n", pvn_qtoa(s, PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(&u, (const int*)NULL)));
+#endif /* !_WIN32 */
+  (void)printf("close=%d\n", PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u));
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_ran_open_()
+int PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)()
 {
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
   return __RDRND__;
@@ -27,7 +29,7 @@ int pvn_ran_open_()
 #endif /* ?__RDRND__ */
 }
 
-int pvn_ran_close_(const int *const u)
+int PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(const int *const u)
 {
   PVN_ASSERT(u);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
@@ -37,7 +39,7 @@ int pvn_ran_close_(const int *const u)
 #endif /* ?__RDRND__ */
 }
 
-float pvn_ran_safe_f_(const int *const u, const int *const p)
+float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
   const float rmin = (p ? scalbnf(FLT_MIN, *p) : FLT_MIN);
@@ -68,10 +70,10 @@ float pvn_ran_safe_f_(const int *const u, const int *const p)
   return r;
 }
 
-float pvn_ran_f_(const int *const u)
+float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u)
 {
 #ifdef PVN_RAN_SAFE
-  return pvn_ran_safe_f_(u, (const int*)NULL);
+  return PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   float r = ((*u < 0) ? NAN : 0.0f);
@@ -92,7 +94,7 @@ float pvn_ran_f_(const int *const u)
 #endif /* ?PVN_RAN_SAFE */
 }
 
-double pvn_ran_safe_(const int *const u, const int *const p)
+double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
   const double rmin = (p ? scalbn(DBL_MIN, *p) : DBL_MIN);
@@ -123,10 +125,10 @@ double pvn_ran_safe_(const int *const u, const int *const p)
   return r;
 }
 
-double pvn_ran_(const int *const u)
+double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
 {
 #ifdef PVN_RAN_SAFE
-  return pvn_ran_safe_(u, (const int*)NULL);
+  return PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   double r = ((*u < 0) ? (double)NAN : 0.0);
@@ -147,7 +149,7 @@ double pvn_ran_(const int *const u)
 #endif /* ?PVN_RAN_SAFE */
 }
 
-long double pvn_ran_safe_l_(const int *const u, const int *const p)
+long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
   const long double rmin = (p ? scalbnl(LDBL_MIN, *p) : LDBL_MIN);
@@ -187,10 +189,10 @@ long double pvn_ran_safe_l_(const int *const u, const int *const p)
   return r;
 }
 
-long double pvn_ran_l_(const int *const u)
+long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u)
 {
 #ifdef PVN_RAN_SAFE
-  return pvn_ran_safe_l_(u, (const int*)NULL);
+  return PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   long double r = ((*u < 0) ? (long double)NAN : 0.0L);
@@ -221,7 +223,7 @@ long double pvn_ran_l_(const int *const u)
 }
 
 #ifdef PVN_QUADMATH
-__float128 pvn_ran_safe_q_(const int *const u, const int *const p)
+__float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
   const __float128 rmin = (p ? scalbnq(FLT128_MIN, *p) : FLT128_MIN);
@@ -253,10 +255,10 @@ __float128 pvn_ran_safe_q_(const int *const u, const int *const p)
   return r;
 }
 
-__float128 pvn_ran_q_(const int *const u)
+__float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
 {
 #ifdef PVN_RAN_SAFE
-  return pvn_ran_safe_q_(u, (const int*)NULL);
+  return PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   __float128 r = ((*u < 0) ? (__float128)NAN : 0.0q);
@@ -278,14 +280,14 @@ __float128 pvn_ran_q_(const int *const u)
 #endif /* ?PVN_RAN_SAFE */
 }
 #else /* !PVN_QUADMATH */
-long double pvn_ran_safe_q_(const int *const u, const int *const p)
+long double PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p)
 {
-  return pvn_ran_safe_l_(u, p);
+  return PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(u, p);
 }
 
-long double pvn_ran_q_(const int *const u)
+long double PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
 {
-  return pvn_ran_l_(u);
+  return PVN_FABI(pvn_ran_l,PVN_RAN_L)(u);
 }
 #endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */

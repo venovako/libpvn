@@ -16,6 +16,7 @@ int main(/* int argc, char *argv[] */)
   (void)printf(" DBL_EPSILON =%s\n", pvn_dtoa(s, DBL_EPSILON));
   (void)printf(" DBL_MAX     =%s\n", pvn_dtoa(s, DBL_MAX));
   (void)printf(" DBL_MAX_EXP =%6d\n", DBL_MAX_EXP);
+#ifndef _WIN32
   (void)printf("LDBL_TRUE_MIN=%s\n", pvn_xtoa(s, LDBL_TRUE_MIN));
   (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
   (void)printf("LDBL_MIN_EXP =%6d\n", LDBL_MIN_EXP);
@@ -30,6 +31,7 @@ int main(/* int argc, char *argv[] */)
   (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
   (void)printf("FLT128_MAX_EXP =%6d\n", FLT128_MAX_EXP);
 #endif /* PVN_QUADMATH */
+#endif /* !_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -98,6 +100,7 @@ char *pvn_dtoa(char *const s, const double x)
   return s;
 }
 
+#ifndef _WIN32
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
@@ -184,4 +187,5 @@ char *pvn_qtoa(char *const s, const long double x)
   return pvn_xtoa(s, x);
 }
 #endif /* ?PVN_QUADMATH */
+#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */

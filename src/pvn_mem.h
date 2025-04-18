@@ -53,8 +53,8 @@
 #error PVN_ASSUME_VECALIGNED already defined
 #endif /* ?PVN_ASSUME_VECALIGNED */
 
-PVN_EXTERN_C unsigned pvn_vec_len_();
-PVN_EXTERN_C size_t pvn_pagesize_();
-PVN_EXTERN_C size_t pvn_alignment_(const size_t *const a);
+PVN_EXTERN_C unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)();
+PVN_EXTERN_C size_t PVN_FABI(pvn_pagesize,PVN_PAGESIZE)();
+PVN_EXTERN_C size_t PVN_FABI(pvn_alignment,PVN_ALIGNMENT)(const size_t *const a);
 
 #endif /* !PVN_MEM_H */

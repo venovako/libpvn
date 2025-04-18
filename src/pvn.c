@@ -31,12 +31,12 @@ int main(/* int argc, char *argv[] */)
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_le_()
+int PVN_FABI(pvn_le,PVN_LE)()
 {
   return pvn_le();
 }
 
-int pvn_omp_()
+int PVN_FABI(pvn_omp,PVN_OMP)()
 {
   return pvn_omp();
 }

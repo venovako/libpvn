@@ -42,12 +42,12 @@ int main(int argc, char *argv[])
   double ch = 1.0, shr = 0.0, shi = 0.0;
   int es = 0, lc = 0;
   if (4 == argc) {
-    lc = pvn_dljv2_(&a11, &a22, &a21r, &ch, &shr, &es);
-    (void)printf("pvn_dljv2_ = %d, es = %d\n", lc, es);
+    lc = PVN_FABI(pvn_dljv2,PVN_DLJV2)(&a11, &a22, &a21r, &ch, &shr, &es);
+    (void)printf("pvn_dljv2 = %d, es = %d\n", lc, es);
   }
   else {
-    lc = pvn_zljv2_(&a11, &a22, &a21r, &a21i, &ch, &shr, &shi, &es);
-    (void)printf("pvn_zljv2_ = %d, es = %d\n", lc, es);
+    lc = PVN_FABI(pvn_zljv2,PVN_ZLJV2)(&a11, &a22, &a21r, &a21i, &ch, &shr, &shi, &es);
+    (void)printf("pvn_zljv2 = %d, es = %d\n", lc, es);
   }
   if (lc < 0)
     return EXIT_FAILURE;
@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     (void)printf("%s]\n", pvn_dtoa(s, shr));
     (void)printf("[%s,", pvn_dtoa(s, shr));
     (void)printf("%s]\n", pvn_dtoa(s, ch));
+#ifndef _WIN32
     (void)printf("V^T A V =\n");
     pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), ch, shr, shr, ch, a11, a21r, a21r, a22);
     pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), c[0][0], c[1][0], c[0][1], c[1][1], ch, shr, shr, ch);
@@ -85,6 +86,7 @@ int main(int argc, char *argv[])
     (void)printf("%s]\n", pvn_qtoa(s, c[0][1]));
     (void)printf("[%s,", pvn_qtoa(s, c[1][0]));
     (void)printf("%s]\n", pvn_qtoa(s, c[1][1]));
+#endif /* !_WIN32 */
   }
   else {
 #ifdef PVN_QUADMATH
@@ -110,6 +112,7 @@ int main(int argc, char *argv[])
     (void)printf("%s),", pvn_dtoa(s, shi));
     (void)printf("(%s,", pvn_dtoa(s, ch));
     (void)printf("%s)]\n", pvn_dtoa(s, 0.0));
+#ifndef _WIN32
     pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), ch, 0.0, shr, shi, shr, -shi, ch, 0.0, a11, 0.0, a21r, a21i, a21r, -a21i, a22, 0.0);
     pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), c[0][0], c[0][1], c[1][0], c[1][1], c[0][2], c[0][3], c[1][2], c[1][3], ch, 0.0, shr, shi, shr, -shi, ch, 0.0);
     (void)printf("V^H A V =\n");
@@ -139,11 +142,12 @@ int main(int argc, char *argv[])
     (void)printf("%s),", pvn_qtoa(s, c[1][1]));
     (void)printf("(%s,", pvn_qtoa(s, c[1][2]));
     (void)printf("%s)]\n", pvn_qtoa(s, c[1][3]));
+#endif /* !_WIN32 */
   }
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int pvn_sljv2_(const float *const a11, const float *const a22, const float *const a21, float *const ch, float *const sh, int *const es)
+int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22, const float *const a21, float *const ch, float *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -212,7 +216,7 @@ int pvn_sljv2_(const float *const a11, const float *const a22, const float *cons
   return (wt | e1 | e2 | er);
 }
 
-int pvn_dljv2_(const double *const a11, const double *const a22, const double *const a21, double *const ch, double *const sh, int *const es)
+int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a22, const double *const a21, double *const ch, double *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -281,7 +285,7 @@ int pvn_dljv2_(const double *const a11, const double *const a22, const double *c
   return (wt | e1 | e2 | er);
 }
 
-int pvn_cljv2_(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const ch, float *const shr, float *const shi, int *const es)
+int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const ch, float *const shr, float *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -364,7 +368,7 @@ int pvn_cljv2_(const float *const a11, const float *const a22, const float *cons
   return (wt | e1 | e2 | er | ei);
 }
 
-int pvn_zljv2_(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const ch, double *const shr, double *const shi, int *const es)
+int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const ch, double *const shr, double *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -447,7 +451,7 @@ int pvn_zljv2_(const double *const a11, const double *const a22, const double *c
   return (wt | e1 | e2 | er | ei);
 }
 
-int pvn_xljv2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
+int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -516,7 +520,7 @@ int pvn_xljv2_(const long double *const a11, const long double *const a22, const
   return (wt | e1 | e2 | er);
 }
 
-int pvn_wljv2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
+int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -606,7 +610,7 @@ int pvn_wljv2_(const long double *const a11, const long double *const a22, const
 #define FLT128_BIG_EXP (FLT128_MAX_EXP - 3)
 #endif /* ?FLT128_BIG_EXP */
 
-int pvn_qljv2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, int *const es)
+int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -675,7 +679,7 @@ int pvn_qljv2_(const __float128 *const a11, const __float128 *const a22, const _
   return (wt | e1 | e2 | er);
 }
 
-int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, int *const es)
+int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -764,14 +768,14 @@ int pvn_yljv2_(const __float128 *const a11, const __float128 *const a22, const _
   return (wt | e1 | e2 | er | ei);
 }
 #else /* !PVN_QUADMATH */
-int pvn_qljv2_(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
+int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
 {
-  return pvn_xljv2_(a11, a22, a21, ch, sh, es);
+  return PVN_FABI(pvn_xljv2,PVN_XLJV2)(a11, a22, a21, ch, sh, es);
 }
 
-int pvn_yljv2_(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
+int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
 {
-  return pvn_wljv2_(a11, a22, a21r, a21i, ch, shr, shi, es);
+  return PVN_FABI(pvn_wljv2,PVN_WLJV2)(a11, a22, a21r, a21i, ch, shr, shi, es);
 }
 #endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */

@@ -47,17 +47,22 @@
 #endif /* ?__cplusplus */
 
 #include <stdalign.h>
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif /* !_WIN32 */
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#ifdef _WIN32
+#include <io.h>
+#else /* !_WIN32 */
 #include <sys/uio.h>
 #include <execinfo.h>
 #include <pthread.h>
 #include <search.h>
 #include <sys/time.h>
 #include <unistd.h>
-
+#endif /* ?_WIN32 */
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -142,7 +147,9 @@ PVN_EXTERN_C __float128 __invsqrtq(__float128);
 #define scalbnq __scalbnq
 #define sqrtq __sqrtq
 #define rsqrtq __invsqrtq
+#ifndef _WIN32
 PVN_EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
+#endif /* !_WIN32 */
 #else /* !__MATHIMF_H_INCLUDED */
 #ifdef __GNUC__
 #include <quadmath.h>
@@ -158,6 +165,28 @@ static inline __float128 rsqrtq(__float128 x)
 #endif /* ?__GNUC__ */
 #endif /* ?__MATHIMF_H_INCLUDED */
 #endif /* PVN_QUADMATH */
+
+#ifndef PVN_FABI
+#ifdef _WIN32
+#define PVN_FABI(P,W) W
+#else /* !_WIN32 */
+#define PVN_FABI(P,W) P##_
+#endif /* ?_WIN32 */
+#else /* PVN_FABI */
+#error PVN_FABI already defined
+#endif /* ?PVN_FABI */
+
+#ifdef _WIN32
+#ifndef ssize_t
+#define ssize_t long long
+#endif /* !ssize_t */
+#ifndef off_t
+#define off_t ssize_t
+#endif /* !off_t */
+#ifndef mode_t
+#define mode_t int
+#endif /* !mode_t */
+#endif /* _WIN32 */
 
 #include "pvn_aux.h"
 #include "pvn_bio.h"
@@ -178,16 +207,18 @@ static inline __float128 rsqrtq(__float128 x)
 #include "pvn_sv2.h"
 #include "pvn_tar.h"
 #include "pvn_vis.h"
+#ifndef _WIN32
 #include "pvn_lock.h"
 #include "pvn_prof.h"
 #include "pvn_timer.h"
+#endif /* !_WIN32 */
 
 static inline int pvn_le()
 {
   const int one = 1;
   return (int)*(const char*)&one;
 }
-PVN_EXTERN_C int pvn_le_();
+PVN_EXTERN_C int PVN_FABI(pvn_le,PVN_LE)();
 
 static inline int pvn_omp()
 {
@@ -199,6 +230,6 @@ static inline int pvn_omp()
 #endif /* ?_OPENMP */
     ;
 }
-PVN_EXTERN_C int pvn_omp_();
+PVN_EXTERN_C int PVN_FABI(pvn_omp,PVN_OMP)();
 
 #endif /* !PVN_H */

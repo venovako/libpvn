@@ -302,7 +302,7 @@ int pvn_cjs_init(void *const js, const int id, const int n)
   return info;
 }
 
-int pvn_cjs_init_(void **const ret, const int *const id, const int *const n)
+int PVN_FABI(pvn_cjs_init,PVN_CJS_INIT)(void **const ret, const int *const id, const int *const n)
 {
   PVN_ASSERT(ret);
   PVN_ASSERT(id);
@@ -553,7 +553,7 @@ int pvn_cjs_next(void *const js, int *const arr)
   return info;
 }
 
-int pvn_cjs_next_(void *const *const js, int *const arr)
+int PVN_FABI(pvn_cjs_next,PVN_CJS_NEXT)(void *const *const js, int *const arr)
 {
   PVN_ASSERT(js);
   PVN_ASSERT(arr);
@@ -569,7 +569,7 @@ int pvn_cjs_free(void *const js)
   return 0;
 }
 
-int pvn_cjs_free_(void **const js)
+int PVN_FABI(pvn_cjs_free,PVN_CJS_FREE)(void **const js)
 {
   PVN_ASSERT(js);
   const int i = pvn_cjs_free(*js);

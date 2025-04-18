@@ -142,22 +142,22 @@ pvn_Tmax4(unsigned long long,ull)
 pvn_Tmax4(size_t,z)
 
 PVN_EXTERN_C size_t pvn_gcd(const size_t a, const size_t b);
-PVN_EXTERN_C size_t pvn_gcd_(const size_t *const a, const size_t *const b);
+PVN_EXTERN_C size_t PVN_FABI(pvn_gcd,PVN_GCD)(const size_t *const a, const size_t *const b);
 PVN_EXTERN_C size_t pvn_lcm(const size_t a, const size_t b);
-PVN_EXTERN_C size_t pvn_lcm_(const size_t *const a, const size_t *const b);
+PVN_EXTERN_C size_t PVN_FABI(pvn_lcm,PVN_LCM)(const size_t *const a, const size_t *const b);
 
 PVN_EXTERN_C char *pvn_hexify(char *const s, const void *const x, const size_t z);
-PVN_EXTERN_C size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...);
+PVN_EXTERN_C size_t PVN_FABI(pvn_hexify,PVN_HEXIFY)(char *const s, const void *const x, const size_t *const z, ...);
 
-PVN_EXTERN_C int pvn_signbitf_(const float *const x);
-PVN_EXTERN_C int pvn_signbit_(const double *const x);
-PVN_EXTERN_C int pvn_signbitl_(const long double *const x);
+PVN_EXTERN_C int PVN_FABI(pvn_signbitf,PVN_SIGNBITF)(const float *const x);
+PVN_EXTERN_C int PVN_FABI(pvn_signbit,PVN_SIGNBIT)(const double *const x);
+PVN_EXTERN_C int PVN_FABI(pvn_signbitl,PVN_SIGNBITL)(const long double *const x);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C int pvn_signbitq_(const __float128 *const x);
+PVN_EXTERN_C int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const __float128 *const x);
 #else /* !PVN_QUADMATH */
-PVN_EXTERN_C int pvn_signbitq_(const long double *const x);
+PVN_EXTERN_C int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const long double *const x);
 #endif /* ?PVN_QUADMATH */
 
-PVN_EXTERN_C void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*));
+PVN_EXTERN_C void PVN_FABI(pvn_qsort,PVN_QSORT)(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*));
 
 #endif /* !PVN_AUX_H */

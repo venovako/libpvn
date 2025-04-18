@@ -43,7 +43,7 @@ size_t pvn_gcd(const size_t a, const size_t b)
   return aa;
 }
 
-size_t pvn_gcd_(const size_t *const a, const size_t *const b)
+size_t PVN_FABI(pvn_gcd,PVN_GCD)(const size_t *const a, const size_t *const b)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
@@ -56,7 +56,7 @@ size_t pvn_lcm(const size_t a, const size_t b)
   return (g ? ((a / g) * b) : (size_t)0u);
 }
 
-size_t pvn_lcm_(const size_t *const a, const size_t *const b)
+size_t PVN_FABI(pvn_lcm,PVN_LCM)(const size_t *const a, const size_t *const b)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
@@ -84,7 +84,7 @@ char *pvn_hexify(char *const s, const void *const x, const size_t z)
   return s;
 }
 
-size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ...)
+size_t PVN_FABI(pvn_hexify,PVN_HEXIFY)(char *const s, const void *const x, const size_t *const z, ...)
 {
   PVN_ASSERT(s);
   PVN_ASSERT(x);
@@ -92,19 +92,19 @@ size_t pvn_hexify_(char *const s, const void *const x, const size_t *const z, ..
   return strlen(pvn_hexify(s, x, *z));
 }
 
-int pvn_signbitf_(const float *const x)
+int PVN_FABI(pvn_signbitf,PVN_SIGNBITF)(const float *const x)
 {
   PVN_ASSERT(x);
   return ((*(const unsigned*)x & 0x80000000u) != 0u);
 }
 
-int pvn_signbit_(const double *const x)
+int PVN_FABI(pvn_signbit,PVN_SIGNBIT)(const double *const x)
 {
   PVN_ASSERT(x);
   return ((((const unsigned*)x)[1u] & 0x80000000u) != 0u);
 }
 
-int pvn_signbitl_(const long double *const x)
+int PVN_FABI(pvn_signbitl,PVN_SIGNBITL)(const long double *const x)
 {
   PVN_ASSERT(x);
 #ifdef __x86_64__
@@ -115,19 +115,19 @@ int pvn_signbitl_(const long double *const x)
 }
 
 #ifdef PVN_QUADMATH
-int pvn_signbitq_(const __float128 *const x)
+int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const __float128 *const x)
 {
   PVN_ASSERT(x);
   return ((((const unsigned*)x)[3u] & 0x80000000u) != 0u);
 }
 #else /* !PVN_QUADMATH */
-int pvn_signbitq_(const long double *const x)
+int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const long double *const x)
 {
-  return pvn_signbitl_(x);
+  return PVN_FABI(pvn_signbitl,PVN_SIGNBITL)(x);
 }
 #endif /* ?PVN_QUADMATH */
 
-void pvn_qsort_(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*))
+void PVN_FABI(pvn_qsort,PVN_QSORT)(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*))
 {
   PVN_ASSERT(b);
   PVN_ASSERT(n);

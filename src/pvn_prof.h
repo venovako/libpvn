@@ -1,6 +1,10 @@
 #ifndef PVN_PROF_H
 #define PVN_PROF_H
 
+#ifdef _WIN32
+#error pvn_prof is not supported on Windows
+#endif /* _WIN32 */
+
 #ifndef PVN_H
 #error pvn_prof.h not intended for direct inclusion
 #endif /* !PVN_H */

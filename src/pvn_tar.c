@@ -3,8 +3,13 @@
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
+#ifdef _WIN32
+  (void)fprintf(stderr, "A tar stream is to be written to stdout.\n");
+  FILE *const p = stdout;
+#else /* !_WIN32 */
   (void)fprintf(stderr, "A tar.gz stream is to be written to stdout.\n");
   FILE *const p = popen("gzip -9cq -", "w");
+#endif /* ?_WIN32 */
   if (!p)
     return EXIT_FAILURE;
   const int fd = fileno(p);
@@ -12,26 +17,28 @@ int main(/* int argc, char *argv[] */)
     return EXIT_FAILURE;
   const unsigned sz = 4u;
   int r = EXIT_SUCCESS, ret = 0;
-  if ((ret = pvn_tar_add_file_(&fd, "foo", &sz, "bar\n")) < 0)
+  if ((ret = PVN_FABI(pvn_tar_add_file,PVN_TAR_ADD_FILE)(&fd, "foo", &sz, "bar\n")) < 0)
     r = EXIT_FAILURE;
   (void)fprintf(stderr, "pvn_tar_add_file_=%d\n", ret);
-  if ((ret = pvn_tar_add_dir_(&fd, "dir")) < 0)
+  if ((ret = PVN_FABI(pvn_tar_add_dir,PVN_TAR_ADD_DIR)(&fd, "dir")) < 0)
     r = EXIT_FAILURE;
   (void)fprintf(stderr, "pvn_tar_add_dir_=%d\n", ret);
-  if ((ret = pvn_tar_add_file_(&fd, "dir/FOO", &sz, "BAR\n")) < 0)
+  if ((ret = PVN_FABI(pvn_tar_add_file,PVN_TAR_ADD_FILE)(&fd, "dir/FOO", &sz, "BAR\n")) < 0)
     r = EXIT_FAILURE;
   (void)fprintf(stderr, "pvn_tar_add_file_=%d\n", ret);
-  if ((ret = pvn_tar_terminate_(&fd)) < 0)
+  if ((ret = PVN_FABI(pvn_tar_terminate,PVN_TAR_TERMINATE)(&fd)) < 0)
     r = EXIT_FAILURE;
   (void)fprintf(stderr, "pvn_tar_terminate_=%d\n", ret);
+#ifndef _WIN32
   if (pclose(p) < 0)
     r = EXIT_FAILURE;
+#endif /* !_WIN32 */
   return r;
 }
 #else /* !PVN_TEST */
 static_assert(sizeof(header_posix_ustar) == 512u, "sizeof(header_posix_ustar) != 512");
 
-int pvn_tar_add_file_(const int *const fd, const char *const fn, const unsigned *const sz, const void *const buf)
+int PVN_FABI(pvn_tar_add_file,PVN_TAR_ADD_FILE)(const int *const fd, const char *const fn, const unsigned *const sz, const void *const buf)
 {
   if (!sz)
     return -3;
@@ -112,13 +119,13 @@ int pvn_tar_add_file_(const int *const fd, const char *const fn, const unsigned 
   return ret;
 }
 
-int pvn_tar_add_dir_(const int *const fd, const char *const dn)
+int PVN_FABI(pvn_tar_add_dir,PVN_TAR_ADD_DIR)(const int *const fd, const char *const dn)
 {
   const unsigned sz = 0u;
-  return pvn_tar_add_file_(fd, dn, &sz, &sz);
+  return PVN_FABI(pvn_tar_add_file,PVN_TAR_ADD_FILE)(fd, dn, &sz, &sz);
 }
 
-int pvn_tar_terminate_(const int *const fd)
+int PVN_FABI(pvn_tar_terminate,PVN_TAR_TERMINATE)(const int *const fd)
 {
   if (!fd || (*fd < 0))
     return -1;
