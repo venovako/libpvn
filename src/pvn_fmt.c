@@ -1,5 +1,9 @@
 #include "pvn.h"
 
+#ifdef _WIN32
+#include <istrconv.h>
+#endif /* _WIN32 */
+
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
@@ -16,13 +20,13 @@ int main(/* int argc, char *argv[] */)
   (void)printf(" DBL_EPSILON =%s\n", pvn_dtoa(s, DBL_EPSILON));
   (void)printf(" DBL_MAX     =%s\n", pvn_dtoa(s, DBL_MAX));
   (void)printf(" DBL_MAX_EXP =%6d\n", DBL_MAX_EXP);
-#ifndef _WIN32
   (void)printf("LDBL_TRUE_MIN=%s\n", pvn_xtoa(s, LDBL_TRUE_MIN));
   (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
   (void)printf("LDBL_MIN_EXP =%6d\n", LDBL_MIN_EXP);
   (void)printf("LDBL_EPSILON =%s\n", pvn_xtoa(s, LDBL_EPSILON));
   (void)printf("LDBL_MAX     =%s\n", pvn_xtoa(s, LDBL_MAX));
   (void)printf("LDBL_MAX_EXP =%6d\n", LDBL_MAX_EXP);
+#ifndef _WIN32
 #ifdef PVN_QUADMATH
   (void)printf("FLT128_TRUE_MIN=%s\n", pvn_qtoa(s, FLT128_TRUE_MIN));
   (void)printf("FLT128_MIN     =%s\n", pvn_qtoa(s, FLT128_MIN));
@@ -100,12 +104,17 @@ char *pvn_dtoa(char *const s, const double x)
   return s;
 }
 
-#ifndef _WIN32
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
 #ifdef __x86_64__
-    int l = sprintf((char*)memset(s, 0, (size_t)31u), "%# -30.21LE", x);
+    int l =
+#ifdef _WIN32
+      __IML_long_double_to_string_e(s, (size_t)31u, 21, x)
+#else /* !_WIN32 */
+      sprintf((char*)memset(s, 0, (size_t)31u), "%# -30.21LE", x)
+#endif /* ?_WIN32 */
+      ;
     if (l <= 0)
       return (char*)NULL;
     char *d = s + 30;
@@ -152,6 +161,7 @@ char *pvn_xtoa(char *const s, const long double x)
   return s;
 }
 
+#ifndef _WIN32
 #ifdef PVN_QUADMATH
 char *pvn_qtoa(char *const s, const __float128 x)
 {

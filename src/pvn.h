@@ -153,8 +153,12 @@ PVN_EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, .
 #else /* !__MATHIMF_H_INCLUDED */
 #ifdef __GNUC__
 #include <quadmath.h>
+#ifndef FLT128_TRUE_MIN
 #define FLT128_TRUE_MIN FLT128_DENORM_MIN
+#endif /* !FLT128_TRUE_MIN */
+#ifndef isfiniteq
 #define isfiniteq finiteq
+#endif /* !isfiniteq */
 /* the GCC's libquadmath does not have rsqrtq or a similar function */
 static inline __float128 rsqrtq(__float128 x)
 {
