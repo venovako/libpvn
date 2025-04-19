@@ -94,10 +94,10 @@ help:
 pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
 
-.c.obj: Makefile
+.c.obj:
 	$(CC) $(CFLAGS) /c $< /Fo$@
 
-.c.exe: Makefile
+.c.exe:
 	$(CC) $(CFLAGS) /DPVN_TEST="\"static_exe\"" $< /link /RELEASE /LIBPATH:. $(LIBS)
 
 clean:
