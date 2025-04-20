@@ -8,7 +8,7 @@ MARCH=Host
 !IFNDEF NDEBUG
 NDEBUG=d
 !ENDIF # NDEBUG
-CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDEBUG=$(NDEBUG) /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x86_64\"" /DPVN_COMPILER="\"icx\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /MT /O$(NDEBUG) /Qx$(MARCH) /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /Wno-deprecated-declarations /Wno-overriding-option
+CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDEBUG=$(NDEBUG) /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x64\"" /DPVN_COMPILER="\"icx\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /MT /O$(NDEBUG) /Qx$(MARCH) /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /Wno-deprecated-declarations /Wno-overriding-option
 SRCS= \
 pvn.c \
 pvn_aux.c \
@@ -106,3 +106,4 @@ clean:
 	-$(RM) *.obj
 	-$(RM) ..\inc\*.obj
 	-$(RM) *.optrpt
+	-$(RM) *.pdb
