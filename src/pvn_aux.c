@@ -4,13 +4,26 @@
 int main(int argc, char *argv[])
 {
   if (4 != argc) {
+#ifdef _WIN32
+    (void)fprintf(stderr, "%s a b d\n", *argv);
+#else /* !_WIN32 */
     (void)fprintf(stderr, "%s a b ld\n", *argv);
+#endif /* ?_WIN32 */
     return EXIT_FAILURE;
   }
   const size_t a = pvn_atoz(argv[1]);
   const size_t b = pvn_atoz(argv[2]);
   (void)printf("gcd(%zu, %zu) = %zu\n", a, b, pvn_gcd(a, b));
   (void)printf("lcm(%zu, %zu) = %zu\n", a, b, pvn_lcm(a, b));
+#ifdef _WIN32
+  char s[17] = { '\0' };
+  char *e = (char*)NULL;
+  double d = 0.0;
+  *(double*)memset(&d, 0, sizeof(d)) = strtod(argv[3], &e);
+  if (e && *e)
+    return EXIT_FAILURE;
+  (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &d, sizeof(d)));
+#else /* !_WIN32 */
   char s[33] = { '\0' };
   char *e = (char*)NULL;
   long double ld = 0.0L;
@@ -18,6 +31,7 @@ int main(int argc, char *argv[])
   if (e && *e)
     return EXIT_FAILURE;
   (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &ld, sizeof(ld)));
+#endif /* ?_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
