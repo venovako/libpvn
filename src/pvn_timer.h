@@ -75,10 +75,10 @@ static inline long pvn_time_mono_res()
   return (clock_getres(PVN_CLOCK_MONOTONIC, &t) ? -1L : pvn_t2ns(&t));
 }
 
-PVN_EXTERN_C long pvn_time_real_us_();
-PVN_EXTERN_C long pvn_time_thread_ns_();
-PVN_EXTERN_C long pvn_time_mono_ns_();
-PVN_EXTERN_C long pvn_time_thread_res_();
-PVN_EXTERN_C long pvn_time_mono_res_();
+PVN_EXTERN_C long PVN_FABI(pvn_time_real_us,PVN_TIME_REAL_US)();
+PVN_EXTERN_C long PVN_FABI(pvn_time_thread_ns,PVN_TIME_THREAD_NS)();
+PVN_EXTERN_C long PVN_FABI(pvn_time_mono_ns,PVN_TIME_MONO_NS)();
+PVN_EXTERN_C long PVN_FABI(pvn_time_thread_res,PVN_TIME_THREAD_RES)();
+PVN_EXTERN_C long PVN_FABI(pvn_time_mono_res,PVN_TIME_MONO_RES)();
 
 #endif /* !PVN_TIMER_H */

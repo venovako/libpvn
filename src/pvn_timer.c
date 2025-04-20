@@ -7,27 +7,27 @@ int main(/* int argc, char *argv[] */)
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-long pvn_time_real_us_()
+long PVN_FABI(pvn_time_real_us,PVN_TIME_REAL_US)()
 {
   return pvn_time_real_us();
 }
 
-long pvn_time_thread_ns_()
+long PVN_FABI(pvn_time_thread_ns,PVN_TIME_THREAD_NS)()
 {
   return pvn_time_thread_ns();
 }
 
-long pvn_time_mono_ns_()
+long PVN_FABI(pvn_time_mono_ns,PVN_TIME_MONO_NS)()
 {
   return pvn_time_mono_ns();
 }
 
-long pvn_time_thread_res_()
+long PVN_FABI(pvn_time_thread_res,PVN_TIME_THREAD_RES)()
 {
   return pvn_time_thread_res();
 }
 
-long pvn_time_mono_res_()
+long PVN_FABI(pvn_time_mono_res,PVN_TIME_MONO_RES)()
 {
   return pvn_time_mono_res();
 }
