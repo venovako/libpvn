@@ -12,7 +12,11 @@ int main(/* int argc, char *argv[] */)
   (void)printf("%s ", PVN_DYNAMIC);
 #else /* !PVN_DYNAMIC */
 #ifdef _WIN32
+#ifdef _DLL
+  (void)printf("dll ");
+#else /* !_DLL */
   (void)printf("lib ");
+#endif /* ?_DLL */
 #else /* !_WIN32 */
   (void)printf("a ");
 #endif /* ?_WIN32 */

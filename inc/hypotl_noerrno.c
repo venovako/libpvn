@@ -28,6 +28,10 @@ SOFTWARE.
    format.
 */
 
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
+
 #include <stdint.h>
 #include <fenv.h>
 #include <errno.h>

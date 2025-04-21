@@ -25,6 +25,8 @@ SOFTWARE.
 */
 
 /* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C double cr_hypot(double x, double y);
 
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO

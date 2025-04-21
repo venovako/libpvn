@@ -30,6 +30,8 @@ SOFTWARE.
 */
 
 /* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C long double cr_rsqrtl(long double x);
 
 #define TRACE 0x8.000000000000001p-5L
 

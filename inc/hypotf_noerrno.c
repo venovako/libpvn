@@ -25,6 +25,8 @@ SOFTWARE.
 */
 
 /* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C float cr_hypotf(float x, float y);
 
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
