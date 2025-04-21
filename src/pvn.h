@@ -67,12 +67,30 @@
 #include <omp.h>
 #endif /* _OPENMP */
 
-#ifndef PVN_EXTERN_C
+#ifndef EXTERN_C
 #ifdef __cplusplus
-#define PVN_EXTERN_C extern "C"
+#define EXTERN_C extern "C"
 #else /* C */
-#define PVN_EXTERN_C extern
+#define EXTERN_C extern
 #endif /* ?__cplusplus */
+#else /* EXTERN_C */
+#error EXTERN_C already defined
+#endif /* ?EXTERN_C */
+
+#ifndef PVN_EXTERN_C
+#ifdef _WIN32
+#ifdef _DLL
+#ifdef PVN_DYNAMIC
+#define PVN_EXTERN_C EXTERN_C __declspec(dllexport)
+#else /* !PVN_DYNAMIC */
+#define PVN_EXTERN_C EXTERN_C __declspec(dllimport)
+#endif /* ?PVN_DYNAMIC */
+#else /* !_DLL */
+#define PVN_EXTERN_C EXTERN_C
+#endif /* ?_DLL */
+#else /* !_WIN32 */
+#define PVN_EXTERN_C EXTERN_C
+#endif /* ?_WIN32 */
 #else /* PVN_EXTERN_C */
 #error PVN_EXTERN_C already defined
 #endif /* ?PVN_EXTERN_C */
@@ -125,17 +143,17 @@
 #define FLT128_MANT_DIG 113
 #define FLT128_MAX_EXP 16384
 #define FLT128_MIN_EXP (-16381)
-PVN_EXTERN_C __float128 __copysignq(__float128, __float128);
-PVN_EXTERN_C __float128 __fabsq(__float128);
-PVN_EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
-PVN_EXTERN_C __float128 __fmaxq(__float128, __float128);
-PVN_EXTERN_C __float128 __fminq(__float128, __float128);
-PVN_EXTERN_C __float128 __frexpq(__float128, int*);
-PVN_EXTERN_C __float128 __hypotq(__float128, __float128);
-PVN_EXTERN_C int __isfiniteq(__float128);
-PVN_EXTERN_C __float128 __scalbnq(__float128, int);
-PVN_EXTERN_C __float128 __sqrtq(__float128);
-PVN_EXTERN_C __float128 __invsqrtq(__float128);
+EXTERN_C __float128 __copysignq(__float128, __float128);
+EXTERN_C __float128 __fabsq(__float128);
+EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
+EXTERN_C __float128 __fmaxq(__float128, __float128);
+EXTERN_C __float128 __fminq(__float128, __float128);
+EXTERN_C __float128 __frexpq(__float128, int*);
+EXTERN_C __float128 __hypotq(__float128, __float128);
+EXTERN_C int __isfiniteq(__float128);
+EXTERN_C __float128 __scalbnq(__float128, int);
+EXTERN_C __float128 __sqrtq(__float128);
+EXTERN_C __float128 __invsqrtq(__float128);
 #define copysignq __copysignq
 #define fabsq __fabsq
 #define fmaq __fmaq
@@ -148,7 +166,7 @@ PVN_EXTERN_C __float128 __invsqrtq(__float128);
 #define sqrtq __sqrtq
 #define rsqrtq __invsqrtq
 #ifndef _WIN32
-PVN_EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
+EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
 #endif /* !_WIN32 */
 #else /* !__MATHIMF_H_INCLUDED */
 #ifdef __GNUC__

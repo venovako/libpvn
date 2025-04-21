@@ -3,11 +3,19 @@
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
+#ifdef _WIN32
+  (void)printf("pvn.");
+#else /* !_WIN32 */
   (void)printf("libpvn.");
+#endif /* ?_WIN32 */
 #ifdef PVN_DYNAMIC
   (void)printf("%s ", PVN_DYNAMIC);
 #else /* !PVN_DYNAMIC */
+#ifdef _WIN32
+  (void)printf("lib ");
+#else /* !_WIN32 */
   (void)printf("a ");
+#endif /* ?_WIN32 */
 #endif /* ?PVN_DYNAMIC */
   (void)printf("built on %s with %s for %s on %s ", __DATE__, PVN_COMPILER, PVN_OS, PVN_ARCH);
 #ifdef NDEBUG

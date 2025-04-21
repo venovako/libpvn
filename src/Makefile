@@ -11,7 +11,19 @@ NDEBUG=d
 !IFNDEF CRT
 CRT=MT
 !ENDIF # !CRT
-CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDEBUG=$(NDEBUG) /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x64\"" /DPVN_COMPILER="\"icx\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /$(CRT) /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDEBUG=$(NDEBUG) /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x64\"" /DPVN_COMPILER="\"icx\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+!IF "$(CRT)"=="MD"
+CFLAGS=$(CFLAGS) /MD
+CCFLAGS=$(CFLAGS) /DPVN_DYNAMIC="\"dll\""
+CLFLAGS=$(CFLAGS) /DPVN_TEST="\"dynamic_exe\""
+LIBS=pvn.dll
+!ELSE # MT
+CFLAGS=$(CFLAGS) /MT
+CCFLAGS=$(CFLAGS)
+CLFLAGS=$(CFLAGS) /DPVN_TEST="\"static_exe\""
+LIBS=pvn.lib
+!ENDIF # MD
+
 SRCS= \
 pvn.c \
 pvn_aux.c \
@@ -70,7 +82,6 @@ pvn_timer.obj \
 ..\inc\rsqrt_noerrno.obj  \
 ..\inc\hypotl_noerrno.obj \
 ..\inc\rsqrtl_noerrno.obj
-LIBS=pvn.lib
 EXES= \
 pvn.exe \
 pvn_aux.exe \
@@ -103,11 +114,14 @@ help:
 pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
 
+pvn.dll: $(OBJS) Makefile
+	$(CC) $(CFLAGS) /LD /Fe$@ /link /RELEASE /IMPLIB:pvn.lib
+
 .c.obj:
-	$(CC) $(CFLAGS) /c $< /Fo$@
+	$(CC) $(CCFLAGS) /c $< /Fo$@
 
 .c.exe:
-	$(CC) $(CFLAGS) /DPVN_TEST="\"static_exe\"" $< /link /RELEASE /LIBPATH:. $(LIBS)
+	$(CC) $(CLFLAGS) $< /link /RELEASE /LIBPATH:. pvn.lib
 
 clean:
 	-$(RM) *.exe
