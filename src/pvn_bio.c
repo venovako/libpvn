@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 #else /* !PVN_TEST */
 static const size_t GiB = (size_t)(1ull << 30u);
 #ifdef _WIN32
+#include <Windows.h>
 static const int perms = (_S_IREAD | _S_IWRITE);
 #else /* !_WIN32 */
 static const mode_t perms = (S_IRUSR | S_IWUSR);
@@ -52,7 +53,7 @@ int PVN_FABI(pvn_bopen_rw,PVN_BOPEN_RW)(off_t *const sz, const char *const fn, .
   if (fd >= 0) {
     if (sz) {
       if (*sz >= 0) {
-        if (
+        if (/* Windows: max 2^31 - 1 bytes */
 #ifdef _WIN32
             _chsize(fd, (long)*sz) < 0
 #else /* !_WIN32 */
@@ -86,7 +87,7 @@ int PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(off_t *const sz, const char *const fn, .
   if (fd >= 0) {
     if (sz) {
       if (*sz >= 0) {
-        if (
+        if ( /* Windows: max 2^31 - 1 bytes */
 #ifdef _WIN32
             _chsize(fd, (long)*sz) < 0
 #else /* !_WIN32 */
@@ -115,7 +116,6 @@ int PVN_FABI(pvn_bclose,PVN_BCLOSE)(const int *const fd)
   return (fd ? ((*fd < 0) ? -3 : close(*fd)) : -2);
 }
 
-#ifndef _WIN32
 ssize_t PVN_FABI(pvn_bwrite,PVN_BWRITE)(const int *const fd, const void *const buf, const size_t *const nB, const off_t *const off)
 {
   if (!fd || (*fd < 0))
@@ -134,22 +134,47 @@ ssize_t PVN_FABI(pvn_bwrite,PVN_BWRITE)(const int *const fd, const void *const b
   off_t _off = *off;
   const size_t qGiB = (_nB >> 30u);
   ssize_t ret = 0;
+#ifdef _WIN32
+  const HANDLE h = (HANDLE)_get_osfhandle(*fd);
+  if (h == INVALID_HANDLE_VALUE)
+    return -1;
+  OVERLAPPED o;
+  (void)memset(&o, 0, sizeof(o));
+#endif /* _WIN32 */
   for (size_t i = 0u; i < qGiB; ++i) {
+#ifdef _WIN32
+    ssize_t ret1 = 0ll;
+    *(off_t*)&(o.Offset) = _off;
+    if (!WriteFile(h, _buf, (DWORD)GiB, (LPDWORD)&ret1, &o))
+      return -5;
+#else /* !_WIN32 */
     const ssize_t ret1 = pwrite(*fd, _buf, GiB, _off);
+#endif /* ?_WIN32 */
     if ((ret1 <= 0) || ((size_t)ret1 != GiB))
       return -5;
+#ifndef _WIN32
     if (fsync(*fd) < 0)
       return -6;
+#endif /* !_WIN32 */
     _buf = (const void*)(((const char*)_buf) + ret1);
     _nB -= ret1;
     _off += ret1;
     ret += ret1;
   }
+#ifdef _WIN32
+  ssize_t ret1 = 0ll;
+  *(off_t*)&(o.Offset) = _off;
+  if (!WriteFile(h, _buf, (DWORD)_nB, (LPDWORD)&ret1, &o))
+    return -7;
+#else /* !_WIN32 */
   const ssize_t ret1 = pwrite(*fd, _buf, _nB, _off);
+#endif /* ?_WIN32 */
   if ((ret1 <= 0) || ((size_t)ret1 != _nB))
     return -7;
+#ifndef _WIN32
   if (fsync(*fd) < 0)
     return -8;
+#endif /* !_WIN32 */
   ret += ret1;
   return ret;
 }
@@ -172,8 +197,22 @@ ssize_t PVN_FABI(pvn_bread,PVN_BREAD)(const int *const fd, void *const buf, cons
   off_t _off = *off;
   const size_t qGiB = (_nB >> 30u);
   ssize_t ret = 0;
+#ifdef _WIN32
+  const HANDLE h = (HANDLE)_get_osfhandle(*fd);
+  if (h == INVALID_HANDLE_VALUE)
+    return -1;
+  OVERLAPPED o;
+  (void)memset(&o, 0, sizeof(o));
+#endif /* _WIN32 */
   for (size_t i = 0u; i < qGiB; ++i) {
+#ifdef _WIN32
+    ssize_t ret1 = 0ll;
+    *(off_t*)&(o.Offset) = _off;
+    if (!ReadFile(h, _buf, (DWORD)GiB, (LPDWORD)&ret1, &o))
+      return -5;
+#else /* !_WIN32 */
     const ssize_t ret1 = pread(*fd, _buf, GiB, _off);
+#endif /* ?_WIN32 */
     if ((ret1 <= 0) || ((size_t)ret1 != GiB))
       return -5;
     _buf = (void*)(((char*)_buf) + ret1);
@@ -181,7 +220,14 @@ ssize_t PVN_FABI(pvn_bread,PVN_BREAD)(const int *const fd, void *const buf, cons
     _off += ret1;
     ret += ret1;
   }
+#ifdef _WIN32
+  ssize_t ret1 = 0ll;
+  *(off_t*)&(o.Offset) = _off;
+  if (!ReadFile(h, _buf, (DWORD)_nB, (LPDWORD)&ret1, &o))
+    return -7;
+#else /* !_WIN32 */
   const ssize_t ret1 = pread(*fd, _buf, _nB, _off);
+#endif /* ?_WIN32 */
   if ((ret1 <= 0) || ((size_t)ret1 != _nB))
     return -6;
   ret += ret1;
@@ -206,19 +252,37 @@ ssize_t PVN_FABI(pvn_bwrite80,PVN_BWRITE80)(const int *const fd, const long doub
   size_t _n = *n;
   off_t _off = *off;
   ssize_t ret = 0;
+#ifdef _WIN32
+  const HANDLE h = (HANDLE)_get_osfhandle(*fd);
+  if (h == INVALID_HANDLE_VALUE)
+    return -1;
+  OVERLAPPED o;
+  (void)memset(&o, 0, sizeof(o));
+#endif /* _WIN32 */
   for (size_t i = 0u; i < _n; ++i) {
+#ifdef _WIN32
+    ssize_t ret1 = 0ll;
+    *(off_t*)&(o.Offset) = _off;
+    if (!WriteFile(h, _buf++, (DWORD)10u, (LPDWORD)&ret1, &o))
+      return -5;
+#else /* !_WIN32 */
     const ssize_t ret1 = pwrite(*fd, _buf++, (size_t)10u, _off);
+#endif /* ?_WIN32 */
     if (ret1 != (ssize_t)10)
       return -5;
 #ifndef NDEBUG
+#ifndef _WIN32
     if (fsync(*fd) < 0)
       return -6;
+#endif /* !_WIN32 */
 #endif /* !NDEBUG */
     _off += (off_t)ret1;
     ret += ret1;
   }
+#ifndef _WIN32
   if (fsync(*fd) < 0)
     return -8;
+#endif /* !_WIN32 */
   return ret;
 }
 
@@ -239,8 +303,22 @@ ssize_t PVN_FABI(pvn_bread80,PVN_BREAD80)(const int *const fd, long double *cons
   size_t _n = *n;
   off_t _off = *off;
   ssize_t ret = 0;
+#ifdef _WIN32
+  const HANDLE h = (HANDLE)_get_osfhandle(*fd);
+  if (h == INVALID_HANDLE_VALUE)
+    return -1;
+  OVERLAPPED o;
+  (void)memset(&o, 0, sizeof(o));
+#endif /* _WIN32 */
   for (size_t i = 0u; i < _n; ++i) {
+#ifdef _WIN32
+    ssize_t ret1 = 0ll;
+    *(off_t*)&(o.Offset) = _off;
+    if (!ReadFile(h, _buf++, (DWORD)10u, (LPDWORD)&ret1, &o))
+      return -5;
+#else /* !_WIN32 */
     const ssize_t ret1 = pread(*fd, _buf++, (size_t)10u, _off);
+#endif /* ?_WIN32 */
     if (ret1 != (ssize_t)10)
       return -5;
     _off += (off_t)ret1;
@@ -249,5 +327,4 @@ ssize_t PVN_FABI(pvn_bread80,PVN_BREAD80)(const int *const fd, long double *cons
   return ret;
 }
 #endif /* __x86_64__ */
-#endif /* !_WIN32 */
 #endif /* ?PVN_TEST */
