@@ -211,8 +211,8 @@ static inline __float128 rsqrtq(__float128 x)
 #ifndef _WIN32
 #include "pvn_lock.h"
 #include "pvn_prof.h"
-#include "pvn_timer.h"
 #endif /* !_WIN32 */
+#include "pvn_timer.h"
 
 static inline int pvn_le()
 {
