@@ -5,7 +5,10 @@
 #error pvn_timer.h not intended for direct inclusion
 #endif /* !PVN_H */
 
-#ifndef _WIN32
+#ifdef _WIN32
+PVN_EXTERN_C long long PVN_FABI(pvn_time_mono_ticks,PVN_TIME_MONO_TICKS)();
+PVN_EXTERN_C long long PVN_FABI(pvn_time_mono_freq,PVN_TIME_MONO_FREQ)();
+#else /* !_WIN32 */
 #ifndef PVN_CLOCK_MONOTONIC
 #ifdef CLOCK_MONOTONIC_RAW
 #define PVN_CLOCK_MONOTONIC CLOCK_MONOTONIC_RAW
@@ -54,16 +57,16 @@ static inline long long pvn_time_thread_ns()
   return (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t) ? -1ll : pvn_t2ns(&t));
 }
 
-static inline long long pvn_time_mono_ns()
-{
-  struct timespec t = { (time_t)0, 0l };
-  return (clock_gettime(PVN_CLOCK_MONOTONIC, &t) ? -1ll : pvn_t2ns(&t));
-}
-
 static inline long long pvn_time_thread_res()
 {
   struct timespec t = { (time_t)0, 0l };
   return (clock_getres(CLOCK_THREAD_CPUTIME_ID, &t) ? -1ll : pvn_t2ns(&t));
+}
+
+static inline long long pvn_time_mono_ns()
+{
+  struct timespec t = { (time_t)0, 0l };
+  return (clock_gettime(PVN_CLOCK_MONOTONIC, &t) ? -1ll : pvn_t2ns(&t));
 }
 
 static inline long long pvn_time_mono_res()
@@ -75,8 +78,8 @@ static inline long long pvn_time_mono_res()
 PVN_EXTERN_C long long PVN_FABI(pvn_time_real_us,PVN_TIME_REAL_US)();
 PVN_EXTERN_C long long PVN_FABI(pvn_time_thread_ns,PVN_TIME_THREAD_NS)();
 PVN_EXTERN_C long long PVN_FABI(pvn_time_thread_res,PVN_TIME_THREAD_RES)();
-#endif /* !_WIN32 */
 PVN_EXTERN_C long long PVN_FABI(pvn_time_mono_ns,PVN_TIME_MONO_NS)();
 PVN_EXTERN_C long long PVN_FABI(pvn_time_mono_res,PVN_TIME_MONO_RES)();
+#endif /* ?_WIN32 */
 
 #endif /* !PVN_TIMER_H */
