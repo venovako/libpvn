@@ -115,7 +115,7 @@ pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
 
 pvn.dll: $(OBJS) Makefile
-	$(CC) $(CFLAGS) /LD /Fe$@ /link /RELEASE /IMPLIB:pvn.lib
+	$(CC) $(CFLAGS) /LD /Fe$@ $(OBJS) /link /RELEASE /IMPLIB:pvn.lib
 
 .c.obj:
 	$(CC) $(CCFLAGS) /c $< /Fo$@
@@ -125,6 +125,7 @@ pvn.dll: $(OBJS) Makefile
 
 clean:
 	-$(RM) *.exe
+	-$(RM) *.dll
 	-$(RM) *.lib
 	-$(RM) *.obj
 	-$(RM) ..\inc\*.obj
