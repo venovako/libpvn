@@ -30,7 +30,7 @@ pvn_ran.c \
 pvn_sv2.c \
 pvn_tar.c \
 pvn_vis.c \
-pvn_timer.c
+pvn_timer.c \
 ..\inc\hypotf_noerrno.c \
 ..\inc\rsqrtf_noerrno.c \
 ..\inc\hypot_noerrno.c  \
@@ -58,7 +58,7 @@ pvn_ran.obj \
 pvn_sv2.obj \
 pvn_tar.obj \
 pvn_vis.obj \
-pvn_timer.obj
+pvn_timer.obj \
 ..\inc\hypotf_noerrno.obj \
 ..\inc\rsqrtf_noerrno.obj \
 ..\inc\hypot_noerrno.obj  \
