@@ -208,8 +208,8 @@ static inline __float128 rsqrtq(__float128 x)
 #include "pvn_sv2.h"
 #include "pvn_tar.h"
 #include "pvn_vis.h"
-#ifndef _WIN32
 #include "pvn_lock.h"
+#ifndef _WIN32
 #include "pvn_prof.h"
 #endif /* !_WIN32 */
 #include "pvn_timer.h"

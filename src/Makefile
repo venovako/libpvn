@@ -33,6 +33,7 @@ pvn_ran.c \
 pvn_sv2.c \
 pvn_tar.c \
 pvn_vis.c \
+pvn_lock.c \
 pvn_timer.c \
 ..\inc\hypotf_noerrno.c \
 ..\inc\rsqrtf_noerrno.c \
@@ -61,6 +62,7 @@ pvn_ran.obj \
 pvn_sv2.obj \
 pvn_tar.obj \
 pvn_vis.obj \
+pvn_lock.obj \
 pvn_timer.obj \
 ..\inc\hypotf_noerrno.obj \
 ..\inc\rsqrtf_noerrno.obj \
@@ -90,6 +92,7 @@ pvn_ran.exe \
 pvn_sv2.exe \
 pvn_tar.exe \
 pvn_vis.exe \
+pvn_lock.exe \
 pvn_timer.exe
 
 all: $(LIBS) $(EXES)
