@@ -139,9 +139,9 @@ EXTERN_C __float128 __invsqrtq(__float128);
 #define scalbnq __scalbnq
 #define sqrtq __sqrtq
 #define rsqrtq __invsqrtq
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #else /* !__MATHIMF_H_INCLUDED */
 #ifdef __GNUC__
 #include <quadmath.h>

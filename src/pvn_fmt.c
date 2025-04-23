@@ -16,7 +16,7 @@ int main(/* int argc, char *argv[] */)
   (void)printf(" DBL_EPSILON =%s\n", pvn_dtoa(s, DBL_EPSILON));
   (void)printf(" DBL_MAX     =%s\n", pvn_dtoa(s, DBL_MAX));
   (void)printf(" DBL_MAX_EXP =%6d\n", DBL_MAX_EXP);
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
   (void)printf("LDBL_TRUE_MIN=%s\n", pvn_xtoa(s, LDBL_TRUE_MIN));
   (void)printf("LDBL_MIN     =%s\n", pvn_xtoa(s, LDBL_MIN));
   (void)printf("LDBL_MIN_EXP =%6d\n", LDBL_MIN_EXP);
@@ -31,7 +31,7 @@ int main(/* int argc, char *argv[] */)
   (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
   (void)printf("FLT128_MAX_EXP =%6d\n", FLT128_MAX_EXP);
 #endif /* PVN_QUADMATH */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
@@ -100,7 +100,38 @@ char *pvn_dtoa(char *const s, const double x)
   return s;
 }
 
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
+#ifdef _WIN32
+char *pvn_xtoa(char *const s, const long double x)
+{
+  if (s) {
+    const __float128 x_ = (__float128)x;
+    int l = quadmath_snprintf((char*)memset(s, 0, (size_t)31u), (size_t)31u, "%# -30.21QE", x_);
+    if (l <= 0)
+      return (char*)NULL;
+    char *d = s + 30;
+    char *e = strrchr(s, 'E');
+    if (e) {
+      for (--d; isblank(*d); --d)
+        *d = '\0';
+      e += 2;
+      l = (int)(strchr(e, '\0') - e);
+      if (l >= 4)
+        return s;
+      d = s + 30;
+      e += l;
+      for (int i = 0; i < l; ++i)
+        *--d = *--e;
+      for (--d; isdigit(*d); --d)
+        *d = '0';
+    }
+    else
+      for (--d; !*d; --d)
+        *d = ' ';
+  }
+  return s;
+}
+#else /* !_WIN32 */
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
@@ -151,7 +182,7 @@ char *pvn_xtoa(char *const s, const long double x)
   }
   return s;
 }
-
+#endif /* ?_WIN32 */
 #ifdef PVN_QUADMATH
 char *pvn_qtoa(char *const s, const __float128 x)
 {
@@ -187,5 +218,5 @@ char *pvn_qtoa(char *const s, const long double x)
   return pvn_xtoa(s, x);
 }
 #endif /* ?PVN_QUADMATH */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #endif /* ?PVN_TEST */

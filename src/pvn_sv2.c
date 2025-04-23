@@ -232,12 +232,12 @@ int main(int argc, char *argv[])
     }
     else
       return EXIT_FAILURE;
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
     (void)printf("cond_2(G) =%s\n", pvn_qtoa(s, E[0]));
     (void)printf("|| U^%c U - I ||_F =%s\n", T, pvn_qtoa(s, E[1]));
     (void)printf("|| V^%c V - I ||_F =%s\n", T, pvn_qtoa(s, E[2]));
     (void)printf("|| U Σ V^%c - G ||_F / || G ||_F =%s\n", T, pvn_qtoa(s, E[3]));
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
   }
   else {
     int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
 #else /* !PVN_QUADMATH */
         EC = fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -292,13 +292,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
         EU = fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -307,13 +307,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
         EV = fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -322,13 +322,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
         EG = fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
       }
     }
     else if (t == 'D') {
@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
 #else /* !PVN_QUADMATH */
         EC = fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -382,13 +382,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
         EU = fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -397,13 +397,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
         EV = fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -412,13 +412,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
         EG = fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -427,7 +427,7 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
       }
     }
     else if (t == 'C') {
@@ -484,7 +484,7 @@ int main(int argc, char *argv[])
 #else /* !PVN_QUADMATH */
         EC = fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -493,13 +493,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
         EU = fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -508,13 +508,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
         EV = fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -523,13 +523,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
         EG = fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -538,7 +538,7 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
       }
     }
     else if (t == 'Z') {
@@ -595,7 +595,7 @@ int main(int argc, char *argv[])
 #else /* !PVN_QUADMATH */
         EC = fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -604,13 +604,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
         EU = fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -619,13 +619,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
         EV = fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -634,13 +634,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
         EG = fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
 #ifdef _OPENMP
 #pragma omp critical
@@ -649,13 +649,13 @@ int main(int argc, char *argv[])
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
 #endif /* !NDEBUG */
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
       }
     }
     else
       return EXIT_FAILURE;
     u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
     (void)printf("max(cond_2(G))=");
 #endif /* !NDEBUG */
@@ -678,7 +678,7 @@ int main(int argc, char *argv[])
     (void)putchar(',');
 #endif /* ?NDEBUG */
     (void)printf("%s\n", pvn_qtoa(s, EG));
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
     if (u != 0) {
       (void)fprintf(stderr, "close(/dev/random): %d\n", u);
       return EXIT_FAILURE;

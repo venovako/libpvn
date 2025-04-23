@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   PVN_FABI(pvn_djs_denc,PVN_DJS_DENC)(&d, &f, &p, &q);
   char s[46] = { '\0' };
   (void)fprintf(stdout, "d=%s\n", pvn_dtoa(s, d));
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
   d = 0.0;
 #ifdef __x86_64__
   long double x = 0.0L;
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
   PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(&e, &d, &p, &q);
   (void)fprintf(stdout, "q=%s\n", pvn_qtoa(s, e));
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */

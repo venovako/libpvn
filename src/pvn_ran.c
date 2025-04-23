@@ -12,10 +12,10 @@ int main(/* int argc, char *argv[] */)
   char s[46] = { '\0' };
   (void)printf("safe_f=%s\n", pvn_stoa(s, PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(&u, (const int*)NULL)));
   (void)printf("safe_d=%s\n", pvn_dtoa(s, PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL)));
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
   (void)printf("safe_l=%s\n", pvn_xtoa(s, PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(&u, (const int*)NULL)));
   (void)printf("safe_q=%s\n", pvn_qtoa(s, PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(&u, (const int*)NULL)));
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
   (void)printf("close=%d\n", PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u));
   return EXIT_SUCCESS;
 }

@@ -15,8 +15,12 @@ CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDE
 !IF "$(CRT)"=="MD"
 CFLAGS=$(CFLAGS) /MD
 CCFLAGS=$(CFLAGS) /DPVN_DYNAMIC="\"dll\""
+CDFLAGS=$(CFLAGS) /LD /Wno-unused-command-line-argument
 CLFLAGS=$(CFLAGS) /DPVN_TEST="\"dynamic_exe\""
 LIBS=pvn.dll
+!IFNDEF MSYS64
+MSYS64=C:\msys64
+!ENDIF # !MSYS64
 !ELSE # MT
 CFLAGS=$(CFLAGS) /MT
 CCFLAGS=$(CFLAGS)
@@ -115,7 +119,12 @@ pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
 
 pvn.dll: $(OBJS) Makefile
-	$(CC) $(CFLAGS) /LD /Fe$@ $(OBJS) /link /RELEASE
+	@echo "=== EXPERIMENTALLY LINKING WITH THE GCC's LIBQUADMATH ==="
+	@echo "=== DO NOT ATTEMPT THIS FOR ANYTHING REDISTRIBUTABLE! ==="
+	$(CC) $(CDFLAGS) /Fe$@ $(OBJS) /link /RELEASE /LIBPATH:$(MSYS64)\ucrt64\lib libquadmath.dll.a
+	copy /Y /V $(MSYS64)\ucrt64\bin\libgcc_s_seh-1.dll .
+	copy /Y /V $(MSYS64)\ucrt64\bin\libquadmath-0.dll .
+	copy /Y /V $(MSYS64)\ucrt64\bin\libwinpthread-1.dll .
 
 .c.obj:
 	$(CC) $(CCFLAGS) /c $< /Fo$@

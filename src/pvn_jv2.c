@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     (void)printf("%s]\n", pvn_dtoa(s, shr));
     (void)printf("[%s,", pvn_dtoa(s, shr));
     (void)printf("%s]\n", pvn_dtoa(s, ch));
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
     (void)printf("V^T A V =\n");
     pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), ch, shr, shr, ch, a11, a21r, a21r, a22);
     pvn_qmm2(&(c[0][0]), &(c[1][0]), &(c[0][1]), &(c[1][1]), c[0][0], c[1][0], c[0][1], c[1][1], ch, shr, shr, ch);
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     (void)printf("%s]\n", pvn_qtoa(s, c[0][1]));
     (void)printf("[%s,", pvn_qtoa(s, c[1][0]));
     (void)printf("%s]\n", pvn_qtoa(s, c[1][1]));
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
   }
   else {
 #ifdef PVN_QUADMATH
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     (void)printf("%s),", pvn_dtoa(s, shi));
     (void)printf("(%s,", pvn_dtoa(s, ch));
     (void)printf("%s)]\n", pvn_dtoa(s, 0.0));
-#ifndef _WIN32
+#if (!defined(_WIN32) || defined(_DLL))
     pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), ch, 0.0, shr, shi, shr, -shi, ch, 0.0, a11, 0.0, a21r, a21i, a21r, -a21i, a22, 0.0);
     pvn_ymm2(&(c[0][0]), &(c[0][1]), &(c[1][0]), &(c[1][1]), &(c[0][2]), &(c[0][3]), &(c[1][2]), &(c[1][3]), c[0][0], c[0][1], c[1][0], c[1][1], c[0][2], c[0][3], c[1][2], c[1][3], ch, 0.0, shr, shi, shr, -shi, ch, 0.0);
     (void)printf("V^H A V =\n");
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
     (void)printf("%s),", pvn_qtoa(s, c[1][1]));
     (void)printf("(%s,", pvn_qtoa(s, c[1][2]));
     (void)printf("%s)]\n", pvn_qtoa(s, c[1][3]));
-#endif /* !_WIN32 */
+#endif /* !_WIN32 || _DLL */
   }
   return EXIT_SUCCESS;
 }
