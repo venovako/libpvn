@@ -15,15 +15,14 @@ int main(int argc, char *argv[])
   char s[33] = { '\0' };
   long double x = 0.0L;
   *(long double*)memset(&x, 0, sizeof(x)) = pvn_atox(argv[3]);
-  (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &x, sizeof(x)));
 #else /* _WIN32 && !_DLL */
   char s[17] = { '\0' };
   char *e = (char*)NULL;
   const double x = strtod(argv[3], &e);
   if (e && *e)
     return EXIT_FAILURE;
-  (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &x, sizeof(x)));
 #endif /* ?(!_WIN32 || _DLL) */
+  (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &x, sizeof(x)));
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
