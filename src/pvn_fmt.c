@@ -102,6 +102,13 @@ char *pvn_dtoa(char *const s, const double x)
 
 #if (!defined(_WIN32) || defined(_DLL))
 #ifdef _WIN32
+long double pvn_atox(const char *const s)
+{
+  char *e = (char*)NULL;
+  const __float128 x = ((s && *s) ? strtoflt128(s, &e) : 0.0q);
+  return ((e && *e) ? 0.0L : (long double)x);
+}
+
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
@@ -132,6 +139,13 @@ char *pvn_xtoa(char *const s, const long double x)
   return s;
 }
 #else /* !_WIN32 */
+long double pvn_atox(const char *const s)
+{
+  char *e = (char*)NULL;
+  const long double x = ((s && *s) ? strtold(s, &e) : 0.0L);
+  return ((e && *e) ? 0.0L : x);
+}
+
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
@@ -184,6 +198,13 @@ char *pvn_xtoa(char *const s, const long double x)
 }
 #endif /* ?_WIN32 */
 #ifdef PVN_QUADMATH
+__float128 pvn_atoq(const char *const s)
+{
+  char *e = (char*)NULL;
+  const __float128 x = ((s && *s) ? strtoflt128(s, &e) : 0.0q);
+  return ((e && *e) ? 0.0q : x);
+}
+
 char *pvn_qtoa(char *const s, const __float128 x)
 {
   if (s) {
@@ -213,6 +234,11 @@ char *pvn_qtoa(char *const s, const __float128 x)
   return s;
 }
 #else /* !PVN_QUADMATH */
+__float128 pvn_atoq(const char *const s)
+{
+  return pvn_atox(s);
+}
+
 char *pvn_qtoa(char *const s, const long double x)
 {
   return pvn_xtoa(s, x);
