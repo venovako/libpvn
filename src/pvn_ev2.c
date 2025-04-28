@@ -165,19 +165,19 @@ int PVN_FABI(pvn_sljev2,PVN_SLJEV2)(const float *const a11, const float *const a
     ad = (a1 - a2),
     t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
-    s2 = fmaf(t1, t1, 1.0f),
-    c1 = rsqrtf(s2);
+    sc = hypotf(t1, 1.0f),
+    c1 = (1.0f / sc);
   *cs = c1;
   if (wt)
     *sn = (as * t1);
   else {
-    const float s1 = (t1 * c1);
+    const float s1 = (t1 / sc);
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((aa != 0.0f) && (fabsf(*sn) < FLT_MIN)) << 2);
-  *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
-  *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
+  *l1 = fmaf( t1, aa, a1);
+  *l2 = fmaf(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   er = ((er && (fminf(fabsf(*l1), fabsf(*l2)) < FLT_MIN)) << 3);
   return (wt | e1 | e2 | er);
@@ -289,19 +289,19 @@ int PVN_FABI(pvn_dljev2,PVN_DLJEV2)(const double *const a11, const double *const
     ad = (a1 - a2),
     t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
-    s2 = fma(t1, t1, 1.0),
-    c1 = rsqrt(s2);
+    sc = hypot(t1, 1.0),
+    c1 = (1.0 / sc);
   *cs = c1;
   if (wt)
     *sn = (as * t1);
   else {
-    const double s1 = (t1 * c1);
+    const double s1 = (t1 / sc);
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((aa != 0.0) && (fabs(*sn) < DBL_MIN)) << 2);
-  *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
-  *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
+  *l1 = fma( t1, aa, a1);
+  *l2 = fma(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   er = ((er && (fmin(fabs(*l1), fabs(*l2)) < DBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
@@ -439,23 +439,23 @@ int PVN_FABI(pvn_cljev2,PVN_CLJEV2)(const float *const a11, const float *const a
     ad = (a1 - a2),
     t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
-    s2 = fmaf(t1, t1, 1.0f),
-    c1 = rsqrtf(s2);
+    sc = hypotf(t1, 1.0f),
+    c1 = (1.0f / sc);
   *cs = c1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
   }
   else {
-    const float s1 = (t1 * c1);
+    const float s1 = (t1 / sc);
     *snr = (ar * s1);
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((ar_ != 0.0f) && (fabsf(*snr) < FLT_MIN)) << 2);
   er = (((ai_ != 0.0f) && (fabsf(*sni) < FLT_MIN)) << 3);
-  *l1 = fmaf(t1, fmaf(a2, t1,  an), a1) / s2;
-  *l2 = fmaf(t1, fmaf(a1, t1, -an), a2) / s2;
+  *l1 = fmaf( t1, aa, a1);
+  *l2 = fmaf(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   ei = ((ei && (fminf(fabsf(*l1), fabsf(*l2)) < FLT_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
@@ -593,23 +593,23 @@ int PVN_FABI(pvn_zljev2,PVN_ZLJEV2)(const double *const a11, const double *const
     ad = (a1 - a2),
     t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
-    s2 = fma(t1, t1, 1.0),
-    c1 = rsqrt(s2);
+    sc = hypot(t1, 1.0),
+    c1 = (1.0 / sc);
   *cs = c1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
   }
   else {
-    const double s1 = (t1 * c1);
+    const double s1 = (t1 / sc);
     *snr = (ar * s1);
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((ar_ != 0.0) && (fabs(*snr) < DBL_MIN)) << 2);
   er = (((ai_ != 0.0) && (fabs(*sni) < DBL_MIN)) << 3);
-  *l1 = fma(t1, fma(a2, t1,  an), a1) / s2;
-  *l2 = fma(t1, fma(a1, t1, -an), a2) / s2;
+  *l1 = fma( t1, aa, a1);
+  *l2 = fma(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   ei = ((ei && (fmin(fabs(*l1), fabs(*l2)) < DBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
@@ -721,25 +721,19 @@ int PVN_FABI(pvn_xljev2,PVN_XLJEV2)(const long double *const a11, const long dou
     ad = (a1 - a2),
     t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
-    s2 = fmal(t1, t1, 1.0L),
-    c1 = rsqrtl(s2);
+    sc = hypotl(t1, 1.0L),
+    c1 = (1.0L / sc);
   *cs = c1;
   if (wt)
     *sn = (as * t1);
   else {
-    const long double s1 =
-#ifdef __MATHIMF_H_INCLUDED
-      (t1 * c1)
-#else /* !__MATHIMF_H_INCLUDED */
-      (t1 / sqrtl(s2))
-#endif /* ?__MATHIMF_H_INCLUDED */
-      ;
+    const long double s1 = (t1 / sc);
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((aa != 0.0L) && (fabsl(*sn) < LDBL_MIN)) << 2);
-  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
-  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
+  *l1 = fmal( t1, aa, a1);
+  *l2 = fmal(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   er = ((er && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
@@ -877,29 +871,23 @@ int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, const long dou
     ad = (a1 - a2),
     t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
-    s2 = fmal(t1, t1, 1.0L),
-    c1 = rsqrtl(s2);
+    sc = hypotl(t1, 1.0L),
+    c1 = (1.0L / sc);
   *cs = c1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
   }
   else {
-    const long double s1 =
-#ifdef __MATHIMF_H_INCLUDED
-      (t1 * c1)
-#else /* !__MATHIMF_H_INCLUDED */
-      (t1 / sqrtl(s2))
-#endif /* ?__MATHIMF_H_INCLUDED */
-      ;
+    const long double s1 = (t1 / sc);
     *snr = (ar * s1);
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((ar_ != 0.0L) && (fabsl(*snr) < LDBL_MIN)) << 2);
   er = (((ai_ != 0.0L) && (fabsl(*sni) < LDBL_MIN)) << 3);
-  *l1 = fmal(t1, fmal(a2, t1,  an), a1) / s2;
-  *l2 = fmal(t1, fmal(a1, t1, -an), a2) / s2;
+  *l1 = fmal( t1, aa, a1);
+  *l2 = fmal(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   ei = ((ei && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
@@ -1018,25 +1006,19 @@ int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float12
     ad = (a1 - a2),
     t2 = copysignq(fminq(fmaxq(an / fabsq(ad), 0.0q), FLT128_MAX), ad),
     t1 = (t2 / (1.0q + hypotq(t2, 1.0q))),
-    s2 = fmaq(t1, t1, 1.0q),
-    c1 = rsqrtq(s2);
+    sc = hypotq(t1, 1.0q),
+    c1 = (1.0q / sc);
   *cs = c1;
   if (wt)
     *sn = (as * t1);
   else {
-    const __float128 s1 =
-#ifdef __MATHIMF_H_INCLUDED
-      (t1 * c1)
-#else /* !__MATHIMF_H_INCLUDED */
-      (t1 / sqrtq(s2))
-#endif /* ?__MATHIMF_H_INCLUDED */
-      ;
+    const __float128 s1 = (t1 / sc);
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((aa != 0.0q) && (fabsq(*sn) < FLT128_MIN)) << 2);
-  *l1 = fmaq(t1, fmaq(a2, t1,  an), a1) / s2;
-  *l2 = fmaq(t1, fmaq(a1, t1, -an), a2) / s2;
+  *l1 = fmaq( t1, aa, a1);
+  *l2 = fmaq(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   er = ((er && (fminq(fabsq(*l1), fabsq(*l2)) < FLT128_MIN)) << 3);
   return (wt | e1 | e2 | er);
@@ -1174,29 +1156,23 @@ int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float12
     ad = (a1 - a2),
     t2 = copysignq(fminq(fmaxq(an / fabsq(ad), 0.0q), FLT128_MAX), ad),
     t1 = (t2 / (1.0q + hypotq(t2, 1.0q))),
-    s2 = fmaq(t1, t1, 1.0q),
-    c1 = rsqrtq(s2);
+    sc = hypotq(t1, 1.0q),
+    c1 = (1.0q / sc);
   *cs = c1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
   }
   else {
-    const __float128 s1 =
-#ifdef __MATHIMF_H_INCLUDED
-      (t1 * c1)
-#else /* !__MATHIMF_H_INCLUDED */
-      (t1 / sqrtq(s2))
-#endif /* ?__MATHIMF_H_INCLUDED */
-      ;
+    const __float128 s1 = (t1 / sc);
     *snr = (ar * s1);
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
   e2 = (((ar_ != 0.0q) && (fabsq(*snr) < FLT128_MIN)) << 2);
   er = (((ai_ != 0.0q) && (fabsq(*sni) < FLT128_MIN)) << 3);
-  *l1 = fmaq(t1, fmaq(a2, t1,  an), a1) / s2;
-  *l2 = fmaq(t1, fmaq(a1, t1, -an), a2) / s2;
+  *l1 = fmaq( t1, aa, a1);
+  *l2 = fmaq(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
   ei = ((ei && (fminq(fabsq(*l1), fabsq(*l2)) < FLT128_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
