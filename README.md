@@ -78,12 +78,12 @@ Bear in mind, however, that this will introduce a dependency on the OpenMP runti
 If `long double` is not the 128-bit floating-point datatype (e.g., on Intel-compatible hardware), the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic, unless `COMPILER=clang` is used.
 
 The `SAFE` variable lists, as one or more comma-separated short names, the components for which a safe implementation is requested:
-- `cma` makes the complex multiplication and FMA safe from unwarranted overflow;
-- `jv2` lowers the upper bound on the magnitudes of scaled input elements;
+- `cma` makes the complex multiplication and FMA safe from unwarranted overflow (work in progress);
+- `ev2` and `jv2` guard against a not-correctly-rounded `hypotq`;
 - `ran` requests that all random numbers (not only those explicitly created as such) lie in the range `[xxx_MIN*2^p,xxx_MAX/4]`, where `p=0` by default;
-- `sv2` indicates that `hypotf` and `hypot` are correctly rounded and can be used for the singular value decomposition.
+- `sv2` uses a slightly more precise triangulation.
 
-So, `SAFE=cma,sv2`, e.g., requests the `cma` and `sv2` safe implementations, but not the `ran` one.
+So, `SAFE=ev2,sv2`, e.g., requests the `ev2` and `sv2` safe implementations, but not the `ran` one.
 
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
 
