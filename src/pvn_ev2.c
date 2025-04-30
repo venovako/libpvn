@@ -1,5 +1,7 @@
 #include "pvn.h"
 
+/* a simplification of the expressions for Λ inspired by Vjeran Hari */
+
 #ifdef FLT_BIG_EXP
 #error FLT_BIG_EXP already defined
 #else /* !FLT_BIG_EXP */
@@ -897,7 +899,7 @@ int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, const long dou
 #ifdef FLT128_BIG_EXP
 #error FLT128_BIG_EXP already defined
 #else /* !FLT128_BIG_EXP */
-#define FLT128_BIG_EXP (FLT128_MAX_EXP - 3)
+#define FLT128_BIG_EXP (FLT128_MAX_EXP - 2)
 #endif /* ?FLT128_BIG_EXP */
 
 int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, int *const es)
@@ -1072,7 +1074,7 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
     ai_ = fabsq(ai),
     aa = hypotq(ar_, ai_);
 #ifdef PVN_EV2_SAFE
-  if ((aa == 0.0q) || !isfiniteq(aa)) {
+  if ((aa <= 0.0q) || !isfiniteq(aa)) {
     *cs = aa;
     return -9;
   }
