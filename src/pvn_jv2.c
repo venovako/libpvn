@@ -25,11 +25,14 @@ int main(int argc, char *argv[])
     (void)fprintf(stderr, "%s a11 a22 a21r [a21i]\n", *argv);
     return EXIT_FAILURE;
   }
-  const double a11 = atof(argv[1]);
-  const double a22 = atof(argv[2]);
-  const double a21r = atof(argv[3]);
-  const double a21i = ((5 == argc) ? atof(argv[4]) : 0.0);
-  double ch = 1.0, shr = 0.0, shi = 0.0;
+  double
+    a11 = atof(argv[1]),
+    a22 = atof(argv[2]),
+    a21r = atof(argv[3]),
+    a21i = ((5 == argc) ? atof(argv[4]) : 0.0),
+    ch = 1.0,
+    shr = 0.0,
+    shi = 0.0;
   int es = 0, lc = 0;
   if (4 == argc) {
     lc = PVN_FABI(pvn_dljv2,PVN_DLJV2)(&a11, &a22, &a21r, &ch, &shr, &es);
@@ -137,7 +140,7 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22, const float *const a21, float *const ch, float *const sh, int *const es)
+int PVN_FABI(pvn_sljv2,PVN_SLJV2)(float *const a11, float *const a22, float *const a21, float *const ch, float *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -154,17 +157,29 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22
   float ar = *a21;
   if (!isfinite(ar))
     return -3;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -175,7 +190,7 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22
     e1 = (a1 != 0.0f),
     e2 = (a2 != 0.0f),
     er = (ar != 0.0f);
-  float t1 = 0.0f;
+  float t1 = 0.0f, aa = 0.0f;
   if (er) {
     *es = (e1 | (e2 << 1) | (er << 2));
     if (*es) {
@@ -192,10 +207,9 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22
       *es = -*es;
     }
     if (er) {
-      const float
-        aa = fabsf(ar);
+      aa = fabsf(ar);
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < FLT_MIN)) || ((e2 & 2) && (a2 < FLT_MIN)) || ((e2 & 4) && (aa < FLT_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < FLT_MIN)) || ((e2 & 2) && (a2 < FLT_MIN)) || ((e2 & 4) && (aa < FLT_MIN))) << 2);
       ar = copysignf(1.0f, ar);
       const float
         an = (2.0f * aa),
@@ -208,7 +222,7 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22
       else {
         t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
         /* tangent underflows */
-        e2 = ((fabsf(t1) < FLT_MIN) << 2);
+        e2 = ((fabsf(t1) < FLT_MIN) << 3);
       }
     }
     else
@@ -226,11 +240,18 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22
   }
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsf(*sh) < FLT_MIN)) << 3);
-  return (wt | e1 | e2 | er);
+  er = ((er && (fabsf(*sh) < FLT_MIN)) << 4);
+  if (ta) {
+    *a11 = fmaf(t1, aa, *a11);
+    *a22 = fmaf(t1, aa, *a22);
+    if (bt != -1)
+      *a21 = 0.0f;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a22, const double *const a21, double *const ch, double *const sh, int *const es)
+int PVN_FABI(pvn_dljv2,PVN_DLJV2)(double *const a11, double *const a22, double *const a21, double *const ch, double *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -247,17 +268,29 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a
   double ar = *a21;
   if (!isfinite(ar))
     return -3;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -268,7 +301,7 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a
     e1 = (a1 != 0.0),
     e2 = (a2 != 0.0),
     er = (ar != 0.0);
-  double t1 = 0.0;
+  double t1 = 0.0, aa = 0.0;
   if (er) {
     *es = (e1 | (e2 << 1) | (er << 2));
     if (*es) {
@@ -285,10 +318,9 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a
       *es = -*es;
     }
     if (er) {
-      const double
-        aa = fabs(ar);
+      aa = fabs(ar);
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < DBL_MIN)) || ((e2 & 2) && (a2 < DBL_MIN)) || ((e2 & 4) && (aa < DBL_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < DBL_MIN)) || ((e2 & 2) && (a2 < DBL_MIN)) || ((e2 & 4) && (aa < DBL_MIN))) << 2);
       ar = copysign(1.0, ar);
       const double
         an = (2.0 * aa),
@@ -301,7 +333,7 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a
       else {
         t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
         /* tangent underflows */
-        e2 = ((fabs(t1) < DBL_MIN) << 2);
+        e2 = ((fabs(t1) < DBL_MIN) << 3);
       }
     }
     else
@@ -319,11 +351,18 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a
   }
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabs(*sh) < DBL_MIN)) << 3);
-  return (wt | e1 | e2 | er);
+  er = ((er && (fabs(*sh) < DBL_MIN)) << 4);
+  if (ta) {
+    *a11 = fma(t1, aa, *a11);
+    *a22 = fma(t1, aa, *a22);
+    if (bt != -1)
+      *a21 = 0.0;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const ch, float *const shr, float *const shi, int *const es)
+int PVN_FABI(pvn_cljv2,PVN_CLJV2)(float *const a11, float *const a22, float *const a21r, float *const a21i, float *const ch, float *const shr, float *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -345,17 +384,29 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22
   float ai = *a21i;
   if (!isfinite(ai))
     return -4;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -367,7 +418,7 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22
     e2 = (a2 != 0.0f),
     er = (ar != 0.0f),
     ei = (ai != 0.0f);
-  float t1 = 0.0f;
+  float t1 = 0.0f, aa = 0.0f;
   if (er || ei) {
     *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
     if (*es) {
@@ -389,10 +440,10 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22
     if (er || ei) {
       const float
         ar_ = fabsf(ar),
-        ai_ = fabsf(ai),
-        aa = hypotf(ar_, ai_); /* aa cannot be zero here if hypotf is correctly rounded */
+        ai_ = fabsf(ai);
+      aa = hypotf(ar_, ai_); /* aa cannot be zero here if hypotf is correctly rounded */
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < FLT_MIN)) || ((e2 & 2) && (a2 < FLT_MIN)) || ((e2 & 4) && (ar_ < FLT_MIN)) || ((e2 & 8) && (ai_ < FLT_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < FLT_MIN)) || ((e2 & 2) && (a2 < FLT_MIN)) || ((e2 & 4) && (ar_ < FLT_MIN)) || ((e2 & 8) && (ai_ < FLT_MIN))) << 2);
       ar = (ar / aa);
       ai = (ai / aa);
       const float
@@ -406,7 +457,7 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22
       else {
         t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
         /* tangent underflows */
-        e2 = ((fabsf(t1) < FLT_MIN) << 2);
+        e2 = ((fabsf(t1) < FLT_MIN) << 3);
       }
     }
     else
@@ -425,12 +476,19 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsf(*shr) < FLT_MIN)) << 3);
-  ei = ((ei && (fabsf(*shi) < FLT_MIN)) << 4);
-  return (wt | e1 | e2 | er | ei);
+  er = ((er && (fabsf(*shr) < FLT_MIN)) << 4);
+  ei = ((ei && (fabsf(*shi) < FLT_MIN)) << 5);
+  if (ta) {
+    *a11 = fmaf(t1, aa, *a11);
+    *a22 = fmaf(t1, aa, *a22);
+    if (bt != -1)
+      *a21i = *a21r = 0.0f;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er | ei);
 }
 
-int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const ch, double *const shr, double *const shi, int *const es)
+int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(double *const a11, double *const a22, double *const a21r, double *const a21i, double *const ch, double *const shr, double *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -452,17 +510,29 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a
   double ai = *a21i;
   if (!isfinite(ai))
     return -4;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -474,7 +544,7 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a
     e2 = (a2 != 0.0),
     er = (ar != 0.0),
     ei = (ai != 0.0);
-  double t1 = 0.0;
+  double t1 = 0.0, aa = 0.0;
   if (er || ei) {
     *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
     if (*es) {
@@ -496,10 +566,10 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a
     if (er || ei) {
       const double
         ar_ = fabs(ar),
-        ai_ = fabs(ai),
-        aa = hypot(ar_, ai_); /* aa cannot be zero here if hypot is correctly rounded */
+        ai_ = fabs(ai);
+      aa = hypot(ar_, ai_); /* aa cannot be zero here if hypot is correctly rounded */
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < DBL_MIN)) || ((e2 & 2) && (a2 < DBL_MIN)) || ((e2 & 4) && (ar_ < DBL_MIN)) || ((e2 & 8) && (ai_ < DBL_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < DBL_MIN)) || ((e2 & 2) && (a2 < DBL_MIN)) || ((e2 & 4) && (ar_ < DBL_MIN)) || ((e2 & 8) && (ai_ < DBL_MIN))) << 2);
       ar = (ar / aa);
       ai = (ai / aa);
       const double
@@ -513,7 +583,7 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a
       else {
         t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
         /* tangent underflows */
-        e2 = ((fabs(t1) < DBL_MIN) << 2);
+        e2 = ((fabs(t1) < DBL_MIN) << 3);
       }
     }
     else
@@ -532,12 +602,19 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabs(*shr) < DBL_MIN)) << 3);
-  ei = ((ei && (fabs(*shi) < DBL_MIN)) << 4);
-  return (wt | e1 | e2 | er | ei);
+  er = ((er && (fabs(*shr) < DBL_MIN)) << 4);
+  ei = ((ei && (fabs(*shi) < DBL_MIN)) << 5);
+  if (ta) {
+    *a11 = fma(t1, aa, *a11);
+    *a22 = fma(t1, aa, *a22);
+    if (bt != -1)
+      *a21i = *a21r = 0.0;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er | ei);
 }
 
-int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
+int PVN_FABI(pvn_xljv2,PVN_XLJV2)(long double *const a11, long double *const a22, long double *const a21, long double *const ch, long double *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -554,17 +631,29 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long doubl
   long double ar = *a21;
   if (!isfinite(ar))
     return -3;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -575,7 +664,7 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long doubl
     e1 = (a1 != 0.0L),
     e2 = (a2 != 0.0L),
     er = (ar != 0.0L);
-  long double t1 = 0.0L;
+  long double t1 = 0.0L, aa = 0.0L;
   if (er) {
     *es = (e1 | (e2 << 1) | (er << 2));
     if (*es) {
@@ -592,10 +681,9 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long doubl
       *es = -*es;
     }
     if (er) {
-      const long double
-        aa = fabsl(ar);
+      aa = fabsl(ar);
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < LDBL_MIN)) || ((e2 & 2) && (a2 < LDBL_MIN)) || ((e2 & 4) && (aa < LDBL_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < LDBL_MIN)) || ((e2 & 2) && (a2 < LDBL_MIN)) || ((e2 & 4) && (aa < LDBL_MIN))) << 2);
       ar = copysignl(1.0L, ar);
       const long double
         an = (2.0L * aa),
@@ -608,7 +696,7 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long doubl
       else {
         t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
         /* tangent underflows */
-        e2 = ((fabsl(t1) < LDBL_MIN) << 2);
+        e2 = ((fabsl(t1) < LDBL_MIN) << 3);
       }
     }
     else
@@ -626,11 +714,18 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long doubl
   }
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsl(*sh) < LDBL_MIN)) << 3);
-  return (wt | e1 | e2 | er);
+  er = ((er && (fabsl(*sh) < LDBL_MIN)) << 4);
+  if (ta) {
+    *a11 = fmal(t1, aa, *a11);
+    *a22 = fmal(t1, aa, *a22);
+    if (bt != -1)
+      *a21 = 0.0L;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
+int PVN_FABI(pvn_wljv2,PVN_WLJV2)(long double *const a11, long double *const a22, long double *const a21r, long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -652,17 +747,29 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
   long double ai = *a21i;
   if (!isfinite(ai))
     return -4;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -674,7 +781,7 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
     e2 = (a2 != 0.0L),
     er = (ar != 0.0L),
     ei = (ai != 0.0L);
-  long double t1 = 0.0L;
+  long double t1 = 0.0L, aa = 0.0L;
   if (er || ei) {
     *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
     if (*es) {
@@ -696,10 +803,10 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
     if (er || ei) {
       const long double
         ar_ = fabsl(ar),
-        ai_ = fabsl(ai),
-        aa = hypotl(ar_, ai_); /* aa cannot be zero here if hypotl is correctly rounded */
+        ai_ = fabsl(ai);
+      aa = hypotl(ar_, ai_); /* aa cannot be zero here if hypotl is correctly rounded */
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < LDBL_MIN)) || ((e2 & 2) && (a2 < LDBL_MIN)) || ((e2 & 4) && (ar_ < LDBL_MIN)) || ((e2 & 8) && (ai_ < LDBL_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < LDBL_MIN)) || ((e2 & 2) && (a2 < LDBL_MIN)) || ((e2 & 4) && (ar_ < LDBL_MIN)) || ((e2 & 8) && (ai_ < LDBL_MIN))) << 2);
       ar = (ar / aa);
       ai = (ai / aa);
       const long double
@@ -713,7 +820,7 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
       else {
         t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
         /* tangent underflows */
-        e2 = ((fabsl(t1) < LDBL_MIN) << 2);
+        e2 = ((fabsl(t1) < LDBL_MIN) << 3);
       }
     }
     else
@@ -732,9 +839,16 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsl(*shr) < LDBL_MIN)) << 3);
-  ei = ((ei && (fabsl(*shi) < LDBL_MIN)) << 4);
-  return (wt | e1 | e2 | er | ei);
+  er = ((er && (fabsl(*shr) < LDBL_MIN)) << 4);
+  ei = ((ei && (fabsl(*shi) < LDBL_MIN)) << 5);
+  if (ta) {
+    *a11 = fmal(t1, aa, *a11);
+    *a22 = fmal(t1, aa, *a22);
+    if (bt != -1)
+      *a21i = *a21r = 0.0L;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er | ei);
 }
 
 #ifdef PVN_QUADMATH
@@ -744,7 +858,7 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
 #define FLT128_BIG_EXP (FLT128_MAX_EXP - 2)
 #endif /* ?FLT128_BIG_EXP */
 
-int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, int *const es)
+int PVN_FABI(pvn_qljv2,PVN_QLJV2)(__float128 *const a11, __float128 *const a22, __float128 *const a21, __float128 *const ch, __float128 *const sh, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -761,17 +875,29 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
   __float128 ar = *a21;
   if (!isfiniteq(ar))
     return -3;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -782,7 +908,7 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
     e1 = (a1 != 0.0q),
     e2 = (a2 != 0.0q),
     er = (ar != 0.0q);
-  __float128 t1 = 0.0q;
+  __float128 t1 = 0.0q, aa = 0.0q;
   if (er) {
     *es = (e1 | (e2 << 1) | (er << 2));
     if (*es) {
@@ -799,10 +925,9 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
       *es = -*es;
     }
     if (er) {
-      const __float128
-        aa = fabsq(ar);
+      aa = fabsq(ar);
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (aa < FLT128_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (aa < FLT128_MIN))) << 2);
       ar = copysignq(1.0q, ar);
       const __float128
         an = (2.0q * aa),
@@ -815,7 +940,7 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
       else {
         t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
         /* tangent underflows */
-        e2 = ((fabsq(t1) < FLT128_MIN) << 2);
+        e2 = ((fabsq(t1) < FLT128_MIN) << 3);
       }
     }
     else
@@ -833,11 +958,18 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
   }
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsq(*sh) < FLT128_MIN)) << 3);
-  return (wt | e1 | e2 | er);
+  er = ((er && (fabsq(*sh) < FLT128_MIN)) << 4);
+  if (ta) {
+    *a11 = fmaq(t1, aa, *a11);
+    *a22 = fmaq(t1, aa, *a22);
+    if (bt != -1)
+      *a21 = 0.0q;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, int *const es)
+int PVN_FABI(pvn_yljv2,PVN_YLJV2)(__float128 *const a11, __float128 *const a22, __float128 *const a21r, __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -859,17 +991,29 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
   __float128 ai = *a21i;
   if (!isfiniteq(ai))
     return -4;
-  int wt = 0, bt = 0;
+  int wt = 0, bt = 0, ta = 0;
   switch (*es) {
+  case -4:
+    ta = 1;
+    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
+  case -3:
+    ta = 1;
+    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
+  case 2:
+    ta = 1;
+    /* FALLTHRU */
   case 0:
     break;
+  case 3:
+    ta = 1;
+    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -881,7 +1025,7 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
     e2 = (a2 != 0.0q),
     er = (ar != 0.0q),
     ei = (ai != 0.0q);
-  __float128 t1 = 0.0q;
+  __float128 t1 = 0.0q, aa = 0.0q;
   if (er || ei) {
     *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
     if (*es) {
@@ -903,8 +1047,8 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
     if (er || ei) {
       const __float128
         ar_ = fabsq(ar),
-        ai_ = fabsq(ai),
-        aa = hypotq(ar_, ai_);
+        ai_ = fabsq(ai);
+      aa = hypotq(ar_, ai_);
 #ifdef PVN_JV2_SAFE
       if ((aa <= 0.0q) || !isfiniteq(aa)) {
         *ch = aa;
@@ -912,7 +1056,7 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
       }
 #endif /* PVN_JV2_SAFE */
       /* a non-zero element underflows due to scaling */
-      e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (ar_ < FLT128_MIN)) || ((e2 & 8) && (ai_ < FLT128_MIN))) << 1);
+      e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (ar_ < FLT128_MIN)) || ((e2 & 8) && (ai_ < FLT128_MIN))) << 2);
       ar = (ar / aa);
       ai = (ai / aa);
       const __float128
@@ -926,7 +1070,7 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
       else {
         t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
         /* tangent underflows */
-        e2 = ((fabsq(t1) < FLT128_MIN) << 2);
+        e2 = ((fabsq(t1) < FLT128_MIN) << 3);
       }
     }
     else
@@ -945,17 +1089,24 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */
-  er = ((er && (fabsq(*shr) < FLT128_MIN)) << 3);
-  ei = ((ei && (fabsq(*shi) < FLT128_MIN)) << 4);
-  return (wt | e1 | e2 | er | ei);
+  er = ((er && (fabsq(*shr) < FLT128_MIN)) << 4);
+  ei = ((ei && (fabsq(*shi) < FLT128_MIN)) << 5);
+  if (ta) {
+    *a11 = fmaq(t1, aa, *a11);
+    *a22 = fmaq(t1, aa, *a22);
+    if (bt != -1)
+      *a21i = *a21r = 0.0q;
+  }
+  bt = ((bt == -1) << 1);
+  return (wt | bt | e1 | e2 | er | ei);
 }
 #else /* !PVN_QUADMATH */
-int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
+int PVN_FABI(pvn_qljv2,PVN_QLJV2)(long double *const a11, long double *const a22, long double *const a21, long double *const ch, long double *const sh, int *const es)
 {
   return PVN_FABI(pvn_xljv2,PVN_XLJV2)(a11, a22, a21, ch, sh, es);
 }
 
-int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
+int PVN_FABI(pvn_yljv2,PVN_YLJV2)(long double *const a11, long double *const a22, long double *const a21r, long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
 {
   return PVN_FABI(pvn_wljv2,PVN_WLJV2)(a11, a22, a21r, a21i, ch, shr, shi, es);
 }
