@@ -18,9 +18,9 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_rsqrt =%18p\n", cr_rsqrt);
   (void)printf("cr_hypotl=%18p\n", cr_hypotl);
   (void)printf("cr_rsqrtl=%18p\n", cr_rsqrtl);
-#if (defined(PVN_QUADMATH) || defined(__GNUC__))
+#if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__APPLE__)))
   (void)printf("cr_rsqrtq=%18p\n", cr_rsqrtq);
-#endif /* PVN_QUADMATH || __GNUC__ */
+#endif
 #endif /* PVN_CR_MATH */
   return EXIT_SUCCESS;
 }
@@ -37,11 +37,11 @@ long double cr_hypotl(long double x, long double y)
 
 long double cr_rsqrtl(long double x)
 {
-#if (defined(PVN_CR_MATH) && (defined(PVN_QUADMATH) || defined(__GNUC__)))
+#if (defined(PVN_CR_MATH) && (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__APPLE__))))
   return cr_rsqrtq(x);
-#else /* !PVN_CR_MATH || (!PVN_QUADMATH && !__GNUC__) */
+#else
   return (1.0L / sqrtl(x));
-#endif /* ?PVN_CR_MATH && (PVN_QUADMATH || __GNUC__) */
+#endif
 }
 #endif /* !__x86_64__ */
 #endif /* ?PVN_TEST */

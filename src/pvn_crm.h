@@ -25,10 +25,10 @@ PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl
 #endif /* __x86_64__ */
-#if (defined(PVN_QUADMATH) || defined(__GNUC__))
+#if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__APPLE__)))
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #define rsqrtq cr_rsqrtq
-#endif /* PVN_QUADMATH || __GNUC__ */
+#endif /* PVN_QUADMATH || (__GNUC__ && !__APPLE__) */
 #else /* !PVN_CR_MATH */
 #ifdef __MATHIMF_H_INCLUDED
 /* almost correctly rounded Intel-specific functions */

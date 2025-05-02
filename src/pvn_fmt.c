@@ -234,7 +234,7 @@ char *pvn_qtoa(char *const s, const __float128 x)
   return s;
 }
 #else /* !PVN_QUADMATH */
-__float128 pvn_atoq(const char *const s)
+long double pvn_atoq(const char *const s)
 {
   return pvn_atox(s);
 }
