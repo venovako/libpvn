@@ -18,32 +18,45 @@ PVN_EXTERN_C double cr_hypot(double x, double y);
 PVN_EXTERN_C double cr_rsqrt(double x);
 #define rsqrt cr_rsqrt
 /* cr_hypotl and cr_rsqrtl in core-math assume the 80-bit double-extended arithmetic */
+#ifdef __x86_64__
 PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 #define hypotl cr_hypotl
 #define cabsl(z) hypotl(creall(z), cimagl(z))
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl
+#endif /* __x86_64__ */
+#if (defined(PVN_QUADMATH) || defined(__GNUC__))
+PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
+#define rsqrtq cr_rsqrtq
+#endif /* PVN_QUADMATH || __GNUC__ */
 #else /* !PVN_CR_MATH */
 #ifdef __MATHIMF_H_INCLUDED
 /* almost correctly rounded Intel-specific functions */
 #define rsqrtf invsqrtf
 #define rsqrt invsqrt
 #define rsqrtl invsqrtl
+#ifdef PVN_QUADMATH
+#define rsqrtq __invsqrtq
+#endif /* PVN_QUADMATH */
 #else /* !__MATHIMF_H_INCLUDED */
 static inline float rsqrtf(float x)
 {
   return (1.0f / sqrtf(x));
 }
-
 static inline double rsqrt(double x)
 {
   return (1.0 / sqrt(x));
 }
-
 static inline long double rsqrtl(long double x)
 {
   return (1.0L / sqrtl(x));
 }
+#ifdef PVN_QUADMATH
+static inline __float128 rsqrtq(__float128 x)
+{
+  return (1.0q / sqrtq(x));
+}
+#endif /* PVN_QUADMATH */
 #endif /* ?__MATHIMF_H_INCLUDED */
 #endif /* ?PVN_CR_MATH */
 

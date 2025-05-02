@@ -85,8 +85,14 @@ CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
 CR_SRCS= \
 $(realpath $(CR_MATH)/src/binary32/hypot/hypotf.c) \
 $(realpath $(CR_MATH)/src/binary32/rsqrt/rsqrtf.c) \
-$(realpath $(CR_MATH)/src/binary64/hypot/hypot.c)  \
+$(realpath $(CR_MATH)/src/binary64/hypot/hypot.c) \
 $(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c)
+ifeq ($(COMPILER),gcc)
+CR_SRCS += $(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c)
+endif # gcc
+ifeq ($(COMPILER),icx)
+CR_SRCS += $(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c)
+endif # icx
 ifeq ($(findstring 86,$(ARCH)),86)
 CR_SRCS += \
 $(realpath $(CR_MATH)/src/binary80/hypot/hypotl.c) \
@@ -101,8 +107,14 @@ endif # ?NDEBUG
 CR_SRCS= \
 ../inc/hypotf_noerrno.c \
 ../inc/rsqrtf_noerrno.c \
-../inc/hypot_noerrno.c  \
+../inc/hypot_noerrno.c \
 ../inc/rsqrt_noerrno.c
+ifeq ($(COMPILER),gcc)
+CR_SRCS += ../inc/rsqrtq_noerrno.c
+endif # gcc
+ifeq ($(COMPILER),icx)
+CR_SRCS += ../inc/rsqrtq_noerrno.c
+endif # icx
 ifeq ($(findstring 86,$(ARCH)),86)
 CR_SRCS += \
 ../inc/hypotl_noerrno.c \

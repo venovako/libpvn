@@ -56,7 +56,8 @@ pvn_timer.c \
 ..\inc\hypot_noerrno.c  \
 ..\inc\rsqrt_noerrno.c  \
 ..\inc\hypotl_noerrno.c \
-..\inc\rsqrtl_noerrno.c
+..\inc\rsqrtl_noerrno.c \
+..\inc\rsqrtq_noerrno.c
 OBJS= \
 pvn.obj \
 pvn_aux.obj \
@@ -85,7 +86,8 @@ pvn_timer.obj \
 ..\inc\hypot_noerrno.obj  \
 ..\inc\rsqrt_noerrno.obj  \
 ..\inc\hypotl_noerrno.obj \
-..\inc\rsqrtl_noerrno.obj
+..\inc\rsqrtl_noerrno.obj \
+..\inc\rsqrtq_noerrno.obj
 EXES= \
 pvn.exe \
 pvn_aux.exe \

@@ -110,13 +110,41 @@
 /* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
 #ifdef __MATHIMF_H_INCLUDED
+#ifndef FLT128_MAX
 #define FLT128_MAX 1.18973149535723176508575932662800702E+4932q
+#else /* FLT128_MAX */
+#error FLT128_MAX already defined
+#endif /* ?FLT128_MAX */
+#ifndef FLT128_MIN
 #define FLT128_MIN 3.36210314311209350626267781732175260E-4932q
+#else /* FLT128_MIN */
+#error FLT128_MIN already defined
+#endif /* ?FLT128_MIN */
+#ifndef FLT128_EPSILON
 #define FLT128_EPSILON 1.92592994438723585305597794258492732E-34q
+#else /* FLT128_EPSILON */
+#error FLT128_EPSILON already defined
+#endif /* ?FLT128_EPSILON */
+#ifndef FLT128_TRUE_MIN
 #define FLT128_TRUE_MIN 6.475175119438025110924438958227646552E-4966q
+#else /* FLT128_TRUE_MIN */
+#error FLT128_TRUE_MIN already defined
+#endif /* !FLT128_TRUE_MIN */
+#ifndef FLT128_MANT_DIG
 #define FLT128_MANT_DIG 113
+#else /* FLT128_MANT_DIG */
+#error FLT128_MANT_DIG already defined
+#endif /* ?FLT128_MANT_DIG */
+#ifndef FLT128_MAX_EXP
 #define FLT128_MAX_EXP 16384
+#else /* FLT128_MAX_EXP */
+#error FLT128_MAX_EXP already defined
+#endif /* ?FLT128_MAX_EXP */
+#ifndef FLT128_MIN_EXP
 #define FLT128_MIN_EXP (-16381)
+#else /* FLT128_MIN_EXP */
+#error FLT128_MIN_EXP already defined
+#endif /* ?FLT128_MIN_EXP */
 EXTERN_C __float128 __copysignq(__float128, __float128);
 EXTERN_C __float128 __fabsq(__float128);
 EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
@@ -127,18 +155,59 @@ EXTERN_C __float128 __hypotq(__float128, __float128);
 EXTERN_C int __isfiniteq(__float128);
 EXTERN_C __float128 __scalbnq(__float128, int);
 EXTERN_C __float128 __sqrtq(__float128);
+#ifndef PVN_CR_MATH
 EXTERN_C __float128 __invsqrtq(__float128);
+#endif /* !PVN_CR_MATH */
+#ifndef copysignq
 #define copysignq __copysignq
+#else /* copysignq */
+#error copysignq already defined
+#endif /* ?copysignq */
+#ifndef fabsq
 #define fabsq __fabsq
+#else /* fabsq */
+#error fabsq already defined
+#endif /* ?fabsq */
+#ifndef fmaq
 #define fmaq __fmaq
+#else /* fmaq */
+#error fmaq already defined
+#endif /* ?fmaq */
+#ifndef fmaxq
 #define fmaxq __fmaxq
+#else /* fmaxq */
+#error fmaxq already defined
+#endif /* ?fmaxq */
+#ifndef fminq
 #define fminq __fminq
+#else /* fminq */
+#error fminq already defined
+#endif /* ?fminq */
+#ifndef frexpq
 #define frexpq __frexpq
+#else /* frexpq */
+#error frexpq already defined
+#endif /* ?frexpq */
+#ifndef hypotq
 #define hypotq __hypotq
+#else /* hypotq */
+#error hypotq already defined
+#endif /* ?hypotq */
+#ifndef isfiniteq
 #define isfiniteq __isfiniteq
+#else /* isfiniteq */
+#error isfiniteq already defined
+#endif /* ?isfiniteq */
+#ifndef scalbnq
 #define scalbnq __scalbnq
+#else /* scalbnq */
+#error scalbnq already defined
+#endif /* ?scalbnq */
+#ifndef sqrtq
 #define sqrtq __sqrtq
-#define rsqrtq __invsqrtq
+#else /* sqrtq */
+#error sqrtq already defined
+#endif /* ?sqrtq */
 #if (!defined(_WIN32) || defined(_DLL))
 EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
 EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
@@ -148,15 +217,14 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #include <quadmath.h>
 #ifndef FLT128_TRUE_MIN
 #define FLT128_TRUE_MIN FLT128_DENORM_MIN
+#else /* FLT128_TRUE_MIN */
+#error FLT128_TRUE_MIN already defined
 #endif /* !FLT128_TRUE_MIN */
 #ifndef isfiniteq
 #define isfiniteq finiteq
-#endif /* !isfiniteq */
-/* the GCC's libquadmath does not have rsqrtq or a similar function */
-static inline __float128 rsqrtq(__float128 x)
-{
-  return (1.0q / sqrtq(x));
-}
+#else /* isfiniteq */
+#error isfiniteq already defined
+#endif /* ?isfiniteq */
 #else /* !__GNUC__ */
 #error quad-precision math not supported
 #endif /* ?__GNUC__ */

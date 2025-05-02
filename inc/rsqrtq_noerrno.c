@@ -27,6 +27,9 @@ SOFTWARE.
 /* modified by venovako */
 #include "pvn_ext.h"
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
+#ifdef __APPLE__
+#include <quadmath.h>
+#endif
 
 #include <stdio.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
@@ -275,7 +278,11 @@ __float128 cr_rsqrtq(__float128 x){
       errno = EDOM;
 #endif
       feraiseexcept (FE_INVALID);
+#ifdef __APPLE__
+      return nanq("<0");
+#else
       return __builtin_nanf128("<0");
+#endif
     } else{
       u.a |= (u128)1<<111; // snan -> qnan
       return u.f; // NaN
