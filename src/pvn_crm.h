@@ -18,13 +18,11 @@ PVN_EXTERN_C double cr_hypot(double x, double y);
 PVN_EXTERN_C double cr_rsqrt(double x);
 #define rsqrt cr_rsqrt
 /* cr_hypotl and cr_rsqrtl in core-math assume the 80-bit double-extended arithmetic */
-#ifdef __x86_64__
 PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 #define hypotl cr_hypotl
 #define cabsl(z) hypotl(creall(z), cimagl(z))
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl
-#endif /* __x86_64__ */
 #if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__APPLE__)))
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #define rsqrtq cr_rsqrtq
