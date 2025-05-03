@@ -29,6 +29,11 @@ SOFTWARE.
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #ifdef __APPLE__
 #include <quadmath.h>
+#else
+#ifdef _WIN32
+EXTERN_C __float128 __nanq(const char *tagp);
+#define nanq __nanq
+#endif
 #endif
 
 #include <stdio.h>
@@ -278,7 +283,7 @@ __float128 cr_rsqrtq(__float128 x){
       errno = EDOM;
 #endif
       feraiseexcept (FE_INVALID);
-#ifdef __APPLE__
+#if (defined(__APPLE__) || defined(_WIN32))
       return nanq("<0");
 #else
       return __builtin_nanf128("<0");
