@@ -25,8 +25,6 @@
 #else /* !_WIN32 */
 #define PVN_EXTERN_C EXTERN_C
 #endif /* ?_WIN32 */
-#else /* PVN_EXTERN_C */
-#error PVN_EXTERN_C already defined
-#endif /* ?PVN_EXTERN_C */
+#endif /* !PVN_EXTERN_C */
 
 #endif /* !PVN_EXT_H */
