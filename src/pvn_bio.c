@@ -144,7 +144,7 @@ ssize_t PVN_FABI(pvn_bwrite,PVN_BWRITE)(const int *const fd, const void *const b
   for (size_t i = 0u; i < qGiB; ++i) {
 #ifdef _WIN32
     ssize_t ret1 = 0ll;
-    *(off_t*)&(o.Offset) = _off;
+    *(off_t*)(void*)&(o.Offset) = _off;
     if (!WriteFile(h, _buf, (DWORD)GiB, (LPDWORD)&ret1, &o))
       return -5;
 #else /* !_WIN32 */
@@ -163,7 +163,7 @@ ssize_t PVN_FABI(pvn_bwrite,PVN_BWRITE)(const int *const fd, const void *const b
   }
 #ifdef _WIN32
   ssize_t ret1 = 0ll;
-  *(off_t*)&(o.Offset) = _off;
+  *(off_t*)(void*)&(o.Offset) = _off;
   if (!WriteFile(h, _buf, (DWORD)_nB, (LPDWORD)&ret1, &o))
     return -7;
 #else /* !_WIN32 */
@@ -207,7 +207,7 @@ ssize_t PVN_FABI(pvn_bread,PVN_BREAD)(const int *const fd, void *const buf, cons
   for (size_t i = 0u; i < qGiB; ++i) {
 #ifdef _WIN32
     ssize_t ret1 = 0ll;
-    *(off_t*)&(o.Offset) = _off;
+    *(off_t*)(void*)&(o.Offset) = _off;
     if (!ReadFile(h, _buf, (DWORD)GiB, (LPDWORD)&ret1, &o))
       return -5;
 #else /* !_WIN32 */
@@ -222,7 +222,7 @@ ssize_t PVN_FABI(pvn_bread,PVN_BREAD)(const int *const fd, void *const buf, cons
   }
 #ifdef _WIN32
   ssize_t ret1 = 0ll;
-  *(off_t*)&(o.Offset) = _off;
+  *(off_t*)(void*)&(o.Offset) = _off;
   if (!ReadFile(h, _buf, (DWORD)_nB, (LPDWORD)&ret1, &o))
     return -7;
 #else /* !_WIN32 */
