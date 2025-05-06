@@ -27,7 +27,7 @@ else # !ppc64le
 CFLAGS += -march=$(MARCH)
 endif # ?ppc64le
 ifeq ($(findstring MINGW64,$(OS)),MINGW64)
-CFLAGS += -DPVN_EXTERN_C=EXTERN_C
+CFLAGS += -DPVN_EXTERN_C=EXTERN_C '-DPVN_FABI(P,W)=P##_'
 LDFLAGS=
 else # !MINGW64
 LDFLAGS=-rdynamic

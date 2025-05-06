@@ -237,9 +237,7 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #else /* !_WIN32 */
 #define PVN_FABI(P,W) P##_
 #endif /* ?_WIN32 */
-#else /* PVN_FABI */
-#error PVN_FABI already defined
-#endif /* ?PVN_FABI */
+#endif /* !PVN_FABI */
 
 #ifdef _WIN32
 #ifndef ssize_t

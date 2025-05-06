@@ -17,6 +17,8 @@ else # !Linux
 COMPILER=clang
 endif # ?Linux
 endif # !COMPILER
+include $(COMPILER).mk
+CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifeq ($(COMPILER),gcc)
 GCC=$(CC)
 else # !gcc
@@ -61,8 +63,6 @@ else # !icx
 SRCS += pvn_vis.c
 endif # ?icx
 
-include $(COMPILER).mk
-CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 ifdef SAFE
 ifeq ($(findstring cma,$(SAFE)),cma)
 CFLAGS += -DPVN_CMA_SAFE="\"all_inputs\""
@@ -80,9 +80,11 @@ ifeq ($(findstring sv2,$(SAFE)),sv2)
 CFLAGS += -DPVN_SV2_SAFE="\"precise\""
 endif # sv2
 endif # SAFE
+
 ifdef VECLEN
 CFLAGS += -DPVN_VECLEN=$(VECLEN)u
 endif # VECLEN
+
 ifdef CR_MATH
 CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
 CR_SRCS= \
@@ -119,6 +121,7 @@ CR_SRCS += \
 endif # 86
 endif # ?CR_MATH
 CR_OBJS=$(CR_SRCS:.c=.o)
+
 ifdef OPENMP
 ifdef PROFILE
 ifeq ($(PROFILE),0)
@@ -126,6 +129,7 @@ PROFILE=1
 endif # ?PROFILE
 endif # PROFILE
 endif # OPENMP
+
 ifdef PROFILE
 CFLAGS += -DPVN_PROFILE=$(PROFILE)u
 ifeq ($(COMPILER),nvc)
@@ -134,9 +138,11 @@ else # !nvc
 CFLAGS += -fno-inline -finstrument-functions
 endif # ?nvc
 endif # PROFILE
+
 ifdef PRINTOUT
 CFLAGS += -DPVN_PRINTOUT=STD$(PRINTOUT)_FILENO
 endif # PRINTOUT
+
 ifdef QUADMATH
 CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 endif # QUADMATH
