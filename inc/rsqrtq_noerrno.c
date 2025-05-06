@@ -31,8 +31,12 @@ PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #include <quadmath.h>
 #else
 #ifdef _WIN32
+#ifdef __GNUC__
+EXTERN_C __float128 nanq(const char *tagp);
+#else /* !__GNUC__ */
 EXTERN_C __float128 __nanq(const char *tagp);
 #define nanq __nanq
+#endif /* ?__GNUC__ */
 #endif
 #endif
 
