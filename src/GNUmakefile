@@ -46,9 +46,12 @@ pvn_nrm.c  \
 pvn_ran.c  \
 pvn_sv2.c  \
 pvn_tar.c  \
-pvn_prof.c \
 pvn_lock.c \
 pvn_timer.c
+
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
+SRCS += pvn_prof.c
+endif # !MINGW64
 
 ifeq ($(COMPILER),icx)
 ifndef MARCH
