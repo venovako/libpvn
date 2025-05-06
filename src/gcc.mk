@@ -26,11 +26,19 @@ CFLAGS += -mcpu=$(MARCH) -mpower8-fusion -mtraceback=full
 else # !ppc64le
 CFLAGS += -march=$(MARCH)
 endif # ?ppc64le
-LDFLAGS=-rdynamic -static-libgcc #-pie
+ifeq ($(findstring MINGW64,$(OS)),MINGW64)
+CFLAGS += -U_DLL
+LDFLAGS=
+else # !MINGW64
+LDFLAGS=-rdynamic
+endif # ?MINGW64
+LDFLAGS=-static-libgcc #-pie
 ifeq ($(findstring BSD,$(OS)),BSD)
 LDFLAGS += -lexecinfo
 else # !BSD
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 LDFLAGS += -ldl
+endif # !MINGW64
 endif # ?BSD
 ifeq ($(findstring 86,$(ARCH)),86)
 ifndef QUADMATH
