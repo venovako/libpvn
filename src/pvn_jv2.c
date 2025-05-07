@@ -243,8 +243,14 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(float *const a11, float *const a22, const floa
   er = ((er && (fabsf(*sh) < FLT_MIN)) << 4);
   if (ta && (t1 != 0.0f)) {
     /* transform the diagonal of the original A */
-    *a11 = fmaf(t1, aa, *a11);
-    *a22 = fmaf(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbnf(fmaf(t1, aa, a1), *es);
+      *a22 = scalbnf(fmaf(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fmaf(t1, aa, a1);
+      *a22 = fmaf(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
@@ -353,8 +359,14 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(double *const a11, double *const a22, const do
   er = ((er && (fabs(*sh) < DBL_MIN)) << 4);
   if (ta && (t1 != 0.0)) {
     /* transform the diagonal of the original A */
-    *a11 = fma(t1, aa, *a11);
-    *a22 = fma(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbn(fma(t1, aa, a1), *es);
+      *a22 = scalbn(fma(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fma(t1, aa, a1);
+      *a22 = fma(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
@@ -478,8 +490,14 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(float *const a11, float *const a22, const floa
   ei = ((ei && (fabsf(*shi) < FLT_MIN)) << 5);
   if (ta && (t1 != 0.0f)) {
     /* transform the diagonal of the original A */
-    *a11 = fmaf(t1, aa, *a11);
-    *a22 = fmaf(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbnf(fmaf(t1, aa, a1), *es);
+      *a22 = scalbnf(fmaf(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fmaf(t1, aa, a1);
+      *a22 = fmaf(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
@@ -603,8 +621,14 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(double *const a11, double *const a22, const do
   ei = ((ei && (fabs(*shi) < DBL_MIN)) << 5);
   if (ta && (t1 != 0.0)) {
     /* transform the diagonal of the original A */
-    *a11 = fma(t1, aa, *a11);
-    *a22 = fma(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbn(fma(t1, aa, a1), *es);
+      *a22 = scalbn(fma(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fma(t1, aa, a1);
+      *a22 = fma(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
@@ -713,8 +737,14 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(long double *const a11, long double *const a22
   er = ((er && (fabsl(*sh) < LDBL_MIN)) << 4);
   if (ta && (t1 != 0.0L)) {
     /* transform the diagonal of the original A */
-    *a11 = fmal(t1, aa, *a11);
-    *a22 = fmal(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbnl(fmal(t1, aa, a1), *es);
+      *a22 = scalbnl(fmal(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fmal(t1, aa, a1);
+      *a22 = fmal(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
@@ -838,8 +868,14 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(long double *const a11, long double *const a22
   ei = ((ei && (fabsl(*shi) < LDBL_MIN)) << 5);
   if (ta && (t1 != 0.0L)) {
     /* transform the diagonal of the original A */
-    *a11 = fmal(t1, aa, *a11);
-    *a22 = fmal(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbnl(fmal(t1, aa, a1), *es);
+      *a22 = scalbnl(fmal(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fmal(t1, aa, a1);
+      *a22 = fmal(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
@@ -955,8 +991,14 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(__float128 *const a11, __float128 *const a22, 
   er = ((er && (fabsq(*sh) < FLT128_MIN)) << 4);
   if (ta && (t1 != 0.0q)) {
     /* transform the diagonal of the original A */
-    *a11 = fmaq(t1, aa, *a11);
-    *a22 = fmaq(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbnq(fmaq(t1, aa, a1), *es);
+      *a22 = scalbnq(fmaq(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fmaq(t1, aa, a1);
+      *a22 = fmaq(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
@@ -1086,8 +1128,14 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(__float128 *const a11, __float128 *const a22, 
   ei = ((ei && (fabsq(*shi) < FLT128_MIN)) << 5);
   if (ta && (t1 != 0.0q)) {
     /* transform the diagonal of the original A */
-    *a11 = fmaq(t1, aa, *a11);
-    *a22 = fmaq(t1, aa, *a22);
+    if (*es) {
+      *a11 = scalbnq(fmaq(t1, aa, a1), *es);
+      *a22 = scalbnq(fmaq(t1, aa, a2), *es);
+    }
+    else {
+      *a11 = fmaq(t1, aa, a1);
+      *a22 = fmaq(t1, aa, a2);
+    }
   }
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
