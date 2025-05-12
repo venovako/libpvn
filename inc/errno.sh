@@ -9,14 +9,18 @@ if [ "$MACHINE" = "ppc64le" ]
 then
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c hypotf_noerrno.c -o hypotf.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c rsqrtf_noerrno.c -o rsqrtf.o
+	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c sincosf_noerrno.c -o sincosf.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c hypot_noerrno.c -o hypot.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c rsqrt_noerrno.c -o rsqrt.o
+	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c sincos_noerrno.c -o sincos.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c rsqrtq_noerrno.c -o rsqrtq.o
 else
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c hypotf_noerrno.c -o hypotf.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c rsqrtf_noerrno.c -o rsqrtf.o
+	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c sincosf_noerrno.c -o sincosf.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c hypot_noerrno.c -o hypot.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c rsqrt_noerrno.c -o rsqrt.o
+	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c sincos_noerrno.c -o sincos.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c rsqrtq_noerrno.c -o rsqrtq.o
 	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" ]
 	then

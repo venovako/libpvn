@@ -53,8 +53,10 @@ pvn_lock.c \
 pvn_timer.c \
 ..\inc\hypotf_noerrno.c \
 ..\inc\rsqrtf_noerrno.c \
-..\inc\hypot_noerrno.c  \
-..\inc\rsqrt_noerrno.c  \
+..\inc\sincosf_noerrno.c \
+..\inc\hypot_noerrno.c \
+..\inc\rsqrt_noerrno.c \
+..\inc\sincos_noerrno.c \
 ..\inc\hypotl_noerrno.c \
 ..\inc\rsqrtl_noerrno.c \
 ..\inc\rsqrtq_noerrno.c
@@ -83,8 +85,10 @@ pvn_lock.obj \
 pvn_timer.obj \
 ..\inc\hypotf_noerrno.obj \
 ..\inc\rsqrtf_noerrno.obj \
-..\inc\hypot_noerrno.obj  \
-..\inc\rsqrt_noerrno.obj  \
+..\inc\sincosf_noerrno.obj \
+..\inc\hypot_noerrno.obj \
+..\inc\rsqrt_noerrno.obj \
+..\inc\sincos_noerrno.obj \
 ..\inc\hypotl_noerrno.obj \
 ..\inc\rsqrtl_noerrno.obj \
 ..\inc\rsqrtq_noerrno.obj

@@ -9,14 +9,18 @@ if [ "$MACHINE" = "ppc64le" ]
 then
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c sincosf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c hypot_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c sincos_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrtq_noerrno.c
 else
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c sincosf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c hypot_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c sincos_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtq_noerrno.c
 	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" ]
 	then

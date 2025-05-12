@@ -90,8 +90,10 @@ CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
 CR_SRCS= \
 $(realpath $(CR_MATH)/src/binary32/hypot/hypotf.c) \
 $(realpath $(CR_MATH)/src/binary32/rsqrt/rsqrtf.c) \
+$(realpath $(CR_MATH)/src/binary32/sincos/sincosf.c) \
 $(realpath $(CR_MATH)/src/binary64/hypot/hypot.c) \
-$(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c)
+$(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c) \
+$(realpath $(CR_MATH)/src/binary64/sincos/sincos.c)
 ifdef QUADMATH
 CR_SRCS += $(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c)
 endif # QUADMATH
@@ -109,8 +111,10 @@ endif # ?NDEBUG
 CR_SRCS= \
 ../inc/hypotf_noerrno.c \
 ../inc/rsqrtf_noerrno.c \
+../inc/sincosf_noerrno.c \
 ../inc/hypot_noerrno.c \
-../inc/rsqrt_noerrno.c
+../inc/rsqrt_noerrno.c \
+../inc/sincos_noerrno.c
 ifdef QUADMATH
 CR_SRCS += ../inc/rsqrtq_noerrno.c
 endif # QUADMATH
