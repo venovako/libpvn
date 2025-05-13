@@ -12,14 +12,14 @@ PVN_EXTERN_C float cr_hypotf(float x, float y);
 #define cabsf(z) hypotf(crealf(z), cimagf(z))
 PVN_EXTERN_C float cr_rsqrtf(float x);
 #define rsqrtf cr_rsqrtf
-PVN_EXTERN_C float cr_sincosf(float x);
+PVN_EXTERN_C void cr_sincosf(float x, float *s, float *c);
 #define sincosf cr_sincosf
 PVN_EXTERN_C double cr_hypot(double x, double y);
 #define hypot cr_hypot
 #define cabs(z) hypot(creal(z), cimag(z))
 PVN_EXTERN_C double cr_rsqrt(double x);
 #define rsqrt cr_rsqrt
-PVN_EXTERN_C double cr_sincos(double x);
+PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 #define sincos cr_sincos
 /* cr_hypotl and cr_rsqrtl in core-math assume the 80-bit double-extended arithmetic */
 PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
