@@ -122,16 +122,26 @@ static inline void pvn_wmul(long double *const cr, long double *const ci, const 
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
+#ifdef PVN_QUADMATH
+  *cr = fmaq(ar, br, -ai * bi);
+  *ci = fmaq(ar, bi,  ai * br);
+#else /* !PVN_QUADMATH */
   *cr = fmal(ar, br, -ai * bi);
   *ci = fmal(ar, bi,  ai * br);
+#endif /* ?PVN_QUADMATH */
 }
 
 static inline void pvn_wfma(long double *const dr, long double *const di, const long double ar, const long double ai, const long double br, const long double bi, const long double cr, const long double ci)
 {
   PVN_ASSERT(dr);
   PVN_ASSERT(di);
+#ifdef PVN_QUADMATH
+  *dr = fmaq(ar, br, fmaq(-ai, bi, cr));
+  *di = fmaq(ar, bi, fmaq( ai, br, ci));
+#else /* !PVN_QUADMATH */
   *dr = fmal(ar, br, fmal(-ai, bi, cr));
   *di = fmal(ar, bi, fmal( ai, br, ci));
+#endif /* ?PVN_QUADMATH */
 }
 
 #ifdef PVN_QUADMATH
