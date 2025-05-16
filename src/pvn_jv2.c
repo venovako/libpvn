@@ -32,14 +32,15 @@ int main(int argc, char *argv[])
     a21i = ((5 == argc) ? atof(argv[4]) : 0.0),
     ch = 1.0,
     shr = 0.0,
-    shi = 0.0;
+    shi = 0.0,
+    th = 0.0;
   int es = 0, lc = 0;
   if (4 == argc) {
-    lc = PVN_FABI(pvn_dljv2,PVN_DLJV2)(&a11, &a22, &a21r, &ch, &shr, &es);
+    lc = PVN_FABI(pvn_dljv2,PVN_DLJV2)(&a11, &a22, &a21r, &ch, &shr, &th, &es);
     (void)printf("pvn_dljv2 = %d, es = %d\n", lc, es);
   }
   else {
-    lc = PVN_FABI(pvn_zljv2,PVN_ZLJV2)(&a11, &a22, &a21r, &a21i, &ch, &shr, &shi, &es);
+    lc = PVN_FABI(pvn_zljv2,PVN_ZLJV2)(&a11, &a22, &a21r, &a21i, &ch, &shr, &shi, &th, &es);
     (void)printf("pvn_zljv2 = %d, es = %d\n", lc, es);
   }
   if (lc < 0)
@@ -140,13 +141,14 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int PVN_FABI(pvn_sljv2,PVN_SLJV2)(float *const a11, float *const a22, const float *const a21, float *const ch, float *const sh, int *const es)
+int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22, const float *const a21, float *const ch, float *const sh, float *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(ch);
   PVN_ASSERT(sh);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
@@ -157,29 +159,17 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(float *const a11, float *const a22, const floa
   float ar = *a21;
   if (!isfinite(ar))
     return -3;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -241,28 +231,19 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(float *const a11, float *const a22, const floa
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsf(*sh) < FLT_MIN)) << 4);
-  if (ta && (t1 != 0.0f)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbnf(fmaf(t1, aa, a1), *es);
-      *a22 = scalbnf(fmaf(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fmaf(t1, aa, a1);
-      *a22 = fmaf(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_dljv2,PVN_DLJV2)(double *const a11, double *const a22, const double *const a21, double *const ch, double *const sh, int *const es)
+int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a22, const double *const a21, double *const ch, double *const sh, double *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(ch);
   PVN_ASSERT(sh);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
@@ -273,29 +254,17 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(double *const a11, double *const a22, const do
   double ar = *a21;
   if (!isfinite(ar))
     return -3;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -357,22 +326,12 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(double *const a11, double *const a22, const do
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabs(*sh) < DBL_MIN)) << 4);
-  if (ta && (t1 != 0.0)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbn(fma(t1, aa, a1), *es);
-      *a22 = scalbn(fma(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fma(t1, aa, a1);
-      *a22 = fma(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_cljv2,PVN_CLJV2)(float *const a11, float *const a22, const float *const a21r, const float *const a21i, float *const ch, float *const shr, float *const shi, int *const es)
+int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const ch, float *const shr, float *const shi, float *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -381,6 +340,7 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(float *const a11, float *const a22, const floa
   PVN_ASSERT(ch);
   PVN_ASSERT(shr);
   PVN_ASSERT(shi);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
@@ -394,29 +354,17 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(float *const a11, float *const a22, const floa
   float ai = *a21i;
   if (!isfinite(ai))
     return -4;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -488,22 +436,12 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(float *const a11, float *const a22, const floa
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsf(*shr) < FLT_MIN)) << 4);
   ei = ((ei && (fabsf(*shi) < FLT_MIN)) << 5);
-  if (ta && (t1 != 0.0f)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbnf(fmaf(t1, aa, a1), *es);
-      *a22 = scalbnf(fmaf(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fmaf(t1, aa, a1);
-      *a22 = fmaf(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
 }
 
-int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(double *const a11, double *const a22, const double *const a21r, const double *const a21i, double *const ch, double *const shr, double *const shi, int *const es)
+int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const ch, double *const shr, double *const shi, double *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -512,6 +450,7 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(double *const a11, double *const a22, const do
   PVN_ASSERT(ch);
   PVN_ASSERT(shr);
   PVN_ASSERT(shi);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
@@ -525,29 +464,17 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(double *const a11, double *const a22, const do
   double ai = *a21i;
   if (!isfinite(ai))
     return -4;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -619,28 +546,19 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(double *const a11, double *const a22, const do
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabs(*shr) < DBL_MIN)) << 4);
   ei = ((ei && (fabs(*shi) < DBL_MIN)) << 5);
-  if (ta && (t1 != 0.0)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbn(fma(t1, aa, a1), *es);
-      *a22 = scalbn(fma(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fma(t1, aa, a1);
-      *a22 = fma(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
 }
 
-int PVN_FABI(pvn_xljv2,PVN_XLJV2)(long double *const a11, long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
+int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, long double *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(ch);
   PVN_ASSERT(sh);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
@@ -651,29 +569,17 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(long double *const a11, long double *const a22
   long double ar = *a21;
   if (!isfinite(ar))
     return -3;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -735,22 +641,12 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(long double *const a11, long double *const a22
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsl(*sh) < LDBL_MIN)) << 4);
-  if (ta && (t1 != 0.0L)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbnl(fmal(t1, aa, a1), *es);
-      *a22 = scalbnl(fmal(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fmal(t1, aa, a1);
-      *a22 = fmal(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_wljv2,PVN_WLJV2)(long double *const a11, long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
+int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, long double *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -759,6 +655,7 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(long double *const a11, long double *const a22
   PVN_ASSERT(ch);
   PVN_ASSERT(shr);
   PVN_ASSERT(shi);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
@@ -772,29 +669,17 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(long double *const a11, long double *const a22
   long double ai = *a21i;
   if (!isfinite(ai))
     return -4;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -866,17 +751,7 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(long double *const a11, long double *const a22
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsl(*shr) < LDBL_MIN)) << 4);
   ei = ((ei && (fabsl(*shi) < LDBL_MIN)) << 5);
-  if (ta && (t1 != 0.0L)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbnl(fmal(t1, aa, a1), *es);
-      *a22 = scalbnl(fmal(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fmal(t1, aa, a1);
-      *a22 = fmal(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
 }
@@ -888,13 +763,14 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(long double *const a11, long double *const a22
 #define FLT128_BIG_EXP (FLT128_MAX_EXP - 2)
 #endif /* ?FLT128_BIG_EXP */
 
-int PVN_FABI(pvn_qljv2,PVN_QLJV2)(__float128 *const a11, __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, int *const es)
+int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, __float128 *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(ch);
   PVN_ASSERT(sh);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
@@ -905,29 +781,17 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(__float128 *const a11, __float128 *const a22, 
   __float128 ar = *a21;
   if (!isfiniteq(ar))
     return -3;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -989,22 +853,12 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(__float128 *const a11, __float128 *const a22, 
   *sh *= ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsq(*sh) < FLT128_MIN)) << 4);
-  if (ta && (t1 != 0.0q)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbnq(fmaq(t1, aa, a1), *es);
-      *a22 = scalbnq(fmaq(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fmaq(t1, aa, a1);
-      *a22 = fmaq(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_yljv2,PVN_YLJV2)(__float128 *const a11, __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, int *const es)
+int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, __float128 *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -1013,6 +867,7 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(__float128 *const a11, __float128 *const a22, 
   PVN_ASSERT(ch);
   PVN_ASSERT(shr);
   PVN_ASSERT(shi);
+  PVN_ASSERT(th);
   PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
@@ -1026,29 +881,17 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(__float128 *const a11, __float128 *const a22, 
   __float128 ai = *a21i;
   if (!isfiniteq(ai))
     return -4;
-  int wt = 0, bt = 0, ta = 0;
+  int wt = 0, bt = 0;
   switch (*es) {
-  case -4:
-    ta = 1;
-    /* FALLTHRU */
   case -2:
     wt = 1;
     break;
-  case -3:
-    ta = 1;
-    /* FALLTHRU */
   case -1:
     wt = 1;
     bt = 1;
     break;
-  case 2:
-    ta = 1;
-    /* FALLTHRU */
   case 0:
     break;
-  case 3:
-    ta = 1;
-    /* FALLTHRU */
   case 1:
     bt = 1;
     break;
@@ -1126,29 +969,19 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(__float128 *const a11, __float128 *const a22, 
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsq(*shr) < FLT128_MIN)) << 4);
   ei = ((ei && (fabsq(*shi) < FLT128_MIN)) << 5);
-  if (ta && (t1 != 0.0q)) {
-    /* transform the diagonal of the original A */
-    if (*es) {
-      *a11 = scalbnq(fmaq(t1, aa, a1), *es);
-      *a22 = scalbnq(fmaq(t1, aa, a2), *es);
-    }
-    else {
-      *a11 = fmaq(t1, aa, a1);
-      *a22 = fmaq(t1, aa, a2);
-    }
-  }
+  *th = t1;
   bt = ((bt == -1) << 1);
   return (wt | bt | e1 | e2 | er | ei);
 }
 #else /* !PVN_QUADMATH */
-int PVN_FABI(pvn_qljv2,PVN_QLJV2)(long double *const a11, long double *const a22, const long double *const a21, long double *const ch, long double *const sh, int *const es)
+int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, long double *const th, int *const es)
 {
-  return PVN_FABI(pvn_xljv2,PVN_XLJV2)(a11, a22, a21, ch, sh, es);
+  return PVN_FABI(pvn_xljv2,PVN_XLJV2)(a11, a22, a21, ch, sh, th, es);
 }
 
-int PVN_FABI(pvn_yljv2,PVN_YLJV2)(long double *const a11, long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, int *const es)
+int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, long double *const th, int *const es)
 {
-  return PVN_FABI(pvn_wljv2,PVN_WLJV2)(a11, a22, a21r, a21i, ch, shr, shi, es);
+  return PVN_FABI(pvn_wljv2,PVN_WLJV2)(a11, a22, a21r, a21i, ch, shr, shi, th, es);
 }
 #endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */
