@@ -95,7 +95,9 @@ $(realpath $(CR_MATH)/src/binary64/hypot/hypot.c) \
 $(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c) \
 $(realpath $(CR_MATH)/src/binary64/sincos/sincos.c)
 ifdef QUADMATH
-CR_SRCS += $(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c)
+CR_SRCS += \
+$(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c) \
+$(realpath $(CR_MATH)/src/binary128/sqrt/sqrtq.c)
 endif # QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
 CR_SRCS += \
@@ -116,7 +118,9 @@ CR_SRCS= \
 ../inc/rsqrt_noerrno.c \
 ../inc/sincos_noerrno.c
 ifdef QUADMATH
-CR_SRCS += ../inc/rsqrtq_noerrno.c
+CR_SRCS += \
+../inc/rsqrtq_noerrno.c \
+../inc/sqrtq_noerrno.c
 endif # QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
 CR_SRCS += \

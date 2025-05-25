@@ -1,4 +1,4 @@
-/* Correctly-rounded reciprocal square root of binary128 value.
+/* Correctly-rounded square root of binary128 value.
 
 Copyright (c) 2025 Alexei Sibidanov <sibid@uvic.ca>
 
@@ -26,9 +26,8 @@ SOFTWARE.
 
 /* modified by venovako */
 #include "pvn_ext.h"
-PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
+PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 
-#include <stdio.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
@@ -106,10 +105,6 @@ static inline __float128 local_nanq(__attribute__((unused)) const char *tagp){
 #define __builtin_nanf128(tagp) local_nanq(tagp)
 #endif
 
-static inline i64 mhui(u64 y, i64 x){
-  return ((u128)(u64)x*(u128)y>>64) - ((x>>63)&y);
-}
-
 // get high part of unsigned 64x64 bit multiplication
 static inline u64 mhuu(u64 _a, u64 _b){
   return ((u128)_a*_b)>>64;
@@ -118,6 +113,13 @@ static inline u64 mhuu(u64 _a, u64 _b){
 // get high part of signed 64x64 bit multiplication
 static inline i64 mhii(i64 x, i64 y){
   return ((i128)x*y)>>64;
+}
+
+static inline u128 mhuU(u64 y, u128 x){
+  b128u128_u ux; ux.a = x;
+  u128 xy0 = ux.b[0]*(u128)y;
+  u128 xy1 = ux.b[1]*(u128)y;
+  return xy1 + (xy0>>64);
 }
 
 // get appoximate high part of unsigned 128x128 bit multiplication
@@ -133,28 +135,19 @@ static inline u128 mhUU(u128 _a, u128 _b){
   return a1b1.a;
 }
 
-// get full product of unsigned 128x128 bit multiplication
-static inline u128 mUU(u128 _a, u128 _b, u128 *t){
-  b128u128_u a, b, a1b0, a0b1, a1b1, a0b0;
-  a.a = _a;
-  b.a = _b;
-  a1b0.a = (u128)a.b[1]*b.b[0];
-  a0b1.a = (u128)a.b[0]*b.b[1];
-  a1b1.a = (u128)a.b[1]*b.b[1];
-  a0b0.a = (u128)a.b[0]*b.b[0];
-  //     a0b0
-  //   a1b0
-  //   a0b1
-  // a1b1
-  unsigned long c;
-  a0b0.b[1] = __builtin_addcl(a0b0.b[1], a1b0.b[0], 0, &c);
-  a1b1.b[0] = __builtin_addcl(a1b1.b[0], a1b0.b[1], c, &c);
-  a1b1.b[1] = __builtin_addcl(a1b1.b[1], 0, c, &c);
-  a0b0.b[1] = __builtin_addcl(a0b0.b[1], a0b1.b[0], 0, &c);
-  a1b1.b[0] = __builtin_addcl(a1b1.b[0], a0b1.b[1], c, &c);
-  a1b1.b[1] = __builtin_addcl(a1b1.b[1], 0, c, &c);
-  *t = a0b0.a;
-  return a1b1.a;
+// get high 128 bit part of (unsigned 128)x(signed 128) bit
+// multiplication with sign mask
+static inline i128 mhUIm(u128 _a, i128 _b, u64 mask){
+  b128u128_u sub; sub.a = _a;
+  sub.b[0] &= mask;
+  sub.b[1] &= mask;
+  return mhUU(_a,_b) - sub.a;
+}
+
+// get high 128 bit part of (unsigned 128)x(signed 128) bit
+// multiplication
+static inline i128 mhIU(i128 _b, u128 _a){
+  return mhUIm(_a,_b,(u64)(_b>>127));
 }
 
 static inline __float128 reinterpret_u128_as_f128(u128 t){
@@ -228,7 +221,7 @@ static inline u64 rsqrt9(u64 m){
   // coefficients into 32 bit. The constant coefficient can be
   // rounded to 33 bits since the most significant bit is always 1
   // and implicitly assumed in the table.
-  u64 indx = m>>58; // subrange index 
+  u64 indx = m>>58; // subrange index
   u64 c3 = c[indx][3], c0 = c[indx][0], c1 = c[indx][1], c2 = c[indx][2];
   c0 <<= 31; // to 64 bit with the space for the implicit bit
   c0 |= 1ull<<63; // add implicit bit
@@ -248,7 +241,7 @@ static inline u64 rsqrt9(u64 m){
   return r;
 }
 
-__float128 cr_rsqrtq(__float128 x){
+__float128 cr_sqrtq(__float128 x) {
   unsigned flagp = _mm_getcsr(), oflagp = flagp;
   b128u128_u u = {.a = reinterpret_f128_as_u128(x)};
   i32 e = u.b[1]>>48; // exponent
@@ -260,24 +253,15 @@ __float128 cr_rsqrtq(__float128 x){
       if(u.b[0]) {
 	ns += __builtin_clzll(u.b[0]) + 64;
       } else {
-#ifdef CORE_MATH_SUPPORT_ERRNO
-	errno = ERANGE; // pole error
-#endif
-	return __builtin_inff128(); // x = +0
+	return x; // x = +0
       }
     }
     e = 1 - ns;
     u.a <<= ns; // normalize mantissa
-    u.b[1] ^= (u64)(ns&1)<<48; // set proper last bit of exponent
   }
   if(__builtin_expect(e>=0x7fff, 0)){// other special cases: NAN, inf, negative numbers
-    if(!(u.a<<1)){ // x = -0
-#ifdef CORE_MATH_SUPPORT_ERRNO
-      errno = ERANGE; // pole error
-#endif
-      return -__builtin_inff128();
-    }
-    if(u.a==(u128)0x7fff<<112) return 0; // x = +Inf
+    if(!(u.a<<1)) return x; // x = -0
+    if(u.a==(u128)0x7fff<<112) return x; // x = +Inf
     if(u.a<=(u128)0xffff<<112 && u.a>(u128)0x8000<<112){ // -inf <= x < -0
       // x < 0
 #ifdef CORE_MATH_SUPPORT_ERRNO
@@ -286,69 +270,78 @@ __float128 cr_rsqrtq(__float128 x){
       feraiseexcept (FE_INVALID);
       return __builtin_nanf128("<0");
     } else{
-      u.a |= (u128)1<<111; // snan -> qnan
-      return u.f; // NaN
+      if(!(u.b[1]&(1ull<<47))) feraiseexcept (FE_INVALID); // complain about the snan argument by the invalid exception
+      u.b[1] |= 1ull<<47; // snan -> qnan
+      return reinterpret_u128_as_f128(u.a); // qNaN
     }
   }
-  e += 121; // bias in case of denormal number
-  unsigned q2 = e/2, i = e&1;
-  i64 e2 = (0x5ffdull-q2+60)<<48;
+  e+=1; // adjust parity
+  i32 q2 = e>>1, i = e&1;
+  // exponent of the final result
+  i64 e2 = (q2+8191ull-1)<<48;
+
   u.a <<= 16;
-  if(__builtin_expect(!u.a, 0)) { // no inexact exception
-    if(~e&1){
-      u.b[1] = e2 + (2ull<<48); // place exponent
-      return u.f;
-    }
-  }
-  
   const u64 rsqrt_2[] = {~0ull,0xb504f333f9de6484ull}; // 2^64/sqrt(2)
   u64 rx = u.b[1], r = rsqrt9(rx);
-  u128 r2 = (u128)r*rsqrt_2[i];
-  unsigned shft = 4-i;
+  u128 r2 = (u128)r*rsqrt_2[i];// + r;
+  unsigned shft = 2-i;
   u.a >>= shft;
-  u.b[1] |= 1ull<<(60+i);
+  u.b[1] |= 1ull<<(62+i);
   r = r2>>64;
-  u128 R2 = (u128)r*r;
-  i64 h = mhUU(R2, u.a), ds = mhui(r, h);
-
-  b128u128_u v; v.a = ((u128)r<<64) - ((i128)ds<<3);
+  u128 sx = mhuU(r, u.a);
+  i128 h  = mhuU(r, sx)<<2, ds = mhIU(h, sx);
+  sx <<= 1;
+  b128u128_u v; v.a = sx - ds;
   unsigned rm = flagp&_MM_ROUND_MASK, nrst = rm == _MM_ROUND_NEAREST;
-  i64 dd = ((v.bs[0]^(nrst<<14))+24)&0x7fff;
-  if(__builtin_expect(dd<49, 0)){ // can round correctly?
-    b128u128_u m;
-    m.a = v.a>>15;
-    b128u128_u t0, t1, k0, k1;
-    t1.a = mUU(m.a, u.a, &t0.a);
-    k1.a = mUU(t0.a, m.a, &k0.a);
-    k1.a += t1.a*m.a;
-    i128 msk = ~(k1.as>>127);
-    t0.a ^= msk;
-    t1.a ^= msk;
-    k0.a += (u.a>>1) - msk;
-    if(k0.a<u.a) k1.a++;
-    k0.a += t0.a;
-    if(k0.a<t0.a) k1.a++;
-    k1.a += t1.a;
-    v.b[0] &= ~0ull<<15;
-    i64 side = k1.bs[1]>>63;
-    if(msk) v.b[0] -= 1<<15;
-    if(side) v.b[0] += 1<<14;
-    v.b[0] |= 1;
+  shft = 49 + nrst;
+  i64 dd = (v.bs[0]<<shft)>>shft;
+  if(__builtin_expect(!(dd<-8||dd>3), 0)){ // can round correctly?
+    // m is almost the final result it can be only 1 ulp off so we
+    // just need to test both possibilities. We square it and
+    // compare with the initial argument.
+    v.a += !nrst<<14;
+    u128 m = v.a>>15, m2 = m*m;
+    b128u128_u t0, t1;
+    // the difference of the squared result and the argument
+    t0.a = m2 - (u.a<<98);
+    if(__builtin_expect(t0.a==0, 0)){
+      // the square root is exact
+      v.a = m<<15;
+    } else {
+      t1 = t0;
+      i64 sgn = t0.bs[1]>>63;
+      t1.a -= (m<<1)^sgn;
+      t1.a += 1 + sgn;
+      if(__builtin_expect(t1.a==0, 0)){
+	// 1 ulp offset brings again an exact root
+	v.a = (m - (2*sgn + 1))<<15;
+      } else {
+	t1.a += t0.a;
+	i64 side = t1.bs[1]>>63; // select what is closer m or m+-1
+	v.b[0] &= ~0ull<<15; // wipe the fractional bits
+	v.a -= ((sgn&side)|(~sgn&1ll))<<(15+side);
+	v.a |= 1;  // add sticky bit since we cannot have an exact mid-point situation
+      }
+    }
   }
+
   unsigned frac = v.b[0]&0x7fffull; // fractional part
-  u64 rnd = 0; 
+  u64 rnd;
   if(__builtin_expect(nrst, 1)){
     rnd = frac>>14;  // round to nearest tie to even
   } else if(rm==_MM_ROUND_UP){
-    rnd = 1; // round up
+    rnd = !!frac; // round up
+  } else if(rm==_MM_ROUND_DOWN){
+    rnd = 0; // round down
   } else {
-    // round down and to zero
+    rnd = 0; // round to zero
   }
   v.a >>= 15; // position mantissa
   v.a += rnd; // round
-  flagp |= FE_INEXACT;
-  // set inexact flag only if it is not already set
-  if(__builtin_expect(oflagp != flagp, 0)) _mm_setcsr(flagp);
+
+  // set inexact flag only if square root is really inexact or not already set
+  if(__builtin_expect(frac, 1)) flagp |= FE_INEXACT;
+  if(__builtin_expect(oflagp!=flagp, 0)) _mm_setcsr(flagp);
 
   v.b[1] += e2; // place exponent
   return reinterpret_u128_as_f128(v.a); // put into xmm register

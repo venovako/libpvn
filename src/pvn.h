@@ -154,8 +154,8 @@ EXTERN_C __float128 __frexpq(__float128, int*);
 EXTERN_C __float128 __hypotq(__float128, __float128);
 EXTERN_C int __isfiniteq(__float128);
 EXTERN_C __float128 __scalbnq(__float128, int);
-EXTERN_C __float128 __sqrtq(__float128);
 #ifndef PVN_CR_MATH
+EXTERN_C __float128 __sqrtq(__float128);
 EXTERN_C __float128 __invsqrtq(__float128);
 #endif /* !PVN_CR_MATH */
 #ifndef copysignq
@@ -203,11 +203,6 @@ EXTERN_C __float128 __invsqrtq(__float128);
 #else /* scalbnq */
 #error scalbnq already defined
 #endif /* ?scalbnq */
-#ifndef sqrtq
-#define sqrtq __sqrtq
-#else /* sqrtq */
-#error sqrtq already defined
-#endif /* ?sqrtq */
 #if (!defined(_WIN32) || defined(_DLL))
 EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
 EXTERN_C __float128 strtoflt128 (const char *s, char **sp);

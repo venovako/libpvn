@@ -22,21 +22,13 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_rsqrtl =%18p\n", cr_rsqrtl);
 #ifdef PVN_QUADMATH
   (void)printf("cr_rsqrtq =%18p\n", cr_rsqrtq);
+  (void)printf("cr_sqrtq  =%18p\n", cr_sqrtq);
 #endif /* PVN_QUADMATH */
 #endif /* PVN_CR_MATH */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
 #ifndef __x86_64__
-#ifdef hypotl
-#undef hypotl
-#endif /* hypotl */
-/* might not be correctly rounded */
-long double cr_hypotl(long double x, long double y)
-{
-  return hypotl(x, y);
-}
-
 long double cr_rsqrtl(long double x)
 {
 #ifdef PVN_QUADMATH
