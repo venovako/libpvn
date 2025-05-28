@@ -203,22 +203,6 @@ endif # XRP
 LNK += $(QUADMATH)
 CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
 
-ifeq ($(OS),Linux)
-ifndef GMP
-GMP=/usr
-endif # !GMP
-ifndef MPFR
-MPFR=/usr
-endif # !MPFR
-else # !Linux
-ifndef GMP
-GMP=/usr/local
-endif # !GMP
-ifndef MPFR
-MPFR=/usr/local
-endif # !MPFR
-endif # ?Linux
-
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)
@@ -244,16 +228,14 @@ libpvn.so: libpvn.a
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
 	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
 
-../var/jv2ld.exe: ../var/jv2ld.c $(LIBS)
-	$(CC) $(CLFLAGS) -I$(MPFR)/include -I$(GMP)/include $< -o $@ $(LNK) -L$(MPFR)/lib -lmpfr -L$(GMP)/lib -lgmp $(LDFLAGS)
-
 clean:
 	-$(RM) *.exe
+	-$(RM) ../etc/*.exe
 	-$(RM) *.so
 	-$(RM) *.dylib
 	-$(RM) *.a
 	-$(RM) *.o
+	-$(RM) *.optrpt
 	-$(RM) ../inc/*.o
-	-$(RM) *.opt.yaml
-	-$(RM) ../inc/*.opt.yaml
+	-$(RM) ../inc/*.optrpt
 	-$(RM) *.dSYM
