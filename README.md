@@ -19,19 +19,17 @@ The library has been successfully built using:
 | gcc(3)   | Darwin  | x86_64   |
 | gcc(4)   | FreeBSD | arm64    |
 | gcc(5)   | Linux   | ppc64le  |
-| gcc(5,6) | Linux   | x86_64   |
+| gcc(6)   | Linux   | x86_64   |
 | icx(7)   | Linux   | x86_64   |
-| nvc(8)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
 2. FreeBSD (clang 18.1.6),
-3. Homebrew (GCC 14.2.0_1),
-4. FreeBSD (GCC 13.3.0),
-5. openSUSE Tumbleweed (GCC 14.2.1),
+3. Homebrew (GCC 15.1.0),
+4. FreeBSD (GCC 13.3.0_2),
+5. openSUSE Tumbleweed (GCC 15.0.1),
 6. Oracle Linux (GCC 14.2.1-1),
-7. Intel oneAPI (2025.0.4),
-8. NVIDIA HPC SDK (25.1).
+7. Intel oneAPI (2025.1.1).
 
 Examples of building the library:
 ```bash
@@ -39,7 +37,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
+# make [COMPILER=clang|gcc|icx] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux with a high optimization level
@@ -69,7 +67,7 @@ Otherwise, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `c
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
 The object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
 
-The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang`, `gcc`, and `nvc`) or `Host` (for `icx` and `icc`).
+The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang` and `gcc`) or `Host` (for `icx` and `icc`).
 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.

@@ -18,7 +18,9 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_hypot  =%18p\n", cr_hypot);
   (void)printf("cr_rsqrt  =%18p\n", cr_rsqrt);
   (void)printf("cr_sincos =%18p\n", cr_sincos);
+#ifdef __x86_64__
   (void)printf("cr_hypotl =%18p\n", cr_hypotl);
+#endif /* __x86_64__ */
   (void)printf("cr_rsqrtl =%18p\n", cr_rsqrtl);
 #ifdef PVN_QUADMATH
   (void)printf("cr_rsqrtq =%18p\n", cr_rsqrtq);
@@ -28,14 +30,4 @@ int main(/* int argc, char *argv[] */)
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-#ifndef __x86_64__
-long double cr_rsqrtl(long double x)
-{
-#ifdef PVN_QUADMATH
-  return cr_rsqrtq(x);
-#else /* !PVN_QUADMATH */
-  return (1.0L / sqrtl(x));
-#endif /* ?PVN_QUADMATH */
-}
-#endif /* !__x86_64__ */
 #endif /* ?PVN_TEST */
