@@ -67,7 +67,7 @@ Otherwise, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `c
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
 The object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
 
-The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang` and `gcc`) or `Host` (for `icx` and `icc`).
+The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang` and `gcc`) or `Host` (for `icx`).
 
 The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
 Set it to `true` if no additional compiler flags are desired.
