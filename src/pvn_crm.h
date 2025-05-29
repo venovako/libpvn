@@ -32,16 +32,9 @@ PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #define rsqrtq cr_rsqrtq
-#ifndef __x86_64__
-#define cr_rsqrtl cr_rsqrtq
-#define rsqrtl cr_rsqrtl
-#endif /* !__x86_64__ */
 PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 #define sqrtq cr_sqrtq
 #else /* !PVN_QUADMATH */
-#ifndef __x86_64__
-#define rsqrtl(x) (1.0L / sqrtl(x))
-#endif /* !__x86_64__ */
 #endif /* ?PVN_QUADMATH */
 #else /* !PVN_CR_MATH */
 #ifdef __MATHIMF_H_INCLUDED

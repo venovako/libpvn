@@ -20,10 +20,8 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_sincos =%18p\n", cr_sincos);
 #ifdef __x86_64__
   (void)printf("cr_hypotl =%18p\n", cr_hypotl);
-#endif /* __x86_64__ */
-#if (!defined(__x86_64__) && defined(PVN_QUADMATH))
   (void)printf("cr_rsqrtl =%18p\n", cr_rsqrtl);
-#endif /* !__x86_64__ && PVN_QUADMATH */
+#endif /* __x86_64__ */
 #ifdef PVN_QUADMATH
   (void)printf("cr_rsqrtq =%18p\n", cr_rsqrtq);
   (void)printf("cr_sqrtq  =%18p\n", cr_sqrtq);
