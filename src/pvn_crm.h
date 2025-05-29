@@ -28,6 +28,8 @@ PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 #define cabsl(z) hypotl(creall(z), cimagl(z))
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl
+#else /* !__x86_64__ */
+#define rsqrtl(x) (1.0L / sqrtl(x))
 #endif /* __x86_64__ */
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
