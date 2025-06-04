@@ -61,13 +61,14 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int PVN_FABI(pvn_sljeu2,PVN_SLJEU2)(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, int *const es)
+int PVN_FABI(pvn_sljeu2,PVN_SLJEU2)(const float *const a11, const float *const a22, const float *const a21, float *const cs, float *const sn, float *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(cs);
   PVN_ASSERT(sn);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
@@ -109,6 +110,7 @@ int PVN_FABI(pvn_sljeu2,PVN_SLJEU2)(const float *const a11, const float *const a
     sc = hypotf(t1, 1.0f),
     c1 = (1.0f / sc);
   *cs = c1;
+  *tg = t1;
   if (wt)
     *sn = (as * t1);
   else {
@@ -185,13 +187,14 @@ int PVN_FABI(pvn_sljev2,PVN_SLJEV2)(const float *const a11, const float *const a
   return (wt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_dljeu2,PVN_DLJEU2)(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, int *const es)
+int PVN_FABI(pvn_dljeu2,PVN_DLJEU2)(const double *const a11, const double *const a22, const double *const a21, double *const cs, double *const sn, double *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(cs);
   PVN_ASSERT(sn);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
@@ -233,6 +236,7 @@ int PVN_FABI(pvn_dljeu2,PVN_DLJEU2)(const double *const a11, const double *const
     sc = hypot(t1, 1.0),
     c1 = (1.0 / sc);
   *cs = c1;
+  *tg = t1;
   if (wt)
     *sn = (as * t1);
   else {
@@ -309,7 +313,7 @@ int PVN_FABI(pvn_dljev2,PVN_DLJEV2)(const double *const a11, const double *const
   return (wt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_cljeu2,PVN_CLJEU2)(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, int *const es)
+int PVN_FABI(pvn_cljeu2,PVN_CLJEU2)(const float *const a11, const float *const a22, const float *const a21r, const float *const a21i, float *const cs, float *const snr, float *const sni, float *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -318,6 +322,7 @@ int PVN_FABI(pvn_cljeu2,PVN_CLJEU2)(const float *const a11, const float *const a
   PVN_ASSERT(cs);
   PVN_ASSERT(snr);
   PVN_ASSERT(sni);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   float a1 = *a11;
   if (!isfinite(a1))
@@ -368,6 +373,7 @@ int PVN_FABI(pvn_cljeu2,PVN_CLJEU2)(const float *const a11, const float *const a
     sc = hypotf(t1, 1.0f),
     c1 = (1.0f / sc);
   *cs = c1;
+  *tg = t1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
@@ -463,7 +469,7 @@ int PVN_FABI(pvn_cljev2,PVN_CLJEV2)(const float *const a11, const float *const a
   return (wt | e1 | e2 | er | ei);
 }
 
-int PVN_FABI(pvn_zljeu2,PVN_ZLJEU2)(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, int *const es)
+int PVN_FABI(pvn_zljeu2,PVN_ZLJEU2)(const double *const a11, const double *const a22, const double *const a21r, const double *const a21i, double *const cs, double *const snr, double *const sni, double *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -472,6 +478,7 @@ int PVN_FABI(pvn_zljeu2,PVN_ZLJEU2)(const double *const a11, const double *const
   PVN_ASSERT(cs);
   PVN_ASSERT(snr);
   PVN_ASSERT(sni);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   double a1 = *a11;
   if (!isfinite(a1))
@@ -522,6 +529,7 @@ int PVN_FABI(pvn_zljeu2,PVN_ZLJEU2)(const double *const a11, const double *const
     sc = hypot(t1, 1.0),
     c1 = (1.0 / sc);
   *cs = c1;
+  *tg = t1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
@@ -617,13 +625,14 @@ int PVN_FABI(pvn_zljev2,PVN_ZLJEV2)(const double *const a11, const double *const
   return (wt | e1 | e2 | er | ei);
 }
 
-int PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, int *const es)
+int PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(cs);
   PVN_ASSERT(sn);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
@@ -665,6 +674,7 @@ int PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(const long double *const a11, const long dou
     sc = hypotl(t1, 1.0L),
     c1 = (1.0L / sc);
   *cs = c1;
+  *tg = t1;
   if (wt)
     *sn = (as * t1);
   else {
@@ -741,7 +751,7 @@ int PVN_FABI(pvn_xljev2,PVN_XLJEV2)(const long double *const a11, const long dou
   return (wt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, int *const es)
+int PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -750,6 +760,7 @@ int PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(const long double *const a11, const long dou
   PVN_ASSERT(cs);
   PVN_ASSERT(snr);
   PVN_ASSERT(sni);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   long double a1 = *a11;
   if (!isfinite(a1))
@@ -800,6 +811,7 @@ int PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(const long double *const a11, const long dou
     sc = hypotl(t1, 1.0L),
     c1 = (1.0L / sc);
   *cs = c1;
+  *tg = t1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
@@ -902,13 +914,14 @@ int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, const long dou
 #define FLT128_BIG_EXP (FLT128_MAX_EXP - 2)
 #endif /* ?FLT128_BIG_EXP */
 
-int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, int *const es)
+int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
   PVN_ASSERT(a21);
   PVN_ASSERT(cs);
   PVN_ASSERT(sn);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
@@ -950,6 +963,7 @@ int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float12
     sc = hypotq(t1, 1.0q),
     c1 = (1.0q / sc);
   *cs = c1;
+  *tg = t1;
   if (wt)
     *sn = (as * t1);
   else {
@@ -1026,7 +1040,7 @@ int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float12
   return (wt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, int *const es)
+int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -1035,6 +1049,7 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
   PVN_ASSERT(cs);
   PVN_ASSERT(snr);
   PVN_ASSERT(sni);
+  PVN_ASSERT(tg);
   PVN_ASSERT(es);
   __float128 a1 = *a11;
   if (!isfiniteq(a1))
@@ -1091,6 +1106,7 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
     sc = hypotq(t1, 1.0q),
     c1 = (1.0q / sc);
   *cs = c1;
+  *tg = t1;
   if (wt) {
     *snr = (ar * t1);
     *sni = (ai * t1);
@@ -1186,9 +1202,9 @@ int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float12
   return (wt | e1 | e2 | er | ei);
 }
 #else /* !PVN_QUADMATH */
-int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, int *const es)
+int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const tg, int *const es)
 {
-  return PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(a11, a22, a21, cs, sn, es);
+  return PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(a11, a22, a21, cs, sn, tg, es);
 }
 
 int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es)
@@ -1196,9 +1212,9 @@ int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const long double *const a11, const long dou
   return PVN_FABI(pvn_xljev2,PVN_XLJEV2)(a11, a22, a21, cs, sn, l1, l2, es);
 }
 
-int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, int *const es)
+int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const tg, int *const es)
 {
-  return PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(a11, a22, a21r, a21i, cs, snr, sni, es);
+  return PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(a11, a22, a21r, a21i, cs, snr, sni, tg, es);
 }
 
 int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const cs, long double *const snr, long double *const sni, long double *const l1, long double *const l2, int *const es)
