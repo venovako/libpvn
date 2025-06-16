@@ -22,12 +22,10 @@ PVN_EXTERN_C double cr_rsqrt(double x);
 PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 #define sincos cr_sincos
 /* cr_hypotl and cr_rsqrtl in core-math assume the 80-bit double-extended arithmetic */
-#ifdef __x86_64__
 PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
+#ifdef __x86_64__
 #define hypotl cr_hypotl
-#else /* !__x86_64__ */
-#define cr_hypotl hypotl
-#endif /* ?__x86_64__ */
+#endif /* __x86_64__ */
 #define cabsl(z) hypotl(creall(z), cimagl(z))
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl

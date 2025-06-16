@@ -30,6 +30,11 @@ int main(/* int argc, char *argv[] */)
 #else /* !PVN_TEST */
 #ifdef PVN_CR_MATH
 #ifndef __x86_64__
+long double cr_hypotl(long double x, long double y)
+{
+  return hypotl(x, y);
+}
+
 long double cr_rsqrtl(long double x)
 {
   return (1.0L / sqrtl(x));
