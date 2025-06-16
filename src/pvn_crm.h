@@ -25,19 +25,18 @@ PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 #ifdef __x86_64__
 PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 #define hypotl cr_hypotl
+#else /* !__x86_64__ */
+#define cr_hypotl hypotl
+#endif /* ?__x86_64__ */
 #define cabsl(z) hypotl(creall(z), cimagl(z))
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl
-#else /* !__x86_64__ */
-#define rsqrtl(x) (1.0L / sqrtl(x))
-#endif /* ?__x86_64__ */
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #define rsqrtq cr_rsqrtq
 PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 #define sqrtq cr_sqrtq
-#else /* !PVN_QUADMATH */
-#endif /* ?PVN_QUADMATH */
+#endif /* PVN_QUADMATH */
 #else /* !PVN_CR_MATH */
 #ifdef __MATHIMF_H_INCLUDED
 /* almost correctly rounded Intel-specific functions */
