@@ -30,9 +30,21 @@ int main(/* int argc, char *argv[] */)
 #else /* !PVN_TEST */
 #ifdef PVN_CR_MATH
 #ifndef __x86_64__
+/* This is not correctly rounded, but is at least reproducible. */
+
 long double cr_hypotl(long double x, long double y)
 {
-  return hypotl(x, y);
+  const long double
+    X = fabsl(x),
+    Y = fabsl(y),
+    m = fminl(X, Y),
+    M = fmaxl(X, Y),
+    q = (m / M),
+    Q = fmaxl(q, 0.0L),
+    S = fmal(Q, Q, 1.0L),
+    s = sqrtl(S),
+    h = (M * s);
+  return h /* hypotl(x, y) */;
 }
 
 long double cr_rsqrtl(long double x)
