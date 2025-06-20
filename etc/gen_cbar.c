@@ -32,12 +32,12 @@ static long double id(long double x)
   return x;
 }
 
-#ifndef _GNU_SOURCE
+#if (!defined(_GNU_SOURCE) && !defined(__INTEL_COMPILER))
 static long double exp10l(long double x)
 {
   return powl(10.0L, x);
 }
-#endif /* !_GNU_SOURCE */
+#endif /* !_GNU_SOURCE && !__INTEL_COMPILER */
 
 int main(int argc, char *argv[])
 {

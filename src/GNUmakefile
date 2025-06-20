@@ -201,7 +201,11 @@ ifdef XRP
 LNK += -Wl,$(XRP)
 endif # XRP
 LNK += $(QUADMATH)
+ifeq ($(COMPILER),icc)
+CLFLAGS=$(CFLAGS)
+else # !icc
 CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
+endif # ?icc
 
 .PHONY: all help clean
 

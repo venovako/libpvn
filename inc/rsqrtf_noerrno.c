@@ -62,7 +62,11 @@ float cr_rsqrtf(float x){
       errno = EDOM;
 #endif
       feraiseexcept (FE_INVALID);
+#ifdef __INTEL_COMPILER
+      return -0.0f / 0.0f;
+#else
       return __builtin_nanf("<0");
+#endif
     }
     if(!(ix.u<<9)) return 0.0f;
     return x + x; // nan

@@ -1,7 +1,7 @@
 #ifndef PVN_H
 #define PVN_H
 
-#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER))
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
 #include <mathimf.h>
 #else /* !Intel */
 #ifdef __cplusplus

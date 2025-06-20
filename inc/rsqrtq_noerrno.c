@@ -132,6 +132,18 @@ static inline u128 mhUU(u128 _a, u128 _b){
   return a1b1.a;
 }
 
+#ifdef __INTEL_COMPILER
+// see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
+static unsigned long int __builtin_addcl(unsigned long a, unsigned long b, unsigned carry_in, unsigned long *carry_out)
+{
+  unsigned long s,
+    c1 = __builtin_add_overflow(a, b, &s),
+    c2 = __builtin_add_overflow(s, carry_in, &s);
+  *(carry_out) = c1 | c2;
+  return s;
+}
+#endif
+
 // get full product of unsigned 128x128 bit multiplication
 static inline u128 mUU(u128 _a, u128 _b, u128 *t){
   b128u128_u a, b, a1b0, a0b1, a1b1, a0b0;

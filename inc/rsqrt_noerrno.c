@@ -178,7 +178,11 @@ double cr_rsqrt(double x){
       errno = EDOM;
 #endif
       feraiseexcept (FE_INVALID);
+#ifdef __INTEL_COMPILER
+      return -0.0 / 0.0;
+#else
       return __builtin_nan("<0");
+#endif
     }
     if(!(ix.u<<12)) return 0.0; // +/-Inf
     return x + x; // +NaN
