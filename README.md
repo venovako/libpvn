@@ -22,6 +22,7 @@ The library has been successfully built using:
 | gcc(6)   | Linux   | x86_64   |
 | icc(7)   | Darwin  | x86_64   |
 | icx(8)   | Linux   | x86_64   |
+| nvc(9)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
@@ -31,7 +32,8 @@ Recent versions of the compilers have been provided by or used on:
 5. openSUSE Tumbleweed (GCC 15.1.1),
 6. Oracle Linux (GCC 14.2.1-7),
 7. Intel Classic (2021.10.0),
-8. Intel oneAPI (2025.1.1).
+8. Intel oneAPI (2025.1.1),
+9. NVIDIA HPC SDK (25.5).
 
 Examples of building the library:
 ```bash
