@@ -96,7 +96,7 @@ typedef union {
   __float128 f;
 } b128u128_u;
 
-#if (defined(__x86_64__) && (defined(__APPLE__) || defined(_WIN32)))
+#if (defined(__x86_64__) && (defined(__APPLE__) || defined(_WIN32) || defined(__INTEL_COMPILER)))
 static inline __float128 local_nanq(__attribute__((unused)) const char *tagp){
   b128u128_u u;
   u.a = ~(u128)0u;
