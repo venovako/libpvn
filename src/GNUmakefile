@@ -23,7 +23,7 @@ ifeq ($(COMPILER),gcc)
 GCC=$(CC)
 else # !gcc
 ifeq ($(OS),Darwin)
-GCC=gcc-14
+GCC=gcc-15
 else # !Darwin
 GCC=gcc
 endif # ?Darwin
@@ -64,9 +64,6 @@ SRCS += pvn_vis.c
 endif # ?icx
 
 ifdef SAFE
-ifeq ($(findstring cma,$(SAFE)),cma)
-CFLAGS += -DPVN_CMA_SAFE="\"all_inputs\""
-endif # cma
 ifeq ($(findstring ev2,$(SAFE)),ev2)
 CFLAGS += -DPVN_EV2_SAFE="\"hypotq\""
 endif # ev2
