@@ -48,20 +48,13 @@ pvn_nrm.c  \
 pvn_ran.c  \
 pvn_sv2.c  \
 pvn_tar.c  \
+pvn_vis.c  \
 pvn_lock.c \
 pvn_timer.c
 
 ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 SRCS += pvn_prof.c
 endif # !MINGW64
-
-ifeq ($(COMPILER),icx)
-ifndef MARCH
-SRCS += pvn_vis.c
-endif # !MARCH
-else # !icx
-SRCS += pvn_vis.c
-endif # ?icx
 
 ifdef SAFE
 ifeq ($(findstring ev2,$(SAFE)),ev2)
