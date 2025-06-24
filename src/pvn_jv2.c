@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     ch = 1.0,
     shr = 0.0,
     shi = 0.0,
-    th = 0.0;
+    th = (4.0 / 5.0);
   int es = 0, lc = 0;
   if (4 == argc) {
     lc = PVN_FABI(pvn_dljv2,PVN_DLJV2)(&a11, &a22, &a21r, &ch, &shr, &th, &es);
@@ -205,30 +205,21 @@ int PVN_FABI(pvn_sljv2,PVN_SLJV2)(const float *const a11, const float *const a22
         an = (2.0f * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0f : (an / ad));
-      if (bt && (fabsf(41.0f * t2) >= 40.0f)) {
-        t1 = copysignf((4.0f / 5.0f), t2);
+      t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
+      if (bt && (fabsf(t1) > *th)) {
+        t1 = copysignf(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
-        /* tangent underflows */
-        e2 = ((fabsf(t1) < FLT_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabsf(t1) < FLT_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0f / 3.0f);
-    *sh = (wt ? t1 : copysignf((4.0f / 3.0f), t1));
-  }
-  else {
-    *ch = rsqrtf(fmaf(-t1, t1, 1.0f));
-    *sh = (wt ? t1 : (*ch * t1));
-  }
-  *sh *= ar;
+  *ch = rsqrtf(fmaf(-t1, t1, 1.0f));
+  *sh = (wt ? t1 : (*ch * t1)) * ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsf(*sh) < FLT_MIN)) << 4);
   *th = t1;
@@ -300,30 +291,21 @@ int PVN_FABI(pvn_dljv2,PVN_DLJV2)(const double *const a11, const double *const a
         an = (2.0 * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0 : (an / ad));
-      if (bt && (fabs(41.0 * t2) >= 40.0)) {
-        t1 = copysign((4.0 / 5.0), t2);
+      t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
+      if (bt && (fabs(t1) > *th)) {
+        t1 = copysign(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
-        /* tangent underflows */
-        e2 = ((fabs(t1) < DBL_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabs(t1) < DBL_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0 / 3.0);
-    *sh = (wt ? t1 : copysign((4.0 / 3.0), t1));
-  }
-  else {
-    *ch = rsqrt(fma(-t1, t1, 1.0));
-    *sh = (wt ? t1 : (*ch * t1));
-  }
-  *sh *= ar;
+  *ch = rsqrt(fma(-t1, t1, 1.0));
+  *sh = (wt ? t1 : (*ch * t1)) * ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabs(*sh) < DBL_MIN)) << 4);
   *th = t1;
@@ -408,29 +390,21 @@ int PVN_FABI(pvn_cljv2,PVN_CLJV2)(const float *const a11, const float *const a22
         an = (2.0f * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0f : (an / ad));
-      if (bt && (fabsf(41.0f * t2) >= 40.0f)) {
-        t1 = copysignf((4.0f / 5.0f), t2);
+      t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
+      if (bt && (fabsf(t1) > *th)) {
+        t1 = copysignf(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0f + sqrtf(fmaf(-t2, t2, 1.0f))));
-        /* tangent underflows */
-        e2 = ((fabsf(t1) < FLT_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabsf(t1) < FLT_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0f / 3.0f);
-    *shi = (wt ? t1 : copysignf((4.0f / 3.0f), t1));
-  }
-  else {
-    *ch = rsqrtf(fmaf(-t1, t1, 1.0f));
-    *shi = (wt ? t1 : (*ch * t1));
-  }
+  *ch = rsqrtf(fmaf(-t1, t1, 1.0f));
+  *shi = (wt ? t1 : (*ch * t1));
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */
@@ -518,29 +492,21 @@ int PVN_FABI(pvn_zljv2,PVN_ZLJV2)(const double *const a11, const double *const a
         an = (2.0 * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0 : (an / ad));
-      if (bt && (fabs(41.0 * t2) >= 40.0)) {
-        t1 = copysign((4.0 / 5.0), t2);
+      t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
+      if (bt && (fabs(t1) > *th)) {
+        t1 = copysign(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0 + sqrt(fma(-t2, t2, 1.0))));
-        /* tangent underflows */
-        e2 = ((fabs(t1) < DBL_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabs(t1) < DBL_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0 / 3.0);
-    *shi = (wt ? t1 : copysign((4.0 / 3.0), t1));
-  }
-  else {
-    *ch = rsqrt(fma(-t1, t1, 1.0));
-    *shi = (wt ? t1 : (*ch * t1));
-  }
+  *ch = rsqrt(fma(-t1, t1, 1.0));
+  *shi = (wt ? t1 : (*ch * t1));
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */
@@ -615,30 +581,21 @@ int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, const long doubl
         an = (2.0L * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0L : (an / ad));
-      if (bt && (fabsl(41.0L * t2) >= 40.0L)) {
-        t1 = copysignl((4.0L / 5.0L), t2);
+      t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
+      if (bt && (fabsl(t1) > *th)) {
+        t1 = copysignl(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
-        /* tangent underflows */
-        e2 = ((fabsl(t1) < LDBL_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabsl(t1) < LDBL_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0L / 3.0L);
-    *sh = (wt ? t1 : copysignl((4.0L / 3.0L), t1));
-  }
-  else {
-    *ch = rsqrtl(fmal(-t1, t1, 1.0L));
-    *sh = (wt ? t1 : (*ch * t1));
-  }
-  *sh *= ar;
+  *ch = rsqrtl(fmal(-t1, t1, 1.0L));
+  *sh = (wt ? t1 : (*ch * t1)) * ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsl(*sh) < LDBL_MIN)) << 4);
   *th = t1;
@@ -723,29 +680,21 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
         an = (2.0L * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0L : (an / ad));
-      if (bt && (fabsl(41.0L * t2) >= 40.0L)) {
-        t1 = copysignl((4.0L / 5.0L), t2);
+      t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
+      if (bt && (fabsl(t1) > *th)) {
+        t1 = copysignl(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0L + sqrtl(fmal(-t2, t2, 1.0L))));
-        /* tangent underflows */
-        e2 = ((fabsl(t1) < LDBL_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabsl(t1) < LDBL_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0L / 3.0L);
-    *shi = (wt ? t1 : copysignl((4.0L / 3.0L), t1));
-  }
-  else {
-    *ch = rsqrtl(fmal(-t1, t1, 1.0L));
-    *shi = (wt ? t1 : (*ch * t1));
-  }
+  *ch = rsqrtl(fmal(-t1, t1, 1.0L));
+  *shi = (wt ? t1 : (*ch * t1));
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */
@@ -827,30 +776,21 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
         an = (2.0q * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0q : (an / ad));
-      if (bt && (fabsq(41.0q * t2) >= 40.0q)) {
-        t1 = copysignq((4.0q / 5.0q), t2);
+      t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
+      if (bt && (fabsq(t1) > *th)) {
+        t1 = copysignq(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
-        /* tangent underflows */
-        e2 = ((fabsq(t1) < FLT128_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabsq(t1) < FLT128_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0q / 3.0q);
-    *sh = (wt ? t1 : copysignq((4.0q / 3.0q), t1));
-  }
-  else {
-    *ch = rsqrtq(fmaq(-t1, t1, 1.0q));
-    *sh = (wt ? t1 : (*ch * t1));
-  }
-  *sh *= ar;
+  *ch = rsqrtq(fmaq(-t1, t1, 1.0q));
+  *sh = (wt ? t1 : (*ch * t1)) * ar;
   /* sine/tangent underflows with a non-zero aa */
   er = ((er && (fabsq(*sh) < FLT128_MIN)) << 4);
   *th = t1;
@@ -941,29 +881,21 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
         an = (2.0q * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0q : (an / ad));
-      if (bt && (fabsq(41.0q * t2) >= 40.0q)) {
-        t1 = copysignq((4.0q / 5.0q), t2);
+      t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
+      if (bt && (fabsq(t1) > *th)) {
+        t1 = copysignq(*th, t1);
         bt = -1;
       }
-      else {
-        t1 = (t2 / (1.0q + sqrtq(fmaq(-t2, t2, 1.0q))));
-        /* tangent underflows */
-        e2 = ((fabsq(t1) < FLT128_MIN) << 3);
-      }
+      /* tangent underflows */
+      e2 = ((fabsq(t1) < FLT128_MIN) << 3);
     }
     else
       e2 = e1 = 0;
   }
   else
     *es = e2 = e1 = 0;
-  if (bt == -1) {
-    *ch = (5.0q / 3.0q);
-    *shi = (wt ? t1 : copysignq((4.0q / 3.0q), t1));
-  }
-  else {
-    *ch = rsqrtq(fmaq(-t1, t1, 1.0q));
-    *shi = (wt ? t1 : (*ch * t1));
-  }
+  *ch = rsqrtq(fmaq(-t1, t1, 1.0q));
+  *shi = (wt ? t1 : (*ch * t1));
   *shr = (*shi * ar);
   *shi *= ai;
   /* sine/tangent underflows with a non-zero aa */

@@ -7,11 +7,9 @@
 
 /* on input, *es should be:
     0: ch, sh; th unbounded;
-    1: ch, sh; |th| bounded by 4/5;
-   -1: ch, th; |th| bounded by 4/5;
+    1: ch, sh; |th| bounded by *th;
+   -1: ch, th; |th| bounded by *th;
    -2: ch, th; th unbounded;
-   with the bound proposed by Krešimir Veselić
-   ( https://doi.org/10.1007/BF01388689 )
 */
 /* on output, -*es is the power of two by which the input has been scaled */
 /* the return value is negative on error, and non-negative on success */
