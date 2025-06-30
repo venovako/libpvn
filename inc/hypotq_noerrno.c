@@ -1,4 +1,4 @@
-/* Correctly-rounded reciprocal square root of binary128 value.
+/* Correctly-rounded Euclidean distance function (hypot) for the binary128 format.
 
 Copyright (c) 2025 Alexei Sibidanov <sibid@uvic.ca>
 
@@ -26,8 +26,9 @@ SOFTWARE.
 
 /* modified by venovako */
 #include "pvn_ext.h"
-PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
+PVN_EXTERN_C __float128 cr_hypotq(__float128 x, __float128 y);
 
+#include <stdio.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
@@ -41,8 +42,6 @@ PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #endif
-
-//#pragma STDC FENV_ACCESS ON
 
 // This code emulates the _mm_getcsr SSE intrinsic by reading the FPCR register.
 // fegetexceptflag accesses the FPSR register, which seems to be much slower
@@ -105,10 +104,6 @@ static inline __float128 local_nanq(__attribute__((unused)) const char *tagp){
 #define __builtin_nanf128(tagp) local_nanq(tagp)
 #endif
 
-static inline i64 mhui(u64 y, i64 x){
-  return ((u128)(u64)x*(u128)y>>64) - ((x>>63)&y);
-}
-
 // get high part of unsigned 64x64 bit multiplication
 static inline u64 mhuu(u64 _a, u64 _b){
   return ((u128)_a*_b)>>64;
@@ -117,6 +112,58 @@ static inline u64 mhuu(u64 _a, u64 _b){
 // get high part of signed 64x64 bit multiplication
 static inline i64 mhii(i64 x, i64 y){
   return ((i128)x*y)>>64;
+}
+
+static inline u128 mhuU(u64 y, u128 x){
+  b128u128_u ux; ux.a = x;
+  u128 xy0 = ux.b[0]*(u128)y;
+  u128 xy1 = ux.b[1]*(u128)y;
+  return xy1 + (xy0>>64);
+}
+
+// get appoximate high part of unsigned 128 bit squaring
+static inline u128 sqrhU(u128 _a){
+  b128u128_u a, a10, a11;
+  a.a = _a;
+  a10.a = (u128)a.b[1]*a.b[0];
+  a11.a = (u128)a.b[1]*a.b[1];
+  a11.a += a10.b[1];
+  a11.a += a10.b[1];
+  return a11.a;
+}
+
+#ifdef __INTEL_COMPILER
+// see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
+static inline unsigned long int __builtin_addcl(unsigned long a, unsigned long b, unsigned carry_in, unsigned long *carry_out)
+{
+  unsigned long s,
+    c1 = __builtin_add_overflow(a, b, &s),
+    c2 = __builtin_add_overflow(s, carry_in, &s);
+  *(carry_out) = c1 | c2;
+  return s;
+}
+#endif
+
+// get full product of unsigned 128x128 bit squaring
+static inline u128 sqrU(u128 _a, u128 *t){
+  b128u128_u a, a10, a11, a00;
+  a.a = _a;
+  a10.a = (u128)a.b[1]*a.b[0];
+  a11.a = (u128)a.b[1]*a.b[1];
+  a00.a = (u128)a.b[0]*a.b[0];
+  //     a0a0
+  //   a1a0
+  //   a1a0
+  // a1a1
+  unsigned long c;
+  a00.b[1] = __builtin_addcl(a00.b[1], a10.b[0], 0, &c);
+  a11.b[0] = __builtin_addcl(a11.b[0], a10.b[1], c, &c);
+  a11.b[1] = __builtin_addcl(a11.b[1], 0, c, &c);
+  a00.b[1] = __builtin_addcl(a00.b[1], a10.b[0], 0, &c);
+  a11.b[0] = __builtin_addcl(a11.b[0], a10.b[1], c, &c);
+  a11.b[1] = __builtin_addcl(a11.b[1], 0, c, &c);
+  *t = a00.a;
+  return a11.a;
 }
 
 // get appoximate high part of unsigned 128x128 bit multiplication
@@ -132,40 +179,19 @@ static inline u128 mhUU(u128 _a, u128 _b){
   return a1b1.a;
 }
 
-#ifdef __INTEL_COMPILER
-// see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
-static inline unsigned long int __builtin_addcl(unsigned long a, unsigned long b, unsigned carry_in, unsigned long *carry_out)
-{
-  unsigned long s,
-    c1 = __builtin_add_overflow(a, b, &s),
-    c2 = __builtin_add_overflow(s, carry_in, &s);
-  *(carry_out) = c1 | c2;
-  return s;
+// get high 128 bit part of (unsigned 128)x(signed 128) bit
+// multiplication with sign mask
+static inline i128 mhUIm(u128 _a, i128 _b, u64 mask){
+  b128u128_u sub; sub.a = _a;
+  sub.b[0] &= mask;
+  sub.b[1] &= mask;
+  return mhUU(_a,_b) - sub.a;
 }
-#endif
 
-// get full product of unsigned 128x128 bit multiplication
-static inline u128 mUU(u128 _a, u128 _b, u128 *t){
-  b128u128_u a, b, a1b0, a0b1, a1b1, a0b0;
-  a.a = _a;
-  b.a = _b;
-  a1b0.a = (u128)a.b[1]*b.b[0];
-  a0b1.a = (u128)a.b[0]*b.b[1];
-  a1b1.a = (u128)a.b[1]*b.b[1];
-  a0b0.a = (u128)a.b[0]*b.b[0];
-  //     a0b0
-  //   a1b0
-  //   a0b1
-  // a1b1
-  unsigned long c;
-  a0b0.b[1] = __builtin_addcl(a0b0.b[1], a1b0.b[0], 0, &c);
-  a1b1.b[0] = __builtin_addcl(a1b1.b[0], a1b0.b[1], c, &c);
-  a1b1.b[1] = __builtin_addcl(a1b1.b[1], 0, c, &c);
-  a0b0.b[1] = __builtin_addcl(a0b0.b[1], a0b1.b[0], 0, &c);
-  a1b1.b[0] = __builtin_addcl(a1b1.b[0], a0b1.b[1], c, &c);
-  a1b1.b[1] = __builtin_addcl(a1b1.b[1], 0, c, &c);
-  *t = a0b0.a;
-  return a1b1.a;
+// get high 128 bit part of (unsigned 128)x(signed 128) bit
+// multiplication
+static inline i128 mhIU(i128 _b, u128 _a){
+  return mhUIm(_a,_b,(u64)(_b>>127));
 }
 
 static inline __float128 reinterpret_u128_as_f128(u128 t){
@@ -259,99 +285,192 @@ static inline u64 rsqrt9(u64 m){
   return r;
 }
 
-__float128 cr_rsqrtq(__float128 x){
-  unsigned flagp = _mm_getcsr(), oflagp = flagp;
-  b128u128_u u = {.a = reinterpret_f128_as_u128(x)};
-  i32 e = u.b[1]>>48; // exponent
-  if(__builtin_expect(e==0, 0)){ // x is subnormal or x=+0
+// 0 - ordinary number, 1 -- infinity, 2 -- snan, 3 -- qnan
+__attribute__((noinline)) char getclass(u128 x){
+  u64 xh = x>>64, xl = x;
+  int t = xh>>32 | !!(xh<<32|xl);
+  return (t>=0x7fff<<16) + (t>=(0x7fff<<16)+1) + (t>=(0x7fff8<<12));
+}
+
+__float128 cr_hypotq(__float128 x, __float128 y) {
+  unsigned flagp = _mm_getcsr(), oflagp = flagp, rm = flagp&_MM_ROUND_MASK;
+  const u64 smsk = 1ll<<63;
+  b128u128_u X = {.a = reinterpret_f128_as_u128(x)};
+  b128u128_u Y = {.a = reinterpret_f128_as_u128(y)};
+
+  X.b[1] &= ~smsk; // strip sign
+  Y.b[1] &= ~smsk; // strip sign
+
+  b128u128_u a, b;
+  i128 dab = X.a - Y.a;
+  dab &= dab>>127;
+  a.a = X.a - dab;
+  b.a = Y.a + dab;
+  int xn = a.b[1]>>48, yn = b.b[1]>>48;
+  if(__builtin_expect(xn==0x7fff, 0)){
+    __float128 out;
+    // 1 -- infinity, 2 -- snan, 3 -- qnan
+    char xnan = getclass(a.a), ynan = getclass(b.a);
+    if(xnan==2||ynan==2){ // signaling NAN
+      flagp |= FE_INVALID;
+      if(__builtin_expect(oflagp!=flagp, 0)) _mm_setcsr(flagp);
+      out = __builtin_nanf128("hypot");
+    } else if(xnan+ynan==4) {//quiet NAN
+      out = __builtin_inff128(); // hypot(+-inf,qnan) = inf and hypot(qnan, +-inf) = inf
+    } else if(xnan==3) {//quiet NAN
+      out = reinterpret_u128_as_f128(a.a); // propagate nan
+    } else if(ynan==3) {//quiet NAN
+      out = reinterpret_u128_as_f128(b.a); // propagate nan
+    } else { // infinity and a normal number
+      out = __builtin_inff128();
+    }
+    return out;
+  }
+  if(__builtin_expect(yn==0, 0)){
     i32 ns = -15;
-    if(u.b[1]){
-      ns += __builtin_clzll(u.b[1]);
+    if(b.b[1]){
+      ns += __builtin_clzll(b.b[1]);
     } else {
-      if(u.b[0]) {
-	ns += __builtin_clzll(u.b[0]) + 64;
+      if(b.b[0]) {
+	ns += __builtin_clzll(b.b[0]) + 64;
       } else {
-#ifdef CORE_MATH_SUPPORT_ERRNO
-	errno = ERANGE; // pole error
-#endif
-	return 1.0q/0.0q; // x = +0
+	return reinterpret_u128_as_f128(a.a);
       }
     }
-    e = 1 - ns;
-    u.a <<= ns; // normalize mantissa
-    u.b[1] ^= (u64)(ns&1)<<48; // set proper last bit of exponent
-  }
-  if(__builtin_expect(e>=0x7fff, 0)){// other special cases: NAN, inf, negative numbers
-    if(!(u.a<<1)){ // x = -0
-#ifdef CORE_MATH_SUPPORT_ERRNO
-      errno = ERANGE; // pole error
-#endif
-      return -1.0q/0.0q;
-    }
-    if(u.a==(u128)0x7fff<<112) return 0; // x = +Inf
-    if(u.a<=(u128)0xffff<<112 && u.a>(u128)0x8000<<112){ // -inf <= x < -0
-      // x < 0
-#ifdef CORE_MATH_SUPPORT_ERRNO
-      errno = EDOM;
-#endif
-      feraiseexcept (FE_INVALID);
-      return __builtin_nanf128("<0");
-    } else{
-      u.a |= (u128)1<<111; // snan -> qnan
-      return u.f; // NaN
-    }
-  }
-  e += 121; // bias in case of denormal number
-  unsigned q2 = e/2, i = e&1;
-  i64 e2 = (0x5ffdull-q2+60)<<48;
-  u.a <<= 16;
-  if(__builtin_expect(!u.a, 0)) { // no inexact exception
-    if(~e&1){
-      u.b[1] = e2 + (2ull<<48); // place exponent
-      return u.f;
+    yn = 1 - ns;
+    b.a <<= ns; // normalize mantissa
+    if(__builtin_expect(xn==0, 0)){
+      ns = -15;
+      if(a.b[1]){
+	ns += __builtin_clzll(a.b[1]);
+      } else {
+	ns += __builtin_clzll(a.b[0]) + 64;
+      }
+      xn = 1 - ns;
+      a.a <<= ns; // normalize mantissa
     }
   }
 
-  const u64 rsqrt_2[] = {~0ull,0xb504f333f9de6484ull}; // 2^64/sqrt(2)
-  u64 rx = u.b[1], r = rsqrt9(rx);
-  u128 r2 = (u128)r*rsqrt_2[i];
-  unsigned shft = 4-i;
-  u.a >>= shft;
-  u.b[1] |= 1ull<<(60+i);
-  r = r2>>64;
-  u128 R2 = (u128)r*r;
-  i64 h = mhUU(R2, u.a), ds = mhui(r, h);
-
-  b128u128_u v; v.a = ((u128)r<<64) - ((i128)ds<<3);
-  unsigned rm = flagp&_MM_ROUND_MASK, nrst = rm == _MM_ROUND_NEAREST;
-  short dd = v.b[0]<<2;
-  if(__builtin_expect(!(dd<-4||dd>96), 0)){ // can round correctly?
-    v.a += 1<<13;
-    b128u128_u m = {.a = v.a>>14}, t0, t1, k0, k1;
-    t1.a = mUU(m.a, u.a, &t0.a);
-    k1.a = mUU(t0.a, m.a, &k0.a);
-    k1.a += t1.a*m.a;
-    k1.a |= !!k0.a;
-    v.b[0] &= ~0x3fffull;
-    i128 D = k1.a;
-    if(D<0) v.a++;
-    if(D>0) v.a--;
-  }
-  unsigned frac = v.b[0]&0x7fffull; // fractional part
-  u64 rnd = 0;
-  if(__builtin_expect(nrst, 1)){
-    rnd = frac>>14;  // round to nearest tie to even
-  } else if(rm==_MM_ROUND_UP){
-    rnd = 1; // round up
+  int dn = xn - yn;
+  a.a <<= 15; a.b[1] |= 1ull<<63;
+  b128u128_u v, dv;
+  if(__builtin_expect(dn>56, 0)){
+    // if x or y is too small compare to the other number
+    // return the largest number
+    v.a = a.a|1;
   } else {
-    // round down and to zero
+    b.a <<= 15; b.b[1] |= 1ull<<63;
+    b128u128_u a2128 = {.a = sqrhU(a.a)}, b2 = {.a = sqrhU(b.a>>dn)};
+    a2128.a += b2.a;
+    char overflow = b2.b[1]>a2128.b[1];
+    int nz = (~0u + overflow) & __builtin_clzll(a2128.b[1]);
+    unsigned i = (!overflow + nz)&1;
+    int s = 1 - overflow + nz;
+    a2128.a <<= s;
+    xn += overflow;
+    const u64 rsqrt_2[] = {~0ull,0xb504f333f9de6484ull}; // 2^64/sqrt(2)
+    u64 rx = a2128.b[1], r = rsqrt9(rx);
+    u128 r2 = (u128)r*rsqrt_2[i];
+    unsigned shft = 2-i;
+    a2128.a >>= shft;
+    a2128.b[1] |= 1ull<<(62+i);
+    r = r2>>64;
+    u128 sx = mhuU(r, a2128.a);
+    i128 h  = mhuU(r, sx)<<2, ds = mhIU(h, sx);
+    sx <<= 1;
+    v.a = sx - ds;
+    short dd = v.b[0]<<2;
+    if(dd>-37 && dd<13){ // rounding test
+      v.a += 1<<13;
+      v.b[0] &= ~0ull<<14;
+      overflow = v.a==0;
+      u128 c = v.a>>13;
+      u128 c2 = c*c;
+      a.a >>= 13;
+      u128 al, ah = sqrU(a.a, &al);
+      b.a >>= 13;
+      u128 bl, bh = sqrU(b.a, &bl);
+      if(dn){
+	bl = (bl>>2*dn|bh<<(128-2*dn)) | !!(bl << (128-2*dn));
+	bh = bh>>2*dn;
+      }
+      al += bl;
+      ah += bh + (al<bl);
+      s = (ah>>102)*2;
+      if(s) {
+	al = (al>>s|ah<<(128-s))|!!(al<<(128-s));
+      }
+      al -= c2;
+      v.b[1] |= (u64)overflow<<63;
+      xn += overflow;
+      if((i128)al<0)
+	v.a -= 1;
+      else if((i128)al>0)
+	v.a += 1;
+    }
   }
-  v.a >>= 15; // position mantissa
-  v.a += rnd; // round
-  flagp |= FE_INEXACT;
-  // set inexact flag only if it is not already set
-  if(__builtin_expect(oflagp != flagp, 0)) _mm_setcsr(flagp);
 
-  v.b[1] += e2; // place exponent
+  if(__builtin_expect(--xn>0,1)){
+    if(__builtin_expect(xn>=32766,0)){
+      u64 rnd, over = v.b[1]>>63;
+      if(__builtin_expect(rm==_MM_ROUND_NEAREST, 1)){
+	rnd = 1;  // round to nearest tie to even
+      } else if(rm==_MM_ROUND_UP){
+	rnd = 1; // round up
+      } else if(rm==_MM_ROUND_DOWN){
+	rnd = 0; // round down
+      } else {
+	rnd = 0; // round to zero
+      }
+      v.a = ((u128)0x7fff<<112) - 1;
+      v.a += rnd;
+      flagp |= FE_INEXACT;
+      // set overflow exception for result which is indeed overflow as well as rounded to infinity
+      if(v.b[1] == 0x7fffull<<48 || over){
+	flagp |= FE_OVERFLOW;
+#ifdef CORE_MATH_SUPPORT_ERRNO
+	errno = ERANGE;
+#endif
+      }
+    } else {
+      unsigned frac = v.b[0]&0x7fffull; // fractional part
+      u64 rnd;
+      if(__builtin_expect(rm==_MM_ROUND_NEAREST, 1)){
+	rnd = frac>>14;  // round to nearest tie to even
+      } else if(rm==_MM_ROUND_UP){
+	rnd = !!frac; // round up
+      } else if(rm==_MM_ROUND_DOWN){
+	rnd = 0; // round down
+      } else {
+	rnd = 0; // round to zero
+      }
+      v.a >>= 15; // position mantissa
+      dv.b[0] = rnd;
+      dv.b[1] = (u128)xn<<48;
+      v.a += dv.a;
+      // set inexact flag only if hypot is really inexact
+      if(__builtin_expect(frac, 1)) flagp |= FE_INEXACT;
+    }
+  } else {
+    u128 frac = v.a&(((u128)1<<(15-xn))-1); // fractional part
+    u64 rnd;
+    if(__builtin_expect(rm==_MM_ROUND_NEAREST, 1)){
+      rnd = frac>>(14-xn);  // round to nearest tie to even
+    } else if(rm==_MM_ROUND_UP){
+      rnd = !!frac; // round up
+    } else if(rm==_MM_ROUND_DOWN){
+      rnd = 0; // round down
+    } else {
+      rnd = 0; // round to zero
+    }
+    v.a >>= 15 - xn; // position mantissa
+    v.a += rnd;
+    // set inexact and underflow flags only if hypot is really inexact
+    if(__builtin_expect(frac, 1)){
+      flagp |= FE_INEXACT;
+      if(v.b[1]<(1ull<<48)) flagp |= FE_UNDERFLOW;
+    }
+  }
+  if(__builtin_expect(oflagp!=flagp, 0)) _mm_setcsr(flagp);
   return reinterpret_u128_as_f128(v.a); // put into xmm register
 }

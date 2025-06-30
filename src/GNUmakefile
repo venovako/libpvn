@@ -86,6 +86,7 @@ $(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c) \
 $(realpath $(CR_MATH)/src/binary64/sincos/sincos.c)
 ifdef QUADMATH
 CR_SRCS += \
+$(realpath $(CR_MATH)/src/binary128/rsqrt/hypotq.c) \
 $(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c) \
 $(realpath $(CR_MATH)/src/binary128/sqrt/sqrtq.c)
 endif # QUADMATH
@@ -109,6 +110,7 @@ CR_SRCS= \
 ../inc/sincos_noerrno.c
 ifdef QUADMATH
 CR_SRCS += \
+../inc/hypotq_noerrno.c \
 ../inc/rsqrtq_noerrno.c \
 ../inc/sqrtq_noerrno.c
 endif # QUADMATH

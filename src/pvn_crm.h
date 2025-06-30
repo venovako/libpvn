@@ -30,6 +30,8 @@ PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define rsqrtl cr_rsqrtl
 #ifdef PVN_QUADMATH
+PVN_EXTERN_C __float128 cr_hypotq(__float128 x, __float128 y);
+#define hypotq cr_hypotq
 PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
 #define rsqrtq cr_rsqrtq
 PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
@@ -42,6 +44,7 @@ PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 #define rsqrt invsqrt
 #define rsqrtl invsqrtl
 #ifdef PVN_QUADMATH
+#define hypotq __hypotq
 #define rsqrtq __invsqrtq
 #define sqrtq __sqrtq
 #endif /* PVN_QUADMATH */

@@ -21,6 +21,7 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_hypotl =%18p\n", cr_hypotl);
   (void)printf("cr_rsqrtl =%18p\n", cr_rsqrtl);
 #ifdef PVN_QUADMATH
+  (void)printf("cr_hypotq =%18p\n", cr_hypotq);
   (void)printf("cr_rsqrtq =%18p\n", cr_rsqrtq);
   (void)printf("cr_sqrtq  =%18p\n", cr_sqrtq);
 #endif /* PVN_QUADMATH */

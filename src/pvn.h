@@ -151,10 +151,10 @@ EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
 EXTERN_C __float128 __fmaxq(__float128, __float128);
 EXTERN_C __float128 __fminq(__float128, __float128);
 EXTERN_C __float128 __frexpq(__float128, int*);
-EXTERN_C __float128 __hypotq(__float128, __float128);
 EXTERN_C int __isfiniteq(__float128);
 EXTERN_C __float128 __scalbnq(__float128, int);
 #ifndef PVN_CR_MATH
+EXTERN_C __float128 __hypotq(__float128, __float128);
 EXTERN_C __float128 __sqrtq(__float128);
 EXTERN_C __float128 __invsqrtq(__float128);
 #endif /* !PVN_CR_MATH */
@@ -188,11 +188,6 @@ EXTERN_C __float128 __invsqrtq(__float128);
 #else /* frexpq */
 #error frexpq already defined
 #endif /* ?frexpq */
-#ifndef hypotq
-#define hypotq __hypotq
-#else /* hypotq */
-#error hypotq already defined
-#endif /* ?hypotq */
 #ifndef isfiniteq
 #define isfiniteq __isfiniteq
 #else /* isfiniteq */
