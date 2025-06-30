@@ -160,6 +160,6 @@ PVN_EXTERN_C int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const long double *const x)
 
 PVN_EXTERN_C void PVN_FABI(pvn_qsort,PVN_QSORT)(void *const b, const size_t *const n, const size_t *const w, int (*const c)(const void*, const void*));
 
-PVN_EXTERN_C void* PVN_FABI(pvn_pack80,PVN_PACK80)(long double *const a, const size_t *const n);
+PVN_EXTERN_C void* PVN_FABI(pvn_pack80,PVN_PACK80)(void *const a, const size_t *const n);
 
 #endif /* !PVN_AUX_H */

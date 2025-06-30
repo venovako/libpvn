@@ -146,13 +146,13 @@ void PVN_FABI(pvn_qsort,PVN_QSORT)(void *const b, const size_t *const n, const s
 #endif /* ?_OPENMP && ?__APPLE__ */
 }
 
-void* PVN_FABI(pvn_pack80,PVN_PACK80)(long double *const a, const size_t *const n)
+void* PVN_FABI(pvn_pack80,PVN_PACK80)(void *const a, const size_t *const n)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(n);
   uint16_t *const x = (uint16_t*)a;
   for (size_t i = 1u; i < *n; ++i) {
-    uint16_t *const s = x + i * 8u;
+    const uint16_t *const s = x + i * 8u;
     uint16_t *const d = x + i * 5u;
     d[0] = s[0];
     d[1] = s[1];
