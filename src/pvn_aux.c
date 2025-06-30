@@ -146,12 +146,15 @@ void PVN_FABI(pvn_qsort,PVN_QSORT)(void *const b, const size_t *const n, const s
 #endif /* ?_OPENMP && ?__APPLE__ */
 }
 
-void* PVN_FABI(pvn_pack80,PVN_PACK80)(void *const a, const size_t *const n)
+void* PVN_FABI(pvn_pack80,PVN_PACK80)(long double *const a, const size_t *const n)
 {
-  PVN_ASSERT(a);
-  PVN_ASSERT(n);
+  PVN_ASSERT(!((uintptr_t)a & 1u));
+  if (!n)
+    return NULL;
+  if (!a || !*n)
+    return a;
   uint16_t *const x = (uint16_t*)a;
-  for (size_t i = 1u; i < *n; ++i) {
+  for (size_t i = (size_t)1u; i < *n; ++i) {
     const uint16_t *const s = x + i * 8u;
     uint16_t *const d = x + i * 5u;
     d[0] = s[0];
@@ -161,5 +164,31 @@ void* PVN_FABI(pvn_pack80,PVN_PACK80)(void *const a, const size_t *const n)
     d[4] = s[4];
   }
   return a;
+}
+
+long double* PVN_FABI(pvn_unpack80,PVN_UNPACK80)(void *const a, const size_t *const n)
+{
+  PVN_ASSERT(!((uintptr_t)a & 1u));
+  if (!n)
+    return (long double*)NULL;
+  if (!a || !*n)
+    return (long double*)a;
+  uint16_t *const x = (uint16_t*)a;
+  for (size_t i = *n - (size_t)1u; i >= (size_t)1u; --i) {
+    const uint16_t *const s = x + i * 5u;
+    uint16_t *const d = x + i * 8u;
+    d[0] = s[0];
+    d[1] = s[1];
+    d[2] = s[2];
+    d[3] = s[3];
+    d[4] = s[4];
+    d[5] = UINT16_C(0);
+    d[6] = UINT16_C(0);
+    d[7] = UINT16_C(0);
+  }
+  x[5] = UINT16_C(0);
+  x[6] = UINT16_C(0);
+  x[7] = UINT16_C(0);
+  return (long double*)a;
 }
 #endif /* ?PVN_TEST */
