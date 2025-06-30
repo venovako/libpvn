@@ -59,6 +59,7 @@ pvn_timer.c \
 ..\inc\sincos_noerrno.c \
 ..\inc\hypotl_noerrno.c \
 ..\inc\rsqrtl_noerrno.c \
+..\inc\hypotq_noerrno.c \
 ..\inc\rsqrtq_noerrno.c \
 ..\inc\sqrtq_noerrno.c
 OBJS= \
@@ -92,6 +93,7 @@ pvn_timer.obj \
 ..\inc\sincos_noerrno.obj \
 ..\inc\hypotl_noerrno.obj \
 ..\inc\rsqrtl_noerrno.obj \
+..\inc\hypotq_noerrno.obj \
 ..\inc\rsqrtq_noerrno.obj \
 ..\inc\sqrtq_noerrno.obj
 EXES= \
