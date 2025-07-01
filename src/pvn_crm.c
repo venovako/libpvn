@@ -18,9 +18,9 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_hypot  =%18p\n", cr_hypot);
   (void)printf("cr_rsqrt  =%18p\n", cr_rsqrt);
   (void)printf("cr_sincos =%18p\n", cr_sincos);
+#if (defined(PVN_QUADMATH) || (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9)))
   (void)printf("cr_hypotl =%18p\n", cr_hypotl);
   (void)printf("cr_rsqrtl =%18p\n", cr_rsqrtl);
-#ifdef PVN_QUADMATH
   (void)printf("cr_hypotq =%18p\n", cr_hypotq);
   (void)printf("cr_rsqrtq =%18p\n", cr_rsqrtq);
   (void)printf("cr_sqrtq  =%18p\n", cr_sqrtq);
@@ -30,7 +30,7 @@ int main(/* int argc, char *argv[] */)
 }
 #else /* !PVN_TEST */
 #ifdef PVN_CR_MATH
-#ifndef __x86_64__
+#if !(defined(PVN_QUADMATH) || (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9)))
 /* This is not correctly rounded, but is at least reproducible. */
 
 long double cr_hypotl(long double x, long double y)

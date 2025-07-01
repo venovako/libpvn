@@ -113,7 +113,14 @@ CR_SRCS += \
 ../inc/hypotq_noerrno.c \
 ../inc/rsqrtq_noerrno.c \
 ../inc/sqrtq_noerrno.c
-endif # QUADMATH
+else # !QUADMATH
+ifeq ($(ARCH),ppc64le)
+CR_SRCS += \
+../inc/hypotq_portable.c \
+../inc/rsqrtq_portable.c \
+../inc/sqrtq_portable.c
+endif # ppc64le
+endif # ?QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
 CR_SRCS += \
 ../inc/hypotl_noerrno.c \
