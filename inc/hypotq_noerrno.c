@@ -316,13 +316,21 @@ __float128 cr_hypotq(__float128 x, __float128 y) {
       if(__builtin_expect(oflagp!=flagp, 0)) _mm_setcsr(flagp);
       out = __builtin_nanf128("hypot");
     } else if(xnan+ynan==4) {//quiet NAN
+#ifdef __INTEL_COMPILER
+      out = 1.0q/0.0q;
+#else
       out = __builtin_inff128(); // hypot(+-inf,qnan) = inf and hypot(qnan, +-inf) = inf
+#endif
     } else if(xnan==3) {//quiet NAN
       out = reinterpret_u128_as_f128(a.a); // propagate nan
     } else if(ynan==3) {//quiet NAN
       out = reinterpret_u128_as_f128(b.a); // propagate nan
     } else { // infinity and a normal number
+#ifdef __INTEL_COMPILER
+      out = 1.0q/0.0q;
+#else
       out = __builtin_inff128();
+#endif
     }
     return out;
   }
