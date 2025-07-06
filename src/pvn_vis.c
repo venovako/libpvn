@@ -1546,9 +1546,9 @@ int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict 
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   return 0;
 }
 
@@ -1589,9 +1589,9 @@ int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict 
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   return 0;
 }
 
@@ -1675,9 +1675,9 @@ int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   return 0;
 }
 
@@ -1718,9 +1718,9 @@ int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   return 0;
 }
 
@@ -1804,9 +1804,9 @@ int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restri
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   return 0;
 }
 
@@ -1847,9 +1847,9 @@ int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restri
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   return 0;
 }
 
@@ -1933,9 +1933,9 @@ int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restr
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   return 0;
 }
 
@@ -1976,9 +1976,9 @@ int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restr
   }
   MB = -MB;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   return 0;
 }
 
@@ -2078,13 +2078,13 @@ int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const r
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fminf(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmaxf(*maxC, MC);
   return 0;
 }
 
@@ -2141,13 +2141,13 @@ int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const r
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fmin(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmax(*maxC, MC);
   return 0;
 }
 
@@ -2267,13 +2267,13 @@ int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const 
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fminf(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmaxf(*maxC, MC);
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -2331,13 +2331,13 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fmin(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmax(*maxC, MC);
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -2459,13 +2459,13 @@ int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *cons
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fminf(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmaxf(*maxC, MC);
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -2523,13 +2523,13 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fmin(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmax(*maxC, MC);
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -2651,13 +2651,13 @@ int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *con
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fminf(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmaxf(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fminf(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmaxf(*maxC, MC);
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
@@ -2715,13 +2715,13 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
   MB = -MB;
   MC = -MC;
   if (isfinite(mB))
-    *minB = fminl(*minB, mB);
+    *minB = fmin(*minB, mB);
   if (isfinite(MB))
-    *maxB = fmaxl(*maxB, MB);
+    *maxB = fmax(*maxB, MB);
   if (isfinite(mC))
-    *minC = fminl(*minC, mC);
+    *minC = fmin(*minC, mC);
   if (isfinite(MC))
-    *maxC = fmaxl(*maxC, MC);
+    *maxC = fmax(*maxC, MC);
   /* check for overflow of |z| */
   return (MB == INFINITY);
 }
