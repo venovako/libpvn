@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
   (void)(fmt ? fprintf(stdout, fmt, fn(min_val)) : fprintf(stdout, "%s", pvn_xtoa(s, fn(min_val))));
   (void)fprintf(stdout, "\' .%s\n", bmp);
   (void)fprintf(stdout, "mv -fv .%s %s\n", bmp, bmp);
-  (void)fprintf(stdout, "magick %s -quality 90 `basename %s bmp`png\n", bmp, bmp);
+  (void)fprintf(stdout, "magick %s -colors 256 -quality 90 `basename %s bmp`png\n", bmp, bmp);
   (void)fprintf(stdout, "rm -fv %s\n", bmp);
   if (pvn_bmp_fwrite(cbar, bmp))
     return EXIT_FAILURE;
