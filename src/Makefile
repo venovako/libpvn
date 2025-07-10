@@ -36,6 +36,7 @@ pvn_bmp.c \
 pvn_cjs.c \
 pvn_cma.c \
 pvn_crm.c \
+pvn_det.c \
 pvn_djs.c \
 pvn_dot.c \
 pvn_err.c \
@@ -70,6 +71,7 @@ pvn_bmp.obj \
 pvn_cjs.obj \
 pvn_cma.obj \
 pvn_crm.obj \
+pvn_det.obj \
 pvn_djs.obj \
 pvn_dot.obj \
 pvn_err.obj \
@@ -104,6 +106,7 @@ pvn_bmp.exe \
 pvn_cjs.exe \
 pvn_cma.exe \
 pvn_crm.exe \
+pvn_det.exe \
 pvn_djs.exe \
 pvn_dot.exe \
 pvn_err.exe \
