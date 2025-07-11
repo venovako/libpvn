@@ -56,8 +56,8 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     v = (ea + ed);
   int
     s = (u - v);
-  *t = ((s > FLT_MAX_EXP) ? (s - FLT_MAX_EXP) : 0);
-  if (*t > 0) {
+  if (s > FLT_MAX_EXP) {
+    *t = (s - FLT_MAX_EXP);
     *t += (*t & 1);
     const int
       t_2 = -(*t >> 1);
@@ -104,8 +104,8 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     v = (ea + ed);
   int
     s = (u - v);
-  *t = ((s > DBL_MAX_EXP) ? (s - DBL_MAX_EXP) : 0);
-  if (*t > 0) {
+  if (s > DBL_MAX_EXP) {
+    *t = (s - DBL_MAX_EXP);
     *t += (*t & 1);
     const int
       t_2 = -(*t >> 1);
@@ -152,8 +152,8 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     v = (ea + ed);
   int
     s = (u - v);
-  *t = ((s > LDBL_MAX_EXP) ? (s - LDBL_MAX_EXP) : 0);
-  if (*t > 0) {
+  if (s > LDBL_MAX_EXP) {
+    *t = (s - LDBL_MAX_EXP);
     *t += (*t & 1);
     const int
       t_2 = -(*t >> 1);
@@ -200,8 +200,8 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
     v = (ea + ed);
   int
     s = (u - v);
-  *t = ((s > FLT128_MAX_EXP) ? (s - FLT128_MAX_EXP) : 0);
-  if (*t > 0) {
+  if (s > FLT128_MAX_EXP) {
+    *t = (s - FLT128_MAX_EXP);
     *t += (*t & 1);
     const int
       t_2 = -(*t >> 1);
