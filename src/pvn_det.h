@@ -48,7 +48,15 @@ static inline __float128 pvn_qdet(const __float128 a, const __float128 b, const 
   return x;
 }
 #else /* !PVN_QUADMATH */
-#define pvn_qdet pvn_xdet
+static inline long double pvn_qdet(const long double a, const long double b, const long double c, const long double d)
+{
+  const long double
+    w = (b * c),
+    e = fmal(-b, c, w),
+    f = fmal(a, d, -w),
+    x = (f + e);
+  return x;
+}
 #endif /* ?PVN_QUADMATH */
 
 PVN_EXTERN_C float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, const float *const c, const float *const d);
