@@ -1,33 +1,94 @@
 #include "pvn.h"
-
+/* TODO: consider underflows */
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
+#ifdef PVN_MPFR
+  if ((argc == 2) || (argc == 3)) {
+    const size_t n = pvn_atoz(argv[1]);
+    if (!n)
+      return EXIT_SUCCESS;
+    mpfr_rnd_t rnd = MPFR_RNDN;
+    mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
+    mpfr_prec_t prec = ((argc == 3) ? atol(argv[2]) : 113l);
+    int t = PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax);
+    if (t) {
+      (void)fprintf(stderr, "PVN_MPFR_START=%d\n", t);
+      return EXIT_FAILURE;
+    }
+    double a = 0.0, b = 0.0, c = 0.0, d = 0.0, r = 0.0, x = 0.0, e = 0.0;
+    mpfr_t ma, mb, mc, md, mr, mx;
+    t = mpfr_init_set_d(ma, a, MPFR_RNDN);
+    t = mpfr_init_set_d(mb, b, MPFR_RNDN);
+    t = mpfr_init_set_d(mc, c, MPFR_RNDN);
+    t = mpfr_init_set_d(md, d, MPFR_RNDN);
+    t = mpfr_init_set_d(mr, r, MPFR_RNDN);
+    t = mpfr_init_set_d(mx, x, MPFR_RNDN);
+    int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
+    char s[26] = { '\0' };
+    for (size_t i = 0u; i < n; ++i) {
+      a = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      (void)printf("%s,", pvn_dtoa(s, a));
+      b = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      (void)printf("%s,", pvn_dtoa(s, b));
+      c = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      (void)printf("%s,", pvn_dtoa(s, c));
+      d = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      (void)printf("%s;", pvn_dtoa(s, d));
+      t = 0;
+      r = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
+      (void)printf("%s,%5d;", pvn_dtoa(s, x), t);
+      (void)mpfr_set_d(ma, a, MPFR_RNDN);
+      (void)mpfr_set_d(mb, b, MPFR_RNDN);
+      (void)mpfr_set_d(mc, c, MPFR_RNDN);
+      (void)mpfr_set_d(md, d, MPFR_RNDN);
+      (void)mpfr_set_d(mx, x, MPFR_RNDN);
+      (void)mpfr_mul_2si(mx, mx, (long)t, MPFR_RNDN);
+      (void)mpfr_fmms(mr, ma, md, mb, mc, MPFR_RNDN);
+      (void)mpfr_sub(mx, mr, mx, MPFR_RNDN);
+      (void)mpfr_div(mx, mx, mr, MPFR_RNDN);
+      (void)mpfr_abs(mx, mx, MPFR_RNDN);
+      r = mpfr_get_d(mx, MPFR_RNDN);
+      (void)printf("%s\n", pvn_dtoa(s, r));
+      e = fmax(e, r);
+    }
+    u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
+    mpfr_clear(mx);
+    mpfr_clear(mr);
+    mpfr_clear(md);
+    mpfr_clear(mc);
+    mpfr_clear(mb);
+    mpfr_clear(ma);
+    t = PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
+    (void)printf("max rel err=%s\n", pvn_dtoa(s, e));
+  }
+  else {
+    (void)fprintf(stderr, "%s n [prec]\n", *argv);
+    return EXIT_FAILURE;
+  }
+#else /* !PVN_MPFR */
   if (argc == 5) {
     const double a = atof(argv[1]);
     const double b = atof(argv[2]);
     const double c = atof(argv[3]);
     const double d = atof(argv[4]);
     char s[26] = { '\0' };
-    double
-      y = pvn_ddet(a, b, c, d),
-      x = 0.0;
+    double x = 0.0,
+      y = pvn_ddet(a, b, c, d);
     (void)printf("pvn_ddet=%s\n", pvn_dtoa(s, y));
-    int
-      t = 0;
+    int t = 0;
     y = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
     (void)printf("PVN_DDET=%s (", pvn_dtoa(s, y));
     (void)printf("%s,%d)\n", pvn_dtoa(s, x), t);
+    return EXIT_SUCCESS;
   }
   else {
     (void)fprintf(stderr, "%s a b c d\n", *argv);
     return EXIT_FAILURE;
   }
-  return EXIT_SUCCESS;
+#endif /* ?PVN_MPFR */
 }
 #else /* !PVN_TEST */
-/* TODO: not yet exhaustively tested! */
-
 float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, const float *const c, const float *const d, float *const x, int *const t)
 {
   PVN_ASSERT(a);
@@ -71,7 +132,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
   const float
     w = (fb * fc),
     e = fmaf(-fb, fc, w),
-    f = fmaf(fa, fd, scalbnf(-w, s));
+    f = fmaf(fa, fd, -scalbnf(w, s));
   *x = fmaf(scalbnf(1.0f, s - 1), 2.0f * e, f);
   return scalbnf(*x, *t);
 }
@@ -119,7 +180,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
   const double
     w = (fb * fc),
     e = fma(-fb, fc, w),
-    f = fma(fa, fd, scalbn(-w, s));
+    f = fma(fa, fd, -scalbn(w, s));
   *x = fma(scalbn(1.0, s - 1), 2.0 * e, f);
   return scalbn(*x, *t);
 }
@@ -167,7 +228,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   const long double
     w = (fb * fc),
     e = fmal(-fb, fc, w),
-    f = fmal(fa, fd, scalbnl(-w, s));
+    f = fmal(fa, fd, -scalbnl(w, s));
   *x = fmal(scalbnl(1.0L, s - 1), 2.0L * e, f);
   return scalbnl(*x, *t);
 }
@@ -215,7 +276,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   const __float128
     w = (fb * fc),
     e = fmaq(-fb, fc, w),
-    f = fmaq(fa, fd, scalbnq(-w, s));
+    f = fmaq(fa, fd, -scalbnq(w, s));
   *x = fmaq(scalbnq(1.0q, s - 1), 2.0q * e, f);
   return scalbnq(*x, *t);
 }
