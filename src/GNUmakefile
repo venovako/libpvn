@@ -57,6 +57,23 @@ ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 SRCS += pvn_prof.c
 endif # !MINGW64
 
+ifdef MPC
+CFLAGS += -I$(MPC)/include -DPVN_MPC="\"$(MPC)\""
+ifndef MPFR
+MPFR=/usr/local
+endif # !MPFR
+endif # MPC
+ifdef MPFR
+SRCS += pvn_mpfr.c
+CFLAGS += -I$(MPFR)/include -DPVN_MPFR="\"$(MPFR)\""
+ifndef GMP
+GMP=/usr/local
+endif # !GMP
+endif # MPFR
+ifdef GMP
+CFLAGS += -I$(GMP)/include -DPVN_GMP="\"$(GMP)\""
+endif # GMP
+
 ifdef SAFE
 ifeq ($(findstring ev2,$(SAFE)),ev2)
 CFLAGS += -DPVN_EV2_SAFE="\"hypotq\""
@@ -207,12 +224,22 @@ else # !icc
 CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
 endif # ?icc
 
+ifdef MPC
+LNK += -L$(MPC)/lib -lmpc
+endif # MPC
+ifdef MPFR
+LNK += -L$(MPFR)/lib -lmpfr
+endif # MPFR
+ifdef GMP
+LNK += -L$(GMP)/lib -lgmp
+endif # GMP
+
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [GMP=...] [MPFR=...] [MPC=...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
