@@ -1,5 +1,5 @@
 #include "pvn.h"
-/* TODO: consider underflows */
+
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
@@ -28,16 +28,26 @@ int main(int argc, char *argv[])
     char s[26] = { '\0' };
     for (size_t i = 0u; i < n; ++i) {
       a = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+#ifndef NDEBUG
       (void)printf("%s,", pvn_dtoa(s, a));
+#endif /* !NDEBUG */
       b = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+#ifndef NDEBUG
       (void)printf("%s,", pvn_dtoa(s, b));
+#endif /* !NDEBUG */
       c = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+#ifndef NDEBUG
       (void)printf("%s,", pvn_dtoa(s, c));
+#endif /* !NDEBUG */
       d = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+#ifndef NDEBUG
       (void)printf("%s;", pvn_dtoa(s, d));
+#endif /* !NDEBUG */
       t = 0;
       r = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
+#ifndef NDEBUG
       (void)printf("%s,%5d;", pvn_dtoa(s, x), t);
+#endif /* !NDEBUG */
       (void)mpfr_set_d(ma, a, MPFR_RNDN);
       (void)mpfr_set_d(mb, b, MPFR_RNDN);
       (void)mpfr_set_d(mc, c, MPFR_RNDN);
@@ -49,7 +59,9 @@ int main(int argc, char *argv[])
       (void)mpfr_div(mx, mx, mr, MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
       r = mpfr_get_d(mx, MPFR_RNDN);
+#ifndef NDEBUG
       (void)printf("%s\n", pvn_dtoa(s, r));
+#endif /* !NDEBUG */
       e = fmax(e, r);
     }
     u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
@@ -97,10 +109,6 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  *t = 0;
-  *x = pvn_sdet(*a, *b, *c, *d);
-  if (isfinite(*x))
-    return *x;
   int
     ea = 0,
     eb = 0,
@@ -145,10 +153,6 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  *t = 0;
-  *x = pvn_ddet(*a, *b, *c, *d);
-  if (isfinite(*x))
-    return *x;
   int
     ea = 0,
     eb = 0,
@@ -193,10 +197,6 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  *t = 0;
-  *x = pvn_xdet(*a, *b, *c, *d);
-  if (isfinite(*x))
-    return *x;
   int
     ea = 0,
     eb = 0,
@@ -241,10 +241,6 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  *t = 0;
-  *x = pvn_qdet(*a, *b, *c, *d);
-  if (isfiniteq(*x))
-    return *x;
   int
     ea = 0,
     eb = 0,
