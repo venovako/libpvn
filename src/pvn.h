@@ -263,15 +263,21 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #include "pvn_prof.h"
 #endif /* !_WIN32 */
 #include "pvn_timer.h"
+
+#ifdef PVN_GMP
+#include "gmp.h"
+#endif /* PVN_GMP */
 #ifdef PVN_MPFR
 #ifdef PVN_QUADMATH
 #define MPFR_WANT_FLOAT128 __float128
 #define mpfr_float128 __float128
 #endif /* PVN_QUADMATH */
-#include "gmp.h"
 #include "mpfr.h"
 #include "pvn_mpfr.h"
 #endif /* PVN_MPFR */
+#ifdef PVN_MPC
+#include "mpc.h"
+#endif /* PVN_MPC */
 
 static inline int pvn_le()
 {

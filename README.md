@@ -41,7 +41,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [GMP=...] [MPFR=...] [MPC=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux with a high optimization level
