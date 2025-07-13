@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
       (void)fprintf(stderr, "PVN_MPFR_START=%d\n", t);
       return EXIT_FAILURE;
     }
-    double a = nan("a"), b = nan("b"), c = nan("c"), d = nan("d"), r = nan("r"), x = nan("x"), e = 0.0;
+    double a = nan("a"), b = nan("b"), c = nan("c"), d = nan("d"), r = nan("r"), x = nan("x"), e = INFINITY, E = 0.0;
     mpfr_t ma, mb, mc, md, mr, mx;
     t = mpfr_init_set_d(ma, a, MPFR_RNDN);
     t = mpfr_init_set_d(mb, b, MPFR_RNDN);
@@ -70,7 +70,8 @@ int main(int argc, char *argv[])
 #ifndef NDEBUG
       (void)printf("%s\n", pvn_dtoa(s, r));
 #endif /* !NDEBUG */
-      e = fmax(e, r);
+      e = fmin(e, r);
+      E = fmax(E, r);
     }
     u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
     mpfr_clear(mx);
@@ -80,7 +81,8 @@ int main(int argc, char *argv[])
     mpfr_clear(mb);
     mpfr_clear(ma);
     t = PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
-    (void)printf("max rel err=%s\n", pvn_dtoa(s, e));
+    (void)printf("min rel err=%s\n", pvn_dtoa(s, e));
+    (void)printf("max rel err=%s\n", pvn_dtoa(s, E));
   }
   else {
     (void)fprintf(stderr, "%s n [prec]\n", *argv);
