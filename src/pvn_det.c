@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
       (void)fprintf(stderr, "PVN_MPFR_START=%d\n", t);
       return EXIT_FAILURE;
     }
-    double a = 0.0, b = 0.0, c = 0.0, d = 0.0, r = 0.0, x = 0.0, e = 0.0;
+    double a = nan("a"), b = nan("b"), c = nan("c"), d = nan("d"), r = nan("r"), x = nan("x"), e = 0.0;
     mpfr_t ma, mb, mc, md, mr, mx;
     t = mpfr_init_set_d(ma, a, MPFR_RNDN);
     t = mpfr_init_set_d(mb, b, MPFR_RNDN);
@@ -27,19 +27,27 @@ int main(int argc, char *argv[])
     int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
     char s[26] = { '\0' };
     for (size_t i = 0u; i < n; ++i) {
-      a = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      do {
+        a = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+      } while (!isfinite(a));
 #ifndef NDEBUG
       (void)printf("%s,", pvn_dtoa(s, a));
 #endif /* !NDEBUG */
-      b = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      do {
+        b = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+      } while (!isfinite(b));
 #ifndef NDEBUG
       (void)printf("%s,", pvn_dtoa(s, b));
 #endif /* !NDEBUG */
-      c = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      do {
+        c = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+      } while (!isfinite(c));
 #ifndef NDEBUG
       (void)printf("%s,", pvn_dtoa(s, c));
 #endif /* !NDEBUG */
-      d = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, (const int*)NULL);
+      do {
+        d = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+      } while (!isfinite(d));
 #ifndef NDEBUG
       (void)printf("%s;", pvn_dtoa(s, d));
 #endif /* !NDEBUG */
@@ -85,7 +93,7 @@ int main(int argc, char *argv[])
     const double c = atof(argv[3]);
     const double d = atof(argv[4]);
     char s[26] = { '\0' };
-    double x = 0.0,
+    double x = nan("x"),
       y = pvn_ddet(a, b, c, d);
     (void)printf("pvn_ddet=%s\n", pvn_dtoa(s, y));
     int t = 0;
