@@ -152,6 +152,8 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     e = fmaf(-fb, fc, w),
     f = fmaf(fa, fd, -scalbnf(w, s));
   *x = fmaf(scalbnf(1.0f, s - 1), 2.0f * e, f);
+  *x = frexpf(*x, &s);
+  *t += s;
   return scalbnf(*x, *t);
 }
 
@@ -196,6 +198,8 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     e = fma(-fb, fc, w),
     f = fma(fa, fd, -scalbn(w, s));
   *x = fma(scalbn(1.0, s - 1), 2.0 * e, f);
+  *x = frexp(*x, &s);
+  *t += s;
   return scalbn(*x, *t);
 }
 
@@ -240,6 +244,8 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     e = fmal(-fb, fc, w),
     f = fmal(fa, fd, -scalbnl(w, s));
   *x = fmal(scalbnl(1.0L, s - 1), 2.0L * e, f);
+  *x = frexpl(*x, &s);
+  *t += s;
   return scalbnl(*x, *t);
 }
 #ifdef PVN_QUADMATH
@@ -284,6 +290,8 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
     e = fmaq(-fb, fc, w),
     f = fmaq(fa, fd, -scalbnq(w, s));
   *x = fmaq(scalbnq(1.0q, s - 1), 2.0q * e, f);
+  *x = frexpq(*x, &s);
+  *t += s;
   return scalbnq(*x, *t);
 }
 #else /* !PVN_QUADMATH */
