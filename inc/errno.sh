@@ -14,11 +14,8 @@ then
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c rsqrt_noerrno.c -o rsqrt.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c sincos_noerrno.c -o sincos.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c hypotq_portable.c -o hypotq.o
-	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c hypotq_noerrno.c -o hypotq.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c rsqrtq_portable.c -o rsqrtq.o
-	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c rsqrtq_noerrno.c -o rsqrtq.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c sqrtq_portable.c -o sqrtq.o
-	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -mcpu=native -mpower8-fusion -mtraceback=full -W -Wall $* -c sqrtq_noerrno.c -o sqrtq.o
 else
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c hypotf_noerrno.c -o hypotf.o
 	$GCC -DCORE_MATH_SUPPORT_ERRNO -I../src -Og -ggdb3 -march=native -W -Wall $* -c rsqrtf_noerrno.c -o rsqrtf.o
