@@ -4,15 +4,38 @@
 #ifdef PVN_MPFR
 int main(int argc, char *argv[])
 {
-  if ((argc < 2) || (argc > 3)) {
-    (void)fprintf(stderr, "%s m [prec]\n", *argv);
+  if ((argc < 3) || (argc > 4)) {
+    (void)fprintf(stderr, "%s m {S|D|X} [prec]\n", *argv);
     return EXIT_FAILURE;
   }
   const size_t m = pvn_atoz(argv[1]);
   if (!m)
     return EXIT_SUCCESS;
+  double e = 0.5;
+  int f = 0;
+  const char p = toupper(*(argv[2]));
+  switch (p) {
+  case 'S':
+    e *= FLT_EPSILON;
+    f = 9;
+    (void)fprintf(stderr, "ε=%#.9e\n", e);
+    break;
+  case 'D':
+    e *= DBL_EPSILON;
+    f = 17;
+    (void)fprintf(stderr, "ε=%#.17e\n", e);
+    break;
+  case 'X':
+    e *= LDBL_EPSILON;
+    f = 21;
+    (void)fprintf(stderr, "ε=%#.21e\n", e);
+    break;
+  default:
+    (void)fprintf(stderr, "%c not in {S,D,X}\n", p);
+    return EXIT_FAILURE;
+  }
   mpfr_rnd_t rnd = MPFR_RNDN;
-  mpfr_prec_t prec = ((argc == 3) ? atol(argv[2]) : __MPFR_PREC_INVALID);
+  mpfr_prec_t prec = ((argc == 4) ? atol(argv[3]) : __MPFR_PREC_INVALID);
   mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
   if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
     return EXIT_FAILURE;
@@ -20,16 +43,14 @@ int main(int argc, char *argv[])
   char
     fmtm[22] = { '\0' },
     fmtp[22] = { '\0' };
-  (void)sprintf(fmtm, "ϵ%%0%zuzu-/ε=%%# .17Re\n", d);
-  (void)sprintf(fmtp, "ϵ%%0%zuzu+/ε=%%# .17Re\n", d);
+  (void)sprintf(fmtm, "ϵ%%0%zuzu-/ε=%%# .%dRe\n", d, f);
+  (void)sprintf(fmtp, "ϵ%%0%zuzu+/ε=%%# .%dRe\n", d, f);
   mpfr_t em, ep, et, ed;
   (void)mpfr_init_set_d(em,-0.0, MPFR_RNDN);
   (void)mpfr_init_set_d(ep, 0.0, MPFR_RNDN);
   (void)mpfr_init_set_d(et, 0.0, MPFR_RNDN);
-  const double e = DBL_EPSILON * 0.5;
   (void)mpfr_init_set_d(ed, e, MPFR_RNDN);
-  (void)fprintf(stderr, "ε=%#.17e, m=%zu, mpfr_prec=%ld\n", e, m, prec);
-  (void)fprintf(stderr, "relative error bounds for the sequential evaluation of double precision ||x||_F:\n");
+  (void)fprintf(stderr, "relative error bounds for the sequential evaluation of %c-precision ||x||_F:\n", p);
   size_t i = (size_t)1u;
   (void)mpfr_printf(fmtm, i, em);
   (void)mpfr_printf(fmtm, i, ep);
