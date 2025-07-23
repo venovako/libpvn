@@ -11,17 +11,29 @@ int main(int argc, char *argv[])
   const size_t m = pvn_atoz(argv[1]);
   if (!m)
     return EXIT_SUCCESS;
-  mpfr_rnd_t rnd = __MPFR_RND_INVALID;
+  mpfr_rnd_t rnd = MPFR_RNDN;
   mpfr_prec_t prec = ((argc == 3) ? atol(argv[2]) : __MPFR_PREC_INVALID);
   mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
   if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
     return EXIT_FAILURE;
+  const size_t d = (size_t)floorl(log10l(m) + 1.0L);
+  char
+    fmtm[22] = { '\0' },
+    fmtp[22] = { '\0' };
+  (void)sprintf(fmtm, "ϵ%%0%zuzu-/ε=%%# .17Re\n", d);
+  (void)sprintf(fmtp, "ϵ%%0%zuzu+/ε=%%# .17Re\n", d);
   mpfr_t em, ep, et, ed;
-  (void)mpfr_init_set_d(em, 0.0, MPFR_RNDN);
+  (void)mpfr_init_set_d(em,-0.0, MPFR_RNDN);
   (void)mpfr_init_set_d(ep, 0.0, MPFR_RNDN);
   (void)mpfr_init_set_d(et, 0.0, MPFR_RNDN);
-  (void)mpfr_init_set_d(ed, DBL_EPSILON * 0.5, MPFR_RNDN);
-  for (size_t i = (size_t)2u; i <= m; ++i) {
+  const double e = DBL_EPSILON * 0.5;
+  (void)mpfr_init_set_d(ed, e, MPFR_RNDN);
+  (void)fprintf(stderr, "ε=%#.17e, m=%zu, mpfr_prec=%ld\n", e, m, prec);
+  (void)fprintf(stderr, "relative error bounds for the sequential evaluation of double precision ||x||_F:\n");
+  size_t i = (size_t)1u;
+  (void)mpfr_printf(fmtm, i, em);
+  (void)mpfr_printf(fmtm, i, ep);
+  for (++i; i <= m; ++i) {
     (void)mpfr_add_d(et, em, 2.0, MPFR_RNDN);
     (void)mpfr_mul(et, et, em, MPFR_RNDN);
     (void)mpfr_add_d(et, et, 1.0, MPFR_RNDN);
@@ -30,7 +42,7 @@ int main(int argc, char *argv[])
     (void)mpfr_mul(em, em, et, MPFR_RNDN);
     (void)mpfr_sub_d(em, em, 1.0, MPFR_RNDN);
     (void)mpfr_div(et, em, ed, MPFR_RNDN);
-    (void)mpfr_printf("ϵ%03zu-/ε=%# .17Re\n", i, et);
+    (void)mpfr_printf(fmtm, i, et);
     (void)mpfr_add_d(et, ep, 2.0, MPFR_RNDN);
     (void)mpfr_mul(et, et, ep, MPFR_RNDN);
     (void)mpfr_add_d(et, et, 1.0, MPFR_RNDN);
@@ -39,7 +51,7 @@ int main(int argc, char *argv[])
     (void)mpfr_mul(ep, ep, et, MPFR_RNDN);
     (void)mpfr_sub_d(ep, ep, 1.0, MPFR_RNDN);
     (void)mpfr_div(et, ep, ed, MPFR_RNDN);
-    (void)mpfr_printf("ϵ%03zu+/ε=%# .17Re\n", i, et);
+    (void)mpfr_printf(fmtp, i, et);
   }
   mpfr_clear(ed);
   mpfr_clear(et);
