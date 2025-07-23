@@ -1,6 +1,53 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
+#ifdef PVN_MPFR
+int main(int argc, char *argv[])
+{
+  if ((argc < 2) || (argc > 3)) {
+    (void)fprintf(stderr, "%s m [prec]\n", *argv);
+    return EXIT_FAILURE;
+  }
+  const size_t m = pvn_atoz(argv[1]);
+  if (!m)
+    return EXIT_SUCCESS;
+  mpfr_rnd_t rnd = __MPFR_RND_INVALID;
+  mpfr_prec_t prec = ((argc == 3) ? atol(argv[2]) : __MPFR_PREC_INVALID);
+  mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
+  if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
+    return EXIT_FAILURE;
+  mpfr_t em, ep, et, ed;
+  (void)mpfr_init_set_d(em, 0.0, MPFR_RNDN);
+  (void)mpfr_init_set_d(ep, 0.0, MPFR_RNDN);
+  (void)mpfr_init_set_d(et, 0.0, MPFR_RNDN);
+  (void)mpfr_init_set_d(ed, DBL_EPSILON * 0.5, MPFR_RNDN);
+  for (size_t i = (size_t)2u; i <= m; ++i) {
+    (void)mpfr_add_d(et, em, 2.0, MPFR_RNDN);
+    (void)mpfr_mul(et, et, em, MPFR_RNDN);
+    (void)mpfr_add_d(et, et, 1.0, MPFR_RNDN);
+    (void)mpfr_sqrt(em, et, MPFR_RNDN);
+    (void)mpfr_d_sub(et, 1.0, ed, MPFR_RNDN);
+    (void)mpfr_mul(em, em, et, MPFR_RNDN);
+    (void)mpfr_sub_d(em, em, 1.0, MPFR_RNDN);
+    (void)mpfr_div(et, em, ed, MPFR_RNDN);
+    (void)mpfr_printf("ϵ%03zu-/ε=%# .17Re\n", i, et);
+    (void)mpfr_add_d(et, ep, 2.0, MPFR_RNDN);
+    (void)mpfr_mul(et, et, ep, MPFR_RNDN);
+    (void)mpfr_add_d(et, et, 1.0, MPFR_RNDN);
+    (void)mpfr_sqrt(ep, et, MPFR_RNDN);
+    (void)mpfr_add_d(et, ed, 1.0, MPFR_RNDN);
+    (void)mpfr_mul(ep, ep, et, MPFR_RNDN);
+    (void)mpfr_sub_d(ep, ep, 1.0, MPFR_RNDN);
+    (void)mpfr_div(et, ep, ed, MPFR_RNDN);
+    (void)mpfr_printf("ϵ%03zu+/ε=%# .17Re\n", i, et);
+  }
+  mpfr_clear(ed);
+  mpfr_clear(et);
+  mpfr_clear(ep);
+  mpfr_clear(em);
+  return (PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)() ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+#else /* !PVN_MPFR */
 int main(/* int argc, char *argv[] */)
 {
   const double x[4][2] = {{-1.0, 1.0}, { 1.0,-1.0}, { 2.0, 2.0}, {-2.0,-2.0}};
@@ -12,6 +59,7 @@ int main(/* int argc, char *argv[] */)
   (void)printf("%#F\n", f);
   return EXIT_SUCCESS;
 }
+#endif /* ?PVN_MPFR */
 #else /* !PVN_TEST */
 void PVN_FABI(pvn_snrm2,PVN_SNRM2)(float *const f, const int *const m, const float *const x, const unsigned *const ix)
 {
