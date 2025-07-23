@@ -33,7 +33,7 @@ Recent versions of the compilers have been provided by or used on:
 6. Oracle Linux (GCC 14.2.1-7),
 7. Intel Classic (2021.10.0),
 8. Intel oneAPI (2025.1.1),
-9. NVIDIA HPC SDK (25.5).
+9. NVIDIA HPC SDK (25.7).
 
 Examples of building the library:
 ```bash
