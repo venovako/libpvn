@@ -35,16 +35,15 @@ int main(/* int argc, char *argv[] */)
 
 long double cr_hypotl(long double x, long double y)
 {
-  const long double
-    X = fabsl(x),
-    Y = fabsl(y),
-    m = fminl(X, Y),
-    M = fmaxl(X, Y),
-    q = (m / M),
-    Q = fmaxl(q, 0.0L),
-    S = fmal(Q, Q, 1.0L),
-    s = sqrtl(S),
-    h = (M * s);
+  const long double X = fabsl(x);
+  const long double Y = fabsl(y);
+  const long double m = fminl(X, Y);
+  const long double M = fmaxl(X, Y);
+  const long double q = (m / M);
+  const long double Q = fmaxl(q, 0.0L);
+  const long double S = fmal(Q, Q, 1.0L);
+  const long double s = sqrtl(S);
+  const long double h = (M * s);
   return h /* hypotl(x, y) */;
 }
 

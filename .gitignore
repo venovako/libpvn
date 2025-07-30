@@ -76,6 +76,7 @@ dkms.conf
 
 # Other
 .DS_Store
+.idea
 *.bt
 *.pt
 *.st
