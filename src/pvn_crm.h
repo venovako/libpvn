@@ -53,23 +53,11 @@ PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 #define sqrtq __sqrtq
 #endif /* PVN_QUADMATH */
 #else /* !__MATHIMF_H_INCLUDED */
-static inline float rsqrtf(float x)
-{
-  return (1.0f / sqrtf(x));
-}
-static inline double rsqrt(double x)
-{
-  return (1.0 / sqrt(x));
-}
-static inline long double rsqrtl(long double x)
-{
-  return (1.0L / sqrtl(x));
-}
+#define rsqrtf(x) pvn_v1s_rsqrt(x)
+#define rsqrt(x) pvn_v1d_rsqrt(x)
+#define rsqrtl(x) pvn_v1x_rsqrt(x)
 #ifdef PVN_QUADMATH
-static inline __float128 rsqrtq(__float128 x)
-{
-  return (1.0q / sqrtq(x));
-}
+#define rsqrtq(x) pvn_v1q_rsqrt(x)
 #endif /* PVN_QUADMATH */
 #endif /* ?__MATHIMF_H_INCLUDED */
 #endif /* ?PVN_CR_MATH */

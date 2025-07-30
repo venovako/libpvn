@@ -35,21 +35,12 @@ int main(/* int argc, char *argv[] */)
 
 long double cr_hypotl(long double x, long double y)
 {
-  const long double X = fabsl(x);
-  const long double Y = fabsl(y);
-  const long double m = fminl(X, Y);
-  const long double M = fmaxl(X, Y);
-  const long double q = (m / M);
-  const long double Q = fmaxl(q, 0.0L);
-  const long double S = fmal(Q, Q, 1.0L);
-  const long double s = sqrtl(S);
-  const long double h = (M * s);
-  return h /* hypotl(x, y) */;
+  return pvn_v1x_hypot(x, y);
 }
 
 long double cr_rsqrtl(long double x)
 {
-  return (1.0L / sqrtl(x));
+  return pvn_v1x_rsqrt(x);
 }
 #endif /* !__x86_64__ */
 #endif /* PVN_CR_MATH */
