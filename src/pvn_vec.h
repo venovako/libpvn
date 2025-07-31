@@ -86,6 +86,11 @@ static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
 #if (defined(__AVX__) && defined(__FMA__))
 #include <immintrin.h>
 
+static inline __m256 pvn_v8s_rsqrt(register const __m256 x)
+{
+  return _mm256_div_ps(_mm256_set1_ps(1.0f), _mm256_sqrt_ps(x)); //_mm256_invsqrt_ps(x)
+}
+
 static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m256 y)
 {
   register const __m256 z = _mm256_set1_ps(-0.0f);
@@ -100,6 +105,11 @@ static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m25
   register const __m256 s = _mm256_sqrt_ps(S);
   register const __m256 h = _mm256_mul_ps(M, s);
   return h;
+}
+
+static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
+{
+  return _mm256_div_pd(_mm256_set1_pd(1.0), _mm256_sqrt_pd(x)); //_mm256_invsqrt_pd(x)
 }
 
 static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m256d y)
@@ -117,9 +127,13 @@ static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m
   register const __m256d h = _mm256_mul_pd(M, s);
   return h;
 }
-#endif /* __AVX__ && __FMA__ */
 
 #ifdef __AVX512F__
+static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
+{
+  return _mm512_div_ps(_mm512_set1_ps(1.0f), _mm512_sqrt_ps(x)); //_mm512_invsqrt_ps(x)
+}
+
 static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
@@ -134,6 +148,11 @@ static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m5
   register const __m512 s = _mm512_sqrt_ps(S);
   register const __m512 h = _mm512_mul_ps(M, s);
   return h;
+}
+
+static inline __m512d pvn_v8d_rsqrt(register const __m512d x)
+{
+  return _mm512_div_pd(_mm512_set1_pd(1.0), _mm512_sqrt_pd(x)); //_mm512_invsqrt_pd(x)
 }
 
 static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m512d y)
@@ -152,4 +171,5 @@ static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m
   return h;
 }
 #endif /* __AVX512F__ */
+#endif /* __AVX__ && __FMA__ */
 #endif /* !PVN_VEC_H */
