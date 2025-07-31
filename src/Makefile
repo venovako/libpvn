@@ -49,6 +49,7 @@ pvn_nrm.c \
 pvn_ran.c \
 pvn_sv2.c \
 pvn_tar.c \
+pvn_vec.c \
 pvn_vis.c \
 pvn_lock.c \
 pvn_timer.c \
@@ -84,6 +85,7 @@ pvn_nrm.obj \
 pvn_ran.obj \
 pvn_sv2.obj \
 pvn_tar.obj \
+pvn_vec.obj \
 pvn_vis.obj \
 pvn_lock.obj \
 pvn_timer.obj \
@@ -119,6 +121,7 @@ pvn_nrm.exe \
 pvn_ran.exe \
 pvn_sv2.exe \
 pvn_tar.exe \
+pvn_vec.exe \
 pvn_vis.exe \
 pvn_lock.exe \
 pvn_timer.exe
