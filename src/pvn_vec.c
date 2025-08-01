@@ -24,10 +24,16 @@ int main(int argc, char *argv[])
     for (size_t i = 0u; i < n; ++i)
       x[i] = drand48();
 #endif /* !_WIN32 */
-    (void)printf("pvn_v2d_nrmf=");
+    (void)printf("pvn_v1d_nrmf=");
     (void)fflush(stdout);
     long long t = pvn_time_mono_ns();
-    double f = PVN_FABI(pvn_v2d_nrmf,PVN_V2D_NRMF)(&n, x);
+    double f = PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(&n, x);
+    t = pvn_time_mono_ns() - t;
+    (void)printf("%#.17e in %21lld ns\n", f, t);
+    (void)printf("pvn_v2d_nrmf=");
+    (void)fflush(stdout);
+    t = pvn_time_mono_ns();
+    f = PVN_FABI(pvn_v2d_nrmf,PVN_V2D_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
     (void)printf("%#.17e in %21lld ns\n", f, t);
     (void)printf("pvn_v4d_nrmf=");
