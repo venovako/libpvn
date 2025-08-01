@@ -222,7 +222,7 @@ static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
 
 static inline float pvn_v16s_hypot_red(register const __m512 x)
 {
-  return pvn_v8s_hypot_red(pvn_v8s_hypot(_mm512_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm512_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
+  return pvn_v8s_hypot_red(pvn_v8s_hypot(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
 
 static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m512 y)
