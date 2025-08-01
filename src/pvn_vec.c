@@ -30,6 +30,12 @@ int main(int argc, char *argv[])
     double f = PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
     (void)printf("%#.17e in %21lld ns\n", f, t);
+    (void)printf("pvn_crd_nrmf=");
+    (void)fflush(stdout);
+    t = pvn_time_mono_ns();
+    f = PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, x);
+    t = pvn_time_mono_ns() - t;
+    (void)printf("%#.17e in %21lld ns\n", f, t);
     (void)printf("pvn_v2d_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
@@ -71,6 +77,19 @@ double PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(const size_t *const n, const double *
   double f = 0.0;
   for (size_t i = 0u; i < m; ++i)
     f = pvn_v1d_hypot(f, x[i]);
+  return f;
+}
+
+double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0;
+  const size_t m = *n;
+  double f = 0.0;
+  for (size_t i = 0u; i < m; ++i)
+    f = hypot(f, x[i]);
   return f;
 }
 #if (defined(__AVX__) && defined(__FMA__))
