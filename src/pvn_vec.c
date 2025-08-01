@@ -54,6 +54,19 @@ unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)()
 {
   return (PVN_VECLEN);
 }
+
+double PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0;
+  const size_t m = *n;
+  double f = 0.0;
+  for (size_t i = 0u; i < m; ++i)
+    f = pvn_v1d_hypot(f, x[i]);
+  return f;
+}
 #if (defined(__AVX__) && defined(__FMA__))
 double PVN_FABI(pvn_v2d_nrmf,PVN_V2D_NRMF)(const size_t *const n, const double *const x)
 {

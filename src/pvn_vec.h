@@ -270,6 +270,7 @@ static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m
 #endif /* __AVX__ && __FMA__ */
 
 PVN_EXTERN_C unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)();
+PVN_EXTERN_C double PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(const size_t *const n, const double *const x);
 #if (defined(__AVX__) && defined(__FMA__))
 PVN_EXTERN_C double PVN_FABI(pvn_v2d_nrmf,PVN_V2D_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_v4d_nrmf,PVN_V4D_NRMF)(const size_t *const n, const double *const x);
