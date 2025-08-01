@@ -21,22 +21,28 @@ int main(int argc, char *argv[])
 #ifndef _WIN32
     if (argc > 2)
       srand48(atol(argv[2]));
-    for (size_t i = n; i; )
-      x[--i] = drand48();
+    for (size_t i = 0u; i < n; ++i)
+      x[i] = drand48();
 #endif /* !_WIN32 */
-    (void)printf("pvn_v4d_nrmf=");
+    (void)printf("pvn_v2d_nrmf=");
     (void)fflush(stdout);
     long long t = pvn_time_mono_ns();
-    double f = PVN_FABI(pvn_v4d_nrmf,PVN_V4D_NRMF)(&n, x);
+    double f = PVN_FABI(pvn_v2d_nrmf,PVN_V2D_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
-    (void)printf("%#.17e in %lld ns\n", f, t);
+    (void)printf("%#.17e in %21lld ns\n", f, t);
+    (void)printf("pvn_v4d_nrmf=");
+    (void)fflush(stdout);
+    t = pvn_time_mono_ns();
+    f = PVN_FABI(pvn_v4d_nrmf,PVN_V4D_NRMF)(&n, x);
+    t = pvn_time_mono_ns() - t;
+    (void)printf("%#.17e in %21lld ns\n", f, t);
 #ifdef __AVX512F__
     (void)printf("pvn_v8d_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
     f = PVN_FABI(pvn_v8d_nrmf,PVN_V8D_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
-    (void)printf("%#.17e in %lld ns\n", f, t);
+    (void)printf("%#.17e in %21lld ns\n", f, t);
 #endif /* __AVX512F__ */
     free(x);
   }
@@ -49,6 +55,21 @@ unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)()
   return (PVN_VECLEN);
 }
 #if (defined(__AVX__) && defined(__FMA__))
+double PVN_FABI(pvn_v2d_nrmf,PVN_V2D_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (*n & 1u)
+    return -1.0;
+  if (!*n)
+    return -0.0;
+  const size_t m = *n;
+  register __m128d f = _mm_setzero_pd();
+  for (size_t i = 0u; i < m; i += 2u)
+    f = pvn_v2d_hypot(f, _mm_load_pd(x + i));
+  return pvn_v2d_hypot_red(f);
+}
+
 double PVN_FABI(pvn_v4d_nrmf,PVN_V4D_NRMF)(const size_t *const n, const double *const x)
 {
   PVN_ASSERT(n);
