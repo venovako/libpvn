@@ -10,7 +10,7 @@ static double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const d
   PVN_ASSERT(x);
   if (!*n)
     return -0.0;
-  const int64_t incx = 1u;
+  const int64_t incx = INT64_C(1);
   return PVN_FABI(dnrm2,DNRM2)(n, x, &incx);
 }
 #endif /* PVN_LAPACK */
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     t = pvn_time_mono_ns();
     f = PVN_FABI(pvn_v8d_nrmf,PVN_V8D_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
-    (void)printf("%#.17e in %21lld ns\n", f, t);
+    (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
 #endif /* __AVX512F__ */
 #ifdef PVN_MPFR
     (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
