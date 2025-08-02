@@ -74,6 +74,9 @@ endif # MPFR
 ifdef GMP
 CFLAGS += -I$(GMP)/include -DPVN_GMP="\"$(GMP)\""
 endif # GMP
+ifdef LAPACK
+CFLAGS += -DPVN_LAPACK="\"$(LAPACK)\""
+endif # LAPACK
 
 ifdef SAFE
 ifeq ($(findstring ev2,$(SAFE)),ev2)

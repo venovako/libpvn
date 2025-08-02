@@ -1,6 +1,7 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
+#ifdef PVN_LAPACK
 extern double PVN_FABI(dnrm2,DNRM2)(const size_t *const n, const double *const x, const int64_t *const incx);
 
 static double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *const x)
@@ -12,7 +13,7 @@ static double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const d
   const int64_t incx = 1u;
   return PVN_FABI(dnrm2,DNRM2)(n, x, &incx);
 }
-
+#endif /* PVN_LAPACK */
 #ifdef PVN_MPFR
 static double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *const x)
 {
@@ -75,17 +76,19 @@ int main(int argc, char *argv[])
     t = pvn_time_mono_ns();
     const double e = PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
-    (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", e, -0.0, t);
+    (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", e, 0.0, t);
 #else /* !PVN_MPFR */
     const double e = 0.0;
 #endif /* ?PVN_MPFR */
     double f = 0.0;
+#ifdef PVN_LAPACK
     (void)printf("pvn_lad_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
     f = PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
     (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+#endif /* PVN_LAPACK */
     (void)printf("pvn_crd_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
