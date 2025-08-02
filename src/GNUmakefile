@@ -234,13 +234,16 @@ endif # MPFR
 ifdef GMP
 LNK += -L$(GMP)/lib -lgmp
 endif # GMP
+ifdef LAPACK
+LNK += -L$(LAPACK) -ltmglib -llapack -lrefblas
+endif # LAPACK
 
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [GMP=...] [MPFR=...] [MPC=...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

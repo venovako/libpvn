@@ -1,6 +1,14 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
+extern double PVN_FABI(dnrm2,DNRM2)(const size_t *const n, const double *const x, const int64_t *const incx);
+
+static double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *const x)
+{
+  const int64_t incx = 1u;
+  return PVN_FABI(dnrm2,DNRM2)(n, x, &incx);
+}
+
 int main(int argc, char *argv[])
 {
   if (argc > 3) {
@@ -10,30 +18,36 @@ int main(int argc, char *argv[])
   (void)printf("PVN_VECLEN = %u\n", PVN_VECLEN);
   (void)printf("PVN_SAFELEN(float) = %zu\n", PVN_SAFELEN(float));
   (void)printf("PVN_SAFELEN(double) = %zu\n", PVN_SAFELEN(double));
-#if (defined(__AVX__) && defined(__FMA__))
+#if (defined(__AVX__) && defined(__FMA__) && !defined(_WIN32))
   if (argc > 1) {
     const size_t n = pvn_atoz(argv[1]);
     if (!n)
       return EXIT_FAILURE;
-    double *const x = (double*)aligned_alloc(64u, n * sizeof(double));
+    double *const x = (double*)aligned_alloc(PVN_FABI(pvn_pagesize,PVN_PAGESIZE)(), n * sizeof(double));
     if (!x)
       return EXIT_FAILURE;
-#ifndef _WIN32
     if (argc > 2)
       srand48(atol(argv[2]));
     for (size_t i = 0u; i < n; ++i)
       x[i] = drand48();
-#endif /* !_WIN32 */
-    (void)printf("pvn_v1d_nrmf=");
+    long long t = 0ll;
+    double f = 0.0;
+    (void)printf("pvn_lad_nrmf=");
     (void)fflush(stdout);
-    long long t = pvn_time_mono_ns();
-    double f = PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(&n, x);
+    t = pvn_time_mono_ns();
+    f = PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
     (void)printf("%#.17e in %21lld ns\n", f, t);
     (void)printf("pvn_crd_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
     f = PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, x);
+    t = pvn_time_mono_ns() - t;
+    (void)printf("%#.17e in %21lld ns\n", f, t);
+    (void)printf("pvn_v1d_nrmf=");
+    (void)fflush(stdout);
+    t = pvn_time_mono_ns();
+    f = PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
     (void)printf("%#.17e in %21lld ns\n", f, t);
     (void)printf("pvn_v2d_nrmf=");
@@ -58,32 +72,13 @@ int main(int argc, char *argv[])
 #endif /* __AVX512F__ */
     free(x);
   }
-#endif /* __AVX__ && __FMA__ */
+#endif /* __AVX__ && __FMA__ && !_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
 unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)()
 {
   return (PVN_VECLEN);
-}
-
-double PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(const size_t *const n, const double *const x)
-{
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-#pragma omp declare reduction(h1d:double:omp_out=pvn_v1d_hypot(omp_out,omp_in)) initializer(omp_priv=0.0)
-#endif /* _OPENMP */
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
-  if (!*n)
-    return -0.0;
-  const size_t m = *n;
-  double f = 0.0;
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-#pragma omp parallel for default(none) shared(m,x) reduction(h1d:f)
-#endif /* _OPENMP */
-  for (size_t i = 0u; i < m; ++i)
-    f = pvn_v1d_hypot(f, x[i]);
-  return f;
 }
 
 double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x)
@@ -102,6 +97,25 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i)
     f = hypot(f, x[i]);
+  return f;
+}
+
+double PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(const size_t *const n, const double *const x)
+{
+#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#pragma omp declare reduction(h1d:double:omp_out=pvn_v1d_hypot(omp_out,omp_in)) initializer(omp_priv=0.0)
+#endif /* _OPENMP */
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0;
+  const size_t m = *n;
+  double f = 0.0;
+#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#pragma omp parallel for default(none) shared(m,x) reduction(h1d:f)
+#endif /* _OPENMP */
+  for (size_t i = 0u; i < m; ++i)
+    f = pvn_v1d_hypot(f, x[i]);
   return f;
 }
 #if (defined(__AVX__) && defined(__FMA__))
