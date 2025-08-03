@@ -58,8 +58,25 @@ int main(int argc, char *argv[])
     double *const x = (double*)aligned_alloc(64u, n * sizeof(double));
     if (!x)
       return EXIT_FAILURE;
-    if (argc > 2) // e.g., the result of `echo "$RANDOM * $RANDOM" | bc`
-      srand48(atol(argv[2]));
+    if (argc > 2) {
+      long s = atol(argv[2]);
+      if (!seed48((unsigned short*)&s))
+        return EXIT_FAILURE;
+    }
+    else {
+      const int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
+      if (u < 0)
+        return EXIT_FAILURE;
+      alignas(8) unsigned short s[4] = { UINT16_C(0), UINT16_C(0), UINT16_C(0), UINT16_C(0) };
+      while (!PVN_FABI(pvn_ran_16,PVN_RAN_16)(&u, s) || !*s) /* loop */;
+      while (!PVN_FABI(pvn_ran_16,PVN_RAN_16)(&u, s + 1) || !s[1]) /* loop */;
+      while (!PVN_FABI(pvn_ran_16,PVN_RAN_16)(&u, s + 2) || !s[2]) /* loop */;
+      if (!seed48(s))
+        return EXIT_FAILURE;
+      if (PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u))
+        return EXIT_FAILURE;
+      (void)printf("SEED = %15ld\n", *(const long*)s);
+    }
     for (size_t i = 0u; i < n; ++i)
       x[i] = drand48();
 #ifdef PVN_MPFR

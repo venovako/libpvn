@@ -39,6 +39,39 @@ int PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(const int *const u)
 #endif /* ?__RDRND__ */
 }
 
+int PVN_FABI(pvn_ran_16,PVN_RAN_16)(const int *const u, uint16_t *const r)
+{
+  PVN_ASSERT(u);
+  PVN_ASSERT(r);
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
+  return _rdrand16_step(r);
+#else /* !__RDRND__ */
+  return (read(*u, r, sizeof(*r)) == (ssize_t)(sizeof(*r)));
+#endif /* ?__RDRND__ */
+}
+
+int PVN_FABI(pvn_ran_32,PVN_RAN_32)(const int *const u, uint32_t *const r)
+{
+  PVN_ASSERT(u);
+  PVN_ASSERT(r);
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
+  return _rdrand32_step(r);
+#else /* !__RDRND__ */
+  return (read(*u, r, sizeof(*r)) == (ssize_t)(sizeof(*r)));
+#endif /* ?__RDRND__ */
+}
+
+int PVN_FABI(pvn_ran_64,PVN_RAN_64)(const int *const u, uint64_t *const r)
+{
+  PVN_ASSERT(u);
+  PVN_ASSERT(r);
+#if (defined(__RDRND__) && !defined(__NVCOMPILER))
+  return _rdrand64_step(r);
+#else /* !__RDRND__ */
+  return (read(*u, r, sizeof(*r)) == (ssize_t)(sizeof(*r)));
+#endif /* ?__RDRND__ */
+}
+
 float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
