@@ -66,7 +66,7 @@ int PVN_FABI(pvn_ran_64,PVN_RAN_64)(const int *const u, uint64_t *const r)
   PVN_ASSERT(u);
   PVN_ASSERT(r);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
-  return _rdrand64_step(r);
+  return _rdrand64_step((unsigned long long*)r);
 #else /* !__RDRND__ */
   return (read(*u, r, sizeof(*r)) == (ssize_t)(sizeof(*r)));
 #endif /* ?__RDRND__ */
