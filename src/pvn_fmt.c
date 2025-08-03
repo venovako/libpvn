@@ -31,6 +31,17 @@ int main(/* int argc, char *argv[] */)
   (void)printf("FLT128_MAX     =%s\n", pvn_qtoa(s, FLT128_MAX));
   (void)printf("FLT128_MAX_EXP =%6d\n", FLT128_MAX_EXP);
 #endif /* PVN_QUADMATH */
+#ifndef _WIN32
+  (void)printf(PVN_ANSI_BLACK "Black" PVN_ANSI_CLEAR "\n");
+  (void)printf(PVN_ANSI_RED "Red" PVN_ANSI_CLEAR "\n");
+  (void)printf(PVN_ANSI_GREEN "Green" PVN_ANSI_CLEAR "\n");
+  (void)printf(PVN_ANSI_YELLOW "Yellow" PVN_ANSI_CLEAR "\n");
+  (void)printf(PVN_ANSI_BLUE "Blue" PVN_ANSI_CLEAR "\n");
+  (void)printf(PVN_ANSI_MAGENTA "Magenta" PVN_ANSI_CLEAR "\n");
+  (void)printf(PVN_ANSI_CYAN "Cyan" PVN_ANSI_CLEAR "\n");
+  (void)printf(PVN_ANSI_WHITE "White" PVN_ANSI_CLEAR "\n");
+  (void)printf("Foreground\n");
+#endif /* !_WIN32 */
 #endif /* !_WIN32 || _DLL */
   return EXIT_SUCCESS;
 }
