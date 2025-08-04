@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
 #if (defined(__AVX__) && defined(__FMA__) && !defined(_WIN32))
   if (argc > 4) {
-    (void)fprintf(stderr, "%s [n [seed [prec]]]\n", *argv);
+    (void)fprintf(stderr, "%s [n [seed [exact]]]\n", *argv);
     return EXIT_FAILURE;
   }
   (void)fprintf(stderr, "PVN_VECLEN = %u\n", PVN_VECLEN);
@@ -45,33 +45,32 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
     for (size_t i = 0u; i < n; ++i)
       x[i] = drand48();
-#ifdef PVN_MPFR
-    mpfr_rnd_t rnd = MPFR_RNDN;
-    mpfr_prec_t prec = ((argc > 3) ? atol(argv[3]) : 2048l);
-    mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
-    if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
-      return EXIT_FAILURE;
-#endif /* PVN_MPFR */
     long long t = 0ll;
-#ifdef PVN_MPFR
-    (void)printf("pvn_mpd_nrmf=");
-    (void)fflush(stdout);
-    t = pvn_time_mono_ns();
-    const double e = PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(&n, x);
-    t = pvn_time_mono_ns() - t;
-    (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", e, 0.0, t);
-#else /* !PVN_MPFR */
-    const double e = 0.0;
-#endif /* ?PVN_MPFR */
+    double e = ((argc > 3) : atof(argv[3]) : 0.0);
+#if (defined(PVN_MPFR) && !defined(_OPENMP))
+    if (argc <= 3) {
+      mpfr_rnd_t rnd = MPFR_RNDN;
+      mpfr_prec_t prec = 2048l;
+      mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
+      if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
+        return EXIT_FAILURE;
+      (void)printf("pvn_mpd_nrmf=");
+      (void)fflush(stdout);
+      t = pvn_time_mono_ns();
+      e = PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(&n, x);
+      t = pvn_time_mono_ns() - t;
+      (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", e, 0.0, t);
+    }
+#endif /* PVN_MPFR && !_OPENMP */
     double f = 0.0;
-#ifdef PVN_LAPACK
+#if (defined(PVN_LAPACK) && !defined(_OPENMP))
     (void)printf("pvn_lad_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
     f = PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
     (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-#endif /* PVN_LAPACK */
+#endif /* PVN_LAPACK && !_OPENMP */
     (void)printf("pvn_crd_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
