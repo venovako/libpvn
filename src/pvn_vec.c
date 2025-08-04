@@ -1,56 +1,22 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-#ifdef PVN_LAPACK
-extern double PVN_FABI(dnrm2,DNRM2)(const size_t *const n, const double *const x, const int64_t *const incx);
-
-static double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *const x)
-{
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
-  if (!*n)
-    return -0.0;
-  const int64_t incx = INT64_C(1);
-  return PVN_FABI(dnrm2,DNRM2)(n, x, &incx);
-}
-#endif /* PVN_LAPACK */
-#ifdef PVN_MPFR
-static double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *const x)
-{
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
-  if (!*n)
-    return -0.0;
-  const size_t m = *n;
-  mpfr_t mf, mx;
-  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
-  (void)mpfr_init_set_d(mx, 0.0, MPFR_RNDN);
-  for (size_t i = 0u; i < m; ++i) {
-    (void)mpfr_set_d(mx, x[i], MPFR_RNDN);
-    (void)mpfr_hypot(mf, mf, mx, MPFR_RNDN);
-  }
-  const double f = mpfr_get_d(mf, MPFR_RNDN);
-  mpfr_clear(mx);
-  mpfr_clear(mf);
-  return f;
-}
-#endif /* PVN_MPFR */
-
+#if (defined(__AVX__) && defined(__FMA__) && !defined(_WIN32))
 static double erelerr(const double e, const double f)
 {
   return ((e == 0.0) ? -0.0 : (fabs(e - f) / scalbn(fabs(e), -53)));
 }
-
+#endif /* __AVX__ && __FMA__ && !_WIN32 */
 int main(int argc, char *argv[])
 {
+#if (defined(__AVX__) && defined(__FMA__) && !defined(_WIN32))
   if (argc > 4) {
     (void)fprintf(stderr, "%s [n [seed [prec]]]\n", *argv);
     return EXIT_FAILURE;
   }
-  (void)printf("PVN_VECLEN = %u\n", PVN_VECLEN);
-  (void)printf("PVN_SAFELEN(float) = %zu\n", PVN_SAFELEN(float));
-  (void)printf("PVN_SAFELEN(double) = %zu\n", PVN_SAFELEN(double));
-#if (defined(__AVX__) && defined(__FMA__) && !defined(_WIN32))
+  (void)fprintf(stderr, "PVN_VECLEN = %u\n", PVN_VECLEN);
+  (void)fprintf(stderr, "PVN_SAFELEN(float) = %zu\n", PVN_SAFELEN(float));
+  (void)fprintf(stderr, "PVN_SAFELEN(double) = %zu\n", PVN_SAFELEN(double));
   if (argc > 1) {
     const size_t n = pvn_atoz(argv[1]);
     if (!n)
@@ -75,7 +41,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
       if (PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u))
         return EXIT_FAILURE;
-      (void)printf("SEED = %15ld\n", *(const long*)s);
+      (void)fprintf(stderr, "SEED = %15ld\n", *(const long*)s);
     }
     for (size_t i = 0u; i < n; ++i)
       x[i] = drand48();
@@ -143,6 +109,10 @@ int main(int argc, char *argv[])
 #endif /* PVN_MPFR */
     free(x);
   }
+#else /* !__AVX__ || !__FMA__ || _WIN32 */
+  (void)printf("PVN_VECLEN = %u\n", PVN_VECLEN);
+  (void)printf("PVN_SAFELEN(float) = %zu\n", PVN_SAFELEN(float));
+  (void)printf("PVN_SAFELEN(double) = %zu\n", PVN_SAFELEN(double));
 #endif /* __AVX__ && __FMA__ && !_WIN32 */
   return EXIT_SUCCESS;
 }
@@ -151,7 +121,39 @@ unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)()
 {
   return (PVN_VECLEN);
 }
-
+#ifdef PVN_MPFR
+static double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0;
+  const size_t m = *n;
+  mpfr_t mf, mx;
+  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+  (void)mpfr_init_set_d(mx, 0.0, MPFR_RNDN);
+  for (size_t i = 0u; i < m; ++i) {
+    (void)mpfr_set_d(mx, x[i], MPFR_RNDN);
+    (void)mpfr_hypot(mf, mf, mx, MPFR_RNDN);
+  }
+  const double f = mpfr_get_d(mf, MPFR_RNDN);
+  mpfr_clear(mx);
+  mpfr_clear(mf);
+  return f;
+}
+#endif /* PVN_MPFR */
+#ifdef PVN_LAPACK
+extern double PVN_FABI(dnrm2,DNRM2)(const size_t *const n, const double *const x, const int64_t *const incx);
+double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0;
+  const int64_t incx = INT64_C(1);
+  return PVN_FABI(dnrm2,DNRM2)(n, x, &incx);
+}
+#endif /* PVN_LAPACK */
 double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x)
 {
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
