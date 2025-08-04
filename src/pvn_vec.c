@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
       const int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
       if (u < 0)
         return EXIT_FAILURE;
-      alignas(8) unsigned short s[4] = { UINT16_C(0), UINT16_C(0), UINT16_C(0), UINT16_C(0) };
+      alignas(alignof(long)) unsigned short s[4] = { UINT16_C(0), UINT16_C(0), UINT16_C(0), UINT16_C(0) };
       while (!PVN_FABI(pvn_ran_16,PVN_RAN_16)(&u, s) || !*s) /* loop */;
       while (!PVN_FABI(pvn_ran_16,PVN_RAN_16)(&u, s + 1) || !s[1]) /* loop */;
       while (!PVN_FABI(pvn_ran_16,PVN_RAN_16)(&u, s + 2) || !s[2]) /* loop */;
@@ -122,7 +122,7 @@ unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)()
   return (PVN_VECLEN);
 }
 #ifdef PVN_MPFR
-static double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *const x)
+double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *const x)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
