@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     for (size_t i = 0u; i < n; ++i)
       x[i] = drand48();
     long long t = 0ll;
-    double e = ((argc > 3) : atof(argv[3]) : 0.0);
+    double e = ((argc > 3) ? atof(argv[3]) : 0.0);
 #if (defined(PVN_MPFR) && !defined(_OPENMP))
     if (argc <= 3) {
       mpfr_rnd_t rnd = MPFR_RNDN;
