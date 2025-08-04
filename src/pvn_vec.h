@@ -27,59 +27,56 @@
 
 static inline float pvn_v1s_rsqrt(const float x)
 {
-  return (1.0f / sqrtf(x));
+  return (1.0f / __builtin_sqrtf(x));
 }
 
 static inline float pvn_v1s_hypot(const float x, const float y)
 {
-  const float X = fabsf(x);
-  const float Y = fabsf(y);
-  const float m = fminf(X, Y);
-  const float M = fmaxf(X, Y);
+  const float X = __builtin_fabsf(x);
+  const float Y = __builtin_fabsf(y);
+  const float m = __builtin_fminf(X, Y);
+  const float M = __builtin_fmaxf(X, Y);
   const float q = (m / M);
-  const float Q = fmaxf(q, 0.0f);
-  const float S = fmaf(Q, Q, 1.0f);
-  const float s = sqrtf(S);
-  const float h = (M * s);
-  return h;
+  const float Q = __builtin_fmaxf(q, 0.0f);
+  const float S = __builtin_fmaf(Q, Q, 1.0f);
+  const float s = __builtin_sqrtf(S);
+  return (M * s);
 }
 
 static inline double pvn_v1d_rsqrt(const double x)
 {
-  return (1.0 / sqrt(x));
+  return (1.0 / __builtin_sqrt(x));
 }
 
 static inline double pvn_v1d_hypot(const double x, const double y)
 {
-  const double X = fabs(x);
-  const double Y = fabs(y);
-  const double m = fmin(X, Y);
-  const double M = fmax(X, Y);
+  const double X = __builtin_fabs(x);
+  const double Y = __builtin_fabs(y);
+  const double m = __builtin_fmin(X, Y);
+  const double M = __builtin_fmax(X, Y);
   const double q = (m / M);
-  const double Q = fmax(q, 0.0);
-  const double S = fma(Q, Q, 1.0);
-  const double s = sqrt(S);
-  const double h = (M * s);
-  return h;
+  const double Q = __builtin_fmax(q, 0.0);
+  const double S = __builtin_fma(Q, Q, 1.0);
+  const double s = __builtin_sqrt(S);
+  return (M * s);
 }
 
 static inline long double pvn_v1x_rsqrt(const long double x)
 {
-  return (1.0L / sqrtl(x));
+  return (1.0L / __builtin_sqrtl(x));
 }
 
 static inline long double pvn_v1x_hypot(const long double x, const long double y)
 {
-  const long double X = fabsl(x);
-  const long double Y = fabsl(y);
-  const long double m = fminl(X, Y);
-  const long double M = fmaxl(X, Y);
+  const long double X = __builtin_fabsl(x);
+  const long double Y = __builtin_fabsl(y);
+  const long double m = __builtin_fminl(X, Y);
+  const long double M = __builtin_fmaxl(X, Y);
   const long double q = (m / M);
-  const long double Q = fmaxl(q, 0.0L);
-  const long double S = fmal(Q, Q, 1.0L);
-  const long double s = sqrtl(S);
-  const long double h = (M * s);
-  return h;
+  const long double Q = __builtin_fmaxl(q, 0.0L);
+  const long double S = __builtin_fmal(Q, Q, 1.0L);
+  const long double s = __builtin_sqrtl(S);
+  return (M * s);
 }
 
 #ifdef PVN_QUADMATH
@@ -98,8 +95,7 @@ static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
   const __float128 Q = fmaxq(q, 0.0q);
   const __float128 S = fmaq(Q, Q, 1.0q);
   const __float128 s = sqrtq(S);
-  const __float128 h = (M * s);
-  return h;
+  return (M * s);
 }
 #endif /* PVN_QUADMATH */
 
