@@ -163,13 +163,33 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
   if (!*n)
     return -0.0;
   const size_t m = *n;
-  double f = 0.0;
+  /* the three Blue's accumulators as in DNRM2, plus the accumulator for subnormal inputs */
+  const double tsml = __builtin_scalbn(1.0, -511);
+  const double tbig = __builtin_scalbn(1.0,  486);
+  double dnr = 0.0, sml = 0.0, med = 0.0, big = 0.0;
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-#pragma omp parallel for default(none) shared(m,x) reduction(hcd:f)
+#pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcd:dnr,sml,med,big)
 #endif /* _OPENMP */
-  for (size_t i = 0u; i < m; ++i)
-    f = hypot(f, x[i]);
-  return f;
+  for (size_t i = 0u; i < m; ++i) {
+    const double y = __builtin_fabs(x[i]);
+    if (y > 0.0) {
+      if (y < DBL_MIN)
+        dnr = hypot(dnr, __builtin_scalbn(y, 52));
+      else if (y < tsml)
+        sml = hypot(sml, y);
+      else if (y > tbig)
+        big = hypot(big, y);
+      else /* med */
+        med = hypot(med, y);
+    }
+  }
+  if (dnr > 0.0)
+    sml = hypot(sml, __builtin_scalbn(dnr, -52));
+  if (sml > 0.0)
+    med = hypot(med, sml);
+  if (med > 0.0)
+    big = hypot(big, med);
+  return big;
 }
 
 double PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(const size_t *const n, const double *const x)
