@@ -1,0 +1,122 @@
+\documentclass[a4paper,12pt,twoside]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{url}
+\newtheorem{thm}{Theorem}
+\title{Computing the Frobenius norm using $\mathrm{cr\_hypot}$}
+\author{Vedran Novakovi\'{c}}
+\begin{document}
+\maketitle
+\begin{thm}\label{t:1.1}
+  Let $\mathbf{x}=\begin{bmatrix}x_1&\cdots&x_n\end{bmatrix}^T$ be a
+  vector of finite floating-point values, and $\|\mathbf{x}\|_F$ its
+  Frobenius norm.  If its approximation $\underline{\|\mathbf{x}\|_F}$
+  is computed as $\underline{\|\mathbf{x}\|_F}=\underline{f_n}$, where
+  \begin{equation}
+    \underline{f_1}=f_1=|x_1|,\qquad
+    2\le i\le n\implies\underline{f_i}=\mathop{\mathrm{hypot}}(\underline{f_{i-1}},x_i),
+    \label{e:1.1}
+  \end{equation}
+  then, barring any overflow and inexact underflow, for all $i$ such
+  that $2\le i\le n$ it holds
+  \begin{equation}
+    x_i^{}\ne 0\implies\underline{f_i^{}}=f_i^{}(1+\epsilon_i^{}),\qquad
+    1+\epsilon_i^{}=\sqrt{1+\epsilon_{i-1}^{}(2+\epsilon_{i-1}^{})\frac{f_{i-1}^2}{f_i^2}}(1+\epsilon_i'),
+    \label{e:1.2}
+  \end{equation}
+  where $|\epsilon_i'|\le\varepsilon$ if $\mathrm{hypot}$ is
+  $\mathrm{cr\_hypot}$, with $\varepsilon$ being the machine
+  precision, and $\epsilon_1^{}=0$.  If $x_i=0$ then
+  $\underline{f_i}=\underline{f_{i-1}}$.  If a lower bound of
+  $\epsilon_{i-1}^{}$ is denoted by $\epsilon_{i-1}^-$ and an upper
+  bound by $\epsilon_{i-1}^+$, where $\epsilon_1^-=\epsilon_1^+=0$,
+  then, when $\mathrm{hypot}$ is $\mathrm{cr\_hypot}$ and
+  $0\ge\epsilon_{i-1}^-\ge-1$, the relative error factor
+  $1+\epsilon_i^{}$ from~\eqref{e:1.2} can be bounded irrespectively
+  of $x_i^{}\ne 0$ and $f_i^{}$ as
+  \begin{equation}
+    \begin{aligned}
+      1+\epsilon_i^-&=\sqrt{1+\epsilon_{i-1}^-(2+\epsilon_{i-1}^-)}(1-\varepsilon)\le 1+\epsilon_i^{}\\
+      &\le\sqrt{1+\epsilon_{i-1}^+(2+\epsilon_{i-1}^+)}(1+\varepsilon)=1+\epsilon_i^+.
+    \end{aligned}
+    \label{e:1.3}
+  \end{equation}
+\end{thm}
+\begin{proof}
+  For $i=1$ it holds $\epsilon_1=0$.  Assuming that~\eqref{e:1.2}
+  holds for all $j<i$, where $2\le i\le n$, and that $x_i\ne 0$, it
+  follows
+  \begin{equation}
+    \underline{f_i^{}}=\sqrt{\underline{f_{i-1}^2}+x_i^2}(1+\epsilon_i')=\sqrt{f_{i-1}^2(1+\epsilon_{i-1}^{})^2+x_i^2}(1+\epsilon_i').
+    \label{e:1.4}
+  \end{equation}
+  If the term under the square root on the right hand side
+  of~\eqref{e:1.4} is written as
+  \begin{equation}
+    f_{i-1}^2(1+\epsilon_{i-1}^{})^2+x_i^2=(f_{i-1}^2+x_i^2)(1+y),
+    \label{e:1.5}
+  \end{equation}
+  then an easy algebraic manipulation gives
+  \begin{equation}
+    y=\epsilon_{i-1}^{}(2+\epsilon_{i-1}^{})\frac{f_{i-1}^2}{f_{i-1}^2+x_i^2}=\epsilon_{i-1}^{}(2+\epsilon_{i-1}^{})\frac{f_{i-1}^2}{f_i^2},
+    \label{e:1.6}
+  \end{equation}
+  what, after taking the absolute value of both sides of~\eqref{e:1.6},
+  leads to
+  \begin{equation}
+    |y|\le|\epsilon_{i-1}^{}|(2+|\epsilon_{i-1}^{}|)\frac{f_{i-1}^2}{f_i^2}\le|\epsilon_{i-1}^{}|(2+|\epsilon_{i-1}^{}|).
+    \label{e:1.7}
+  \end{equation}
+  Substituting~\eqref{e:1.5} into~\eqref{e:1.4} yields
+  \begin{displaymath}
+    \underline{f_i^{}}=\sqrt{f_{i-1}^2+x_i^2}\sqrt{1+y}(1+\epsilon_i')=f_i^{}\sqrt{1+y}(1+\epsilon_i')=f_i^{}(1+\epsilon_i^{}),
+  \end{displaymath}
+  where $(1+\epsilon_i^{})=\sqrt{1+y}(1+\epsilon_i')$, as claimed
+  in~\eqref{e:1.2}.  The bounds~\eqref{e:1.3} for $1+\epsilon_i$ when
+  $x_i\ne 0$ follow from~\eqref{e:1.7} and the fact that the function
+  $x\mapsto x(2+x)$ is monotonically increasing for $x\ge-1$.
+\end{proof}
+
+More practically, \eqref{e:1.3} can be further simplified as
+$-\epsilon_i^-<\epsilon_i^+<i\varepsilon$ when
+\begin{displaymath}
+  ((\varepsilon=2^{-24})\wedge(3\le i\le 5793))\quad\vee\quad((\varepsilon=2^{-53})\wedge(3\le i\le 134217729)),
+\end{displaymath}
+what follows from evaluating~\eqref{e:1.3} iteratively over $i$ using
+the MPFR library~\cite{Fousse-et-al-07} with $2048$ bits of precision.
+
+A result similar to Theorem~\ref{t:1.1} can be obtained in the case of
+combining two partial norms as
+\begin{displaymath}
+  \underline{f_k}=\mathop{\mathrm{hypot}}(\underline{f_i},\underline{f_j}),
+\end{displaymath}
+e.g., when OpenMP-reducing the partial, per-thread results.  Bear in
+mind that the OpenMP standard~\cite[\S 7.6.7]{OpenMP6} leaves the
+reduction order unspecified.
+%% OpenMP-API-Specification-6.0.pdf
+%% 7.6.7 Reduction Scoping Clauses
+%% p.~251, l.~5--9
+%% The location in the OpenMP program at which values are combined and the order in which values are combined are unspecified.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\begin{thebibliography}{1}
+
+\bibitem{Fousse-et-al-07}
+Laurent Fousse, Guillaume Hanrot, Vincent Lef\`{e}vre, Patrick P\'{e}lissier,
+  and Paul Zimmermann.
+\newblock {MPFR}: A multiple-precision binary floating-point library with
+  correct rounding.
+\newblock {\em ACM Trans. Math. Softw.}, 33(2):13, 2007.
+
+\bibitem{OpenMP6}
+{OpenMP Architecture Review Board}.
+\newblock {OpenMP API 6.0 Specification}.
+\newblock online:
+  \url{https://www.openmp.org/wp-content/uploads/OpenMP-API-Specification-6-0.pdf},
+  Nov 2024.
+
+\end{thebibliography}
+%
+\end{document}
