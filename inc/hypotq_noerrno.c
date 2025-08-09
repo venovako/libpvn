@@ -132,7 +132,7 @@ static inline u128 sqrhU(u128 _a){
   return a11.a;
 }
 
-#ifdef __INTEL_COMPILER
+#if (defined(__INTEL_COMPILER) || (defined(__GNUC__) && (__GNUC__ < 14)))
 // see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
 static inline unsigned long int __builtin_addcl(unsigned long a, unsigned long b, unsigned carry_in, unsigned long *carry_out)
 {
