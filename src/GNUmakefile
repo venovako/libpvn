@@ -91,6 +91,9 @@ endif # ran
 ifeq ($(findstring sv2,$(SAFE)),sv2)
 CFLAGS += -DPVN_SV2_SAFE="\"precise\""
 endif # sv2
+ifeq ($(findstring vec,$(SAFE)),vec)
+CFLAGS += -DPVN_VEC_SAFE="\"hypot\""
+endif # vec
 endif # SAFE
 
 ifdef VECLEN

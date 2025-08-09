@@ -82,7 +82,8 @@ If `long double` is not the 128-bit floating-point datatype (e.g., on Intel-comp
 The `SAFE` variable lists, as one or more comma-separated short names, the components for which a safe implementation is requested:
 - `ev2` and `jv2` guard against a not-correctly-rounded `hypotq`;
 - `ran` requests that all random numbers (not only those explicitly created as such) lie in the range `[xxx_MIN*2^p,xxx_MAX/4]`, where `p=0` by default;
-- `sv2` uses a slightly more precise triangulation.
+- `sv2` uses a slightly more precise triangulation; and
+- `vec` uses the `mpfr_hypot`-based instead of the `mpfr_fma`-based norm computation.
 
 So, `SAFE=ev2,jv2,sv2`, e.g., requests the `ev2`, `jv2`, and `sv2` safe implementations, but not the `ran` one.
 

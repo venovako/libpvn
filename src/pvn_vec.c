@@ -71,12 +71,14 @@ int main(int argc, char *argv[])
     t = pvn_time_mono_ns() - t;
     (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
 #endif /* PVN_LAPACK && !_OPENMP */
+#ifndef _OPENMP
     (void)printf("pvn_red_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
     f = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
     (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+#endif /* !_OPENMP */
     (void)printf("pvn_crd_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
@@ -139,8 +141,15 @@ double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *
   (void)mpfr_init_set_d(mx, 0.0, MPFR_RNDN);
   for (size_t i = 0u; i < m; ++i) {
     (void)mpfr_set_d(mx, x[i], MPFR_RNDN);
+#ifdef PVN_VEC_SAFE
     (void)mpfr_hypot(mf, mf, mx, MPFR_RNDN);
+#else /* !PVN_VEC_SAFE */
+    (void)mpfr_fma(mf, mx, mx, mf, MPFR_RNDN);
+#endif /* ?PVN_VEC_SAFE */
   }
+#ifndef PVN_VEC_SAFE
+  (void)mpfr_sqrt(mf, mf, MPFR_RNDN);
+#endif /* !PVN_VEC_SAFE */
   const double f = mpfr_get_d(mf, MPFR_RNDN);
   mpfr_clear(mx);
   mpfr_clear(mf);
@@ -169,9 +178,11 @@ double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *
     return __builtin_fabs(*x);
   if (*n == (size_t)2u)
     return hypot(x[0], x[1]);
-  const size_t l = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t r = (*n - l);
-  return hypot(PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&l, x), PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&r, (x + l)));
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const double fl = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&nl, x);
+  const double fr = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&nr, (x + nl));
+  return hypot(fl, fr);
 }
 
 double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x)
@@ -183,6 +194,10 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
   PVN_ASSERT(x);
   if (!*n)
     return -0.0;
+  if (*n == (size_t)1u)
+    return __builtin_fabs(*x);
+  if (*n == (size_t)2u)
+    return hypot(x[0], x[1]);
   const size_t m = *n;
   /* the three Blue's accumulators as in DNRM2, plus the accumulator for subnormal inputs */
   const double tsml = __builtin_scalbn(1.0, -511);
