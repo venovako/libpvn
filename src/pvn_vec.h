@@ -273,6 +273,7 @@ PVN_EXTERN_C double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, c
 #ifdef PVN_LAPACK
 PVN_EXTERN_C double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *const x);
 #endif /* PVN_LAPACK */
+PVN_EXTERN_C double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(const size_t *const n, const double *const x);
 #if (defined(__AVX__) && defined(__FMA__))

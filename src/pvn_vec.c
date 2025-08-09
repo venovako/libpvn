@@ -71,6 +71,12 @@ int main(int argc, char *argv[])
     t = pvn_time_mono_ns() - t;
     (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
 #endif /* PVN_LAPACK && !_OPENMP */
+    (void)printf("pvn_red_nrmf=");
+    (void)fflush(stdout);
+    t = pvn_time_mono_ns();
+    f = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&n, x);
+    t = pvn_time_mono_ns() - t;
+    (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
     (void)printf("pvn_crd_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
@@ -153,6 +159,21 @@ double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *
   return PVN_FABI(dnrm2,DNRM2)(n, x, &incx);
 }
 #endif /* PVN_LAPACK */
+double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0;
+  if (*n == (size_t)1u)
+    return __builtin_fabs(*x);
+  if (*n == (size_t)2u)
+    return hypot(x[0], x[1]);
+  const size_t l = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t r = (*n - l);
+  return hypot(PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&l, x), PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&r, (x + l)));
+}
+
 double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x)
 {
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
