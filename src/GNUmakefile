@@ -85,15 +85,15 @@ endif # ev2
 ifeq ($(findstring jv2,$(SAFE)),jv2)
 CFLAGS += -DPVN_JV2_SAFE="\"hypotq\""
 endif # jv2
+ifeq ($(findstring nrm,$(SAFE)),nrm)
+CFLAGS += -DPVN_NRM_SAFE="\"hypot\""
+endif # nrm
 ifeq ($(findstring ran,$(SAFE)),ran)
 CFLAGS += -DPVN_RAN_SAFE="\"all_outputs\""
 endif # ran
 ifeq ($(findstring sv2,$(SAFE)),sv2)
 CFLAGS += -DPVN_SV2_SAFE="\"precise\""
 endif # sv2
-ifeq ($(findstring vec,$(SAFE)),vec)
-CFLAGS += -DPVN_VEC_SAFE="\"hypot\""
-endif # vec
 endif # SAFE
 
 ifdef VECLEN
