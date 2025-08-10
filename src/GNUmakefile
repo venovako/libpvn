@@ -180,9 +180,10 @@ CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 endif # QUADMATH
 
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
-EXES=$(SRCS:.c=.exe) \
-../etc/gen_cbar.exe \
-../var/crh_relerr.exe
+EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
+ifdef MPFR
+EXES += ../var/crh_relerr.exe
+endif # MPFR
 LIBS=libpvn.a
 LNK=-L.
 ifdef DYNAMIC
