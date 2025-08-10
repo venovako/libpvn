@@ -180,7 +180,9 @@ CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 endif # QUADMATH
 
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
-EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
+EXES=$(SRCS:.c=.exe) \
+../etc/gen_cbar.exe \
+../var/crh_relerr.exe
 LIBS=libpvn.a
 LNK=-L.
 ifdef DYNAMIC
@@ -269,9 +271,13 @@ libpvn.so: libpvn.a
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
 	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
 
+../var/crh_relerr.exe: ../var/crh_relerr.c $(LIBS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+
 clean:
 	-$(RM) *.exe
 	-$(RM) ../etc/*.exe
+	-$(RM) ../var/*.exe
 	-$(RM) *.so
 	-$(RM) *.dylib
 	-$(RM) *.a

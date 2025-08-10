@@ -15,7 +15,8 @@ int main(int argc, char *argv[])
   const size_t n = pvn_atoz(argv[1]);
   if (!n)
     return EXIT_FAILURE;
-  if (n % PVN_VECLEN)
+  const size_t nb = (n * sizeof(double));
+  if (nb % PVN_VECLEN)
     return EXIT_FAILURE;
   if (argc > 2) {
     long s = atol(argv[2]);
@@ -36,7 +37,7 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
     (void)fprintf(stderr, "SEED = %15ld\n", *(const long*)s);
   }
-  double *const x = (double*)aligned_alloc(64u, n * sizeof(double));
+  double *const x = (double*)aligned_alloc(64u, nb);
   if (!x)
     return EXIT_FAILURE;
   for (size_t i = 0u; i < n; ++i)
