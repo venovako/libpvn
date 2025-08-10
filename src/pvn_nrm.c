@@ -264,7 +264,7 @@ long double PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(const size_t *const n, const lon
   return hypotl(fl, fr);
 }
 
-float PVN_FABI(pvn_crf_nrmf,PVN_CRF_NRMF)(const size_t *const n, const float *const x)
+float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *const x)
 {
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
 #pragma omp declare reduction(hcf:float:omp_out=hypotf(omp_out,omp_in)) initializer(omp_priv=0.0f)
@@ -395,7 +395,7 @@ long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const lon
 
 float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x)
 {
-  return PVN_FABI(pvn_ref_nrmf,PVN_REF_NRMF)(n, x);
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(n, x);
 }
 float PVN_FABI(pvn_cnrm2,PVN_CNRM2)(const size_t *const n, const float *const x)
 {
