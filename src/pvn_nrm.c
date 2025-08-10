@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
   const size_t n = pvn_atoz(argv[1]);
   if (!n)
     return EXIT_FAILURE;
+  if (n % PVN_VECLEN)
+    return EXIT_FAILURE;
   if (argc > 2) {
     long s = atol(argv[2]);
     if (!seed48((unsigned short*)&s))
