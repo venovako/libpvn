@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
   if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
     return EXIT_FAILURE;
   char
-    fmtm[24] = { '\0' },
-    fmtp[24] = { '\0' };
+    fmtm[32] = { '\0' },
+    fmtp[32] = { '\0' };
   const size_t d = (size_t)floorl(log10l(m) + 1.0L);
   (void)sprintf(fmtm, "ϵ%%0%zuzu-/ε=%%# .%dRe\n", d, f);
   (void)sprintf(fmtp, "ϵ%%0%zuzu+/ε=%%# .%dRe\n", d, f);

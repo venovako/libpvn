@@ -5,6 +5,7 @@ typedef struct {
 } re_t;
 
 static mpfr_t ed;
+static char fmtm[32], fmtp[32];
 
 static re_t relerr(const size_t m)
 {
@@ -20,19 +21,28 @@ static re_t relerr(const size_t m)
   }
 
   const size_t n = ((m >> 1u) + (m & (size_t)1u));
+  const size_t k = (m - n);
   re_t l = relerr(n);
-  re_t r = relerr(m - n);
+#ifndef NDEBUG
+  (void)mpfr_printf(fmtm, n, l.m);
+  (void)mpfr_printf(fmtp, n, l.p);
+#endif /* !NDEBUG */
+  re_t r = relerr(k);
+#ifndef NDEBUG
+  (void)mpfr_printf(fmtm, k, r.m);
+  (void)mpfr_printf(fmtp, k, r.p);
+#endif /* !NDEBUG */
 
   mpfr_t e1, e2, eq;
-  (void)mpfr_init_set_d(e1, 0.0, MPFR_RNDN);
-  (void)mpfr_init_set_d(e2, 0.0, MPFR_RNDN);
-  (void)mpfr_init_set_d(eq, 0.0, MPFR_RNDN);
+  (void)mpfr_init(e1);
+  (void)mpfr_init(e2);
+  (void)mpfr_init(eq);
 
   (void)mpfr_add_d(e1, l.m, 1.0, MPFR_RNDN);
   (void)mpfr_add_d(e2, r.m, 1.0, MPFR_RNDN);
   (void)mpfr_div(eq, e1, e2, MPFR_RNDN);
+  (void)mpfr_add_d(e1, eq, 1.0, MPFR_RNDN);
   (void)mpfr_sub_d(eq, eq, 1.0, MPFR_RNDN);
-  (void)mpfr_add_d(e1, eq, 2.0, MPFR_RNDN);
   (void)mpfr_mul(e1, eq, e1, MPFR_RNDN);
   (void)mpfr_add_d(e1, e1, 1.0, MPFR_RNDN);
   (void)mpfr_sqrt(e1, e1, MPFR_RNDN);
@@ -44,8 +54,8 @@ static re_t relerr(const size_t m)
   (void)mpfr_add_d(e1, r.p, 1.0, MPFR_RNDN);
   (void)mpfr_add_d(e2, l.p, 1.0, MPFR_RNDN);
   (void)mpfr_div(eq, e1, e2, MPFR_RNDN);
+  (void)mpfr_add_d(e1, eq, 1.0, MPFR_RNDN);
   (void)mpfr_sub_d(eq, eq, 1.0, MPFR_RNDN);
-  (void)mpfr_add_d(e1, eq, 2.0, MPFR_RNDN);
   (void)mpfr_mul(e1, eq, e1, MPFR_RNDN);
   (void)mpfr_add_d(e1, e1, 1.0, MPFR_RNDN);
   (void)mpfr_sqrt(e1, e1, MPFR_RNDN);
@@ -67,7 +77,7 @@ static re_t relerr(const size_t m)
 int main(int argc, char *argv[])
 {
   if (argc != 4) {
-    (void)fprintf(stderr, "%s {S|D|X} prec m=2^k\n", *argv);
+    (void)fprintf(stderr, "%s {S|D|X} prec m\n", *argv);
     return EXIT_FAILURE;
   }
   double e = 0.5;
@@ -94,16 +104,13 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   const size_t m = pvn_atoz(argv[3]);
-  if (__builtin_popcountl(m) != 1)
+  if (!m)
     return EXIT_FAILURE;
   mpfr_rnd_t rnd = MPFR_RNDN;
   mpfr_prec_t prec = atol(argv[2]);
   mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
   if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
     return EXIT_FAILURE;
-  char
-    fmtm[24] = { '\0' },
-    fmtp[24] = { '\0' };
   const size_t d = (size_t)floorl(log10l(m) + 1.0L);
   (void)sprintf(fmtm, "ϵ%%0%zuzu-/ε=%%# .%dRe\n", d, f);
   (void)sprintf(fmtp, "ϵ%%0%zuzu+/ε=%%# .%dRe\n", d, f);

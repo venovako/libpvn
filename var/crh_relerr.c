@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
   if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
     return EXIT_FAILURE;
   char
-    fmtm[24] = { '\0' },
-    fmtp[24] = { '\0' };
+    fmtm[32] = { '\0' },
+    fmtp[32] = { '\0' };
   size_t m = ~0ul - 1ul;
   if (argc == 4) {
     if (!(m = pvn_atoz(argv[3])))
