@@ -9,7 +9,10 @@ CFLAGS += -Wall -Wextra -Wno-stringop-truncation
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 23; else echo 18; fi) -fPIC -fexceptions -fasynchronous-unwind-tables -ffp-contract=fast -fno-omit-frame-pointer -pthread
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 23; else echo 18; fi) -fPIC -ffp-contract=fast -pthread
+ifndef LAPACK
+CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
+endif # !LAPACK
 ifdef OPENMP
 CFLAGS += -fopenmp
 ifneq ($(OPENMP),true)

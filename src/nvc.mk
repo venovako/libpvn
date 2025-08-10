@@ -8,7 +8,10 @@ endif # ?NDEBUG
 ifndef MARCH
 MARCH=native
 endif # !MARCH
-CFLAGS += --diag_suppress integer_sign_change -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -c18 -fpic -Kieee -Meh_frame -Mfma -Mframe -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH) -traceback
+CFLAGS += --diag_suppress integer_sign_change -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -c18 -fpic -Kieee -Mfma -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH)
+ifndef LAPACK
+CFLAGS += -Meh_frame -Mframe -traceback
+endif # !LAPACK
 ifdef OPENMP
 CFLAGS += -mp
 ifneq ($(OPENMP),true)

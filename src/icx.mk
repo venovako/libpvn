@@ -13,7 +13,10 @@ ifndef MARCH
 MARCH=Host
 # common-avx512 for KNLs
 endif # !MARCH
-CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -std=gnu18 -fPIC -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -fp-model=precise -fp-speculation=safe -fprotect-parens -fma -no-ftz -fimf-precision=high -mprefer-vector-width=512 -pthread -traceback -vec-threshold0 -x$(MARCH) -Wno-overriding-option
+CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -std=gnu18 -fPIC -fp-model=precise -fp-speculation=safe -fprotect-parens -fma -no-ftz -fimf-precision=high -mprefer-vector-width=512 -pthread -vec-threshold0 -x$(MARCH) -Wno-overriding-option
+ifndef LAPACK
+CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback
+endif # !LAPACK
 ifdef OPENMP
 CFLAGS += -qopenmp
 ifneq ($(OPENMP),true)
