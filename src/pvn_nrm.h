@@ -6,7 +6,7 @@
 #endif /* !PVN_H */
 
 #ifdef PVN_MPFR
-PVN_EXTERN_C float PVN_FABI(pvn_mpf_nrmf,PVN_MPF_NRMF)(const size_t *const n, const float *const x);
+PVN_EXTERN_C float PVN_FABI(pvn_mps_nrmf,PVN_MPS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_mpx_nrmf,PVN_MPX_NRMF)(const size_t *const n, const long double *const x);
 #endif /* PVN_MPFR */
@@ -21,7 +21,7 @@ PVN_EXTERN_C float PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(const size_t *const n, co
 PVN_EXTERN_C double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(const size_t *const n, const long double *const x);
 
-PVN_EXTERN_C float PVN_FABI(pvn_crf_nrmf,PVN_CRF_NRMF)(const size_t *const n, const float *const x);
+PVN_EXTERN_C float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const long double *const x);
 

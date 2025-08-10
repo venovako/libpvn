@@ -106,7 +106,7 @@ int main(/* int argc, char *argv[] */)
 #endif /* ?PVN_MPFR */
 #else /* !PVN_TEST */
 #ifdef PVN_MPFR
-float PVN_FABI(pvn_mpf_nrmf,PVN_MPF_NRMF)(const size_t *const n, const float *const x)
+float PVN_FABI(pvn_mps_nrmf,PVN_MPS_NRMF)(const size_t *const n, const float *const x)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
