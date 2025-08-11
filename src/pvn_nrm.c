@@ -875,21 +875,56 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
   register const __m512 z = _mm512_set1_ps(-0.0f);
   if (!n)
     return z;
-  const size_t m = (n >> 4u);
+  size_t
+    r = (n & (size_t)15u),
+    m = ((n >> 4u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
-    register const __m512 f = _mm512_load_ps(x);
-    return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(f)));
+    switch ((unsigned)r) {
+    case  0u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_load_ps(x))));
+    case  1u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,     (__mmask16)1u, x))));
+    case  2u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,     (__mmask16)3u, x))));
+    case  3u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,     (__mmask16)7u, x))));
+    case  4u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,    (__mmask16)15u, x))));
+    case  5u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,    (__mmask16)31u, x))));
+    case  6u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,    (__mmask16)63u, x))));
+    case  7u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,   (__mmask16)127u, x))));
+    case  8u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,   (__mmask16)255u, x))));
+    case  9u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,   (__mmask16)511u, x))));
+    case 10u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,  (__mmask16)1023u, x))));
+    case 11u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,  (__mmask16)2047u, x))));
+    case 12u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,  (__mmask16)4095u, x))));
+    case 13u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z,  (__mmask16)8191u, x))));
+    case 14u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z, (__mmask16)16383u, x))));
+    case 15u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z, (__mmask16)32767u, x))));
+    default:
+      return z;
+    }
   }
   if (m == (size_t)2u) {
-    register const __m512 fl = _mm512_load_ps(x);
-    register const __m512 fd = _mm512_load_ps(x + 16u);
-    return pvn_v16s_hypot(fl, fd);
+    if (r)
+      return pvn_v16s_hypot(_mm512_load_ps(x), rzs_nrmf(r, (x + 16u)));
+    else
+      return pvn_v16s_hypot(_mm512_load_ps(x), _mm512_load_ps(x + 16u));
   }
-  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
   const size_t nr = (n - nl);
-  register const __m512 fl = rzs_nrmf(nl, x);
-  register const __m512 fr = rzs_nrmf(nr, (x + nl));
-  return pvn_v16s_hypot(fl, fr);
+  return pvn_v16s_hypot(rzs_nrmf(nl, x), rzs_nrmf(nr, (x + nl)));
 }
 
 float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x)
