@@ -50,11 +50,15 @@ PVN_EXTERN_C long double PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, co
 PVN_EXTERN_C long double PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const long double *const x);
 #endif /* ?PVN_QUADMATH */
 
+/* with __builtin_hypot[fl] */
 PVN_EXTERN_C float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const long double *const x);
 
+/* when n is a power of two */
 #if (defined(__AVX__) && defined(__FMA__))
+PVN_EXTERN_C float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x);
 #ifdef __AVX512F__
