@@ -783,7 +783,7 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
   }
   if (m == (size_t)2u) {
     register const __m128 fl = _mm_load_ps(x);
-    register const __m128 fd = _mm_load_ps(x + 8u);
+    register const __m128 fd = _mm_load_ps(x + 4u);
     return pvn_v4s_hypot(fl, fd);
   }
   const size_t nl = ((n >> 1u) + (n & (size_t)1u));
@@ -817,7 +817,7 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
   }
   if (m == (size_t)2u) {
     register const __m128d fl = _mm_load_pd(x);
-    register const __m128d fd = _mm_load_pd(x + 4u);
+    register const __m128d fd = _mm_load_pd(x + 2u);
     return pvn_v2d_hypot(fl, fd);
   }
   const size_t nl = ((n >> 1u) + (n & (size_t)1u));
@@ -835,8 +835,7 @@ double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *
     return -1.0;
   alignas(16) double f[2];
   _mm_store_pd(f, rxd_nrmf(*n, x));
-  const size_t m = (size_t)2u;
-  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
+  return hypot(f[0], f[1]);
 }
 
 static __m256 rys_nrmf(const size_t n, const float *const x)
