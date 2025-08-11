@@ -15,9 +15,6 @@ int main(int argc, char *argv[])
   const size_t n = pvn_atoz(argv[1]);
   if (!n)
     return EXIT_FAILURE;
-  const size_t nb = (n * sizeof(double));
-  if (nb % PVN_VECLEN)
-    return EXIT_FAILURE;
   if (argc > 2) {
     long s = atol(argv[2]);
     if (!seed48((unsigned short*)&s))
@@ -37,7 +34,7 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
     (void)fprintf(stderr, "SEED = %15ld\n", *(const long*)s);
   }
-  double *const x = (double*)aligned_alloc(64u, nb);
+  double *const x = (double*)aligned_alloc(64u, (n * sizeof(double)));
   if (!x)
     return EXIT_FAILURE;
   for (size_t i = 0u; i < n; ++i)
@@ -114,34 +111,9 @@ int main(int argc, char *argv[])
   f = PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-  (void)printf("pvn_v1d_nrmf=");
-  (void)fflush(stdout);
-  t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_v1d_nrmf,PVN_V1D_NRMF)(&n, x);
-  t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-  (void)printf("pvn_v2d_nrmf=");
-  (void)fflush(stdout);
-  t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_v2d_nrmf,PVN_V2D_NRMF)(&n, x);
-  t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-  (void)printf("pvn_v4d_nrmf=");
-  (void)fflush(stdout);
-  t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_v4d_nrmf,PVN_V4D_NRMF)(&n, x);
-  t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-#ifdef __AVX512F__
-  (void)printf("pvn_v8d_nrmf=");
-  (void)fflush(stdout);
-  t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_v8d_nrmf,PVN_V8D_NRMF)(&n, x);
-  t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-#endif /* __AVX512F__ */
 #ifdef PVN_MPFR
-  (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
+  if (argc <= 3)
+    (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
 #endif /* PVN_MPFR */
   free(x);
   return EXIT_SUCCESS;
