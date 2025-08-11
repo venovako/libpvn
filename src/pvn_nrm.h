@@ -49,4 +49,17 @@ PVN_EXTERN_C long double PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const
 PVN_EXTERN_C long double PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const long double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const long double *const x);
 #endif /* ?PVN_QUADMATH */
+
+PVN_EXTERN_C float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *const x);
+PVN_EXTERN_C long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const long double *const x);
+
+#if (defined(__AVX__) && defined(__FMA__))
+PVN_EXTERN_C float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x);
+#ifdef __AVX512F__
+PVN_EXTERN_C float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x);
+#endif /* __AVX512F__ */
+#endif /* __AVX__ && __FMA__ */
 #endif /* !PVN_NRM_H */
