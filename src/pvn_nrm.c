@@ -823,9 +823,7 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
   }
   const size_t nl = ((n >> 1u) + (n & (size_t)1u));
   const size_t nr = (n - nl);
-  register const __m256 fl = rys_nrmf(nl, x);
-  register const __m256 fr = rys_nrmf(nr, (x + nl));
-  return pvn_v8s_hypot(fl, fr);
+  return pvn_v8s_hypot(rys_nrmf(nl, x), rys_nrmf(nr, (x + nl)));
 }
 
 float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x)
@@ -855,7 +853,7 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
     case 2u:
       return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_load_pd(x), 0));
     case 3u:
-      return _mm256_andnot_pd(z, _mm256_set_m128d(_mm_set_pd(-0.0, x[3u]), _mm_load_pd(x)));
+      return _mm256_andnot_pd(z, _mm256_set_m128d(_mm_set_pd(-0.0, x[2u]), _mm_load_pd(x)));
     default:
       return z;
     }
