@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
   (void)mpfr_printf(fmtm, i, em);
   (void)mpfr_printf(fmtm, i, ep);
   for (++i; i <= m; ++i) {
+    const int j = __builtin_popcountl((long)i);
     (void)mpfr_add_d(em, em, 1.0, MPFR_RNDN);
     (void)mpfr_d_sub(et, 1.0, ed, MPFR_RNDN);
     (void)mpfr_mul(em, em, et, MPFR_RNDN);
@@ -62,7 +63,8 @@ int main(int argc, char *argv[])
     (void)mpfr_sub_d(em, em, 1.0, MPFR_RNDN);
     (void)mpfr_sub_d(ef, ef, 1.0, MPFR_RNDN);
     (void)mpfr_div(ef, ef, ed, MPFR_RNDN);
-    (void)mpfr_printf(fmtm, i, ef);
+    if (j == 1)
+      (void)mpfr_printf(fmtm, i, ef);
     (void)mpfr_add_d(ep, ep, 1.0, MPFR_RNDN);
     (void)mpfr_add_d(et, ed, 1.0, MPFR_RNDN);
     (void)mpfr_mul(ep, ep, et, MPFR_RNDN);
@@ -71,7 +73,8 @@ int main(int argc, char *argv[])
     (void)mpfr_sub_d(ep, ep, 1.0, MPFR_RNDN);
     (void)mpfr_sub_d(ef, ef, 1.0, MPFR_RNDN);
     (void)mpfr_div(ef, ef, ed, MPFR_RNDN);
-    (void)mpfr_printf(fmtp, i, ef);
+    if (j == 1)
+      (void)mpfr_printf(fmtp, i, ef);
   }
   mpfr_clear(ed);
   mpfr_clear(ef);
