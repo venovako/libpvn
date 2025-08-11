@@ -748,21 +748,32 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
   register const __m128 z = _mm_set1_ps(-0.0f);
   if (!n)
     return z;
-  const size_t m = (n >> 2u);
+  size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
-    register const __m128 f = _mm_load_ps(x);
-    return _mm_andnot_ps(z, f);
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_load_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default:
+      return z;
+    }
   }
   if (m == (size_t)2u) {
-    register const __m128 fl = _mm_load_ps(x);
-    register const __m128 fd = _mm_load_ps(x + 4u);
-    return pvn_v4s_hypot(fl, fd);
+    if (r)
+      return pvn_v4s_hypot(_mm_load_ps(x), rxs_nrmf(r, (x + 4u)));
+    else
+      return pvn_v4s_hypot(_mm_load_ps(x), _mm_load_ps(x + 4u));
   }
-  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  register const __m128 fl = rxs_nrmf(nl, x);
-  register const __m128 fr = rxs_nrmf(nr, (x + nl));
-  return pvn_v4s_hypot(fl, fr);
+  return pvn_v4s_hypot(rxs_nrmf(nl, x), rxs_nrmf(nr, (x + nl)));
 }
 
 float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x)
