@@ -843,21 +843,32 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
   register const __m256d z = _mm256_set1_pd(-0.0);
   if (!n)
     return z;
-  const size_t m = (n >> 2u);
+  size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
-    register const __m256d f = _mm256_load_pd(x);
-    return _mm256_andnot_pd(z, f);
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_pd(z, _mm256_load_pd(x));
+    case 1u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_set_pd(-0.0, *x), 0));
+    case 2u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_load_pd(x), 0));
+    case 3u:
+      return _mm256_andnot_pd(z, _mm256_set_m128d(_mm_set_pd(-0.0, x[3u]), _mm_load_pd(x)));
+    default:
+      return z;
+    }
   }
   if (m == (size_t)2u) {
-    register const __m256d fl = _mm256_load_pd(x);
-    register const __m256d fd = _mm256_load_pd(x + 4u);
-    return pvn_v4d_hypot(fl, fd);
+    if (r)
+      return pvn_v4d_hypot(_mm256_load_pd(x), ryd_nrmf(r, (x + 4u)));
+    else
+      return pvn_v4d_hypot(_mm256_load_pd(x), _mm256_load_pd(x + 4u));
   }
-  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  register const __m256d fl = ryd_nrmf(nl, x);
-  register const __m256d fr = ryd_nrmf(nr, (x + nl));
-  return pvn_v4d_hypot(fl, fr);
+  return pvn_v4d_hypot(ryd_nrmf(nl, x), ryd_nrmf(nr, (x + nl)));
 }
 
 double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x)
