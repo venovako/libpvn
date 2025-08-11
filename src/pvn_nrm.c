@@ -80,6 +80,34 @@ int main(int argc, char *argv[])
   f = PVN_FABI(pvn_dnrm2,PVN_DNRM2)(&n, x);
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+#ifndef _OPENMP
+  (void)printf("pvn_rfd_nrmf=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&n, x);
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("pvn_rxd_nrmf=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(&n, x);
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("pvn_ryd_nrmf=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(&n, x);
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+#ifdef __AVX512F__
+  (void)printf("pvn_rzd_nrmf=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(&n, x);
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+#endif /* __AVX512F__ */
+#endif /* !_OPENMP */
   (void)printf("pvn_crd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
@@ -690,4 +718,261 @@ long double PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const long doub
   return PVN_FABI(pvn_wnrm2,PVN_WNRM2)(n, x);
 }
 #endif /* ?PVN_QUADMATH */
+
+float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0f;
+  if (*n == (size_t)1u)
+    return __builtin_fabsf(*x);
+  if (*n == (size_t)2u)
+    return __builtin_hypotf(x[0], x[1]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const float fl = PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&nl, x);
+  const float fr = PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&nr, (x + nl));
+  return __builtin_hypotf(fl, fr);
+}
+
+double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0;
+  if (*n == (size_t)1u)
+    return __builtin_fabs(*x);
+  if (*n == (size_t)2u)
+    return __builtin_hypot(x[0], x[1]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const double fl = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&nl, x);
+  const double fr = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&nr, (x + nl));
+  return __builtin_hypot(fl, fr);
+}
+
+long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const long double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (!*n)
+    return -0.0L;
+  if (*n == (size_t)1u)
+    return __builtin_fabsl(*x);
+  if (*n == (size_t)2u)
+    return __builtin_hypotl(x[0], x[1]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const long double fl = PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&nl, x);
+  const long double fr = PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&nr, (x + nl));
+  return __builtin_hypotl(fl, fr);
+}
+
+#if (defined(__AVX__) && defined(__FMA__))
+static __m128 rxs_nrmf(const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+  if (!n)
+    return z;
+  const size_t m = (n >> 2u);
+  if (m == (size_t)1u) {
+    register const __m128 f = _mm_load_ps(x);
+    return _mm_andnot_ps(z, f);
+  }
+  if (m == (size_t)2u) {
+    register const __m128 fl = _mm_load_ps(x);
+    register const __m128 fd = _mm_load_ps(x + 4u);
+    return pvn_v4s_hypot(fl, fd);
+  }
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  register const __m128 fl = rxs_nrmf(nl, x);
+  register const __m128 fr = rxs_nrmf(nr, (x + nl));
+  return pvn_v4s_hypot(fl, fr);
+}
+
+float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (__builtin_popcountll((long long)*n) != 1)
+    return -1.0f;
+  alignas(16) float f[4];
+  _mm_store_ps(f, rxs_nrmf(*n, x));
+  const size_t m = (size_t)4u;
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+}
+
+static __m128d rxd_nrmf(const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+  if (!n)
+    return z;
+  const size_t m = (n >> 1u);
+  if (m == (size_t)1u) {
+    register const __m128d f = _mm_load_pd(x);
+    return _mm_andnot_pd(z, f);
+  }
+  if (m == (size_t)2u) {
+    register const __m128d fl = _mm_load_pd(x);
+    register const __m128d fd = _mm_load_pd(x + 2u);
+    return pvn_v2d_hypot(fl, fd);
+  }
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  register const __m128d fl = rxd_nrmf(nl, x);
+  register const __m128d fr = rxd_nrmf(nr, (x + nl));
+  return pvn_v2d_hypot(fl, fr);
+}
+
+double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (__builtin_popcountll((long long)*n) != 1)
+    return -1.0;
+  alignas(16) double f[2];
+  _mm_store_pd(f, rxd_nrmf(*n, x));
+  return hypot(f[0], f[1]);
+}
+
+static __m256 rys_nrmf(const size_t n, const float *const x)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+  if (!n)
+    return z;
+  const size_t m = (n >> 3u);
+  if (m == (size_t)1u) {
+    register const __m256 f = _mm256_load_ps(x);
+    return _mm256_andnot_ps(z, f);
+  }
+  if (m == (size_t)2u) {
+    register const __m256 fl = _mm256_load_ps(x);
+    register const __m256 fd = _mm256_load_ps(x + 8u);
+    return pvn_v8s_hypot(fl, fd);
+  }
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  register const __m256 fl = rys_nrmf(nl, x);
+  register const __m256 fr = rys_nrmf(nr, (x + nl));
+  return pvn_v8s_hypot(fl, fr);
+}
+
+float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (__builtin_popcountll((long long)*n) != 1)
+    return -1.0f;
+  alignas(32) float f[8];
+  _mm256_store_ps(f, rys_nrmf(*n, x));
+  const size_t m = (size_t)8u;
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+}
+
+static __m256d ryd_nrmf(const size_t n, const double *const x)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+  if (!n)
+    return z;
+  const size_t m = (n >> 2u);
+  if (m == (size_t)1u) {
+    register const __m256d f = _mm256_load_pd(x);
+    return _mm256_andnot_pd(z, f);
+  }
+  if (m == (size_t)2u) {
+    register const __m256d fl = _mm256_load_pd(x);
+    register const __m256d fd = _mm256_load_pd(x + 4u);
+    return pvn_v4d_hypot(fl, fd);
+  }
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  register const __m256d fl = ryd_nrmf(nl, x);
+  register const __m256d fr = ryd_nrmf(nr, (x + nl));
+  return pvn_v4d_hypot(fl, fr);
+}
+
+double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (__builtin_popcountll((long long)*n) != 1)
+    return -1.0;
+  alignas(32) double f[4];
+  _mm256_store_pd(f, ryd_nrmf(*n, x));
+  const size_t m = (size_t)4u;
+  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
+}
+#ifdef __AVX512F__
+static __m512 rzs_nrmf(const size_t n, const float *const x)
+{
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+  if (!n)
+    return z;
+  const size_t m = (n >> 4u);
+  if (m == (size_t)1u) {
+    register const __m512 f = _mm512_load_ps(x);
+    return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(f)));
+  }
+  if (m == (size_t)2u) {
+    register const __m512 fl = _mm512_load_ps(x);
+    register const __m512 fd = _mm512_load_ps(x + 16u);
+    return pvn_v16s_hypot(fl, fd);
+  }
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  register const __m512 fl = rzs_nrmf(nl, x);
+  register const __m512 fr = rzs_nrmf(nr, (x + nl));
+  return pvn_v16s_hypot(fl, fr);
+}
+
+float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (__builtin_popcountll((long long)*n) != 1)
+    return -1.0f;
+  alignas(64) float f[16];
+  _mm512_store_ps(f, rzs_nrmf(*n, x));
+  const size_t m = (size_t)16u;
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+}
+
+static __m512d rzd_nrmf(const size_t n, const double *const x)
+{
+  register const __m512d z = _mm512_set1_pd(-0.0);
+  if (!n)
+    return z;
+  const size_t m = (n >> 3u);
+  if (m == (size_t)1u) {
+    register const __m512d f = _mm512_load_pd(x);
+    return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(f)));
+  }
+  if (m == (size_t)2u) {
+    register const __m512d fl = _mm512_load_pd(x);
+    register const __m512d fd = _mm512_load_pd(x + 8u);
+    return pvn_v8d_hypot(fl, fd);
+  }
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  register const __m512d fl = rzd_nrmf(nl, x);
+  register const __m512d fr = rzd_nrmf(nr, (x + nl));
+  return pvn_v8d_hypot(fl, fr);
+}
+
+double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x)
+{
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  if (__builtin_popcountll((long long)*n) != 1)
+    return -1.0;
+  alignas(64) double f[8];
+  _mm512_store_pd(f, rzd_nrmf(*n, x));
+  const size_t m = (size_t)8u;
+  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
+}
+#endif /* __AVX512F__ */
+#endif /* __AVX__ && __FMA__ */
 #endif /* ?PVN_TEST */
