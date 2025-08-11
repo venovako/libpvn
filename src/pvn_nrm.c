@@ -797,8 +797,6 @@ float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *co
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  if (__builtin_popcountll((long long)*n) != 1)
-    return -1.0f;
   alignas(16) float f[4];
   _mm_store_ps(f, rxs_nrmf(*n, x));
   const size_t m = (size_t)4u;
@@ -831,8 +829,6 @@ double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  if (__builtin_popcountll((long long)*n) != 1)
-    return -1.0;
   alignas(16) double f[2];
   _mm_store_pd(f, rxd_nrmf(*n, x));
   return hypot(f[0], f[1]);
@@ -864,8 +860,6 @@ float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *co
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  if (__builtin_popcountll((long long)*n) != 1)
-    return -1.0f;
   alignas(32) float f[8];
   _mm256_store_ps(f, rys_nrmf(*n, x));
   const size_t m = (size_t)8u;
@@ -898,8 +892,6 @@ double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  if (__builtin_popcountll((long long)*n) != 1)
-    return -1.0;
   alignas(32) double f[4];
   _mm256_store_pd(f, ryd_nrmf(*n, x));
   const size_t m = (size_t)4u;
@@ -932,8 +924,6 @@ float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *co
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  if (__builtin_popcountll((long long)*n) != 1)
-    return -1.0f;
   alignas(64) float f[16];
   _mm512_store_ps(f, rzs_nrmf(*n, x));
   const size_t m = (size_t)16u;
@@ -945,29 +935,46 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
   register const __m512d z = _mm512_set1_pd(-0.0);
   if (!n)
     return z;
-  const size_t m = (n >> 3u);
+  size_t
+    r = (n & (size_t)7u),
+    m = ((n >> 3u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
-    register const __m512d f = _mm512_load_pd(x);
-    return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(f)));
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_load_pd(x))));
+    case 1u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z,   (__mmask8)1u, x))));
+    case 2u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z,   (__mmask8)3u, x))));
+    case 3u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z,   (__mmask8)7u, x))));
+    case 4u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z,  (__mmask8)15u, x))));
+    case 5u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z,  (__mmask8)31u, x))));
+    case 6u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z,  (__mmask8)63u, x))));
+    case 7u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z, (__mmask8)127u, x))));
+    default:
+      return z;
+    }
   }
   if (m == (size_t)2u) {
-    register const __m512d fl = _mm512_load_pd(x);
-    register const __m512d fd = _mm512_load_pd(x + 8u);
-    return pvn_v8d_hypot(fl, fd);
+    if (r)
+      return pvn_v8d_hypot(_mm512_load_pd(x), rzd_nrmf(r, (x + 8u)));
+    else
+      return pvn_v8d_hypot(_mm512_load_pd(x), _mm512_load_pd(x + 8u));
   }
-  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-  register const __m512d fl = rzd_nrmf(nl, x);
-  register const __m512d fr = rzd_nrmf(nr, (x + nl));
-  return pvn_v8d_hypot(fl, fr);
+  return pvn_v8d_hypot(rzd_nrmf(nl, x), rzd_nrmf(nr, (x + nl)));
 }
 
 double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x)
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  if (__builtin_popcountll((long long)*n) != 1)
-    return -1.0;
   alignas(64) double f[8];
   _mm512_store_pd(f, rzd_nrmf(*n, x));
   const size_t m = (size_t)8u;
