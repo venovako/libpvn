@@ -68,14 +68,18 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
 #endif /* PVN_LAPACK && !_OPENMP */
-#ifndef _OPENMP
-  (void)printf("pvn_red_nrmf=");
+  (void)printf("pvn_dnrm2["
+#ifdef _OPENMP
+               "p"
+#else /* !_OPENMP */
+               "s"
+#endif /* ?_OPENMP */
+               "]=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&n, x);
+  f = PVN_FABI(pvn_dnrm2,PVN_DNRM2)(&n, x);
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-#endif /* !_OPENMP */
   (void)printf("pvn_crd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
@@ -415,8 +419,38 @@ long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const lon
 
 float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x)
 {
+#ifdef _OPENMP
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  const size_t mt = (size_t)omp_get_max_threads();
+  float p[mt];
+  for (size_t i = 0u; i < mt; ++i)
+    p[i] = 0.0f;
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)*n, (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m)
+      p[tn] = PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, (x + o));
+  }
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&mt, p);
+#else /* !_OPENMP */
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(n, x);
+#endif /* _OPENMP */
 }
+
 float PVN_FABI(pvn_cnrm2,PVN_CNRM2)(const size_t *const n, const float *const x)
 {
   const size_t m = (n ? (*n << 1u) : (size_t)0u);
@@ -425,8 +459,38 @@ float PVN_FABI(pvn_cnrm2,PVN_CNRM2)(const size_t *const n, const float *const x)
 
 double PVN_FABI(pvn_dnrm2,PVN_DNRM2)(const size_t *const n, const double *const x)
 {
+#ifdef _OPENMP
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  const size_t mt = (size_t)omp_get_max_threads();
+  double p[mt];
+  for (size_t i = 0u; i < mt; ++i)
+    p[i] = 0.0;
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)*n, (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m)
+      p[tn] = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, (x + o));
+  }
+  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&mt, p);
+#else /* !_OPENMP */
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(n, x);
+#endif /* ?_OPENMP */
 }
+
 double PVN_FABI(pvn_znrm2,PVN_ZNRM2)(const size_t *const n, const double *const x)
 {
   const size_t m = (n ? (*n << 1u) : (size_t)0u);
@@ -435,8 +499,38 @@ double PVN_FABI(pvn_znrm2,PVN_ZNRM2)(const size_t *const n, const double *const 
 
 long double PVN_FABI(pvn_xnrm2,PVN_XNRM2)(const size_t *const n, const long double *const x)
 {
+#ifdef _OPENMP
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  const size_t mt = (size_t)omp_get_max_threads();
+  long double p[mt];
+  for (size_t i = 0u; i < mt; ++i)
+    p[i] = 0.0L;
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)*n, (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m)
+      p[tn] = PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&m, (x + o));
+  }
+  return PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&mt, p);
+#else /* !_OPENMP */
   return PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(n, x);
+#endif /* ?_OPENMP */
 }
+
 long double PVN_FABI(pvn_wnrm2,PVN_WNRM2)(const size_t *const n, const long double *const x)
 {
   const size_t m = (n ? (*n << 1u) : (size_t)0u);
@@ -535,8 +629,38 @@ __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __fl
 
 __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128 *const x)
 {
+#ifdef _OPENMP
+  PVN_ASSERT(n);
+  PVN_ASSERT(x);
+  const size_t mt = (size_t)omp_get_max_threads();
+  __float128 p[mt];
+  for (size_t i = 0u; i < mt; ++i)
+    p[i] = 0.0q;
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)*n, (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m)
+      p[tn] = PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&m, (x + o));
+  }
+  return PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&mt, p);
+#else /* !_OPENMP */
   return PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(n, x);
+#endif /* ?_OPENMP */
 }
+
 __float128 PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const __float128 *const x)
 {
   const size_t m = (n ? (*n << 1u) : (size_t)0u);
