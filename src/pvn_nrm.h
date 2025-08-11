@@ -55,7 +55,7 @@ PVN_EXTERN_C float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, co
 PVN_EXTERN_C double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const long double *const x);
 
-/* when n is a power of two */
+/* when x is veclen-aligned */
 #if (defined(__AVX__) && defined(__FMA__))
 PVN_EXTERN_C float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x);

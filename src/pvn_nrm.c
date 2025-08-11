@@ -780,21 +780,24 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
   register const __m128d z = _mm_set1_pd(-0.0);
   if (!n)
     return z;
-  const size_t m = (n >> 1u);
+  size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
   if (m == (size_t)1u) {
-    register const __m128d f = _mm_load_pd(x);
-    return _mm_andnot_pd(z, f);
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_load_pd(x));
   }
   if (m == (size_t)2u) {
-    register const __m128d fl = _mm_load_pd(x);
-    register const __m128d fd = _mm_load_pd(x + 2u);
-    return pvn_v2d_hypot(fl, fd);
+    if (r)
+      return pvn_v2d_hypot(_mm_load_pd(x), rxd_nrmf(r, (x + 2u)));
+    else
+      return pvn_v2d_hypot(_mm_load_pd(x), _mm_load_pd(x + 2u));
   }
-  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
   const size_t nr = (n - nl);
-  register const __m128d fl = rxd_nrmf(nl, x);
-  register const __m128d fr = rxd_nrmf(nr, (x + nl));
-  return pvn_v2d_hypot(fl, fr);
+  return pvn_v2d_hypot(rxd_nrmf(nl, x), rxd_nrmf(nr, (x + nl)));
 }
 
 double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x)
@@ -811,17 +814,38 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
   register const __m256 z = _mm256_set1_ps(-0.0f);
   if (!n)
     return z;
-  const size_t m = (n >> 3u);
+  size_t
+    r = (n & (size_t)7u),
+    m = ((n >> 3u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
-    register const __m256 f = _mm256_load_ps(x);
-    return _mm256_andnot_ps(z, f);
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_ps(z, _mm256_load_ps(x));
+    case 1u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]), 0));
+    case 2u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]), 0));
+    case 3u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]), 0));
+    case 4u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_load_ps(x), 0));
+    case 5u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, -0.0f, x[4u]), _mm_load_ps(x)));
+    case 6u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, x[5u], x[4u]), _mm_load_ps(x)));
+    case 7u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, x[6u], x[5u], x[4u]), _mm_load_ps(x)));
+    default:
+      return z;
+    }
   }
   if (m == (size_t)2u) {
-    register const __m256 fl = _mm256_load_ps(x);
-    register const __m256 fd = _mm256_load_ps(x + 8u);
-    return pvn_v8s_hypot(fl, fd);
+    if (r)
+      return pvn_v8s_hypot(_mm256_load_ps(x), rys_nrmf(r, (x + 8u)));
+    else
+      return pvn_v8s_hypot(_mm256_load_ps(x), _mm256_load_ps(x + 8u));
   }
-  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
   return pvn_v8s_hypot(rys_nrmf(nl, x), rys_nrmf(nr, (x + nl)));
 }
@@ -849,7 +873,7 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
     case 0u:
       return _mm256_andnot_pd(z, _mm256_load_pd(x));
     case 1u:
-      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_set_pd(-0.0, *x), 0));
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_set_pd(-0.0, x[0u]), 0));
     case 2u:
       return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_load_pd(x), 0));
     case 3u:
