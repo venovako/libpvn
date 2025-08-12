@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
   f = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
-#endif /* !_OPENMP */
   (void)printf("pvn_rxd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
@@ -105,16 +104,17 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
 #endif /* __AVX512F__ */
+#endif /* !_OPENMP */
   (void)printf("pvn_crd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
-#ifdef PVN_MPFR
+#if (defined(PVN_MPFR) && !defined(_OPENMP))
   if (argc <= 3)
     (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
-#endif /* PVN_MPFR */
+#endif /* PVN_MPFR && !_OPENMP */
   free(x);
   return EXIT_SUCCESS;
 }
@@ -132,10 +132,12 @@ int main(/* int argc, char *argv[] */)
 #ifdef PVN_MPFR
 float PVN_FABI(pvn_mps_nrmf,PVN_MPS_NRMF)(const size_t *const n, const float *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
+  if (!x)
+    return -2.0f;
   const size_t m = *n;
   mpfr_t mf, mx;
   (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
@@ -159,10 +161,12 @@ float PVN_FABI(pvn_mps_nrmf,PVN_MPS_NRMF)(const size_t *const n, const float *co
 
 double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
+  if (!x)
+    return -2.0;
   const size_t m = *n;
   mpfr_t mf, mx;
   (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
@@ -186,10 +190,12 @@ double PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(const size_t *const n, const double *
 
 long double PVN_FABI(pvn_mpx_nrmf,PVN_MPX_NRMF)(const size_t *const n, const long double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0L;
   if (!*n)
     return -0.0L;
+  if (!x)
+    return -2.0L;
   const size_t m = *n;
   mpfr_t mf, mx;
   (void)mpfr_init_set_ld(mf, 0.0L, MPFR_RNDN);
@@ -218,20 +224,24 @@ extern double PVN_FABI(dnrm2,DNRM2)(const size_t *const n, const double *const x
 
 float PVN_FABI(pvn_las_nrmf,PVN_LAS_NRMF)(const size_t *const n, const float *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
+  if (!x)
+    return -2.0f;
   const int64_t incx = INT64_C(1);
   return PVN_FABI(snrm2,SNRM2)(n, x, &incx);
 }
 
 double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
+  if (!x)
+    return -2.0;
   const int64_t incx = INT64_C(1);
   return PVN_FABI(dnrm2,DNRM2)(n, x, &incx);
 }
@@ -239,10 +249,14 @@ double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *
 
 float PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(const size_t *const n, const float *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+#ifndef NDEBUG
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
+  if (!x)
+    return -2.0f;
+#endif /* !NDEBUG */
   if (*n == (size_t)1u)
     return __builtin_fabsf(*x);
   if (*n == (size_t)2u)
@@ -256,10 +270,14 @@ float PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(const size_t *const n, const float *co
 
 double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+#ifndef NDEBUG
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
+  if (!x)
+    return -2.0;
+#endif /* !NDEBUG */
   if (*n == (size_t)1u)
     return __builtin_fabs(*x);
   if (*n == (size_t)2u)
@@ -273,10 +291,14 @@ double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *
 
 long double PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(const size_t *const n, const long double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+#ifndef NDEBUG
+  if (!n)
+    return -1.0L;
   if (!*n)
     return -0.0L;
+  if (!x)
+    return -2.0L;
+#endif /* !NDEBUG */
   if (*n == (size_t)1u)
     return __builtin_fabsl(*x);
   if (*n == (size_t)2u)
@@ -293,10 +315,12 @@ float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *co
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
 #pragma omp declare reduction(hcf:float:omp_out=hypotf(omp_out,omp_in)) initializer(omp_priv=0.0f)
 #endif /* _OPENMP */
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
+  if (!x)
+    return -2.0f;
   if (*n == (size_t)1u)
     return __builtin_fabsf(*x);
   if (*n == (size_t)2u)
@@ -336,10 +360,12 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
 #pragma omp declare reduction(hcd:double:omp_out=hypot(omp_out,omp_in)) initializer(omp_priv=0.0)
 #endif /* _OPENMP */
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
+  if (!x)
+    return -2.0;
   if (*n == (size_t)1u)
     return __builtin_fabs(*x);
   if (*n == (size_t)2u)
@@ -379,10 +405,12 @@ long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const lon
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
 #pragma omp declare reduction(hcx:long double:omp_out=hypotl(omp_out,omp_in)) initializer(omp_priv=0.0L)
 #endif /* _OPENMP */
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0L;
   if (!*n)
     return -0.0L;
+  if (!x)
+    return -2.0L;
   if (*n == (size_t)1u)
     return __builtin_fabsl(*x);
   if (*n == (size_t)2u)
@@ -419,9 +447,13 @@ long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const lon
 
 float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x)
 {
+  if (!n)
+    return -1.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -2.0f;
 #ifdef _OPENMP
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
   const size_t mt = (size_t)omp_get_max_threads();
   float p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -459,9 +491,13 @@ float PVN_FABI(pvn_cnrm2,PVN_CNRM2)(const size_t *const n, const float *const x)
 
 double PVN_FABI(pvn_dnrm2,PVN_DNRM2)(const size_t *const n, const double *const x)
 {
+  if (!n)
+    return -1.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -2.0;
 #ifdef _OPENMP
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
   const size_t mt = (size_t)omp_get_max_threads();
   double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -499,9 +535,13 @@ double PVN_FABI(pvn_znrm2,PVN_ZNRM2)(const size_t *const n, const double *const 
 
 long double PVN_FABI(pvn_xnrm2,PVN_XNRM2)(const size_t *const n, const long double *const x)
 {
+  if (!n)
+    return -1.0L;
+  if (!*n)
+    return -0.0L;
+  if (!x)
+    return -2.0L;
 #ifdef _OPENMP
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
   const size_t mt = (size_t)omp_get_max_threads();
   long double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -541,10 +581,12 @@ long double PVN_FABI(pvn_wnrm2,PVN_WNRM2)(const size_t *const n, const long doub
 #ifdef PVN_MPFR
 __float128 PVN_FABI(pvn_mpq_nrmf,PVN_MPQ_NRMF)(const size_t *const n, const __float128 *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0q;
   if (!*n)
     return -0.0q;
+  if (!x)
+    return -2.0q;
   const size_t m = *n;
   mpfr_t mf, mx;
   (void)mpfr_init_set_ld(mf, 0.0L, MPFR_RNDN);
@@ -569,10 +611,14 @@ __float128 PVN_FABI(pvn_mpq_nrmf,PVN_MPQ_NRMF)(const size_t *const n, const __fl
 
 __float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __float128 *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+#ifndef NDEBUG
+  if (!n)
+    return -1.0q;
   if (!*n)
     return -0.0q;
+  if (!x)
+    return -2.0q;
+#endif /* !NDEBUG */
   if (*n == (size_t)1u)
     return fabsq(*x);
   if (*n == (size_t)2u)
@@ -589,10 +635,12 @@ __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __fl
 #if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
 #pragma omp declare reduction(hcq:__float128:omp_out=hypotq(omp_out,omp_in)) initializer(omp_priv=0.0q)
 #endif /* _OPENMP */
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0q;
   if (!*n)
     return -0.0q;
+  if (!x)
+    return -2.0q;
   if (*n == (size_t)1u)
     return fabsq(*x);
   if (*n == (size_t)2u)
@@ -629,9 +677,13 @@ __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __fl
 
 __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128 *const x)
 {
+  if (!n)
+    return -1.0q;
+  if (!*n)
+    return -0.0q;
+  if (!x)
+    return -2.0q;
 #ifdef _OPENMP
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
   const size_t mt = (size_t)omp_get_max_threads();
   __float128 p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -693,10 +745,14 @@ long double PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const long doub
 
 float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+#ifndef NDEBUG
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
+  if (!x)
+    return -2.0f;
+#endif /* !NDEBUG */
   if (*n == (size_t)1u)
     return __builtin_fabsf(*x);
   if (*n == (size_t)2u)
@@ -710,14 +766,18 @@ float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *co
 
 double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+#ifndef NDEBUG
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
+  if (!x)
+    return -2.0;
+#endif /* !NDEBUG */
   if (*n == (size_t)1u)
     return __builtin_fabs(*x);
   if (*n == (size_t)2u)
-    return __builtin_hypot(x[0], x[1]);
+    return __builtin_hypot(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
   const double fl = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&nl, x);
@@ -727,14 +787,18 @@ double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *
 
 long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const long double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+#ifndef NDEBUG
+  if (!n)
+    return -1.0L;
   if (!*n)
     return -0.0L;
+  if (!x)
+    return -2.0L;
+#endif /* !NDEBUG */
   if (*n == (size_t)1u)
     return __builtin_fabsl(*x);
   if (*n == (size_t)2u)
-    return __builtin_hypotl(x[0], x[1]);
+    return __builtin_hypotl(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
   const long double fl = PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&nl, x);
@@ -778,50 +842,16 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
 
 float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
-  if ((uintptr_t)x & (uintptr_t)0x0Fu)
+  if (!x || ((uintptr_t)x & (uintptr_t)0x0Fu))
     return -2.0f;
-#ifdef _OPENMP
-  const size_t mt = (size_t)omp_get_max_threads();
-  alignas(16) float p[mt][4u];
-  size_t i = 0u;
-  while (i < mt)
-    _mm_store_ps(p[i++], _mm_setzero_ps());
-#pragma omp parallel default(none) shared(n,x,p)
-  {
-    const size_t nt = (size_t)omp_get_num_threads();
-    const size_t tn = (size_t)omp_get_thread_num();
-    lldiv_t qr = lldiv((long long)((*n >> 2u) + ((*n & (size_t)3u) != (size_t)0u)), (long long)nt);
-    const size_t q = (size_t)(qr.quot);
-    const size_t r = (size_t)(qr.rem);
-    size_t m = q, o = (tn * q);
-    if (r) {
-      if (tn < r) {
-        ++m;
-        o += tn;
-      }
-      else
-        o += r;
-    }
-    if (m) {
-      size_t l = (m << 2u);
-      if ((o + l) > *n)
-        l = (*n - o);
-      _mm_store_ps(p[tn], rxs_nrmf(l, (x + o)));
-    }
-  }
-  _mm_store_ps(p[0u], rxs_nrmf((mt << 2u), p[0u]));
-  i = (size_t)4u;
-  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&i, p[0u]);
-#else /* !_OPENMP */
-  alignas(16) float f[4];
+  alignas(16) float f[4u];
   _mm_store_ps(f, rxs_nrmf(*n, x));
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
-#endif /* ?_OPENMP */
 }
 
 static __m128d rxd_nrmf(const size_t n, const double *const x)
@@ -851,48 +881,15 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
 
 double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
-  if ((uintptr_t)x & (uintptr_t)0x0Fu)
+  if (!x || ((uintptr_t)x & (uintptr_t)0x0Fu))
     return -2.0;
-#ifdef _OPENMP
-  const size_t mt = (size_t)omp_get_max_threads();
-  alignas(16) double p[mt][2u];
-  size_t i = 0u;
-  while (i < mt)
-    _mm_store_pd(p[i++], _mm_setzero_pd());
-#pragma omp parallel default(none) shared(n,x,p)
-  {
-    const size_t nt = (size_t)omp_get_num_threads();
-    const size_t tn = (size_t)omp_get_thread_num();
-    lldiv_t qr = lldiv((long long)((*n >> 1u) + (*n & (size_t)1u)), (long long)nt);
-    const size_t q = (size_t)(qr.quot);
-    const size_t r = (size_t)(qr.rem);
-    size_t m = q, o = (tn * q);
-    if (r) {
-      if (tn < r) {
-        ++m;
-        o += tn;
-      }
-      else
-        o += r;
-    }
-    if (m) {
-      size_t l = (m << 1u);
-      if ((o + l) > *n)
-        l = (*n - o);
-      _mm_store_pd(p[tn], rxd_nrmf(l, (x + o)));
-    }
-  }
-  _mm_store_pd(p[0u], rxd_nrmf((mt << 1u), p[0u]));
-  return hypot(p[0u][0u], p[0u][1u]);
-#else /* !_OPENMP */
   alignas(16) double f[2u];
   _mm_store_pd(f, rxd_nrmf(*n, x));
   return hypot(f[0u], f[1u]);
-#endif /* ?_OPENMP */
 }
 
 static __m256 rys_nrmf(const size_t n, const float *const x)
@@ -938,50 +935,16 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
 
 float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
-  if ((uintptr_t)x & (uintptr_t)0x1Fu)
+  if (!x || ((uintptr_t)x & (uintptr_t)0x1Fu))
     return -2.0f;
-#ifdef _OPENMP
-  const size_t mt = (size_t)omp_get_max_threads();
-  alignas(32) float p[mt][8u];
-  size_t i = 0u;
-  while (i < mt)
-    _mm256_store_ps(p[i++], _mm256_setzero_ps());
-#pragma omp parallel default(none) shared(n,x,p)
-  {
-    const size_t nt = (size_t)omp_get_num_threads();
-    const size_t tn = (size_t)omp_get_thread_num();
-    lldiv_t qr = lldiv((long long)((*n >> 3u) + ((*n & (size_t)7u) != (size_t)0u)), (long long)nt);
-    const size_t q = (size_t)(qr.quot);
-    const size_t r = (size_t)(qr.rem);
-    size_t m = q, o = (tn * q);
-    if (r) {
-      if (tn < r) {
-        ++m;
-        o += tn;
-      }
-      else
-        o += r;
-    }
-    if (m) {
-      size_t l = (m << 3u);
-      if ((o + l) > *n)
-        l = (*n - o);
-      _mm256_store_ps(p[tn], rys_nrmf(l, (x + o)));
-    }
-  }
-  _mm256_store_ps(p[0u], rys_nrmf((mt << 3u), p[0u]));
-  i = (size_t)8u;
-  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&i, p[0u]);
-#else /* !_OPENMP */
   alignas(32) float f[8u];
   _mm256_store_ps(f, rys_nrmf(*n, x));
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
-#endif /* ?_OPENMP */
 }
 
 static __m256d ryd_nrmf(const size_t n, const double *const x)
@@ -1019,50 +982,16 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
 
 double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
-  if ((uintptr_t)x & (uintptr_t)0x1Fu)
+  if (!x || ((uintptr_t)x & (uintptr_t)0x1Fu))
     return -2.0;
-#ifdef _OPENMP
-  const size_t mt = (size_t)omp_get_max_threads();
-  alignas(32) double p[mt][4u];
-  size_t i = 0u;
-  while (i < mt)
-    _mm256_store_pd(p[i++], _mm256_setzero_pd());
-#pragma omp parallel default(none) shared(n,x,p)
-  {
-    const size_t nt = (size_t)omp_get_num_threads();
-    const size_t tn = (size_t)omp_get_thread_num();
-    lldiv_t qr = lldiv((long long)((*n >> 2u) + ((*n & (size_t)3u) != (size_t)0u)), (long long)nt);
-    const size_t q = (size_t)(qr.quot);
-    const size_t r = (size_t)(qr.rem);
-    size_t m = q, o = (tn * q);
-    if (r) {
-      if (tn < r) {
-        ++m;
-        o += tn;
-      }
-      else
-        o += r;
-    }
-    if (m) {
-      size_t l = (m << 2u);
-      if ((o + l) > *n)
-        l = (*n - o);
-      _mm256_store_pd(p[tn], ryd_nrmf(l, (x + o)));
-    }
-  }
-  _mm256_store_pd(p[0u], ryd_nrmf((mt << 2u), p[0u]));
-  i = (size_t)4u;
-  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&i, p[0u]);
-#else /* !_OPENMP */
   alignas(32) double f[4u];
   _mm256_store_pd(f, ryd_nrmf(*n, x));
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
-#endif /* ?_OPENMP */
 }
 #ifdef __AVX512F__
 static __m512 rzs_nrmf(const size_t n, const float *const x)
@@ -1124,50 +1053,16 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
 
 float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0f;
   if (!*n)
     return -0.0f;
-  if ((uintptr_t)x & (uintptr_t)0x3Fu)
+  if (!x || ((uintptr_t)x & (uintptr_t)0x3Fu))
     return -2.0f;
-#ifdef _OPENMP
-  const size_t mt = (size_t)omp_get_max_threads();
-  alignas(64) float p[mt][16u];
-  size_t i = 0u;
-  while (i < mt)
-    _mm512_store_ps(p[i++], _mm512_setzero_ps());
-#pragma omp parallel default(none) shared(n,x,p)
-  {
-    const size_t nt = (size_t)omp_get_num_threads();
-    const size_t tn = (size_t)omp_get_thread_num();
-    lldiv_t qr = lldiv((long long)((*n >> 4u) + ((*n & (size_t)15u) != (size_t)0u)), (long long)nt);
-    const size_t q = (size_t)(qr.quot);
-    const size_t r = (size_t)(qr.rem);
-    size_t m = q, o = (tn * q);
-    if (r) {
-      if (tn < r) {
-        ++m;
-        o += tn;
-      }
-      else
-        o += r;
-    }
-    if (m) {
-      size_t l = (m << 4u);
-      if ((o + l) > *n)
-        l = (*n - o);
-      _mm512_store_ps(p[tn], rzs_nrmf(l, (x + o)));
-    }
-  }
-  _mm512_store_ps(p[0u], rzs_nrmf((mt << 4u), p[0u]));
-  i = (size_t)16u;
-  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&i, p[0u]);
-#else /* !_OPENMP */
   alignas(64) float f[16u];
   _mm512_store_ps(f, rzs_nrmf(*n, x));
   const size_t m = (size_t)16u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
-#endif /* ?_OPENMP */
 }
 
 static __m512d rzd_nrmf(const size_t n, const double *const x)
@@ -1213,50 +1108,16 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
 
 double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x)
 {
-  PVN_ASSERT(n);
-  PVN_ASSERT(x);
+  if (!n)
+    return -1.0;
   if (!*n)
     return -0.0;
-  if ((uintptr_t)x & (uintptr_t)0x3Fu)
+  if (!x || ((uintptr_t)x & (uintptr_t)0x3Fu))
     return -2.0;
-#ifdef _OPENMP
-  const size_t mt = (size_t)omp_get_max_threads();
-  alignas(64) double p[mt][8u];
-  size_t i = 0u;
-  while (i < mt)
-    _mm512_store_pd(p[i++], _mm512_setzero_pd());
-#pragma omp parallel default(none) shared(n,x,p)
-  {
-    const size_t nt = (size_t)omp_get_num_threads();
-    const size_t tn = (size_t)omp_get_thread_num();
-    lldiv_t qr = lldiv((long long)((*n >> 3u) + ((*n & (size_t)7u) != (size_t)0u)), (long long)nt);
-    const size_t q = (size_t)(qr.quot);
-    const size_t r = (size_t)(qr.rem);
-    size_t m = q, o = (tn * q);
-    if (r) {
-      if (tn < r) {
-        ++m;
-        o += tn;
-      }
-      else
-        o += r;
-    }
-    if (m) {
-      size_t l = (m << 3u);
-      if ((o + l) > *n)
-        l = (*n - o);
-      _mm512_store_pd(p[tn], rzd_nrmf(l, (x + o)));
-    }
-  }
-  _mm512_store_pd(p[0u], rzd_nrmf((mt << 3u), p[0u]));
-  i = (size_t)8u;
-  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&i, p[0u]);
-#else /* !_OPENMP */
   alignas(64) double f[8u];
   _mm512_store_pd(f, rzd_nrmf(*n, x));
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
-#endif /* ?_OPENMP */
 }
 #endif /* __AVX512F__ */
 #endif /* __AVX__ && __FMA__ */
