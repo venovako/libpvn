@@ -2,9 +2,9 @@
 
 #ifdef PVN_TEST
 #if (defined(__AVX__) && defined(__FMA__) && !defined(_WIN32))
-static double erelerr(const double e, const double f)
+static long double erelerr(const double e, const double f)
 {
-  return ((e == 0.0) ? -0.0 : (fabs(e - f) / scalbn(fabs(e), -53)));
+  return ((e == 0.0) ? -0.0L : (__builtin_fabsl((long double)e - (long double)f) / __builtin_scalbnl(__builtin_fabsl((long double)e), -53)));
 }
 int main(int argc, char *argv[])
 {
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     t = pvn_time_mono_ns();
     e = PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(&n, x);
     t = pvn_time_mono_ns() - t;
-    (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", e, 0.0, t);
+    (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", e, 0.0L, t);
   }
 #endif /* PVN_MPFR && !_OPENMP */
   double f = 0.0;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
 #endif /* PVN_LAPACK && !_OPENMP */
   (void)printf("pvn_dnrm2["
 #ifdef _OPENMP
@@ -76,41 +76,39 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_dnrm2,PVN_DNRM2)(&n, x);
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-#ifndef _OPENMP
+  (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
   (void)printf("pvn_rfd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
   (void)printf("pvn_rxd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
   (void)printf("pvn_ryd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
 #ifdef __AVX512F__
   (void)printf("pvn_rzd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
 #endif /* __AVX512F__ */
-#endif /* !_OPENMP */
   (void)printf("pvn_crd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, x);
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .21Le in %21lld ns\n", f, erelerr(e, f), t);
 #ifdef PVN_MPFR
   if (argc <= 3)
     (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
@@ -780,10 +778,48 @@ float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *co
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
+  if (!*n)
+    return -0.0f;
+  if ((uintptr_t)x & (uintptr_t)0x0Fu)
+    return -2.0f;
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  alignas(16) float p[mt][4u];
+  size_t i = 0u;
+  while (i < mt)
+    _mm_store_ps(p[i++], _mm_setzero_ps());
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)((*n >> 2u) + ((*n & (size_t)3u) != (size_t)0u)), (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m) {
+      size_t l = (m << 2u);
+      if ((o + l) > *n)
+        l = (*n - o);
+      _mm_store_ps(p[tn], rxs_nrmf(l, (x + o)));
+    }
+  }
+  _mm_store_ps(p[0u], rxs_nrmf((mt << 2u), p[0u]));
+  i = (size_t)4u;
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&i, p[0u]);
+#else /* !_OPENMP */
   alignas(16) float f[4];
   _mm_store_ps(f, rxs_nrmf(*n, x));
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+#endif /* ?_OPENMP */
 }
 
 static __m128d rxd_nrmf(const size_t n, const double *const x)
@@ -815,9 +851,46 @@ double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  alignas(16) double f[2];
+  if (!*n)
+    return -0.0;
+  if ((uintptr_t)x & (uintptr_t)0x0Fu)
+    return -2.0;
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  alignas(16) double p[mt][2u];
+  size_t i = 0u;
+  while (i < mt)
+    _mm_store_pd(p[i++], _mm_setzero_pd());
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)((*n >> 1u) + (*n & (size_t)1u)), (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m) {
+      size_t l = (m << 1u);
+      if ((o + l) > *n)
+        l = (*n - o);
+      _mm_store_pd(p[tn], rxd_nrmf(l, (x + o)));
+    }
+  }
+  _mm_store_pd(p[0u], rxd_nrmf((mt << 1u), p[0u]));
+  return hypot(p[0u][0u], p[0u][1u]);
+#else /* !_OPENMP */
+  alignas(16) double f[2u];
   _mm_store_pd(f, rxd_nrmf(*n, x));
-  return hypot(f[0], f[1]);
+  return hypot(f[0u], f[1u]);
+#endif /* ?_OPENMP */
 }
 
 static __m256 rys_nrmf(const size_t n, const float *const x)
@@ -865,10 +938,48 @@ float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *co
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  alignas(32) float f[8];
+  if (!*n)
+    return -0.0f;
+  if ((uintptr_t)x & (uintptr_t)0x1Fu)
+    return -2.0f;
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  alignas(32) float p[mt][8u];
+  size_t i = 0u;
+  while (i < mt)
+    _mm256_store_ps(p[i++], _mm256_setzero_ps());
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)((*n >> 3u) + ((*n & (size_t)7u) != (size_t)0u)), (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m) {
+      size_t l = (m << 3u);
+      if ((o + l) > *n)
+        l = (*n - o);
+      _mm256_store_ps(p[tn], rys_nrmf(l, (x + o)));
+    }
+  }
+  _mm256_store_ps(p[0u], rys_nrmf((mt << 3u), p[0u]));
+  i = (size_t)8u;
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&i, p[0u]);
+#else /* !_OPENMP */
+  alignas(32) float f[8u];
   _mm256_store_ps(f, rys_nrmf(*n, x));
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+#endif /* ?_OPENMP */
 }
 
 static __m256d ryd_nrmf(const size_t n, const double *const x)
@@ -908,10 +1019,48 @@ double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  alignas(32) double f[4];
+  if (!*n)
+    return -0.0;
+  if ((uintptr_t)x & (uintptr_t)0x1Fu)
+    return -2.0;
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  alignas(32) double p[mt][4u];
+  size_t i = 0u;
+  while (i < mt)
+    _mm256_store_pd(p[i++], _mm256_setzero_pd());
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)((*n >> 2u) + ((*n & (size_t)3u) != (size_t)0u)), (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m) {
+      size_t l = (m << 2u);
+      if ((o + l) > *n)
+        l = (*n - o);
+      _mm256_store_pd(p[tn], ryd_nrmf(l, (x + o)));
+    }
+  }
+  _mm256_store_pd(p[0u], ryd_nrmf((mt << 2u), p[0u]));
+  i = (size_t)4u;
+  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&i, p[0u]);
+#else /* !_OPENMP */
+  alignas(32) double f[4u];
   _mm256_store_pd(f, ryd_nrmf(*n, x));
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
+#endif /* ?_OPENMP */
 }
 #ifdef __AVX512F__
 static __m512 rzs_nrmf(const size_t n, const float *const x)
@@ -975,10 +1124,48 @@ float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *co
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  alignas(64) float f[16];
+  if (!*n)
+    return -0.0f;
+  if ((uintptr_t)x & (uintptr_t)0x3Fu)
+    return -2.0f;
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  alignas(64) float p[mt][16u];
+  size_t i = 0u;
+  while (i < mt)
+    _mm512_store_ps(p[i++], _mm512_setzero_ps());
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)((*n >> 4u) + ((*n & (size_t)15u) != (size_t)0u)), (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m) {
+      size_t l = (m << 4u);
+      if ((o + l) > *n)
+        l = (*n - o);
+      _mm512_store_ps(p[tn], rzs_nrmf(l, (x + o)));
+    }
+  }
+  _mm512_store_ps(p[0u], rzs_nrmf((mt << 4u), p[0u]));
+  i = (size_t)16u;
+  return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&i, p[0u]);
+#else /* !_OPENMP */
+  alignas(64) float f[16u];
   _mm512_store_ps(f, rzs_nrmf(*n, x));
   const size_t m = (size_t)16u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+#endif /* ?_OPENMP */
 }
 
 static __m512d rzd_nrmf(const size_t n, const double *const x)
@@ -1026,10 +1213,48 @@ double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *
 {
   PVN_ASSERT(n);
   PVN_ASSERT(x);
-  alignas(64) double f[8];
+  if (!*n)
+    return -0.0;
+  if ((uintptr_t)x & (uintptr_t)0x3Fu)
+    return -2.0;
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  alignas(64) double p[mt][8u];
+  size_t i = 0u;
+  while (i < mt)
+    _mm512_store_pd(p[i++], _mm512_setzero_pd());
+#pragma omp parallel default(none) shared(n,x,p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)((*n >> 3u) + ((*n & (size_t)7u) != (size_t)0u)), (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m) {
+      size_t l = (m << 3u);
+      if ((o + l) > *n)
+        l = (*n - o);
+      _mm512_store_pd(p[tn], rzd_nrmf(l, (x + o)));
+    }
+  }
+  _mm512_store_pd(p[0u], rzd_nrmf((mt << 3u), p[0u]));
+  i = (size_t)8u;
+  return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&i, p[0u]);
+#else /* !_OPENMP */
+  alignas(64) double f[8u];
   _mm512_store_pd(f, rzd_nrmf(*n, x));
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
+#endif /* ?_OPENMP */
 }
 #endif /* __AVX512F__ */
 #endif /* __AVX__ && __FMA__ */
