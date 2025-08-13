@@ -86,7 +86,7 @@ ifeq ($(findstring jv2,$(SAFE)),jv2)
 CFLAGS += -DPVN_JV2_SAFE="\"hypotq\""
 endif # jv2
 ifeq ($(findstring nrm,$(SAFE)),nrm)
-CFLAGS += -DPVN_NRM_SAFE="\"hypot\""
+CFLAGS += -DPVN_NRM_SAFE="\"cr_hypot\""
 endif # nrm
 ifeq ($(findstring ran,$(SAFE)),ran)
 CFLAGS += -DPVN_RAN_SAFE="\"all_outputs\""
