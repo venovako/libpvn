@@ -4,7 +4,7 @@ typedef struct {
   mpfr_t m, p;
 } re_t;
 
-static mpfr_t ed;
+static mpfr_t em, ep;
 static char fmtm[32], fmtp[32];
 
 static re_t relerr(const size_t m)
@@ -15,8 +15,8 @@ static re_t relerr(const size_t m)
   if (m <= (size_t)1u)
     return o;
   if (m == (size_t)2u) {
-    (void)mpfr_neg(o.m, ed, MPFR_RNDN);
-    (void)mpfr_set(o.p, ed, MPFR_RNDN);
+    (void)mpfr_set(o.m, em, MPFR_RNDN);
+    (void)mpfr_set(o.p, ep, MPFR_RNDN);
     return o;
   }
 
@@ -47,7 +47,7 @@ static re_t relerr(const size_t m)
   (void)mpfr_add_d(e1, e1, 1.0, MPFR_RNDN);
   (void)mpfr_sqrt(e1, e1, MPFR_RNDN);
   (void)mpfr_mul(e1, e1, e2, MPFR_RNDN);
-  (void)mpfr_d_sub(e2, 1.0, ed, MPFR_RNDN);
+  (void)mpfr_add_d(e2, em, 1.0, MPFR_RNDN);
   (void)mpfr_mul(e1, e1, e2, MPFR_RNDN);
   (void)mpfr_sub_d(o.m, e1, 1.0, MPFR_RNDN);
 
@@ -60,7 +60,7 @@ static re_t relerr(const size_t m)
   (void)mpfr_add_d(e1, e1, 1.0, MPFR_RNDN);
   (void)mpfr_sqrt(e1, e1, MPFR_RNDN);
   (void)mpfr_mul(e1, e1, e2, MPFR_RNDN);
-  (void)mpfr_add_d(e2, ed, 1.0, MPFR_RNDN);
+  (void)mpfr_add_d(e2, ep, 1.0, MPFR_RNDN);
   (void)mpfr_mul(e1, e1, e2, MPFR_RNDN);
   (void)mpfr_sub_d(o.p, e1, 1.0, MPFR_RNDN);
 
@@ -113,7 +113,36 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   (void)sprintf(fmtm, "ϵ%%010zu-/ε=%%# .%dRe\n", f);
   (void)sprintf(fmtp, "ϵ%%010zu+/ε=%%# .%dRe\n", f);
+  mpfr_t ed, et, tf;
+  (void)mpfr_init_set_d(em, 2.0, MPFR_RNDN);
+  (void)mpfr_init_set_d(ep, 2.0, MPFR_RNDN);
   (void)mpfr_init_set_d(ed, e, MPFR_RNDN);
+  (void)mpfr_init_set_d(et, 0.0, MPFR_RNDN);
+  (void)mpfr_init_set_d(tf, 2.5, MPFR_RNDN);
+  (void)mpfr_sub(em, em, ed, MPFR_RNDN);
+  (void)mpfr_add(ep, ep, ed, MPFR_RNDN);
+  (void)mpfr_mul(em, em, ed, MPFR_RNDN);
+  (void)mpfr_mul(ep, ep, ed, MPFR_RNDN);
+  (void)mpfr_mul_d(em, em, 0.5, MPFR_RNDN);
+  (void)mpfr_mul_d(ep, ep, 0.5, MPFR_RNDN);
+  (void)mpfr_d_sub(em, 1.0, em, MPFR_RNDN);
+  (void)mpfr_add_d(ep, ep, 1.0, MPFR_RNDN);
+  (void)mpfr_sqrt(em, em, MPFR_RNDN);
+  (void)mpfr_sqrt(ep, ep, MPFR_RNDN);
+  (void)mpfr_d_sub(et, 1.0, ed, MPFR_RNDN);
+  (void)mpfr_sqrt(tf, et, MPFR_RNDN);
+  (void)mpfr_sqr(et, et, MPFR_RNDN);
+  (void)mpfr_mul(et, et, tf, MPFR_RNDN);
+  (void)mpfr_mul(em, em, et, MPFR_RNDN);
+  (void)mpfr_sub_d(em, em, 1.0, MPFR_RNDN);
+  (void)mpfr_add_d(et, ed, 1.0, MPFR_RNDN);
+  (void)mpfr_sqrt(tf, et, MPFR_RNDN);
+  (void)mpfr_sqr(et, et, MPFR_RNDN);
+  (void)mpfr_mul(et, et, tf, MPFR_RNDN);
+  (void)mpfr_mul(ep, ep, et, MPFR_RNDN);
+  (void)mpfr_sub_d(ep, ep, 1.0, MPFR_RNDN);
+  mpfr_clear(tf);
+  mpfr_clear(et);
   (void)fprintf(stderr, "(%c) relative error bounds for the recursive evaluation:\n", p);
   re_t r = relerr(m);
   (void)mpfr_div(r.m, r.m, ed, MPFR_RNDN);
@@ -123,5 +152,7 @@ int main(int argc, char *argv[])
   mpfr_clear(r.p);
   mpfr_clear(r.m);
   mpfr_clear(ed);
+  mpfr_clear(ep);
+  mpfr_clear(em);
   return (PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)() ? EXIT_FAILURE : EXIT_SUCCESS);
 }

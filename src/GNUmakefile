@@ -185,7 +185,8 @@ ifdef MPFR
 EXES += \
 ../var/crh_relerr.exe \
 ../var/laf_relerr.exe \
-../var/reh_relerr.exe
+../var/reh_relerr.exe \
+../var/rhh_relerr.exe
 endif # MPFR
 LIBS=libpvn.a
 LNK=-L.
@@ -282,6 +283,9 @@ libpvn.so: libpvn.a
 	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
 
 ../var/reh_relerr.exe: ../var/reh_relerr.c $(LIBS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+
+../var/rhh_relerr.exe: ../var/rhh_relerr.c $(LIBS)
 	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
 
 clean:
