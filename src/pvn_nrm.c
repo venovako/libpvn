@@ -897,16 +897,51 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
   return pvn_v4s_hypot(rxs_nrmf(nl, x), rxs_nrmf(nr, (x + nl)));
 }
 
+static __m128 rxsunrmf(const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_loadu_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  if (m == (size_t)2u) {
+    if (r)
+      return pvn_v4s_hypot(_mm_loadu_ps(x), rxs_nrmf(r, (x + 4u)));
+    else
+      return pvn_v4s_hypot(_mm_loadu_ps(x), _mm_loadu_ps(x + 4u));
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+  return pvn_v4s_hypot(rxs_nrmf(nl, x), rxs_nrmf(nr, (x + nl)));
+}
+
 float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x)
 {
   if (!n)
     return -1.0f;
   if (!*n)
     return -0.0f;
-  if (!x || ((uintptr_t)x & (uintptr_t)0x0Fu))
+  if (!x)
     return -2.0f;
   alignas(16) float f[4u];
-  _mm_store_ps(f, rxs_nrmf(*n, x));
+  _mm_store_ps(f, (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxsunrmf(*n, x) : rxs_nrmf(*n, x)));
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
 }
@@ -938,16 +973,43 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
   return pvn_v2d_hypot(rxd_nrmf(nl, x), rxd_nrmf(nr, (x + nl)));
 }
 
+static __m128d rxdunrmf(const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
+  if (m == (size_t)1u) {
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_loadu_pd(x));
+  }
+  if (m == (size_t)2u) {
+    if (r)
+      return pvn_v2d_hypot(_mm_loadu_pd(x), rxd_nrmf(r, (x + 2u)));
+    else
+      return pvn_v2d_hypot(_mm_loadu_pd(x), _mm_loadu_pd(x + 2u));
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
+  const size_t nr = (n - nl);
+  return pvn_v2d_hypot(rxd_nrmf(nl, x), rxd_nrmf(nr, (x + nl)));
+}
+
 double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x)
 {
   if (!n)
     return -1.0;
   if (!*n)
     return -0.0;
-  if (!x || ((uintptr_t)x & (uintptr_t)0x0Fu))
+  if (!x)
     return -2.0;
   alignas(16) double f[2u];
-  _mm_store_pd(f, rxd_nrmf(*n, x));
+  _mm_store_pd(f, (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrmf(*n, x) : rxd_nrmf(*n, x)));
   return hypot(f[0u], f[1u]);
 }
 
@@ -994,16 +1056,59 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
   return pvn_v8s_hypot(rys_nrmf(nl, x), rys_nrmf(nr, (x + nl)));
 }
 
+static __m256 rysunrmf(const size_t n, const float *const x)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  size_t
+    r = (n & (size_t)7u),
+    m = ((n >> 3u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_ps(z, _mm256_loadu_ps(x));
+    case 1u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]), 0));
+    case 2u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]), 0));
+    case 3u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]), 0));
+    case 4u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_loadu_ps(x), 0));
+    case 5u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, -0.0f, x[4u]), _mm_loadu_ps(x)));
+    case 6u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, x[5u], x[4u]), _mm_loadu_ps(x)));
+    case 7u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, x[6u], x[5u], x[4u]), _mm_loadu_ps(x)));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  if (m == (size_t)2u) {
+    if (r)
+      return pvn_v8s_hypot(_mm256_loadu_ps(x), rys_nrmf(r, (x + 8u)));
+    else
+      return pvn_v8s_hypot(_mm256_loadu_ps(x), _mm256_loadu_ps(x + 8u));
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
+  const size_t nr = (n - nl);
+  return pvn_v8s_hypot(rys_nrmf(nl, x), rys_nrmf(nr, (x + nl)));
+}
+
 float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x)
 {
   if (!n)
     return -1.0f;
   if (!*n)
     return -0.0f;
-  if (!x || ((uintptr_t)x & (uintptr_t)0x1Fu))
+  if (!x)
     return -2.0f;
   alignas(32) float f[8u];
-  _mm256_store_ps(f, rys_nrmf(*n, x));
+  _mm256_store_ps(f, (((uintptr_t)x & (uintptr_t)0x1Fu) ? rysunrmf(*n, x) : rys_nrmf(*n, x)));
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
 }
@@ -1043,16 +1148,51 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
   return pvn_v4d_hypot(ryd_nrmf(nl, x), ryd_nrmf(nr, (x + nl)));
 }
 
+static __m256d rydunrmf(const size_t n, const double *const x)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_pd(z, _mm256_loadu_pd(x));
+    case 1u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_set_pd(-0.0, x[0u]), 0));
+    case 2u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_loadu_pd(x), 0));
+    case 3u:
+      return _mm256_andnot_pd(z, _mm256_set_m128d(_mm_set_pd(-0.0, x[2u]), _mm_loadu_pd(x)));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  if (m == (size_t)2u) {
+    if (r)
+      return pvn_v4d_hypot(_mm256_loadu_pd(x), ryd_nrmf(r, (x + 4u)));
+    else
+      return pvn_v4d_hypot(_mm256_loadu_pd(x), _mm256_loadu_pd(x + 4u));
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+  return pvn_v4d_hypot(ryd_nrmf(nl, x), ryd_nrmf(nr, (x + nl)));
+}
+
 double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x)
 {
   if (!n)
     return -1.0;
   if (!*n)
     return -0.0;
-  if (!x || ((uintptr_t)x & (uintptr_t)0x1Fu))
+  if (!x)
     return -2.0;
   alignas(32) double f[4u];
-  _mm256_store_pd(f, ryd_nrmf(*n, x));
+  _mm256_store_pd(f, (((uintptr_t)x & (uintptr_t)0x1Fu) ? rydunrmf(*n, x) : ryd_nrmf(*n, x)));
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
 }
@@ -1116,16 +1256,75 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
   return pvn_v16s_hypot(rzs_nrmf(nl, x), rzs_nrmf(nr, (x + nl)));
 }
 
+static __m512 rzsunrmf(const size_t n, const float *const x)
+{
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  size_t
+    r = (n & (size_t)15u),
+    m = ((n >> 4u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case  0u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_loadu_ps(x))));
+    case  1u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,     (__mmask16)1u, x))));
+    case  2u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,     (__mmask16)3u, x))));
+    case  3u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,     (__mmask16)7u, x))));
+    case  4u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,    (__mmask16)15u, x))));
+    case  5u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,    (__mmask16)31u, x))));
+    case  6u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,    (__mmask16)63u, x))));
+    case  7u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,   (__mmask16)127u, x))));
+    case  8u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,   (__mmask16)255u, x))));
+    case  9u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,   (__mmask16)511u, x))));
+    case 10u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,  (__mmask16)1023u, x))));
+    case 11u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,  (__mmask16)2047u, x))));
+    case 12u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,  (__mmask16)4095u, x))));
+    case 13u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z,  (__mmask16)8191u, x))));
+    case 14u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z, (__mmask16)16383u, x))));
+    case 15u:
+      return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_loadu_ps(z, (__mmask16)32767u, x))));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  if (m == (size_t)2u) {
+    if (r)
+      return pvn_v16s_hypot(_mm512_loadu_ps(x), rzs_nrmf(r, (x + 16u)));
+    else
+      return pvn_v16s_hypot(_mm512_loadu_ps(x), _mm512_loadu_ps(x + 16u));
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
+  const size_t nr = (n - nl);
+  return pvn_v16s_hypot(rzs_nrmf(nl, x), rzs_nrmf(nr, (x + nl)));
+}
+
 float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x)
 {
   if (!n)
     return -1.0f;
   if (!*n)
     return -0.0f;
-  if (!x || ((uintptr_t)x & (uintptr_t)0x3Fu))
+  if (!x)
     return -2.0f;
   alignas(64) float f[16u];
-  _mm512_store_ps(f, rzs_nrmf(*n, x));
+  _mm512_store_ps(f, (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzsunrmf(*n, x) : rzs_nrmf(*n, x)));
   const size_t m = (size_t)16u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
 }
@@ -1173,16 +1372,59 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
   return pvn_v8d_hypot(rzd_nrmf(nl, x), rzd_nrmf(nr, (x + nl)));
 }
 
+static __m512d rzdunrmf(const size_t n, const double *const x)
+{
+  register const __m512d z = _mm512_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  size_t
+    r = (n & (size_t)7u),
+    m = ((n >> 3u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_loadu_pd(x))));
+    case 1u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_loadu_pd(z,   (__mmask8)1u, x))));
+    case 2u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_loadu_pd(z,   (__mmask8)3u, x))));
+    case 3u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_loadu_pd(z,   (__mmask8)7u, x))));
+    case 4u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_loadu_pd(z,  (__mmask8)15u, x))));
+    case 5u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_loadu_pd(z,  (__mmask8)31u, x))));
+    case 6u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_loadu_pd(z,  (__mmask8)63u, x))));
+    case 7u:
+      return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_loadu_pd(z, (__mmask8)127u, x))));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  if (m == (size_t)2u) {
+    if (r)
+      return pvn_v8d_hypot(_mm512_loadu_pd(x), rzd_nrmf(r, (x + 8u)));
+    else
+      return pvn_v8d_hypot(_mm512_loadu_pd(x), _mm512_loadu_pd(x + 8u));
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
+  const size_t nr = (n - nl);
+  return pvn_v8d_hypot(rzd_nrmf(nl, x), rzd_nrmf(nr, (x + nl)));
+}
+
 double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x)
 {
   if (!n)
     return -1.0;
   if (!*n)
     return -0.0;
-  if (!x || ((uintptr_t)x & (uintptr_t)0x3Fu))
+  if (!x)
     return -2.0;
   alignas(64) double f[8u];
-  _mm512_store_pd(f, rzd_nrmf(*n, x));
+  _mm512_store_pd(f, (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzdunrmf(*n, x) : rzd_nrmf(*n, x)));
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
 }
