@@ -112,10 +112,18 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
 #ifndef _OPENMP
+#ifdef PVN_NRM_SAFE
   (void)printf("pvn_rfd_nrmf=");
+#else /* !PVN_NRM_SAFE */
+  (void)printf("pvn_red_nrmf=");
+#endif /* ?PVN_NRM_SAFE */
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
+#ifdef PVN_NRM_SAFE
   f = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&n, x);
+#else /* !PVN_NRM_SAFE */
+  f = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&n, x);
+#endif /* ?PVN_NRM_SAFE */
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
   (void)printf("pvn_rxd_nrmf=");
@@ -492,11 +500,23 @@ float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x)
         o += r;
     }
     if (m)
+#ifdef PVN_NRM_SAFE
       p[tn] = PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, (x + o));
+#else /* !PVN_NRM_SAFE */
+      p[tn] = PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&m, (x + o));
+#endif /* ?PVN_NRM_SAFE */
   }
+#ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&mt, p);
+#else /* !PVN_NRM_SAFE */
+  return PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&mt, p);
+#endif /* ?PVN_NRM_SAFE */
 #else /* !_OPENMP */
+#ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(n, x);
+#else /* !PVN_NRM_SAFE */
+  return PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(n, x);
+#endif /* ?PVN_NRM_SAFE */
 #endif /* _OPENMP */
 }
 
@@ -536,11 +556,23 @@ double PVN_FABI(pvn_dnrm2,PVN_DNRM2)(const size_t *const n, const double *const 
         o += r;
     }
     if (m)
+#ifdef PVN_NRM_SAFE
       p[tn] = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, (x + o));
+#else /* !PVN_NRM_SAFE */
+      p[tn] = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&m, (x + o));
+#endif /* ?PVN_NRM_SAFE */
   }
+#ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&mt, p);
+#else /* !PVN_NRM_SAFE */
+  return PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&mt, p);
+#endif /* ?PVN_NRM_SAFE */
 #else /* !_OPENMP */
+#ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(n, x);
+#else /* !PVN_NRM_SAFE */
+  return PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(n, x);
+#endif /* ?PVN_NRM_SAFE */
 #endif /* ?_OPENMP */
 }
 
@@ -580,11 +612,23 @@ long double PVN_FABI(pvn_xnrm2,PVN_XNRM2)(const size_t *const n, const long doub
         o += r;
     }
     if (m)
+#ifdef PVN_NRM_SAFE
       p[tn] = PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&m, (x + o));
+#else /* !PVN_NRM_SAFE */
+      p[tn] = PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&m, (x + o));
+#endif /* ?PVN_NRM_SAFE */
   }
+#ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&mt, p);
+#else /* !PVN_NRM_SAFE */
+  return PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&mt, p);
+#endif /* ?PVN_NRM_SAFE */
 #else /* !_OPENMP */
+#ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(n, x);
+#else /* !PVN_NRM_SAFE */
+  return PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(n, x);
+#endif /* ?PVN_NRM_SAFE */
 #endif /* ?_OPENMP */
 }
 
@@ -821,8 +865,10 @@ long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const lon
 static __m128 rxs_nrmf(const size_t n, const float *const x)
 {
   register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
   if (!n)
     return z;
+#endif /* !NDEBUG */
   size_t
     r = (n & (size_t)3u),
     m = ((n >> 2u) + (r != (size_t)0u));
@@ -868,8 +914,10 @@ float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *co
 static __m128d rxd_nrmf(const size_t n, const double *const x)
 {
   register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
   if (!n)
     return z;
+#endif /* !NDEBUG */
   size_t
     r = (n & (size_t)1u),
     m = ((n >> 1u) + r);
@@ -906,8 +954,10 @@ double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *
 static __m256 rys_nrmf(const size_t n, const float *const x)
 {
   register const __m256 z = _mm256_set1_ps(-0.0f);
+#ifndef NDEBUG
   if (!n)
     return z;
+#endif /* !NDEBUG */
   size_t
     r = (n & (size_t)7u),
     m = ((n >> 3u) + (r != (size_t)0u));
@@ -961,8 +1011,10 @@ float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *co
 static __m256d ryd_nrmf(const size_t n, const double *const x)
 {
   register const __m256d z = _mm256_set1_pd(-0.0);
+#ifndef NDEBUG
   if (!n)
     return z;
+#endif /* !NDEBUG */
   size_t
     r = (n & (size_t)3u),
     m = ((n >> 2u) + (r != (size_t)0u));
@@ -1008,8 +1060,10 @@ double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *
 static __m512 rzs_nrmf(const size_t n, const float *const x)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
+#ifndef NDEBUG
   if (!n)
     return z;
+#endif /* !NDEBUG */
   size_t
     r = (n & (size_t)15u),
     m = ((n >> 4u) + (r != (size_t)0u));
@@ -1079,8 +1133,10 @@ float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *co
 static __m512d rzd_nrmf(const size_t n, const double *const x)
 {
   register const __m512d z = _mm512_set1_pd(-0.0);
+#ifndef NDEBUG
   if (!n)
     return z;
+#endif /* !NDEBUG */
   size_t
     r = (n & (size_t)7u),
     m = ((n >> 3u) + (r != (size_t)0u));
