@@ -329,7 +329,7 @@ long double PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(const size_t *const n, const lon
 
 float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *const x)
 {
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp declare reduction(hcf:float:omp_out=hypotf(omp_out,omp_in)) initializer(omp_priv=0.0f)
 #endif /* _OPENMP */
   if (!n)
@@ -347,7 +347,7 @@ float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *co
   const float tsml = __builtin_scalbnf(1.0f, -63);
   const float tbig = __builtin_scalbnf(1.0f,  52);
   float dnr = 0.0f, sml = 0.0f, med = 0.0f, big = 0.0f;
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcf:dnr,sml,med,big)
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
@@ -374,7 +374,7 @@ float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *co
 
 double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x)
 {
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp declare reduction(hcd:double:omp_out=hypot(omp_out,omp_in)) initializer(omp_priv=0.0)
 #endif /* _OPENMP */
   if (!n)
@@ -392,7 +392,7 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
   const double tsml = __builtin_scalbn(1.0, -511);
   const double tbig = __builtin_scalbn(1.0,  486);
   double dnr = 0.0, sml = 0.0, med = 0.0, big = 0.0;
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcd:dnr,sml,med,big)
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
@@ -419,7 +419,7 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
 
 long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const long double *const x)
 {
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp declare reduction(hcx:long double:omp_out=hypotl(omp_out,omp_in)) initializer(omp_priv=0.0L)
 #endif /* _OPENMP */
   if (!n)
@@ -437,7 +437,7 @@ long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const lon
   const long double tsml = __builtin_scalbnl(1.0L, -8191);
   const long double tbig = __builtin_scalbnl(1.0L,  8160);
   long double dnr = 0.0L, sml = 0.0L, med = 0.0L, big = 0.0L;
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcx:dnr,sml,med,big)
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
@@ -643,7 +643,7 @@ __float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __fl
 
 __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __float128 *const x)
 {
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp declare reduction(hcq:__float128:omp_out=hypotq(omp_out,omp_in)) initializer(omp_priv=0.0q)
 #endif /* _OPENMP */
   if (!n)
@@ -661,7 +661,7 @@ __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __fl
   const __float128 tsml = scalbnq(1.0L, -8191);
   const __float128 tbig = scalbnq(1.0L,  8136);
   __float128 dnr = 0.0q, sml = 0.0q, med = 0.0q, big = 0.0q;
-#if (defined(_OPENMP) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcq:dnr,sml,med,big)
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
@@ -836,7 +836,7 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
       return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
     case 3u:
       return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
-    default:
+    default: /* should never happen */
       return z;
     }
   }
@@ -929,7 +929,7 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
       return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, x[5u], x[4u]), _mm_load_ps(x)));
     case 7u:
       return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, x[6u], x[5u], x[4u]), _mm_load_ps(x)));
-    default:
+    default: /* should never happen */
       return z;
     }
   }
@@ -976,7 +976,7 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
       return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_load_pd(x), 0));
     case 3u:
       return _mm256_andnot_pd(z, _mm256_set_m128d(_mm_set_pd(-0.0, x[2u]), _mm_load_pd(x)));
-    default:
+    default: /* should never happen */
       return z;
     }
   }
@@ -1047,7 +1047,7 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
       return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z, (__mmask16)16383u, x))));
     case 15u:
       return _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(_mm512_mask_load_ps(z, (__mmask16)32767u, x))));
-    default:
+    default: /* should never happen */
       return z;
     }
   }
@@ -1102,7 +1102,7 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
       return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z,  (__mmask8)63u, x))));
     case 7u:
       return _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(_mm512_mask_load_pd(z, (__mmask8)127u, x))));
-    default:
+    default: /* should never happen */
       return z;
     }
   }
