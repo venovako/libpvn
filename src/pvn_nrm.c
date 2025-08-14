@@ -1,11 +1,16 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-#if (defined(PVN_LAPACK) && defined(__AVX__) && defined(__FMA__) && !defined(_WIN32))
+#if (defined(PVN_LAPACK) && defined(__AVX__) && defined(__FMA__))
 /* this assumes the Fortran integers are four-byte long, but only for this tester */
+extern float PVN_FABI(slaran,SLARAN)(int *const iseed);
+extern float PVN_FABI(slarnd,SLARND)(const int *const idist, int *const iseed);
 extern double PVN_FABI(dlaran,DLARAN)(int *const iseed);
 extern double PVN_FABI(dlarnd,DLARND)(const int *const idist, int *const iseed);
-
+static double frelerr(const double e, const double f)
+{
+  return ((e == 0.0) ? -0.0 : (__builtin_fabs(e - f) / __builtin_scalbn(__builtin_fabs(e), -24)));
+}
 static double erelerr(const double e, const double f)
 {
   return ((e == 0.0) ? -0.0 : (double)(__builtin_fabsl((long double)e - (long double)f) / __builtin_scalbnl(__builtin_fabsl((long double)e), -53)));
@@ -30,11 +35,10 @@ int main(int argc, char *argv[])
       ls.l = (unsigned long long)-s_;
       idist = -idist;
     }
-    else {
+    else
       ls.l = (unsigned long long)s_;
-      if (!(ls.s[2u] & UINT16_C(16)))
+    if (!(ls.s[2u] & UINT16_C(16)))
         return 3;
-    }
     if (ls.s[3u]) /* longer than 48 bits */
       return 4;
   }
@@ -51,32 +55,28 @@ int main(int argc, char *argv[])
     (void)fprintf(stderr, "SEED = %15llu\n", ls.l);
   }
   const size_t n = (size_t)((n_ < 0ll) ? -n_ : n_);
-  double *const x = (double*)aligned_alloc((size_t)64u, (n * sizeof(double)));
+  void *const x = aligned_alloc((size_t)64u, (n * ((idist < 0) ? sizeof(float) : sizeof(double))));
   if (!x)
     return 7;
-  if (idist < 0) {
-    if (!seed48(ls.s))
-      return 8;
-    if (idist == -1) {
-      for (size_t i = (size_t)0u; i < n; ++i)
-        x[i] = drand48();
-    }
-    else { /* this is just to check if the negative elements are handled correctly */
-      for (size_t i = (size_t)0u; i < n; ++i)
-        x[i] = -drand48();
-    }
+  int iseed[4u] = { (int)(ls.l & 0xFFFull), (int)((ls.l >> 12u) & 0xFFFull), (int)((ls.l >> 24u) & 0xFFFull), (int)((ls.l >> 36u) & 0xFFFull) };
+  if (idist == -3) {
+    for (size_t i = (size_t)0u; i < n; ++i)
+      ((float*)x)[i] = PVN_FABI(slarnd,SLARND)(&idist, iseed);
   }
-  else {
-    int iseed[4u] = { (int)(ls.l & 0xFFFull), (int)((ls.l >> 12u) & 0xFFFull), (int)((ls.l >> 24u) & 0xFFFull), (int)((ls.l >> 36u) & 0xFFFull) };
-    if (idist == 1) {
-      for (size_t i = (size_t)0u; i < n; ++i)
-        x[i] = PVN_FABI(dlaran,DLARAN)(iseed);
-    }
-    else {
-      for (size_t i = (size_t)0u; i < n; ++i)
-        x[i] = PVN_FABI(dlarnd,DLARND)(&idist, iseed);
-    }
+  else if (idist == -1) {
+    for (size_t i = (size_t)0u; i < n; ++i)
+      ((float*)x)[i] = PVN_FABI(slaran,SLARAN)(iseed);
   }
+  else if (idist == 1) {
+    for (size_t i = (size_t)0u; i < n; ++i)
+      ((double*)x)[i] = PVN_FABI(dlaran,DLARAN)(iseed);
+  }
+  else if (idist == 3) {
+    for (size_t i = (size_t)0u; i < n; ++i)
+      ((double*)x)[i] = PVN_FABI(dlarnd,DLARND)(&idist, iseed);
+  }
+  else
+    return 8;
   long long t = 0ll;
   double e = ((argc > 3) ? atof(argv[3u]) : 0.0);
 #if (defined(PVN_MPFR) && !defined(_OPENMP))
@@ -86,73 +86,73 @@ int main(int argc, char *argv[])
     mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
     if (PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax))
       return 9;
-    (void)printf("pvn_mpd_nrmf=");
+    (void)printf((idist < 0) ? "pvn_mps_nrmf=" : "pvn_mpd_nrmf=");
     (void)fflush(stdout);
     t = pvn_time_mono_ns();
-    e = PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(&n, x);
+    e = ((idist < 0) ? PVN_FABI(pvn_mps_nrmf,PVN_MPS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_mpd_nrmf,PVN_MPD_NRMF)(&n, (const double*)x));
     t = pvn_time_mono_ns() - t;
     (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", e, 0.0, t);
   }
 #endif /* PVN_MPFR && !_OPENMP */
   double f = 0.0;
 #ifndef _OPENMP
-  (void)printf("pvn_lad_nrmf=");
+  (void)printf((idist < 0) ? "pvn_las_nrmf=" : "pvn_lad_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_las_nrmf,PVN_LAS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-  (void)printf("pvn_dnrm2[s]=");
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  (void)printf((idist < 0) ? "pvn_snrm2[s]=" : "pvn_dnrm2[s]=");
 #else /* _OPENMP */
-  (void)printf("pvn_dnrm2[p]=");
+  (void)printf((idist < 0) ? "pvn_snrm2[p]=" : "pvn_dnrm2[p]=");
 #endif /* ?_OPENMP */
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_dnrm2,PVN_DNRM2)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_snrm2,PVN_SNRM2)(&n, (const float*)x) : PVN_FABI(pvn_dnrm2,PVN_DNRM2)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
 #ifndef _OPENMP
 #ifdef PVN_NRM_SAFE
-  (void)printf("pvn_rfd_nrmf=");
+  (void)printf((idist < 0) ? "pvn_rfs_nrmf=" : "pvn_rfd_nrmf=");
 #else /* !PVN_NRM_SAFE */
-  (void)printf("pvn_red_nrmf=");
+  (void)printf((idist < 0) ? "pvn_res_nrmf=" : "pvn_red_nrmf=");
 #endif /* ?PVN_NRM_SAFE */
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
 #ifdef PVN_NRM_SAFE
-  f = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&n, (const double*)x));
 #else /* !PVN_NRM_SAFE */
-  f = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&n, (const double*)x));
 #endif /* ?PVN_NRM_SAFE */
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-  (void)printf("pvn_rxd_nrmf=");
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  (void)printf((idist < 0) ? "pvn_rxs_nrmf=" : "pvn_rxd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
-  (void)printf("pvn_ryd_nrmf=");
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  (void)printf((idist < 0) ? "pvn_rys_nrmf=" : "pvn_ryd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
 #ifdef __AVX512F__
-  (void)printf("pvn_rzd_nrmf=");
+  (void)printf((idist < 0) ? "pvn_rzs_nrmf=" : "pvn_rzd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
 #endif /* __AVX512F__ */
 #endif /* !_OPENMP */
-  (void)printf("pvn_crd_nrmf=");
+  (void)printf((idist < 0) ? "pvn_crs_nrmf=" : "pvn_crd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
-  f = PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, x);
+  f = ((idist < 0) ? PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
-  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, erelerr(e, f), t);
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
 #if (defined(PVN_MPFR) && !defined(_OPENMP))
   if (argc <= 3)
     (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
   free(x);
   return 0;
 }
-#else /* !PVN_LAPACK || !__AVX__ || !__FMA__ || _WIN32 */
+#else /* !PVN_LAPACK || !__AVX__ || !__FMA__ */
 int main(/* int argc, char *argv[] */)
 {
   const double x[4][2] = {{-1.0, 1.0}, { 1.0,-1.0}, { 2.0, 2.0}, {-2.0,-2.0}};
@@ -169,7 +169,7 @@ int main(/* int argc, char *argv[] */)
   (void)printf("%#F\n", PVN_FABI(pvn_znrm2,PVN_ZNRM2)(&n, &(x[0][0])));
   return EXIT_SUCCESS;
 }
-#endif /* PVN_LAPACK && __AVX__ && __FMA__ && !_WIN32 */
+#endif /* PVN_LAPACK && __AVX__ && __FMA__ */
 #else /* !PVN_TEST */
 #ifdef PVN_MPFR
 float PVN_FABI(pvn_mps_nrmf,PVN_MPS_NRMF)(const size_t *const n, const float *const x)
