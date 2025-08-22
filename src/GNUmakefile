@@ -19,15 +19,6 @@ endif # ?Linux
 endif # !COMPILER
 include $(COMPILER).mk
 CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
-ifeq ($(COMPILER),gcc)
-GCC=$(CC)
-else # !gcc
-ifeq ($(OS),Darwin)
-GCC=gcc-15
-else # !Darwin
-GCC=gcc
-endif # ?Darwin
-endif # ?gcc
 
 SRCS=pvn.c \
 pvn_aux.c  \
@@ -179,6 +170,7 @@ ifdef QUADMATH
 CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
 endif # QUADMATH
 
+HDRS=$(SRCS:.c=.h)
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
 EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
 ifdef MPFR
@@ -190,7 +182,17 @@ EXES += \
 endif # MPFR
 LIBS=libpvn.a
 LNK=-L.
+
 ifdef DYNAMIC
+ifeq ($(COMPILER),gcc)
+GCC=$(CC)
+else # !gcc
+ifeq ($(OS),Darwin)
+GCC=gcc-15
+else # !Darwin
+GCC=gcc
+endif # ?Darwin
+endif # ?gcc
 CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
 LIBS += libpvn.$(DYNAMIC)
 ifdef QUADMATH
@@ -227,6 +229,7 @@ ifneq ($(COMPILER),clang)
 GNU += $(realpath $(shell $(GCC) -print-file-name=libgcc.a))
 endif # !clang
 endif # DYNAMIC
+
 LNK += -lpvn
 ifdef XRP
 LNK += -Wl,$(XRP)
@@ -267,10 +270,10 @@ libpvn.dylib: libpvn.a
 libpvn.so: libpvn.a
 	ld -shared -o $@ $(OBJS) $(GNU)
 
-%.o : %.c
+%.o : %.c $(HDRS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.exe : %.c
+%.exe : %.c $(HDRS)
 	$(CC) $(CLFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNK) $(LDFLAGS)
 
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)

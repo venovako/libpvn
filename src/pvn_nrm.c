@@ -861,6 +861,48 @@ long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const lon
   return __builtin_hypotl(fl, fr);
 }
 
+float PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(const size_t *const n, const float *const x)
+{
+#ifndef NDEBUG
+  if (!n)
+    return -1.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -2.0f;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabsf(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1s_hypot(x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const float fl = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nl, x);
+  const float fr = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nr, (x + nl));
+  return pvn_v1s_hypot(fl, fr);
+}
+
+double PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(const size_t *const n, const double *const x)
+{
+#ifndef NDEBUG
+  if (!n)
+    return -1.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -2.0;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabs(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1d_hypot(x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const double fl = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nl, x);
+  const double fr = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nr, (x + nl));
+  return pvn_v1d_hypot(fl, fr);
+}
+
 #if (defined(__AVX__) && defined(__FMA__))
 static __m128 rxs_nrmf(const size_t n, const float *const x)
 {
