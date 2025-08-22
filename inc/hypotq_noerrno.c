@@ -28,7 +28,6 @@ SOFTWARE.
 #include "pvn_ext.h"
 PVN_EXTERN_C __float128 cr_hypotq(__float128 x, __float128 y);
 
-#include <stdio.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
