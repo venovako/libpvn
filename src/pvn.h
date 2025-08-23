@@ -153,11 +153,9 @@ EXTERN_C __float128 __fminq(__float128, __float128);
 EXTERN_C __float128 __frexpq(__float128, int*);
 EXTERN_C int __isfiniteq(__float128);
 EXTERN_C __float128 __scalbnq(__float128, int);
-#ifndef PVN_CR_MATH
 EXTERN_C __float128 __hypotq(__float128, __float128);
 EXTERN_C __float128 __sqrtq(__float128);
 EXTERN_C __float128 __invsqrtq(__float128);
-#endif /* !PVN_CR_MATH */
 #ifndef copysignq
 #define copysignq __copysignq
 #else /* copysignq */
