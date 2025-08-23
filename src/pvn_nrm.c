@@ -341,69 +341,6 @@ long double PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(const size_t *const n, const lon
   return hypotl(fl, fr);
 }
 
-float PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(const size_t *const n, const float *const x)
-{
-#ifndef NDEBUG
-  if (!n)
-    return -1.0f;
-  if (!*n)
-    return -0.0f;
-  if (!x)
-    return -2.0f;
-#endif /* !NDEBUG */
-  if (*n == (size_t)1u)
-    return __builtin_fabsf(*x);
-  if (*n == (size_t)2u)
-    return pvn_v1s_hypot(x[0u], x[1u]);
-  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t nr = (*n - nl);
-  const float fl = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nl, x);
-  const float fr = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nr, (x + nl));
-  return pvn_v1s_hypot(fl, fr);
-}
-
-double PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(const size_t *const n, const double *const x)
-{
-#ifndef NDEBUG
-  if (!n)
-    return -1.0;
-  if (!*n)
-    return -0.0;
-  if (!x)
-    return -2.0;
-#endif /* !NDEBUG */
-  if (*n == (size_t)1u)
-    return __builtin_fabs(*x);
-  if (*n == (size_t)2u)
-    return pvn_v1d_hypot(x[0u], x[1u]);
-  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t nr = (*n - nl);
-  const double fl = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nl, x);
-  const double fr = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nr, (x + nl));
-  return pvn_v1d_hypot(fl, fr);
-}
-
-long double PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(const size_t *const n, const long double *const x)
-{
-#ifndef NDEBUG
-  if (!n)
-    return -1.0L;
-  if (!*n)
-    return -0.0L;
-  if (!x)
-    return -2.0L;
-#endif /* !NDEBUG */
-  if (*n == (size_t)1u)
-    return __builtin_fabsl(*x);
-  if (*n == (size_t)2u)
-    return pvn_v1x_hypot(x[0u], x[1u]);
-  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t nr = (*n - nl);
-  const long double fl = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nl, x);
-  const long double fr = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nr, (x + nl));
-  return pvn_v1x_hypot(fl, fr);
-}
-
 float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x)
 {
 #ifndef NDEBUG
@@ -467,6 +404,69 @@ long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const lon
   return __builtin_hypotl(fl, fr);
 }
 
+float PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(const size_t *const n, const float *const x)
+{
+#ifndef NDEBUG
+  if (!n)
+    return -1.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -2.0f;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabsf(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1s_hypot(x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const float fl = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nl, x);
+  const float fr = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nr, (x + nl));
+  return pvn_v1s_hypot(fl, fr);
+}
+
+double PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(const size_t *const n, const double *const x)
+{
+#ifndef NDEBUG
+  if (!n)
+    return -1.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -2.0;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabs(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1d_hypot(x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const double fl = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nl, x);
+  const double fr = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nr, (x + nl));
+  return pvn_v1d_hypot(fl, fr);
+}
+
+long double PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(const size_t *const n, const long double *const x)
+{
+#ifndef NDEBUG
+  if (!n)
+    return -1.0L;
+  if (!*n)
+    return -0.0L;
+  if (!x)
+    return -2.0L;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabsl(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1x_hypot(x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const long double fl = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nl, x);
+  const long double fr = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nr, (x + nl));
+  return pvn_v1x_hypot(fl, fr);
+}
+
 float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *const x)
 {
 #ifdef _OPENMP
@@ -483,19 +483,31 @@ float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *co
   if (*n == (size_t)2u)
     return hypotf(x[0u], x[1u]);
   const size_t m = *n;
-  /* the three Blue's accumulators as in SNRM2, plus the accumulator for subnormal inputs */
   const float tsml = scalbnf(1.0f, -63);
   const float tbig = scalbnf(1.0f,  52);
-  float dnr = 0.0f, sml = 0.0f, med = 0.0f, big = 0.0f;
+  /* the three Blue's accumulators as in SNRM2 */
+  float sml = 0.0f, med = 0.0f, big = 0.0f;
+#ifndef PVN_LAPACK
+  /* the accumulator for subnormal inputs */
+  float dnr = 0.0f;
+#endif /* !PVN_LAPACK */
 #ifdef _OPENMP
+#ifdef PVN_LAPACK
+#pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcf:sml,med,big)
+#else /* !PVN_LAPACK */
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcf:dnr,sml,med,big)
+#endif /* ?PVN_LAPACK */
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
     const float y = __builtin_fabsf(x[i]);
     if (y > 0.0f) {
+#ifdef PVN_LAPACK
+      if (y < tsml)
+#else /* !PVN_LAPACK */
       if (y < FLT_MIN)
         dnr = hypotf(dnr, scalbnf(y, 23));
       else if (y < tsml)
+#endif /* PVN_LAPACK */
         sml = hypotf(sml, y);
       else if (y > tbig)
         big = hypotf(big, y);
@@ -503,8 +515,10 @@ float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *co
         med = hypotf(med, y);
     }
   }
+#ifndef PVN_LAPACK
   if (dnr > 0.0f)
     sml = hypotf(sml, scalbnf(dnr, -23));
+#endif /* !PVN_LAPACK */
   if (sml > 0.0f)
     med = hypotf(med, sml);
   if (med > 0.0f)
@@ -528,19 +542,31 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
   if (*n == (size_t)2u)
     return hypot(x[0u], x[1u]);
   const size_t m = *n;
-  /* the three Blue's accumulators as in DNRM2, plus the accumulator for subnormal inputs */
   const double tsml = scalbn(1.0, -511);
   const double tbig = scalbn(1.0,  486);
-  double dnr = 0.0, sml = 0.0, med = 0.0, big = 0.0;
+  /* the three Blue's accumulators as in DNRM2 */
+  double sml = 0.0, med = 0.0, big = 0.0;
+#ifndef PVN_LAPACK
+  /* the accumulator for subnormal inputs */
+  double dnr = 0.0;
+#endif /* !PVN_LAPACK */
 #ifdef _OPENMP
+#ifdef PVN_LAPACK
+#pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcd:sml,med,big)
+#else /* !PVN_LAPACK */
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcd:dnr,sml,med,big)
+#endif /* ?PVN_LAPACK */
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
     const double y = __builtin_fabs(x[i]);
     if (y > 0.0) {
+#ifdef PVN_LAPACK
+      if (y < tsml)
+#else /* !PVN_LAPACK */
       if (y < DBL_MIN)
         dnr = hypot(dnr, scalbn(y, 52));
       else if (y < tsml)
+#endif /* ?PVN_LAPACK */
         sml = hypot(sml, y);
       else if (y > tbig)
         big = hypot(big, y);
@@ -548,8 +574,10 @@ double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *
         med = hypot(med, y);
     }
   }
+#ifndef PVN_LAPACK
   if (dnr > 0.0)
     sml = hypot(sml, scalbn(dnr, -52));
+#endif /* !PVN_LAPACK */
   if (sml > 0.0)
     med = hypot(med, sml);
   if (med > 0.0)
@@ -573,19 +601,31 @@ long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const lon
   if (*n == (size_t)2u)
     return hypotl(x[0u], x[1u]);
   const size_t m = *n;
-  /* the three Blue's accumulators, plus the accumulator for subnormal inputs */
   const long double tsml = scalbnl(1.0L, -8191);
   const long double tbig = scalbnl(1.0L,  8160);
-  long double dnr = 0.0L, sml = 0.0L, med = 0.0L, big = 0.0L;
+  /* the three Blue's accumulators */
+  long double sml = 0.0L, med = 0.0L, big = 0.0L;
+#ifndef PVN_LAPACK
+  /* the accumulator for subnormal inputs */
+  long double dnr = 0.0L;
+#endif /* !PVN_LAPACK */
 #ifdef _OPENMP
+#ifdef PVN_LAPACK
+#pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcx:sml,med,big)
+#else /* !PVN_LAPACK */
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcx:dnr,sml,med,big)
+#endif /* ?PVN_LAPACK */
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
     const long double y = __builtin_fabsl(x[i]);
     if (y > 0.0L) {
+#ifdef PVN_LAPACK
+      if (y < tsml)
+#else /* !PVN_LAPACK */
       if (y < LDBL_MIN)
         dnr = hypotl(dnr, scalbnl(y, 63));
       else if (y < tsml)
+#endif /* ?PVN_LAPACK */
         sml = hypotl(sml, y);
       else if (y > tbig)
         big = hypotl(big, y);
@@ -593,8 +633,10 @@ long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const lon
         med = hypotl(med, y);
     }
   }
+#ifndef PVN_LAPACK
   if (dnr > 0.0L)
     sml = hypotl(sml, scalbnl(dnr, -63));
+#endif /* !PVN_LAPACK */
   if (sml > 0.0L)
     med = hypotl(med, sml);
   if (med > 0.0L)
@@ -817,27 +859,6 @@ __float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __fl
   return hypotq(fl, fr);
 }
 
-__float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __float128 *const x)
-{
-#ifndef NDEBUG
-  if (!n)
-    return -1.0q;
-  if (!*n)
-    return -0.0q;
-  if (!x)
-    return -2.0q;
-#endif /* !NDEBUG */
-  if (*n == (size_t)1u)
-    return fabsq(*x);
-  if (*n == (size_t)2u)
-    return pvn_v1q_hypot(x[0], x[1]);
-  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t nr = (*n - nl);
-  const __float128 fl = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nl, x);
-  const __float128 fr = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nr, (x + nl));
-  return pvn_v1q_hypot(fl, fr);
-}
-
 __float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const __float128 *const x)
 {
 #ifndef NDEBUG
@@ -875,6 +896,27 @@ __float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const __fl
 #endif /* ?__MATHIMF_H_INCLUDED */
 }
 
+__float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __float128 *const x)
+{
+#ifndef NDEBUG
+  if (!n)
+    return -1.0q;
+  if (!*n)
+    return -0.0q;
+  if (!x)
+    return -2.0q;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return fabsq(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1q_hypot(x[0], x[1]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  const __float128 fl = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nl, x);
+  const __float128 fr = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nr, (x + nl));
+  return pvn_v1q_hypot(fl, fr);
+}
+
 __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __float128 *const x)
 {
 #ifdef _OPENMP
@@ -891,19 +933,31 @@ __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __fl
   if (*n == (size_t)2u)
     return hypotq(x[0], x[1]);
   const size_t m = *n;
-  /* the three Blue's accumulators, plus the accumulator for subnormal inputs */
   const __float128 tsml = scalbnq(1.0L, -8191);
   const __float128 tbig = scalbnq(1.0L,  8136);
-  __float128 dnr = 0.0q, sml = 0.0q, med = 0.0q, big = 0.0q;
+  /* the three Blue's accumulators */
+  __float128 sml = 0.0q, med = 0.0q, big = 0.0q;
+#ifndef PVN_LAPACK
+  /* the accumulator for subnormal inputs */
+  __float128 dnr = 0.0q;
+#endif /* !PVN_LAPACK */
 #ifdef _OPENMP
+#ifdef PVN_LAPACK
+#pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcq:sml,med,big)
+#else /* !PVN_LAPACK */
 #pragma omp parallel for default(none) shared(m,x,tsml,tbig) reduction(hcq:dnr,sml,med,big)
+#endif /* ?PVN_LAPACK */
 #endif /* _OPENMP */
   for (size_t i = 0u; i < m; ++i) {
     const __float128 y = fabsq(x[i]);
     if (y > 0.0q) {
+#ifdef PVN_LAPACK
+      if (y < tsml)
+#else /* !PVN_LAPACK */
       if (y < FLT128_MIN)
         dnr = hypotq(dnr, scalbnq(y, 112));
       else if (y < tsml)
+#endif /* ?PVN_LAPACK */
         sml = hypotq(sml, y);
       else if (y > tbig)
         big = hypotq(big, y);
@@ -911,8 +965,10 @@ __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __fl
         med = hypotq(med, y);
     }
   }
+#ifndef PVN_LAPACK
   if (dnr > 0.0q)
     sml = hypotq(sml, scalbnq(dnr, -112));
+#endif /* !PVN_LAPACK */
   if (sml > 0.0q)
     med = hypotq(med, sml);
   if (med > 0.0q)
@@ -986,13 +1042,13 @@ long double PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const lon
 {
   return PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(n, x);
 }
-long double PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const long double *const x)
-{
-  return PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(n, x);
-}
 long double PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const long double *const x)
 {
   return PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(n, x);
+}
+long double PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const long double *const x)
+{
+  return PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(n, x);
 }
 long double PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const long double *const x)
 {
