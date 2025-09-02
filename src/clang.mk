@@ -13,10 +13,14 @@ ifndef LAPACK
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 endif # !LAPACK
 ifdef OPENMP
+ifeq ($(OPENMP),cilk)
+CFLAGS += -fopencilk -DPVN_CILK=3
+else # !cilk
 CFLAGS += -fopenmp
 ifneq ($(OPENMP),true)
 CFLAGS += $(OPENMP)
 endif # !true
+endif # ?cilk
 else # !OPENMP
 CFLAGS += -fopenmp-simd
 endif # ?OPENMP

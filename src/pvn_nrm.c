@@ -1132,7 +1132,7 @@ static __m128 rxsunrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  return pvn_v4s_hypot(rxs_nrmf(nl, x), rxs_nrmf(nr, (x + nl)));
+  return pvn_v4s_hypot(rxsunrmf(nl, x), rxsunrmf(nr, (x + nl)));
 }
 
 float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x)
@@ -1200,7 +1200,7 @@ static __m128d rxdunrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
   const size_t nr = (n - nl);
-  return pvn_v2d_hypot(rxd_nrmf(nl, x), rxd_nrmf(nr, (x + nl)));
+  return pvn_v2d_hypot(rxdunrmf(nl, x), rxdunrmf(nr, (x + nl)));
 }
 
 double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x)
@@ -1299,7 +1299,7 @@ static __m256 rysunrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-  return pvn_v8s_hypot(rys_nrmf(nl, x), rys_nrmf(nr, (x + nl)));
+  return pvn_v8s_hypot(rysunrmf(nl, x), rysunrmf(nr, (x + nl)));
 }
 
 float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x)
@@ -1383,7 +1383,7 @@ static __m256d rydunrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  return pvn_v4d_hypot(ryd_nrmf(nl, x), ryd_nrmf(nr, (x + nl)));
+  return pvn_v4d_hypot(rydunrmf(nl, x), rydunrmf(nr, (x + nl)));
 }
 
 double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x)
@@ -1515,7 +1515,7 @@ static __m512 rzsunrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
   const size_t nr = (n - nl);
-  return pvn_v16s_hypot(rzs_nrmf(nl, x), rzs_nrmf(nr, (x + nl)));
+  return pvn_v16s_hypot(rzsunrmf(nl, x), rzsunrmf(nr, (x + nl)));
 }
 
 float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x)
@@ -1615,7 +1615,7 @@ static __m512d rzdunrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-  return pvn_v8d_hypot(rzd_nrmf(nl, x), rzd_nrmf(nr, (x + nl)));
+  return pvn_v8d_hypot(rzdunrmf(nl, x), rzdunrmf(nr, (x + nl)));
 }
 
 double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x)
