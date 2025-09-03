@@ -1097,16 +1097,12 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m128 fl, fr;
   cilk_scope {
     fl = cilk_spawn rxs_nrmf(nl, x);
     fr = rxs_nrmf(nr, (x + nl));
   }
   return pvn_v4s_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v4s_hypot(rxs_nrmf(nl, x), rxs_nrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 static __m128 rxsunrmf(const size_t n, const float *const x)
@@ -1141,16 +1137,12 @@ static __m128 rxsunrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m128 fl, fr;
   cilk_scope {
     fl = cilk_spawn rxsunrmf(nl, x);
     fr = rxsunrmf(nr, (x + nl));
   }
   return pvn_v4s_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v4s_hypot(rxsunrmf(nl, x), rxsunrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x)
@@ -1191,16 +1183,12 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m128d fl, fr;
   cilk_scope {
     fl = cilk_spawn rxd_nrmf(nl, x);
     fr = rxd_nrmf(nr, (x + nl));
   }
   return pvn_v2d_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v2d_hypot(rxd_nrmf(nl, x), rxd_nrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 static __m128d rxdunrmf(const size_t n, const double *const x)
@@ -1227,16 +1215,12 @@ static __m128d rxdunrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m128d fl, fr;
   cilk_scope {
     fl = cilk_spawn rxdunrmf(nl, x);
     fr = rxdunrmf(nr, (x + nl));
   }
   return pvn_v2d_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v2d_hypot(rxdunrmf(nl, x), rxdunrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x)
@@ -1292,16 +1276,12 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m256 fl, fr;
   cilk_scope {
     fl = cilk_spawn rys_nrmf(nl, x);
     fr = rys_nrmf(nr, (x + nl));
   }
   return pvn_v8s_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v8s_hypot(rys_nrmf(nl, x), rys_nrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 static __m256 rysunrmf(const size_t n, const float *const x)
@@ -1344,16 +1324,12 @@ static __m256 rysunrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m256 fl, fr;
   cilk_scope {
     fl = cilk_spawn rysunrmf(nl, x);
     fr = rysunrmf(nr, (x + nl));
   }
   return pvn_v8s_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v8s_hypot(rysunrmf(nl, x), rysunrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x)
@@ -1402,16 +1378,12 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m256d fl, fr;
   cilk_scope {
     fl = cilk_spawn ryd_nrmf(nl, x);
     fr = ryd_nrmf(nr, (x + nl));
   }
   return pvn_v4d_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v4d_hypot(ryd_nrmf(nl, x), ryd_nrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 static __m256d rydunrmf(const size_t n, const double *const x)
@@ -1446,16 +1418,12 @@ static __m256d rydunrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m256d fl, fr;
   cilk_scope {
     fl = cilk_spawn rydunrmf(nl, x);
     fr = rydunrmf(nr, (x + nl));
   }
   return pvn_v4d_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v4d_hypot(rydunrmf(nl, x), rydunrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x)
@@ -1528,16 +1496,12 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m512 fl, fr;
   cilk_scope {
     fl = cilk_spawn rzs_nrmf(nl, x);
     fr = rzs_nrmf(nr, (x + nl));
   }
   return pvn_v16s_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v16s_hypot(rzs_nrmf(nl, x), rzs_nrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 static __m512 rzsunrmf(const size_t n, const float *const x)
@@ -1596,16 +1560,12 @@ static __m512 rzsunrmf(const size_t n, const float *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m512 fl, fr;
   cilk_scope {
     fl = cilk_spawn rzsunrmf(nl, x);
     fr = rzsunrmf(nr, (x + nl));
   }
   return pvn_v16s_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v16s_hypot(rzsunrmf(nl, x), rzsunrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x)
@@ -1662,16 +1622,12 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m512d fl, fr;
   cilk_scope {
     fl = cilk_spawn rzd_nrmf(nl, x);
     fr = rzd_nrmf(nr, (x + nl));
   }
   return pvn_v8d_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v8d_hypot(rzd_nrmf(nl, x), rzd_nrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 static __m512d rzdunrmf(const size_t n, const double *const x)
@@ -1714,16 +1670,12 @@ static __m512d rzdunrmf(const size_t n, const double *const x)
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-#ifdef PVN_CILK
   register __m512d fl, fr;
   cilk_scope {
     fl = cilk_spawn rzdunrmf(nl, x);
     fr = rzdunrmf(nr, (x + nl));
   }
   return pvn_v8d_hypot(fl, fr);
-#else /* !PVN_CILK */
-  return pvn_v8d_hypot(rzdunrmf(nl, x), rzdunrmf(nr, (x + nl)));
-#endif /* ?PVN_CILK */
 }
 
 double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x)
