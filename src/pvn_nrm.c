@@ -78,8 +78,9 @@ int main(int argc, char *argv[])
   else
     return 8;
   long long t = 0ll;
-  double e = ((argc > 3) ? atof(argv[3u]) : 0.0);
-#if (defined(PVN_MPFR) && !defined(_OPENMP))
+  double e = ((argc > 3) ? atof(argv[3u]) : 0.0), f = 0.0;
+#ifndef PVN_CILK
+#ifdef PVN_MPFR
   if (argc <= 3) {
     mpfr_rnd_t rnd = MPFR_RNDN;
     mpfr_prec_t prec = 2048l;
@@ -93,9 +94,7 @@ int main(int argc, char *argv[])
     t = pvn_time_mono_ns() - t;
     (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", e, 0.0, t);
   }
-#endif /* PVN_MPFR && !_OPENMP */
-  double f = 0.0;
-#ifndef _OPENMP
+#endif /* PVN_MPFR */
   (void)printf((idist < 0) ? "pvn_las_nrmf=" : "pvn_lad_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
@@ -103,15 +102,14 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
   (void)printf((idist < 0) ? "pvn_snrm2[s]=" : "pvn_dnrm2[s]=");
-#else /* _OPENMP */
+#else /* PVN_CILK */
   (void)printf((idist < 0) ? "pvn_snrm2[p]=" : "pvn_dnrm2[p]=");
-#endif /* ?_OPENMP */
+#endif /* ?PVN_CILK */
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = ((idist < 0) ? PVN_FABI(pvn_snrm2,PVN_SNRM2)(&n, (const float*)x) : PVN_FABI(pvn_dnrm2,PVN_DNRM2)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
-#ifndef _OPENMP
 #ifdef PVN_NRM_SAFE
   (void)printf((idist < 0) ? "pvn_rfs_nrmf=" : "pvn_rfd_nrmf=");
 #else /* !PVN_NRM_SAFE */
@@ -152,17 +150,16 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
 #endif /* __AVX512F__ */
-#endif /* !_OPENMP */
   (void)printf((idist < 0) ? "pvn_crs_nrmf=" : "pvn_crd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = ((idist < 0) ? PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
-#if (defined(PVN_MPFR) && !defined(_OPENMP))
+#ifdef PVN_MPFR
   if (argc <= 3)
     (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
-#endif /* PVN_MPFR && !_OPENMP */
+#endif /* PVN_MPFR */
   free(x);
   return 0;
 }
@@ -294,8 +291,11 @@ float PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(const size_t *const n, const float *co
     return hypotf(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const float fl = PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&nl, x);
-  const float fr = PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&nr, (x + nl));
+  float fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&nr, (x + nl));
+  }
   return hypotf(fl, fr);
 }
 
@@ -315,8 +315,11 @@ double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *
     return hypot(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const double fl = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&nl, x);
-  const double fr = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&nr, (x + nl));
+  double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&nr, (x + nl));
+  }
   return hypot(fl, fr);
 }
 
@@ -336,8 +339,11 @@ long double PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(const size_t *const n, const lon
     return hypotl(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const long double fl = PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&nl, x);
-  const long double fr = PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&nr, (x + nl));
+  long double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(&nr, (x + nl));
+  }
   return hypotl(fl, fr);
 }
 
@@ -357,8 +363,11 @@ float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *co
     return __builtin_hypotf(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const float fl = PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&nl, x);
-  const float fr = PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&nr, (x + nl));
+  float fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&nr, (x + nl));
+  }
   return __builtin_hypotf(fl, fr);
 }
 
@@ -378,8 +387,11 @@ double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *
     return __builtin_hypot(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const double fl = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&nl, x);
-  const double fr = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&nr, (x + nl));
+  double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&nr, (x + nl));
+  }
   return __builtin_hypot(fl, fr);
 }
 
@@ -399,8 +411,11 @@ long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const n, const lon
     return __builtin_hypotl(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const long double fl = PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&nl, x);
-  const long double fr = PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&nr, (x + nl));
+  long double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&nr, (x + nl));
+  }
   return __builtin_hypotl(fl, fr);
 }
 
@@ -420,8 +435,11 @@ float PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(const size_t *const n, const float *co
     return pvn_v1s_hypot(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const float fl = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nl, x);
-  const float fr = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nr, (x + nl));
+  float fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nr, (x + nl));
+  }
   return pvn_v1s_hypot(fl, fr);
 }
 
@@ -441,8 +459,11 @@ double PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(const size_t *const n, const double *
     return pvn_v1d_hypot(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const double fl = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nl, x);
-  const double fr = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nr, (x + nl));
+  double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nr, (x + nl));
+  }
   return pvn_v1d_hypot(fl, fr);
 }
 
@@ -462,8 +483,11 @@ long double PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(const size_t *const n, const lon
     return pvn_v1x_hypot(x[0u], x[1u]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const long double fl = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nl, x);
-  const long double fr = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nr, (x + nl));
+  long double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nr, (x + nl));
+  }
   return pvn_v1x_hypot(fl, fr);
 }
 
@@ -854,8 +878,11 @@ __float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __fl
     return hypotq(x[0], x[1]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const __float128 fl = PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&nl, x);
-  const __float128 fr = PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&nr, (x + nl));
+  __float128 fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&nr, (x + nl));
+  }
   return hypotq(fl, fr);
 }
 
@@ -883,8 +910,11 @@ __float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const __fl
 #endif /* ?__MATHIMF_H_INCLUDED */
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const __float128 fl = PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(&nl, x);
-  const __float128 fr = PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(&nr, (x + nl));
+  __float128 fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(&nr, (x + nl));
+  }
 #ifdef __MATHIMF_H_INCLUDED
   return __hypotq(fl, fr);
 #else /* !__MATHIMF_H_INCLUDED */
@@ -912,8 +942,11 @@ __float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __fl
     return pvn_v1q_hypot(x[0], x[1]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  const __float128 fl = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nl, x);
-  const __float128 fr = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nr, (x + nl));
+  __float128 fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nl, x);
+    fr = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nr, (x + nl));
+  }
   return pvn_v1q_hypot(fl, fr);
 }
 
