@@ -59,9 +59,10 @@ int main(int argc, char *argv[])
   if (!x)
     return 7;
   int iseed[4u] = { (int)(ls.l & 0xFFFull), (int)((ls.l >> 12u) & 0xFFFull), (int)((ls.l >> 24u) & 0xFFFull), (int)((ls.l >> 36u) & 0xFFFull) };
+  const int adist = abs(idist);
   if (idist == -3) {
     for (size_t i = (size_t)0u; i < n; ++i)
-      ((float*)x)[i] = PVN_FABI(slarnd,SLARND)(&idist, iseed);
+      ((float*)x)[i] = PVN_FABI(slarnd,SLARND)(&adist, iseed);
   }
   else if (idist == -1) {
     for (size_t i = (size_t)0u; i < n; ++i)
@@ -73,7 +74,7 @@ int main(int argc, char *argv[])
   }
   else if (idist == 3) {
     for (size_t i = (size_t)0u; i < n; ++i)
-      ((double*)x)[i] = PVN_FABI(dlarnd,DLARND)(&idist, iseed);
+      ((double*)x)[i] = PVN_FABI(dlarnd,DLARND)(&adist, iseed);
   }
   else
     return 8;
@@ -156,10 +157,12 @@ int main(int argc, char *argv[])
   f = ((idist < 0) ? PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+#ifndef PVN_CILK
 #ifdef PVN_MPFR
   if (argc <= 3)
     (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
 #endif /* PVN_MPFR */
+#endif /* !PVN_CILK */
   free(x);
   return 0;
 }

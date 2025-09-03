@@ -67,6 +67,7 @@
 #include <omp.h>
 #endif /* _OPENMP */
 #ifndef PVN_CILK
+#define cilk_for for
 #define cilk_scope
 #define cilk_spawn
 #endif /* !PVN_CILK */
