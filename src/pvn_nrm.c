@@ -151,13 +151,13 @@ int main(int argc, char *argv[])
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
 #endif /* __AVX512F__ */
+#ifndef PVN_CILK
   (void)printf((idist < 0) ? "pvn_crs_nrmf=" : "pvn_crd_nrmf=");
   (void)fflush(stdout);
   t = pvn_time_mono_ns();
   f = ((idist < 0) ? PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(&n, (const float*)x) : PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(&n, (const double*)x));
   t = pvn_time_mono_ns() - t;
   (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
-#ifndef PVN_CILK
 #ifdef PVN_MPFR
   if (argc <= 3)
     (void)PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();

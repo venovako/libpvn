@@ -27,12 +27,17 @@ int main(/* int argc, char *argv[] */)
 #else /* !NDEBUG */
   (void)printf("for debugging ");
 #endif /* ?NDEBUG */
-  (void)printf("and with OpenMP ");
+  (void)printf("and with ");
+#ifdef PVN_CILK
+  (void)printf("OpenCilk %d\n", PVN_CILK);
+#else /* !PVN_CILK */
+  (void)printf("OpenMP ");
 #ifdef _OPENMP
   (void)printf("%d\n", _OPENMP);
 #else /* !_OPENMP */
   (void)printf("disabled\n");
 #endif /* ?_OPENMP */
+#endif /* ?PVN_CILK */
   (void)printf("endianness  : %s\n", (pvn_le() ? "little" : "big"));
 #ifdef PVN_CR_MATH
   (void)printf("PVN_CR_MATH : %s\n", PVN_CR_MATH);
