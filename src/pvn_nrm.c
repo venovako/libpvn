@@ -1108,7 +1108,7 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)3u),
     m = ((n >> 2u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1148,7 +1148,7 @@ static __m128 rxsunrmf(const size_t n, const float *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)3u),
     m = ((n >> 2u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1202,7 +1202,7 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)1u),
     m = ((n >> 1u) + r);
   if (m == (size_t)1u) {
@@ -1234,7 +1234,7 @@ static __m128d rxdunrmf(const size_t n, const double *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)1u),
     m = ((n >> 1u) + r);
   if (m == (size_t)1u) {
@@ -1279,7 +1279,7 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)7u),
     m = ((n >> 3u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1327,7 +1327,7 @@ static __m256 rysunrmf(const size_t n, const float *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)7u),
     m = ((n >> 3u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1389,7 +1389,7 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)3u),
     m = ((n >> 2u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1429,7 +1429,7 @@ static __m256d rydunrmf(const size_t n, const double *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)3u),
     m = ((n >> 2u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1483,7 +1483,7 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)15u),
     m = ((n >> 4u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1547,7 +1547,7 @@ static __m512 rzsunrmf(const size_t n, const float *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)15u),
     m = ((n >> 4u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
@@ -1625,7 +1625,7 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
   if (!n)
     return z;
 #endif /* !NDEBUG */
-  size_t
+  const size_t
     r = (n & (size_t)7u),
     m = ((n >> 3u) + (r != (size_t)0u));
   if (m == (size_t)1u) {
