@@ -14,3 +14,7 @@ then
 	unset OMP_PROC_BIND
 fi
 export OMP_PROC_BIND=SPREAD
+if [ -n "${CILK_NWORKERS}" ]
+then
+	unset CILK_NWORKERS
+fi
