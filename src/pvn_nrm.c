@@ -1125,15 +1125,14 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
       return z;
     }
   }
+  register __m128 fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v4s_hypot(_mm_load_ps(x), rxs_nrmf(r, (x + 4u)));
-    else
-      return pvn_v4s_hypot(_mm_load_ps(x), _mm_load_ps(x + 4u));
+    fl = _mm_load_ps(x);
+    fr = (r ? rxs_nrmf(r, (x + 4u)) : _mm_load_ps(x + 4u));
+    return pvn_v4s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  register __m128 fl, fr;
   cilk_scope {
     fl = cilk_spawn rxs_nrmf(nl, x);
     fr = rxs_nrmf(nr, (x + nl));
@@ -1165,15 +1164,15 @@ static __m128 rxsunrmf(const size_t n, const float *const x)
       return z;
     }
   }
+  register __m128 fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v4s_hypot(_mm_loadu_ps(x), rxs_nrmf(r, (x + 4u)));
-    else
-      return pvn_v4s_hypot(_mm_loadu_ps(x), _mm_loadu_ps(x + 4u));
+    fl = _mm_loadu_ps(x);
+    fr = (r ? rxs_nrmf(r, (x + 4u)) : _mm_loadu_ps(x + 4u));
+    return pvn_v4s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  register __m128 fl, fr;
+
   cilk_scope {
     fl = cilk_spawn rxsunrmf(nl, x);
     fr = rxsunrmf(nr, (x + nl));
@@ -1211,15 +1210,14 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
     else
       return _mm_andnot_pd(z, _mm_load_pd(x));
   }
+  register __m128d fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v2d_hypot(_mm_load_pd(x), rxd_nrmf(r, (x + 2u)));
-    else
-      return pvn_v2d_hypot(_mm_load_pd(x), _mm_load_pd(x + 2u));
+    fl = _mm_load_pd(x);
+    fr = (r ? rxd_nrmf(r, (x + 2u)) : _mm_load_pd(x + 2u));
+    return pvn_v2d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
   const size_t nr = (n - nl);
-  register __m128d fl, fr;
   cilk_scope {
     fl = cilk_spawn rxd_nrmf(nl, x);
     fr = rxd_nrmf(nr, (x + nl));
@@ -1243,15 +1241,14 @@ static __m128d rxdunrmf(const size_t n, const double *const x)
     else
       return _mm_andnot_pd(z, _mm_loadu_pd(x));
   }
+  register __m128d fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v2d_hypot(_mm_loadu_pd(x), rxd_nrmf(r, (x + 2u)));
-    else
-      return pvn_v2d_hypot(_mm_loadu_pd(x), _mm_loadu_pd(x + 2u));
+    fl = _mm_loadu_pd(x);
+    fr = (r ? rxd_nrmf(r, (x + 2u)) : _mm_loadu_pd(x + 2u));
+    return pvn_v2d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
   const size_t nr = (n - nl);
-  register __m128d fl, fr;
   cilk_scope {
     fl = cilk_spawn rxdunrmf(nl, x);
     fr = rxdunrmf(nr, (x + nl));
@@ -1304,15 +1301,14 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
       return z;
     }
   }
+  register __m256 fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v8s_hypot(_mm256_load_ps(x), rys_nrmf(r, (x + 8u)));
-    else
-      return pvn_v8s_hypot(_mm256_load_ps(x), _mm256_load_ps(x + 8u));
+    fl = _mm256_load_ps(x);
+    fr = (r ? rys_nrmf(r, (x + 8u)) : _mm256_load_ps(x + 8u));
+    return pvn_v8s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-  register __m256 fl, fr;
   cilk_scope {
     fl = cilk_spawn rys_nrmf(nl, x);
     fr = rys_nrmf(nr, (x + nl));
@@ -1352,15 +1348,14 @@ static __m256 rysunrmf(const size_t n, const float *const x)
       return z;
     }
   }
+  register __m256 fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v8s_hypot(_mm256_loadu_ps(x), rys_nrmf(r, (x + 8u)));
-    else
-      return pvn_v8s_hypot(_mm256_loadu_ps(x), _mm256_loadu_ps(x + 8u));
+    fl = _mm256_loadu_ps(x);
+    fr = (r ? rys_nrmf(r, (x + 8u)) : _mm256_loadu_ps(x + 8u));
+    return pvn_v8s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-  register __m256 fl, fr;
   cilk_scope {
     fl = cilk_spawn rysunrmf(nl, x);
     fr = rysunrmf(nr, (x + nl));
@@ -1406,15 +1401,14 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
       return z;
     }
   }
+  register __m256d fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v4d_hypot(_mm256_load_pd(x), ryd_nrmf(r, (x + 4u)));
-    else
-      return pvn_v4d_hypot(_mm256_load_pd(x), _mm256_load_pd(x + 4u));
+    fl = _mm256_load_pd(x);
+    fr = (r ? ryd_nrmf(r, (x + 4u)) : _mm256_load_pd(x + 4u));
+    return pvn_v4d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  register __m256d fl, fr;
   cilk_scope {
     fl = cilk_spawn ryd_nrmf(nl, x);
     fr = ryd_nrmf(nr, (x + nl));
@@ -1446,15 +1440,14 @@ static __m256d rydunrmf(const size_t n, const double *const x)
       return z;
     }
   }
+  register __m256d fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v4d_hypot(_mm256_loadu_pd(x), ryd_nrmf(r, (x + 4u)));
-    else
-      return pvn_v4d_hypot(_mm256_loadu_pd(x), _mm256_loadu_pd(x + 4u));
+    fl = _mm256_loadu_pd(x);
+    fr = (r ? ryd_nrmf(r, (x + 4u)) : _mm256_loadu_pd(x + 4u));
+    return pvn_v4d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
   const size_t nr = (n - nl);
-  register __m256d fl, fr;
   cilk_scope {
     fl = cilk_spawn rydunrmf(nl, x);
     fr = rydunrmf(nr, (x + nl));
@@ -1524,15 +1517,14 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
       return z;
     }
   }
+  register __m512 fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v16s_hypot(_mm512_load_ps(x), rzs_nrmf(r, (x + 16u)));
-    else
-      return pvn_v16s_hypot(_mm512_load_ps(x), _mm512_load_ps(x + 16u));
+    fl = _mm512_load_ps(x);
+    fr = (r ? rzs_nrmf(r, (x + 16u)) : _mm512_load_ps(x + 16u));
+    return pvn_v16s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
   const size_t nr = (n - nl);
-  register __m512 fl, fr;
   cilk_scope {
     fl = cilk_spawn rzs_nrmf(nl, x);
     fr = rzs_nrmf(nr, (x + nl));
@@ -1588,15 +1580,14 @@ static __m512 rzsunrmf(const size_t n, const float *const x)
       return z;
     }
   }
+  register __m512 fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v16s_hypot(_mm512_loadu_ps(x), rzs_nrmf(r, (x + 16u)));
-    else
-      return pvn_v16s_hypot(_mm512_loadu_ps(x), _mm512_loadu_ps(x + 16u));
+    fl = _mm512_loadu_ps(x);
+    fr = (r ? rzs_nrmf(r, (x + 16u)) : _mm512_loadu_ps(x + 16u));
+    return pvn_v16s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
   const size_t nr = (n - nl);
-  register __m512 fl, fr;
   cilk_scope {
     fl = cilk_spawn rzsunrmf(nl, x);
     fr = rzsunrmf(nr, (x + nl));
@@ -1650,15 +1641,14 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
       return z;
     }
   }
+  register __m512d fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v8d_hypot(_mm512_load_pd(x), rzd_nrmf(r, (x + 8u)));
-    else
-      return pvn_v8d_hypot(_mm512_load_pd(x), _mm512_load_pd(x + 8u));
+    fl = _mm512_load_pd(x);
+    fr = (r ? rzd_nrmf(r, (x + 8u)) : _mm512_load_pd(x + 8u));
+    return pvn_v8d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-  register __m512d fl, fr;
   cilk_scope {
     fl = cilk_spawn rzd_nrmf(nl, x);
     fr = rzd_nrmf(nr, (x + nl));
@@ -1698,15 +1688,14 @@ static __m512d rzdunrmf(const size_t n, const double *const x)
       return z;
     }
   }
+  register __m512d fl, fr;
   if (m == (size_t)2u) {
-    if (r)
-      return pvn_v8d_hypot(_mm512_loadu_pd(x), rzd_nrmf(r, (x + 8u)));
-    else
-      return pvn_v8d_hypot(_mm512_loadu_pd(x), _mm512_loadu_pd(x + 8u));
+    fl = _mm512_loadu_pd(x);
+    fr = (r ? rzd_nrmf(r, (x + 8u)) : _mm512_loadu_pd(x + 8u));
+    return pvn_v8d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
   const size_t nr = (n - nl);
-  register __m512d fl, fr;
   cilk_scope {
     fl = cilk_spawn rzdunrmf(nl, x);
     fr = rzdunrmf(nr, (x + nl));
