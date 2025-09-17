@@ -64,11 +64,11 @@ int main(int argc, char *argv[])
 #endif /* ?NDEBUG */
         break;
       case 'd':
-#ifdef PVN_DYNAMIC
-        (void)printf("dynamic=%s\n", PVN_DYNAMIC);
-#else /* !PVN_DYNAMIC */
+#if (defined(PVN_DYNAMIC) || (defined(_WIN32) && defined(_DLL)))
+        (void)printf("dynamic=true\n");
+#else /* !DYNAMIC */
         (void)printf("dynamic=false\n");
-#endif /* ?PVN_DYNAMIC */
+#endif /* ?DYNAMIC */
         break;
       case 'p':
 #ifdef _OPENMP
@@ -86,8 +86,9 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
       }
     }
-    argc -= optind;
     argv += optind;
+    if ((argc -= optind) < 0)
+      return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 }

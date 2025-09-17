@@ -50,6 +50,7 @@
  */
 
 /* modified by venovako from /usr/src/lib/libc/stdlib/getopt_long.c */
+/* https://cvsweb.openbsd.org/src/lib/libc/stdlib/getopt_long.c */
 
 #include <errno.h>
 #include "getopt.h"
@@ -61,12 +62,14 @@
 /* venovako: */ static const char *__progname = (const char*)NULL;
 
 /* venovako: modified from /usr/src/include/err.h */
+/* https://cvsweb.openbsd.org/src/include/err.h */
 static void	warnx(const char *, ...)
 			__attribute__((__format__ (printf, 1, 2)));
 static void	vwarnx(const char *, __builtin_va_list)
 			__attribute__((__format__ (printf, 1, 0)));
 
 /* venovako: modified from /usr/src/lib/libc/gen/vwarnx.c */
+/* https://cvsweb.openbsd.org/src/lib/libc/gen/vwarnx.c */
 static void vwarnx(const char *fmt, va_list ap)
 {
 	(void)fprintf(stderr, "%s: ", __progname);
@@ -76,6 +79,7 @@ static void vwarnx(const char *fmt, va_list ap)
 }
 
 /* venovako: modified from /usr/src/lib/libc/gen/warnx.c */
+/* https://cvsweb.openbsd.org/src/lib/libc/gen/warnx.c */
 static void warnx(const char *fmt, ...)
 {
 	va_list ap;
