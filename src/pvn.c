@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         break;
       default:
       err:
-        (void)fprintf(stderr, "Usage: %s [-d|--dynamic] [-g|--debug] [-p|--parallel]\n", *argv);
+        (void)fprintf(stderr, "Usage: pvn.exe [-d|--dynamic] [-g|--debug] [-p|--parallel]\n");
         return EXIT_FAILURE;
       }
     }
