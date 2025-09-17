@@ -82,13 +82,15 @@ int main(int argc, char *argv[])
 #endif /* ?_OPENMP */
         break;
       default:
+      err:
         (void)fprintf(stderr, "Usage: %s [-d|--dynamic] [-g|--debug] [-p|--parallel]\n", *argv);
         return EXIT_FAILURE;
       }
     }
     argv += optind;
-    if ((argc -= optind) < 0)
-      return EXIT_FAILURE;
+    argc -= optind;
+    if (argc)
+      goto err;
   }
   return EXIT_SUCCESS;
 }
