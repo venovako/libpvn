@@ -41,6 +41,14 @@ PVN_EXTERN_C double PVN_FABI(pvn_znrm2,PVN_ZNRM2)(const size_t *const n, const d
 PVN_EXTERN_C long double PVN_FABI(pvn_xnrm2,PVN_XNRM2)(const size_t *const n, const long double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_wnrm2,PVN_WNRM2)(const size_t *const n, const long double *const x);
 
+PVN_EXTERN_C float PVN_FABI(pvn_slp2,PVN_SLP2)(const float *const p, const float *const x, const float *const y);
+PVN_EXTERN_C double PVN_FABI(pvn_dlp2,PVN_DLP2)(const double *const p, const double *const x, const double *const y);
+PVN_EXTERN_C long double PVN_FABI(pvn_xlp2,PVN_XLP2)(const long double *const p, const long double *const x, const long double *const y);
+
+PVN_EXTERN_C float PVN_FABI(pvn_snrmp,PVN_SNRMP)(const float *const p, const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_dnrmp,PVN_DNRMP)(const double *const p, const size_t *const n, const double *const x);
+PVN_EXTERN_C long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size_t *const n, const long double *const x);
+
 #ifdef PVN_QUADMATH
 #ifdef PVN_MPFR
 PVN_EXTERN_C __float128 PVN_FABI(pvn_mpq_nrmf,PVN_MPQ_NRMF)(const size_t *const n, const __float128 *const x);
