@@ -47,15 +47,14 @@
 #endif /* ?__cplusplus */
 
 #include <stdalign.h>
-#ifndef _WIN32
-#include <dlfcn.h>
-#endif /* !_WIN32 */
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <io.h>
 #else /* !_WIN32 */
+#include <dlfcn.h>
+#include <getopt.h>
 #include <sys/uio.h>
 #include <execinfo.h>
 #include <pthread.h>

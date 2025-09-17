@@ -1,5 +1,4 @@
 #include "pvn.h"
-#include "../inc/pvn_cjs_ME.h"
 
 #ifdef PVN_TEST
 static int test_rolcyc(const int id, const int n)
@@ -138,6 +137,8 @@ int main(int argc, char *argv[])
   return ((ret <= 0) ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 #else /* !PVN_TEST */
+#include "../inc/pvn_cjs_ME.h"
+
 static int *me_dup(const int n1, const int *const tbl)
 {
   if (!tbl)
