@@ -33,12 +33,14 @@ int main(/* int argc, char *argv[] */)
 }
 #else /* !PVN_TEST */
 #ifdef PVN_CR_MATH
-#if !(defined(PVN_QUADMATH) || (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9)))
+#ifndef __x86_64__
+/* This might not be correctly rounded! */
 long double cr_powl(long double x, long double y)
 {
   return __builtin_powl(x, y);
 }
-
+#endif /* !__x86_64__ */
+#if !(defined(PVN_QUADMATH) || (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9)))
 /* This is not correctly rounded, but is at least reproducible. */
 
 long double cr_hypotl(long double x, long double y)
