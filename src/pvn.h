@@ -1,6 +1,12 @@
 #ifndef PVN_H
 #define PVN_H
 
+#ifdef _WIN32
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif /* !_USE_MATH_DEFINES */
+#endif /* _WIN32 */
+
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
 #include <mathimf.h>
 #else /* !Intel */
@@ -52,6 +58,7 @@
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <io.h>
+#include "../inc/getopt.h"
 #else /* !_WIN32 */
 #include <dlfcn.h>
 #include <getopt.h>

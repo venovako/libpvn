@@ -10,6 +10,11 @@ This software is a supplementary material for the papers:
 
 Some functions have been adapted from those in the repositories [JACSD](https://github.com/venovako/JACSD) and [VecJac](https://github.com/venovako/VecJac).
 
+A `getopt(3)`, `getopt_long(3)`, and `getopt_long_only(3)` implementation for Windows, in the `inc` subdirectory, has been modified from the [OpenBSD](https://www.openbsd.org) sources.
+
+Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
+Their slightly modified implementations included here, in the `inc` subdirectory, will be taken if `CR_MATH` is not set.
+
 ## Building
 
 The library has been successfully built using:
@@ -66,9 +71,7 @@ Fortran (column-major) array order is assumed for the functions that operate on 
 
 A function with the name ending with an underscore (`_`) should be callable from Fortran without an explicit interface, just by declaring it `EXTERNAL` (without the underscore).
 
-Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
-Their slightly modified implementations included here will be taken if `CR_MATH` is not set.
-Otherwise, set the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path.
+Setting the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path overrides the included choice of the CORE-MATH functions.
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
 The object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
 

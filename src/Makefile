@@ -66,7 +66,8 @@ pvn_timer.c \
 ..\inc\rsqrtl_noerrno.c \
 ..\inc\hypotq_noerrno.c \
 ..\inc\rsqrtq_noerrno.c \
-..\inc\sqrtq_noerrno.c
+..\inc\sqrtq_noerrno.c \
+..\inc\getopt_long.c
 OBJS= \
 pvn.obj \
 pvn_aux.obj \
@@ -105,7 +106,8 @@ pvn_timer.obj \
 ..\inc\rsqrtl_noerrno.obj \
 ..\inc\hypotq_noerrno.obj \
 ..\inc\rsqrtq_noerrno.obj \
-..\inc\sqrtq_noerrno.obj
+..\inc\sqrtq_noerrno.obj \
+..\inc\getopt_long.obj
 EXES= \
 pvn.exe \
 pvn_aux.exe \
