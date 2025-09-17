@@ -320,7 +320,7 @@ getopt_internal(int nargc, char * const *nargv, const char *options,
 	int optchar, short_too;
 	static int posixly_correct = -1;
 
-        /* venovako: */ __progname = *nargv;
+        /* venovako: */ if (!__progname) __progname = *nargv;
 
 	if (options == NULL)
 		return (-1);
