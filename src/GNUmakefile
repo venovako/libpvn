@@ -95,9 +95,11 @@ ifdef CR_MATH
 CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
 CR_SRCS= \
 $(realpath $(CR_MATH)/src/binary32/hypot/hypotf.c) \
+$(realpath $(CR_MATH)/src/binary32/pow/powf.c) \
 $(realpath $(CR_MATH)/src/binary32/rsqrt/rsqrtf.c) \
 $(realpath $(CR_MATH)/src/binary32/sincos/sincosf.c) \
 $(realpath $(CR_MATH)/src/binary64/hypot/hypot.c) \
+$(realpath $(CR_MATH)/src/binary64/pow/pow.c) \
 $(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c) \
 $(realpath $(CR_MATH)/src/binary64/sincos/sincos.c)
 ifdef QUADMATH
@@ -109,6 +111,7 @@ endif # QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
 CR_SRCS += \
 $(realpath $(CR_MATH)/src/binary80/hypot/hypotl.c) \
+$(realpath $(CR_MATH)/src/binary80/pow/powl.c) \
 $(realpath $(CR_MATH)/src/binary80/rsqrt/rsqrtl.c)
 endif # 86
 else # !CR_MATH
@@ -119,9 +122,11 @@ CFLAGS += -DPVN_CR_MATH="\"bundled\"" -DCORE_MATH_SUPPORT_ERRNO
 endif # ?NDEBUG
 CR_SRCS= \
 ../inc/hypotf_noerrno.c \
+../inc/powf_noerrno.c \
 ../inc/rsqrtf_noerrno.c \
 ../inc/sincosf_noerrno.c \
 ../inc/hypot_noerrno.c \
+../inc/pow_noerrno.c \
 ../inc/rsqrt_noerrno.c \
 ../inc/sincos_noerrno.c
 ifdef QUADMATH
@@ -140,6 +145,7 @@ endif # ?QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
 CR_SRCS += \
 ../inc/hypotl_noerrno.c \
+../inc/powl_noerrno.c \
 ../inc/rsqrtl_noerrno.c
 endif # 86
 endif # ?CR_MATH
