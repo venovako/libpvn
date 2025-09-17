@@ -89,15 +89,15 @@ static inline
 void exactify(qint64_t* a) {
 	if((a->hl>>62) & 1) {
 		uint64_t oldhl = a->hl;
-		a->hl += (1ul << 63);
+		a->hl += (1ull << 63);
 		if(a->hl < oldhl) {
 			a->hh++;
 		}
 
 		if(__builtin_expect(!a->hh, 0)) {
-			a->hh = 1ul << 63;
+			a->hh = 1ull << 63;
 			a->ex++;
 		}
 	}
-	a->hl &= 1ul<<63; a->lh = a->ll = 0;
+	a->hl &= 1ull<<63; a->lh = a->ll = 0;
 }
