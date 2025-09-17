@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
       (void)fprintf(stderr, "PVN_MPFR_START=%d\n", t);
       return EXIT_FAILURE;
     }
-    double a = nan("a"), b = nan("b"), c = nan("c"), d = nan("d"), r = nan("r"), x = nan("x"), e = INFINITY, E = 0.0;
+    double a = __builtin_nan("a"), b = __builtin_nan("b"), c = __builtin_nan("c"), d = __builtin_nan("d"), r = __builtin_nan("r"), x = __builtin_nan("x"), e = __builtin_inf(), E = 0.0;
     mpfr_t ma, mb, mc, md, mr, mx;
     t = mpfr_init_set_d(ma, a, MPFR_RNDN);
     t = mpfr_init_set_d(mb, b, MPFR_RNDN);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     const double c = atof(argv[3]);
     const double d = atof(argv[4]);
     char s[26] = { '\0' };
-    double x = nan("x"),
+    double x = __builtin_nan("x"),
       y = pvn_ddet(a, b, c, d);
     (void)printf("pvn_ddet=%s\n", pvn_dtoa(s, y));
     int t = 0;

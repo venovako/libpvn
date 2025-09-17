@@ -132,8 +132,8 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
   if (!*fnB)
     return -5;
 
-  ctx->minB =  INFINITY;
-  ctx->maxB = -INFINITY;
+  ctx->minB =  __builtin_inff();
+  ctx->maxB = -__builtin_inff();
   ctx->op = op;
   ctx->B = (float*)NULL;
   ctx->m = m;
@@ -201,8 +201,8 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
   if (!*fnB)
     return -5;
 
-  ctx->minB =  INFINITY;
-  ctx->maxB = -INFINITY;
+  ctx->minB =  __builtin_inf();
+  ctx->maxB = -__builtin_inf();
   ctx->op = op;
   ctx->B = (double*)NULL;
   ctx->m = m;
@@ -271,8 +271,8 @@ int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned
   if (!*fnB)
     return -5;
 
-  ctx->minB =  INFINITY;
-  ctx->maxB = -INFINITY;
+  ctx->minB =  __builtin_infl();
+  ctx->maxB = -__builtin_infl();
   ctx->op = op;
   ctx->B = (long double*)NULL;
   ctx->m = m;
@@ -967,8 +967,8 @@ int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned
   if (!*fnC)
     return -6;
 
-  ctx->minC = ctx->minB =  INFINITY;
-  ctx->maxC = ctx->maxB = -INFINITY;
+  ctx->minC = ctx->minB =  __builtin_inff();
+  ctx->maxC = ctx->maxB = -__builtin_inff();
   ctx->op = op;
   ctx->C = ctx->B = (float*)NULL;
   ctx->m = m;
@@ -1064,8 +1064,8 @@ int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, 
   if (!*fnC)
     return -6;
 
-  ctx->minC = ctx->minB =  INFINITY;
-  ctx->maxC = ctx->maxB = -INFINITY;
+  ctx->minC = ctx->minB =  __builtin_inf();
+  ctx->maxC = ctx->maxB = -__builtin_inf();
   ctx->op = op;
   ctx->C = ctx->B = (double*)NULL;
   ctx->m = m;
@@ -1162,8 +1162,8 @@ int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned
   if (!*fnC)
     return -6;
 
-  ctx->minC = ctx->minB =  INFINITY;
-  ctx->maxC = ctx->maxB = -INFINITY;
+  ctx->minC = ctx->minB =  __builtin_infl();
+  ctx->maxC = ctx->maxB = -__builtin_infl();
   ctx->op = op;
   ctx->C = ctx->B = (long double*)NULL;
   ctx->m = m;
@@ -1529,7 +1529,7 @@ int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict 
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  float mB = INFINITY, MB = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1572,7 +1572,7 @@ int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict 
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  double mB = INFINITY, MB = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1615,7 +1615,7 @@ int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const res
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  long double mB = INFINITY, MB = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1658,7 +1658,7 @@ int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  float mB = INFINITY, MB = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1701,7 +1701,7 @@ int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  double mB = INFINITY, MB = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1744,7 +1744,7 @@ int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const re
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  long double mB = INFINITY, MB = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1787,7 +1787,7 @@ int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restri
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  float mB = INFINITY, MB = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1830,7 +1830,7 @@ int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restri
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  double mB = INFINITY, MB = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1873,7 +1873,7 @@ int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const 
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  long double mB = INFINITY, MB = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1916,7 +1916,7 @@ int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restr
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  float mB = INFINITY, MB = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -1959,7 +1959,7 @@ int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restr
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  double mB = INFINITY, MB = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -2002,7 +2002,7 @@ int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const
     return -8;
   if (m > pvn_umin(ldA, ldB))
     return -9;
-  long double mB = INFINITY, MB = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB) reduction(min:mB,MB)
 #endif /* _OPENMP */
@@ -2053,7 +2053,7 @@ int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const r
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  float mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff(), mC = __builtin_inff(), MC = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2116,7 +2116,7 @@ int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const r
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf(), mC = __builtin_inf(), MC = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2179,7 +2179,7 @@ int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *c
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  long double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl(), mC = __builtin_infl(), MC = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2242,7 +2242,7 @@ int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const 
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  float mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff(), mC = __builtin_inff(), MC = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2275,7 +2275,7 @@ int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const 
   if (isfinite(MC))
     *maxC = fmaxf(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_inff());
 }
 
 int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
@@ -2306,7 +2306,7 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf(), mC = __builtin_inf(), MC = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2339,7 +2339,7 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
   if (isfinite(MC))
     *maxC = fmax(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_inf());
 }
 
 int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
@@ -2370,7 +2370,7 @@ int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  long double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl(), mC = __builtin_infl(), MC = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2403,7 +2403,7 @@ int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *
   if (isfinite(MC))
     *maxC = fmaxl(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_infl());
 }
 
 int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
@@ -2434,7 +2434,7 @@ int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *cons
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  float mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff(), mC = __builtin_inff(), MC = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2467,7 +2467,7 @@ int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *cons
   if (isfinite(MC))
     *maxC = fmaxf(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_inff());
 }
 
 int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
@@ -2498,7 +2498,7 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf(), mC = __builtin_inf(), MC = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2531,7 +2531,7 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
   if (isfinite(MC))
     *maxC = fmax(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_inf());
 }
 
 int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
@@ -2562,7 +2562,7 @@ int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  long double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl(), mC = __builtin_infl(), MC = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2595,7 +2595,7 @@ int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex
   if (isfinite(MC))
     *maxC = fmaxl(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_infl());
 }
 
 int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
@@ -2626,7 +2626,7 @@ int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *con
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  float mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  float mB = __builtin_inff(), MB = __builtin_inff(), mC = __builtin_inff(), MC = __builtin_inff();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2659,7 +2659,7 @@ int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *con
   if (isfinite(MC))
     *maxC = fmaxf(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_inff());
 }
 
 int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
@@ -2690,7 +2690,7 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  double mB = __builtin_inf(), MB = __builtin_inf(), mC = __builtin_inf(), MC = __builtin_inf();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2723,7 +2723,7 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
   if (isfinite(MC))
     *maxC = fmax(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_inf());
 }
 
 int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
@@ -2754,7 +2754,7 @@ int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double comple
     return -12;
   if (m > pvn_umin(pvn_umin(ldA, ldB), ldC))
     return -13;
-  long double mB = INFINITY, MB = INFINITY, mC = INFINITY, MC = INFINITY;
+  long double mB = __builtin_infl(), MB = __builtin_infl(), mC = __builtin_infl(), MC = __builtin_infl();
 #ifdef _OPENMP
 #pragma omp parallel for default(none) shared(m,n,A,ldA,B,ldB,C,ldC) reduction(min:mB,MB,mC,MC)
 #endif /* _OPENMP */
@@ -2787,6 +2787,6 @@ int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double comple
   if (isfinite(MC))
     *maxC = fmaxl(*maxC, MC);
   /* check for overflow of |z| */
-  return (MB == INFINITY);
+  return (MB == __builtin_infl());
 }
 #endif /* ?PVN_TEST */

@@ -109,7 +109,7 @@ float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u)
   return PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
-  float r = ((*u < 0) ? NAN : 0.0f);
+  float r = ((*u < 0) ? __builtin_nanf("") : 0.0f);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand32_step((unsigned*)&r)) /**/;
 #else /* !__RDRND__ */
@@ -121,7 +121,7 @@ float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u)
     s = read(*u, &r, sizeof(r));
   }
   if (s != (ssize_t)sizeof(r))
-    r = NAN;
+    r = __builtin_nanf("");
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */
@@ -164,7 +164,7 @@ double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
   return PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
-  double r = ((*u < 0) ? (double)NAN : 0.0);
+  double r = ((*u < 0) ? __builtin_nan("") : 0.0);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
 #else /* !__RDRND__ */
@@ -176,7 +176,7 @@ double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
     s = read(*u, &r, sizeof(r));
   }
   if (s != (ssize_t)sizeof(r))
-    r = (double)NAN;
+    r = __builtin_nan("");
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */
@@ -228,7 +228,7 @@ long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u)
   return PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
-  long double r = ((*u < 0) ? (long double)NAN : 0.0L);
+  long double r = ((*u < 0) ? __builtin_nanl("") : 0.0L);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
   while (!_rdrand16_step((unsigned short*)((unsigned long long*)&r + 1))) /**/;
@@ -249,7 +249,7 @@ long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u)
 #else /* !__x86_64__ */
   if (s != (ssize_t)sizeof(r))
 #endif /* ?__x86_64__ */
-    r = (long double)NAN;
+    r = __builtin_nanl("");
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */
@@ -294,7 +294,7 @@ __float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
   return PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(u, (const int*)NULL);
 #else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
-  __float128 r = ((*u < 0) ? (__float128)NAN : 0.0q);
+  __float128 r = ((*u < 0) ? (0.0q / 0.0q) : 0.0q);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
   while (!_rdrand64_step((unsigned long long*)&r + 1)) /**/;
@@ -307,7 +307,7 @@ __float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
     s = read(*u, &r, sizeof(r));
   }
   if (s != (ssize_t)sizeof(r))
-    r = (__float128)NAN;
+    r = (0.0q / 0.0q);
 #endif /* ?__RDRND__ */
   return r;
 #endif /* ?PVN_RAN_SAFE */

@@ -733,7 +733,7 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
   PVN_ASSERT(w1);
 #ifdef PVN_SV2_SAFE
   if (feclearexcept(FE_INEXACT))
-    return NAN;
+    return __builtin_nanf("");
 #endif /* PVN_SV2_SAFE */
   const float t = (*A21 / *A11);
 #ifdef PVN_SV2_SAFE
@@ -2515,7 +2515,7 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
   PVN_ASSERT(w1);
 #ifdef PVN_SV2_SAFE
   if (feclearexcept(FE_INEXACT))
-    return (double)NAN;
+    return __builtin_nan("");
 #endif /* PVN_SV2_SAFE */
   const double t = (*A21 / *A11);
 #ifdef PVN_SV2_SAFE
@@ -4284,7 +4284,7 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
     s1l = scalbnl(*s1, es[1] - es[0]),                          \
     s2l = scalbnl(*s2, es[2] - es[0]);                          \
   /* cond_2(G) */                                               \
-  E[0] = fminl((s1l / s2l), INFINITY);                          \
+  E[0] = fminl((s1l / s2l), __builtin_infl());                  \
   /* U^T U - I */                                               \
   long double T11 = fmal(u11l, u11l, fmal(u21l, u21l, -1.0L));  \
   long double T21 = fmal(u12l, u11l, u22l * u21l);              \
@@ -4356,7 +4356,7 @@ void PVN_FABI(pvn_dxljr2,PVN_DXLJR2)
     S1 = scalbnl(*s1, es[1] - es[0]),                                \
     S2 = scalbnl(*s2, es[2] - es[0]);                                \
   /* cond_2(G) */                                                    \
-  E[0] = fminl((S1 / S2), INFINITY);                                 \
+  E[0] = fminl((S1 / S2), __builtin_infl());                         \
   /* U^H U - I */                                                    \
   long double T11r = -1.0L, T11i = 0.0L;                             \
   pvn_wfma(&T11r, &T11i, U21r, -U21i, U21r, U21i, T11r, T11i);       \
@@ -6177,7 +6177,7 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
     s1l = scalbnq(*s1, es[1] - es[0]),                          \
     s2l = scalbnq(*s2, es[2] - es[0]);                          \
   /* cond_2(G) */                                               \
-  E[0] = fminq((s1l / s2l), INFINITY);                          \
+  E[0] = fminq((s1l / s2l), (1.0q / 0.0q));                     \
   /* U^T U - I */                                               \
   __float128 T11 = fmaq(u11l, u11l, fmaq(u21l, u21l, -1.0q));   \
   __float128 T21 = fmaq(u12l, u11l, u22l * u21l);               \
@@ -6256,7 +6256,7 @@ void PVN_FABI(pvn_xqljr2,PVN_XQLJR2)
     S1 = scalbnq(*s1, es[1] - es[0]),                                \
     S2 = scalbnq(*s2, es[2] - es[0]);                                \
   /* cond_2(G) */                                                    \
-  E[0] = fminq((S1 / S2), INFINITY);                                 \
+  E[0] = fminq((S1 / S2), (1.0q / 0.0q));                            \
   /* U^H U - I */                                                    \
   __float128 T11r = -1.0q, T11i = 0.0q;                              \
   pvn_yfma(&T11r, &T11i, U21r, -U21i, U21r, U21i, T11r, T11i);       \
