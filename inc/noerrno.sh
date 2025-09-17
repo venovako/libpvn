@@ -8,9 +8,11 @@ echo "MACHINE=$MACHINE; GCC=$GCC"
 if [ "$MACHINE" = "ppc64le" ]
 then
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c powf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c sincosf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c hypot_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c pow_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c sincos_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c hypotq_portable.c
@@ -18,9 +20,11 @@ then
 	$GCC -DNDEBUG -I../src -O3 -mcpu=native -mpower8-fusion -mtraceback=full -fno-math-errno -W -Wall $* -c sqrtq_portable.c
 else
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c hypotf_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c powf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c sincosf_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c hypot_noerrno.c
+	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c pow_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrt_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c sincos_noerrno.c
 	$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c hypotq_portable.c
@@ -32,6 +36,7 @@ else
 	if [ "$MACHINE" = "x86_64" -o "$MACHINE" = "amd64" ]
 	then
 		$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c hypotl_noerrno.c
+		$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c powl_noerrno.c
 		$GCC -DNDEBUG -I../src -O3 -march=native -fno-math-errno -W -Wall $* -c rsqrtl_noerrno.c
 	fi
 fi

@@ -1,0 +1,24 @@
+A similar recursive approach would work for the $\ell^p$ norm of
+${\bf x}$, where $p\ge 1$ and
+$$\|{\bf x}\|_p^{}=\left(\sum_{i=1}^n|x_i^{}|^p\right)^{1/p},$$
+if a function ${\rm norm}p(x,y)$ were available, where
+$${\rm norm}p(x,y)=\left(|x|^p+|y|^p\right)^{1/p},$$
+such that unwarranted under/over-flows are avoided, and relative
+accuracy and monotonicity with respect to $|x|$ and $|y|$ are
+guaranteed.
+
+For $p=1$, ${\rm norm}1(x,y)=|x|+|y|$, for $p=2$,
+${\rm norm}2(x,y)={\rm hypot}(x,y)$.  Else, as the first attempt,
+$${\rm norm}p(x,y)=M\left(1+q^p\right)^{1/p},\quad
+M=\max\{|x|,|y|\},\quad
+m=\min\{|x|,|y|\},\quad
+q=m/M \hbox{ or 0 if } m=0.$$
+Let $z=q^{p/2}$.  Then $1+q^p=1+z^2\approx{\rm fma}(z,z,1)$.
+With ${\rm cr\_pow}$, the algorithm might be as follows:
+$$X={\rm fabs}(x),\quad Y={\rm fabs}(y);$$
+$$M={\rm fmax}(X,Y),\quad m={\rm fmin}(X,Y);$$
+$$q=m/M,\quad Q={\rm fmax}(q,0);$$
+$$z={\rm cr\_pow}(Q,p/2),\quad Z={\rm fma}(z,z,1);$$
+$$C={\rm cr\_pow}(Z,1/p);$$
+$${\rm norm}p(x,y)\approx M\cdot C.$$
+\bye
