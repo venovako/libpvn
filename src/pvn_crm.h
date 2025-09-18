@@ -25,19 +25,28 @@ PVN_EXTERN_C double cr_rsqrt(double x);
 #define rsqrt cr_rsqrt
 PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 #define sincos cr_sincos
+#define cr_sqrtl sqrtl
 /* cr_hypotl, cr_powl, and cr_rsqrtl in core-math assume the 80-bit double-extended arithmetic */
+#ifdef __x86_64__
+PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
+PVN_EXTERN_C long double cr_powl(long double x, long double y);
+#define powl cr_powl
+PVN_EXTERN_C long double cr_rsqrtl(long double x);
+#else /* !__x86_64__ */
+/* TODO: might not be correctly rounded */
+#define cr_powl powl
 #if (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9))
 #define cr_hypotl cr_hypotq
 #define cr_rsqrtl cr_rsqrtq
-/* sqrtl should be correctly rounded */
 #else /* !(__PPC64__ && __LITTLE_ENDIAN__ && _ARCH_PWR9) */
-PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
-PVN_EXTERN_C long double cr_rsqrtl(long double x);
+/* TODO: might not be correctly rounded */
+#define cr_hypotl pvn_v1x_hypot
+/* TODO: might not be correctly rounded */
+#define cr_rsqrtl pvn_v1x_rsqrt
 #endif /* ?(__PPC64__ && __LITTLE_ENDIAN__ && _ARCH_PWR9) */
+#endif /* ?__x86_64__ */
 #define hypotl cr_hypotl
 #define cabsl(z) hypotl(creall(z), cimagl(z))
-PVN_EXTERN_C long double cr_powl(long double x, long double y);
-#define powl cr_powl
 #define rsqrtl cr_rsqrtl
 #if (defined(PVN_QUADMATH) || (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9)))
 PVN_EXTERN_C __float128 cr_hypotq(__float128 x, __float128 y);
@@ -59,13 +68,15 @@ PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 #define sqrtq __sqrtq
 #endif /* PVN_QUADMATH */
 #else /* !__MATHIMF_H_INCLUDED */
-#define rsqrtf(x) pvn_v1s_rsqrt(x)
-#define rsqrt(x) pvn_v1d_rsqrt(x)
-#define rsqrtl(x) pvn_v1x_rsqrt(x)
+#define rsqrtf pvn_v1s_rsqrt
+#define rsqrt pvn_v1d_rsqrt
+#define rsqrtl pvn_v1x_rsqrt
 #ifdef PVN_QUADMATH
-#define rsqrtq(x) pvn_v1q_rsqrt(x)
+#define rsqrtq pvn_v1q_rsqrt
 #endif /* PVN_QUADMATH */
 #endif /* ?__MATHIMF_H_INCLUDED */
 #endif /* ?PVN_CR_MATH */
+
+PVN_EXTERN_C int PVN_FABI(c_math_err,C_MATH_ERR)();
 
 #endif /* !PVN_CRM_H */

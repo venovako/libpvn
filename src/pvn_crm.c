@@ -7,7 +7,7 @@ int main(/* int argc, char *argv[] */)
 #ifdef PVN_CR_MATH
                PVN_CR_MATH
 #else /* !PVN_CR_MATH */
-               "<undefined>"
+               "false"
 #endif /* ?PVN_CR_MATH */
                );
 #ifdef PVN_CR_MATH
@@ -29,29 +29,12 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_sqrtq  =%18p\n", cr_sqrtq);
 #endif /* PVN_QUADMATH */
 #endif /* PVN_CR_MATH */
+  (void)printf("math_errhandling=%d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-#ifdef PVN_CR_MATH
-#ifndef __x86_64__
-/* This might not be correctly rounded! */
-long double cr_powl(long double x, long double y)
+int PVN_FABI(c_math_err,C_MATH_ERR)()
 {
-  return __builtin_powl(x, y);
+  return math_errhandling;
 }
-#endif /* !__x86_64__ */
-#if !(defined(PVN_QUADMATH) || (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9)))
-/* This is not correctly rounded, but is at least reproducible. */
-
-long double cr_hypotl(long double x, long double y)
-{
-  return pvn_v1x_hypot(x, y);
-}
-
-long double cr_rsqrtl(long double x)
-{
-  return pvn_v1x_rsqrt(x);
-}
-#endif /* !__x86_64__ */
-#endif /* PVN_CR_MATH */
 #endif /* ?PVN_TEST */
