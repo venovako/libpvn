@@ -13,7 +13,7 @@ Some functions have been adapted from those in the repositories [JACSD](https://
 A `getopt(3)`, `getopt_long(3)`, and `getopt_long_only(3)` implementation for Windows, in the `inc` subdirectory, has been modified from the [OpenBSD](https://www.openbsd.org) sources.
 
 Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
-Their slightly modified implementations included here, in the `inc` subdirectory, will be taken if `CR_MATH` is not set.
+Their slightly modified implementations included here, in the `inc` subdirectory, will be taken if the `CR_MATH` make variable is not set.
 
 ## Building
 
@@ -63,13 +63,13 @@ gmake clean all
 ## Using
 
 Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.a` static library, as shown in `GNUmakefile`.
-There are no mutable global/static variables present, *unless profiling has been enabled*, but some static constant lookup tables are used.
-The functions can safely be called from multiple threads on *unrelated* data without locking.
+There are no mutable global/static variables present, *unless profiling has been enabled or Windows are targeted*, but some static constant lookup tables are used.
+The functions that do not interface other non-system libraries can safely be called from multiple threads on *unrelated* data without locking.
 You might wish to tune the compiler flags to match yours, especially if you are building a dynamic library, a static executable, and/or want to use OpenMP.
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 
-A function with the name ending with an underscore (`_`) should be callable from Fortran without an explicit interface, just by declaring it `EXTERNAL` (without the underscore).
+All functions declared with `PVN_FABI` and not taking their arguments by value should be callable from Fortran without an explicit interface, just by declaring it `EXTERNAL` (without the underscore).
 
 Setting the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path overrides the included choice of the CORE-MATH functions.
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
