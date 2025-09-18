@@ -80,6 +80,48 @@ int main(int argc, char *argv[])
     return 8;
   long long t = 0ll;
   double e = ((argc > 3) ? atof(argv[3u]) : 0.0), f = 0.0;
+  /* first, time the p-norms... */
+  double pd = __builtin_inf();
+  float pf = __builtin_inff();
+  (void)printf((idist < 0) ? "pvn_snrmp:∞:=" : "pvn_dnrmp:∞:=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = ((idist < 0) ? PVN_FABI(pvn_snrmp,PVN_SNMRP)(&pf, &n, (const float*)x) : PVN_FABI(pvn_dnrmp,PVN_DNRMP)(&pd, &n, (const double*)x));
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  pd = M_PI;
+  pf = (float)pd;
+  (void)printf((idist < 0) ? "pvn_snrmp:π:=" : "pvn_dnrmp:π:=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = ((idist < 0) ? PVN_FABI(pvn_snrmp,PVN_SNMRP)(&pf, &n, (const float*)x) : PVN_FABI(pvn_dnrmp,PVN_DNRMP)(&pd, &n, (const double*)x));
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  pd = M_E;
+  pf = (float)pd;
+  (void)printf((idist < 0) ? "pvn_snrmp:e:=" : "pvn_dnrmp:e:=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = ((idist < 0) ? PVN_FABI(pvn_snrmp,PVN_SNMRP)(&pf, &n, (const float*)x) : PVN_FABI(pvn_dnrmp,PVN_DNRMP)(&pd, &n, (const double*)x));
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  pd = M_SQRT2;
+  pf = (float)pd;
+  (void)printf((idist < 0) ? "pvn_snrmp:√2=" : "pvn_dnrmp:√2=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = ((idist < 0) ? PVN_FABI(pvn_snrmp,PVN_SNMRP)(&pf, &n, (const float*)x) : PVN_FABI(pvn_dnrmp,PVN_DNRMP)(&pd, &n, (const double*)x));
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  pd = 1.0;
+  pf = (float)pd;
+  (void)printf((idist < 0) ? "pvn_snrmp:1:=" : "pvn_dnrmp:1:=");
+  (void)fflush(stdout);
+  t = pvn_time_mono_ns();
+  f = ((idist < 0) ? PVN_FABI(pvn_snrmp,PVN_SNMRP)(&pf, &n, (const float*)x) : PVN_FABI(pvn_dnrmp,PVN_DNRMP)(&pd, &n, (const double*)x));
+  t = pvn_time_mono_ns() - t;
+  (void)printf("%# .17e relerr/ε %# .17e in %21lld ns\n", f, ((idist < 0) ? frelerr(e, f) : erelerr(e, f)), t);
+  /* ...then test the 2-norms */
 #ifndef PVN_CILK
 #ifdef PVN_MPFR
   if (argc <= 3) {
@@ -853,6 +895,8 @@ float PVN_FABI(pvn_slp2,PVN_SLP2)(const float *const p, const float *const x, co
     return (__builtin_fabsf(*x) + __builtin_fabsf(*y));
   if (*p == 2.0f)
     return hypotf(*x, *y);
+  if (isinf(*p))
+    return __builtin_fmaxf(__builtin_fabsf(*x), __builtin_fabsf(*y));
   const float X = __builtin_fabsf(*x);
   const float Y = __builtin_fabsf(*y);
   const float M = __builtin_fmaxf(X, Y);
@@ -881,6 +925,8 @@ double PVN_FABI(pvn_dlp2,PVN_DLP2)(const double *const p, const double *const x,
     return (__builtin_fabs(*x) + __builtin_fabs(*y));
   if (*p == 2.0)
     return hypot(*x, *y);
+  if (isinf(*p))
+    return __builtin_fmax(__builtin_fabs(*x), __builtin_fabs(*y));
   const double X = __builtin_fabs(*x);
   const double Y = __builtin_fabs(*y);
   const double M = __builtin_fmax(X, Y);
@@ -909,6 +955,8 @@ long double PVN_FABI(pvn_xlp2,PVN_XLP2)(const long double *const p, const long d
     return (__builtin_fabsl(*x) + __builtin_fabsl(*y));
   if (*p == 2.0L)
     return hypotl(*x, *y);
+  if (isinf(*p))
+    return __builtin_fmaxl(__builtin_fabsl(*x), __builtin_fabsl(*y));
   const long double X = __builtin_fabsl(*x);
   const long double Y = __builtin_fabsl(*y);
   const long double M = __builtin_fmaxl(X, Y);
