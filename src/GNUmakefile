@@ -223,6 +223,7 @@ LIBS=libpvn.a
 
 LNK=-L.
 ifdef DYNAMIC
+LIBS += libpvn.$(DYNAMIC)
 ifdef QUADMATH
 FSYS=$(dir $(QUADMATH))
 GNU=-L$(FSYS) -lquadmath -rpath=$(FSYS) $(QUADMATH)
