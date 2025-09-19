@@ -13,12 +13,12 @@ $${\rm norm}p(x,y)=M\left(1+q^p\right)^{1/p},\quad
 M=\max\{|x|,|y|\},\quad
 m=\min\{|x|,|y|\},\quad
 q=m/M \hbox{ or 0 if } m=0.$$
-Let $z=q^{p/2}$.  Then $1+q^p=1+z^2\approx{\rm fma}(z,z,1)$.
+Let $S=q^{p/2}$.  Then $1+q^p=1+S^2\approx{\rm fma}(S,S,1)$.
 With ${\rm cr\_pow}$, the algorithm might be as follows:
 $$X={\rm fabs}(x),\quad Y={\rm fabs}(y);$$
 $$M={\rm fmax}(X,Y),\quad m={\rm fmin}(X,Y);$$
 $$q=m/M,\quad Q={\rm fmax}(q,0);$$
-$$z={\rm cr\_pow}(Q,p/2),\quad Z={\rm fma}(z,z,1);$$
+$$S={\rm cr\_pow}(Q,p/2),\quad Z={\rm fma}(S,S,1);$$
 $$C={\rm cr\_pow}(Z,1/p);$$
 $${\rm norm}p(x,y)\approx M\cdot C.$$
 

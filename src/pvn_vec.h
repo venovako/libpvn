@@ -52,9 +52,9 @@ static inline float pvn_v1s_lp(const float p, const float x, const float y)
   const float q = (m / M);
   const float s = (p * 0.5f);
   const float Q = __builtin_fmaxf(q, 0.0f);
-  const float z = powf(Q, s);
+  const float S = powf(Q, s);
   const float c = (1.0f / p);
-  const float Z = __builtin_fmaf(z, z, 1.0f);
+  const float Z = __builtin_fmaf(S, S, 1.0f);
   const float C = powf(Z, c);
   return (M * C);
 }
@@ -100,9 +100,9 @@ static inline double pvn_v1d_lp(const double p, const double x, const double y)
   const double q = (m / M);
   const double s = (p * 0.5);
   const double Q = __builtin_fmax(q, 0.0);
-  const double z = pow(Q, s);
+  const double S = pow(Q, s);
   const double c = (1.0 / p);
-  const double Z = __builtin_fma(z, z, 1.0);
+  const double Z = __builtin_fma(S, S, 1.0);
   const double C = pow(Z, c);
   return (M * C);
 }
@@ -148,9 +148,9 @@ static inline long double pvn_v1x_lp(const long double p, const long double x, c
   const long double q = (m / M);
   const long double s = (p * 0.5L);
   const long double Q = __builtin_fmaxl(q, 0.0L);
-  const long double z = powl(Q, s);
+  const long double S = powl(Q, s);
   const long double c = (1.0L / p);
-  const long double Z = __builtin_fmal(z, z, 1.0L);
+  const long double Z = __builtin_fmal(S, S, 1.0L);
   const long double C = powl(Z, c);
   return (M * C);
 }
@@ -197,9 +197,9 @@ static inline __float128 pvn_v1q_lp(const __float128 p, const __float128 x, cons
   const __float128 q = (m / M);
   const __float128 s = (p * 0.5q);
   const __float128 Q = fmaxq(q, 0.0q);
-  const __float128 z = powq(Q, s);
+  const __float128 S = powq(Q, s);
   const __float128 c = (1.0q / p);
-  const __float128 Z = fmaq(z, z, 1.0q);
+  const __float128 Z = fmaq(S, S, 1.0q);
   const __float128 C = powq(Z, c);
   return (M * C);
 }
