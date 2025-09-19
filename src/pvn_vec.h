@@ -359,7 +359,7 @@ static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
 }
 
 #ifdef __AVX512F__
-static inline __m512 pvn_v8s_add_abs(register const __m512 x, register const __m512 y)
+static inline __m512 pvn_v16s_add_abs(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
   register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
@@ -367,7 +367,7 @@ static inline __m512 pvn_v8s_add_abs(register const __m512 x, register const __m
   return _mm512_add_ps(X, Y);
 }
 
-static inline __m512 pvn_v8s_max_abs(register const __m512 x, register const __m512 y)
+static inline __m512 pvn_v16s_max_abs(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
   register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
