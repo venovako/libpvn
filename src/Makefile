@@ -13,8 +13,7 @@ CRT=MT
 !ENDIF # !CRT
 CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDEBUG=$(NDEBUG) /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x64\"" /DPVN_COMPILER="\"icx\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
 !IF "$(CRT)"=="MD"
-CFLAGS=$(CFLAGS) /MD
-CCFLAGS=$(CFLAGS) /DPVN_DYNAMIC="\"dll\""
+CFLAGS=$(CFLAGS) /DPVN_DYNAMIC="\"dll\"" /MD
 CDFLAGS=$(CFLAGS) /LD /Wno-unused-command-line-argument
 CLFLAGS=$(CFLAGS) /DPVN_TEST="\"dynamic_exe\""
 LIBS=pvn.dll
@@ -23,7 +22,6 @@ MSYS64=C:\msys64
 !ENDIF # !MSYS64
 !ELSE # MT
 CFLAGS=$(CFLAGS) /MT
-CCFLAGS=$(CFLAGS)
 CLFLAGS=$(CFLAGS) /DPVN_TEST="\"static_exe\""
 LIBS=pvn.lib
 !ENDIF # MD
@@ -151,7 +149,7 @@ pvn.dll: $(OBJS) Makefile
 	copy /Y /V $(MSYS64)\ucrt64\bin\libwinpthread-1.dll .
 
 .c.obj:
-	$(CC) $(CCFLAGS) /c $< /Fo$@
+	$(CC) $(CFLAGS) /c $< /Fo$@
 
 .c.exe:
 	$(CC) $(CLFLAGS) $< /link /RELEASE /LIBPATH:. pvn.lib

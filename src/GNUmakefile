@@ -222,19 +222,10 @@ EXES += \
 ../var/rhh_relerr.exe
 endif # MPFR
 LIBS=libpvn.a
-
 LNK=-L.
 ifdef DYNAMIC
 LIBS += libpvn.$(DYNAMIC)
-ifdef QUADMATH
-GNU=$(QUADMATH)
-else # !QUADMATH
-GNU=
-endif # ?QUADMATH
 LNK += -Wl,-rpath=.
-ifneq ($(COMPILER),clang)
-GNU += $(realpath $(shell $(GCC) -print-file-name=libgcc.a))
-endif # !clang
 endif # DYNAMIC
 LNK += -lpvn
 ifdef MPC
@@ -270,7 +261,7 @@ libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 libpvn.so: libpvn.a
-	ld -shared -o $@ $(OBJS) $(GNU)
+	ld -shared -o $@ $(OBJS)
 
 %.o : %.c $(HDRS)
 	$(CC) $(CFLAGS) -c $< -o $@
