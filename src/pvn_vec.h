@@ -45,15 +45,16 @@ static inline float pvn_v1s_hypot(const float x, const float y)
 
 static inline float pvn_v1s_lp(const float p, const float x, const float y)
 {
+  /* s and c should be computed only once for a fixed p */
+  const float s = (p * 0.5f);
+  const float c = (1.0f / p);
   const float X = __builtin_fabsf(x);
   const float Y = __builtin_fabsf(y);
   const float M = __builtin_fmaxf(X, Y);
   const float m = __builtin_fminf(X, Y);
   const float q = (m / M);
-  const float s = (p * 0.5f);
   const float Q = __builtin_fmaxf(q, 0.0f);
   const float S = powf(Q, s);
-  const float c = (1.0f / p);
   const float Z = __builtin_fmaf(S, S, 1.0f);
   const float C = powf(Z, c);
   return (M * C);
@@ -93,15 +94,16 @@ static inline double pvn_v1d_hypot(const double x, const double y)
 
 static inline double pvn_v1d_lp(const double p, const double x, const double y)
 {
+  /* s and c should be computed only once for a fixed p */
+  const double s = (p * 0.5);
+  const double c = (1.0 / p);
   const double X = __builtin_fabs(x);
   const double Y = __builtin_fabs(y);
   const double M = __builtin_fmax(X, Y);
   const double m = __builtin_fmin(X, Y);
   const double q = (m / M);
-  const double s = (p * 0.5);
   const double Q = __builtin_fmax(q, 0.0);
   const double S = pow(Q, s);
-  const double c = (1.0 / p);
   const double Z = __builtin_fma(S, S, 1.0);
   const double C = pow(Z, c);
   return (M * C);
@@ -141,15 +143,16 @@ static inline long double pvn_v1x_hypot(const long double x, const long double y
 
 static inline long double pvn_v1x_lp(const long double p, const long double x, const long double y)
 {
+  /* s and c should be computed only once for a fixed p */
+  const long double s = (p * 0.5L);
+  const long double c = (1.0L / p);
   const long double X = __builtin_fabsl(x);
   const long double Y = __builtin_fabsl(y);
   const long double M = __builtin_fmaxl(X, Y);
   const long double m = __builtin_fminl(X, Y);
   const long double q = (m / M);
-  const long double s = (p * 0.5L);
   const long double Q = __builtin_fmaxl(q, 0.0L);
   const long double S = powl(Q, s);
-  const long double c = (1.0L / p);
   const long double Z = __builtin_fmal(S, S, 1.0L);
   const long double C = powl(Z, c);
   return (M * C);
@@ -190,15 +193,16 @@ static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
 
 static inline __float128 pvn_v1q_lp(const __float128 p, const __float128 x, const __float128 y)
 {
+  /* s and c should be computed only once for a fixed p */
+  const __float128 s = (p * 0.5q);
+  const __float128 c = (1.0q / p);
   const __float128 X = fabsq(x);
   const __float128 Y = fabsq(y);
   const __float128 M = fmaxq(X, Y);
   const __float128 m = fminq(X, Y);
   const __float128 q = (m / M);
-  const __float128 s = (p * 0.5q);
   const __float128 Q = fmaxq(q, 0.0q);
   const __float128 S = powq(Q, s);
-  const __float128 c = (1.0q / p);
   const __float128 Z = fmaq(S, S, 1.0q);
   const __float128 C = powq(Z, c);
   return (M * C);
@@ -266,18 +270,19 @@ static inline float pvn_v4s_hypot_red(register const __m128 x)
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
 static inline __m128 pvn_v4s_lp(register const __m128 p, register const __m128 x, register const __m128 y)
 {
+  /* z, h, o, s, and c should be computed only once for a fixed p */
   register const __m128 z = _mm_set1_ps(-0.0f);
   register const __m128 h = _mm_set1_ps(0.5f);
   register const __m128 o = _mm_set1_ps(1.0f);
+  register const __m128 s = _mm_mul_ps(p, h);
+  register const __m128 c = _mm_div_ps(o, p);
   register const __m128 X = _mm_andnot_ps(z, x);
   register const __m128 Y = _mm_andnot_ps(z, y);
   register const __m128 m = _mm_min_ps(X, Y);
   register const __m128 M = _mm_max_ps(X, Y);
   register const __m128 q = _mm_div_ps(m, M);
-  register const __m128 s = _mm_mul_ps(p, h);
   register const __m128 Q = _mm_max_ps(q, z);
   register const __m128 S = _mm_pow_ps(Q, s);
-  register const __m128 c = _mm_div_ps(o, p);
   register const __m128 Z = _mm_fmadd_ps(S, S, o);
   register const __m128 C = _mm_pow_ps(Z, c);
   return _mm_mul_ps(M, C);
@@ -352,18 +357,19 @@ static inline double pvn_v2d_hypot_red(register const __m128d x)
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
 static inline __m128d pvn_v2d_lp(register const __m128d p, register const __m128d x, register const __m128d y)
 {
+  /* z, h, o, s, and c should be computed only once for a fixed p */
   register const __m128d z = _mm_set1_pd(-0.0);
   register const __m128d h = _mm_set1_pd(0.5);
   register const __m128d o = _mm_set1_pd(1.0);
+  register const __m128d s = _mm_mul_pd(p, h);
+  register const __m128d c = _mm_div_pd(o, p);
   register const __m128d X = _mm_andnot_pd(z, x);
   register const __m128d Y = _mm_andnot_pd(z, y);
   register const __m128d m = _mm_min_pd(X, Y);
   register const __m128d M = _mm_max_pd(X, Y);
   register const __m128d q = _mm_div_pd(m, M);
-  register const __m128d s = _mm_mul_pd(p, h);
   register const __m128d Q = _mm_max_pd(q, z);
   register const __m128d S = _mm_pow_pd(Q, s);
-  register const __m128d c = _mm_div_pd(o, p);
   register const __m128d Z = _mm_fmadd_pd(S, S, o);
   register const __m128d C = _mm_pow_pd(Z, c);
   return _mm_mul_pd(M, C);
@@ -431,6 +437,28 @@ static inline float pvn_v8s_hypot_red(register const __m256 x)
   return pvn_v4s_hypot_red(pvn_v4s_hypot(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
 
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+static inline __m256 pvn_v8s_lp(register const __m256 p, register const __m256 x, register const __m256 y)
+{
+  /* z, h, o, s, and c should be computed only once for a fixed p */
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+  register const __m256 h = _mm256_set1_ps(0.5f);
+  register const __m256 o = _mm256_set1_ps(1.0f);
+  register const __m256 s = _mm256_mul_ps(p, h);
+  register const __m256 c = _mm256_div_ps(o, p);
+  register const __m256 X = _mm256_andnot_ps(z, x);
+  register const __m256 Y = _mm256_andnot_ps(z, y);
+  register const __m256 m = _mm256_min_ps(X, Y);
+  register const __m256 M = _mm256_max_ps(X, Y);
+  register const __m256 q = _mm256_div_ps(m, M);
+  register const __m256 Q = _mm256_max_ps(q, z);
+  register const __m256 S = _mm256_pow_ps(Q, s);
+  register const __m256 Z = _mm256_fmadd_ps(S, S, o);
+  register const __m256 C = _mm256_pow_ps(Z, c);
+  return _mm256_mul_ps(M, C);
+}
+#endif /* Intel */
+
 static inline __m256 pvn_v8s_max_abs(register const __m256 x, register const __m256 y)
 {
   register const __m256 z = _mm256_set1_ps(-0.0f);
@@ -489,6 +517,28 @@ static inline double pvn_v4d_hypot_red(register const __m256d x)
 {
   return pvn_v2d_hypot_red(pvn_v2d_hypot(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
+
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+static inline __m256d pvn_v4d_lp(register const __m256d p, register const __m256d x, register const __m256d y)
+{
+  /* z, h, o, s, and c should be computed only once for a fixed p */
+  register const __m256d z = _mm256_set1_pd(-0.0);
+  register const __m256d h = _mm256_set1_pd(0.5);
+  register const __m256d o = _mm256_set1_pd(1.0);
+  register const __m256d s = _mm256_mul_pd(p, h);
+  register const __m256d c = _mm256_div_pd(o, p);
+  register const __m256d X = _mm256_andnot_pd(z, x);
+  register const __m256d Y = _mm256_andnot_pd(z, y);
+  register const __m256d m = _mm256_min_pd(X, Y);
+  register const __m256d M = _mm256_max_pd(X, Y);
+  register const __m256d q = _mm256_div_pd(m, M);
+  register const __m256d Q = _mm256_max_pd(q, z);
+  register const __m256d S = _mm256_pow_pd(Q, s);
+  register const __m256d Z = _mm256_fmadd_pd(S, S, o);
+  register const __m256d C = _mm256_pow_pd(Z, c);
+  return _mm256_mul_pd(M, C);
+}
+#endif /* Intel */
 
 static inline __m256d pvn_v4d_max_abs(register const __m256d x, register const __m256d y)
 {
