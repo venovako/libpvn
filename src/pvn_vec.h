@@ -276,9 +276,9 @@ static inline __m128 pvn_v4s_lp(register const __m128 p, register const __m128 x
   register const __m128 q = _mm_div_ps(m, M);
   register const __m128 s = _mm_mul_ps(p, h);
   register const __m128 Q = _mm_max_ps(q, z);
-  register const __m128 z = _mm_pow_ps(Q, s);
+  register const __m128 S = _mm_pow_ps(Q, s);
   register const __m128 c = _mm_div_ps(o, p);
-  register const __m128 Z = _mm_fmadd_ps(z, z, o);
+  register const __m128 Z = _mm_fmadd_ps(S, S, o);
   register const __m128 C = _mm_pow_ps(Z, c);
   return _mm_mul_ps(M, C);
 }
@@ -362,9 +362,9 @@ static inline __m128d pvn_v2d_lp(register const __m128d p, register const __m128
   register const __m128d q = _mm_div_pd(m, M);
   register const __m128d s = _mm_mul_pd(p, h);
   register const __m128d Q = _mm_max_pd(q, z);
-  register const __m128d z = _mm_pow_pd(Q, s);
+  register const __m128d S = _mm_pow_pd(Q, s);
   register const __m128d c = _mm_div_pd(o, p);
-  register const __m128d Z = _mm_fmadd_pd(z, z, o);
+  register const __m128d Z = _mm_fmadd_pd(S, S, o);
   register const __m128d C = _mm_pow_pd(Z, c);
   return _mm_mul_pd(M, C);
 }
