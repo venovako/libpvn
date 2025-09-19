@@ -1398,10 +1398,15 @@ float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *co
     return -0.0f;
   if (!x)
     return -2.0f;
+  register const __m128 r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxsunrmf(*n, x) : rxs_nrmf(*n, x));
+#ifdef PVN_NRM_SAFE
   alignas(16) float f[4u];
-  _mm_store_ps(f, (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxsunrmf(*n, x) : rxs_nrmf(*n, x)));
+  _mm_store_ps(f, r);
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v4s_hypot_red(r);
+#endif /* ?PVN_NRM_SAFE */
 }
 
 static __m128d rxd_nrmf(const size_t n, const double *const x)
@@ -1474,9 +1479,14 @@ double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *
     return -0.0;
   if (!x)
     return -2.0;
+  register const __m128d r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrmf(*n, x) : rxd_nrmf(*n, x));
+#ifdef PVN_NRM_SAFE
   alignas(16) double f[2u];
-  _mm_store_pd(f, (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrmf(*n, x) : rxd_nrmf(*n, x)));
+  _mm_store_pd(f, r);
   return hypot(f[0u], f[1u]);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v2d_hypot_red(r);
+#endif /* ?PVN_NRM_SAFE */
 }
 
 static __m256 rys_nrmf(const size_t n, const float *const x)
@@ -1581,10 +1591,15 @@ float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *co
     return -0.0f;
   if (!x)
     return -2.0f;
+  register const __m256 r = (((uintptr_t)x & (uintptr_t)0x1Fu) ? rysunrmf(*n, x) : rys_nrmf(*n, x));
+#ifdef PVN_NRM_SAFE
   alignas(32) float f[8u];
-  _mm256_store_ps(f, (((uintptr_t)x & (uintptr_t)0x1Fu) ? rysunrmf(*n, x) : rys_nrmf(*n, x)));
+  _mm256_store_ps(f, r);
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v8s_hypot_red(r);
+#endif /* ?PVN_NRM_SAFE */
 }
 
 static __m256d ryd_nrmf(const size_t n, const double *const x)
@@ -1673,10 +1688,15 @@ double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *
     return -0.0;
   if (!x)
     return -2.0;
+  register const __m256d r = (((uintptr_t)x & (uintptr_t)0x1Fu) ? rydunrmf(*n, x) : ryd_nrmf(*n, x));
+#ifdef PVN_NRM_SAFE
   alignas(32) double f[4u];
-  _mm256_store_pd(f, (((uintptr_t)x & (uintptr_t)0x1Fu) ? rydunrmf(*n, x) : ryd_nrmf(*n, x)));
+  _mm256_store_pd(f, r);
   const size_t m = (size_t)4u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v4d_hypot_red(r);
+#endif /* ?PVN_NRM_SAFE */
 }
 #ifdef __AVX512F__
 static __m512 rzs_nrmf(const size_t n, const float *const x)
@@ -1813,10 +1833,15 @@ float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *co
     return -0.0f;
   if (!x)
     return -2.0f;
+  register const __m512 r = (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzsunrmf(*n, x) : rzs_nrmf(*n, x));
+#ifdef PVN_NRM_SAFE
   alignas(64) float f[16u];
-  _mm512_store_ps(f, (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzsunrmf(*n, x) : rzs_nrmf(*n, x)));
+  _mm512_store_ps(f, r);
   const size_t m = (size_t)16u;
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(&m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v16s_hypot_red(r);
+#endif /* ?PVN_NRM_SAFE */
 }
 
 static __m512d rzd_nrmf(const size_t n, const double *const x)
@@ -1921,10 +1946,15 @@ double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *
     return -0.0;
   if (!x)
     return -2.0;
+  register const __m512d r = (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzdunrmf(*n, x) : rzd_nrmf(*n, x));
+#ifdef PVN_NRM_SAFE
   alignas(64) double f[8u];
-  _mm512_store_pd(f, (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzdunrmf(*n, x) : rzd_nrmf(*n, x)));
+  _mm512_store_pd(f, r);
   const size_t m = (size_t)8u;
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(&m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v8d_hypot_red(r);
+#endif /* ?PVN_NRM_SAFE */
 }
 #endif /* __AVX512F__ */
 #endif /* __AVX__ && __FMA__ */

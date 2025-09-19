@@ -43,6 +43,22 @@ static inline float pvn_v1s_hypot(const float x, const float y)
   return (M * s);
 }
 
+static inline float pvn_v1s_lp(const float p, const float x, const float y)
+{
+  const float X = __builtin_fabsf(x);
+  const float Y = __builtin_fabsf(y);
+  const float M = __builtin_fmaxf(X, Y);
+  const float m = __builtin_fminf(X, Y);
+  const float q = (m / M);
+  const float s = (p * 0.5f);
+  const float Q = __builtin_fmaxf(q, 0.0f);
+  const float z = powf(Q, s);
+  const float c = (1.0f / p);
+  const float Z = __builtin_fmaf(z, z, 1.0f);
+  const float C = powf(Z, c);
+  return (M * C);
+}
+
 static inline float pvn_v1s_max_abs(const float x, const float y)
 {
   return __builtin_fmaxf(__builtin_fabsf(x), __builtin_fabsf(y));
@@ -73,6 +89,22 @@ static inline double pvn_v1d_hypot(const double x, const double y)
   const double S = __builtin_fma(Q, Q, 1.0);
   const double s = __builtin_sqrt(S);
   return (M * s);
+}
+
+static inline double pvn_v1d_lp(const double p, const double x, const double y)
+{
+  const double X = __builtin_fabs(x);
+  const double Y = __builtin_fabs(y);
+  const double M = __builtin_fmax(X, Y);
+  const double m = __builtin_fmin(X, Y);
+  const double q = (m / M);
+  const double s = (p * 0.5);
+  const double Q = __builtin_fmax(q, 0.0);
+  const double z = pow(Q, s);
+  const double c = (1.0 / p);
+  const double Z = __builtin_fma(z, z, 1.0);
+  const double C = pow(Z, c);
+  return (M * C);
 }
 
 static inline double pvn_v1d_max_abs(const double x, const double y)
@@ -107,6 +139,22 @@ static inline long double pvn_v1x_hypot(const long double x, const long double y
   return (M * s);
 }
 
+static inline long double pvn_v1x_lp(const long double p, const long double x, const long double y)
+{
+  const long double X = __builtin_fabsl(x);
+  const long double Y = __builtin_fabsl(y);
+  const long double M = __builtin_fmaxl(X, Y);
+  const long double m = __builtin_fminl(X, Y);
+  const long double q = (m / M);
+  const long double s = (p * 0.5L);
+  const long double Q = __builtin_fmaxl(q, 0.0L);
+  const long double z = powl(Q, s);
+  const long double c = (1.0L / p);
+  const long double Z = __builtin_fmal(z, z, 1.0L);
+  const long double C = powl(Z, c);
+  return (M * C);
+}
+
 static inline long double pvn_v1x_max_abs(const long double x, const long double y)
 {
   return __builtin_fmaxl(__builtin_fabsl(x), __builtin_fabsl(y));
@@ -138,6 +186,22 @@ static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
   const __float128 S = fmaq(Q, Q, 1.0q);
   const __float128 s = sqrtq(S);
   return (M * s);
+}
+
+static inline __float128 pvn_v1q_lp(const __float128 p, const __float128 x, const __float128 y)
+{
+  const __float128 X = fabsq(x);
+  const __float128 Y = fabsq(y);
+  const __float128 M = fmaxq(X, Y);
+  const __float128 m = fminq(X, Y);
+  const __float128 q = (m / M);
+  const __float128 s = (p * 0.5q);
+  const __float128 Q = fmaxq(q, 0.0q);
+  const __float128 z = powq(Q, s);
+  const __float128 c = (1.0q / p);
+  const __float128 Z = fmaq(z, z, 1.0q);
+  const __float128 C = powq(Z, c);
+  return (M * C);
 }
 
 static inline __float128 pvn_v1q_max_abs(const __float128 x, const __float128 y)

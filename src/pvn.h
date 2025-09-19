@@ -162,11 +162,12 @@ EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
 EXTERN_C __float128 __fmaxq(__float128, __float128);
 EXTERN_C __float128 __fminq(__float128, __float128);
 EXTERN_C __float128 __frexpq(__float128, int*);
-EXTERN_C int __isfiniteq(__float128);
-EXTERN_C __float128 __scalbnq(__float128, int);
-EXTERN_C __float128 __hypotq(__float128, __float128);
-EXTERN_C __float128 __sqrtq(__float128);
 EXTERN_C __float128 __invsqrtq(__float128);
+EXTERN_C int __isfiniteq(__float128);
+EXTERN_C __float128 __hypotq(__float128, __float128);
+EXTERN_C __float128 __powq(__float128, __float128);
+EXTERN_C __float128 __scalbnq(__float128, int);
+EXTERN_C __float128 __sqrtq(__float128);
 #ifndef copysignq
 #define copysignq __copysignq
 #else /* copysignq */
@@ -202,6 +203,11 @@ EXTERN_C __float128 __invsqrtq(__float128);
 #else /* isfiniteq */
 #error isfiniteq already defined
 #endif /* ?isfiniteq */
+#ifndef powq
+#define powq __powq
+#else /* powq */
+#error powq already defined
+#endif /* ?powq */
 #ifndef scalbnq
 #define scalbnq __scalbnq
 #else /* scalbnq */
