@@ -10,6 +10,7 @@ ARCH=$(MACHINE)
 endif # ?aarch64
 endif # ?amd64
 RM=rm -rfv
+
 ifndef COMPILER
 ifeq ($(OS),Linux)
 COMPILER=gcc
@@ -17,7 +18,39 @@ else # !Linux
 COMPILER=clang
 endif # ?Linux
 endif # !COMPILER
+ifneq ($(COMPILER),gcc)
+ifndef GCC
+ifeq ($(OS),Darwin)
+GCC=gcc-15
+else # !Darwin
+GCC=gcc
+endif # ?Darwin
+endif # !GCC
+endif # !gcc
 include $(COMPILER).mk
+ifndef GCC
+GCC=$(CC)
+endif # !GCC
+
+ifeq ($(findstring 86,$(ARCH)),86)
+ifndef QUADMATH
+ifdef DYNAMIC
+QUADMATH=$(realpath $(shell $(GCC) -print-file-name=libquadmath.$(DYNAMIC)))
+else # !DYNAMIC
+QMA=$(realpath $(shell $(GCC) -print-file-name=libquadmath.a))
+ifeq ($(QMA),)
+ifeq ($(OS),Darwin)
+QUADMATH=$(realpath $(shell $(GCC) -print-file-name=libquadmath.dylib))
+else # !Darwin
+QUADMATH=$(realpath $(shell $(GCC) -print-file-name=libquadmath.so))
+endif # ?Darwin
+else # QMA
+QUADMATH=$(QMA)
+endif # ?QM
+endif # ?DYNAMIC
+endif # !QUADMATH
+endif # ?86
+
 CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
 
 SRCS=pvn.c \
@@ -187,66 +220,19 @@ EXES += \
 ../var/rhh_relerr.exe
 endif # MPFR
 LIBS=libpvn.a
-LNK=-L.
 
+LNK=-L.
 ifdef DYNAMIC
-ifeq ($(COMPILER),gcc)
-GCC=$(CC)
-else # !gcc
-ifeq ($(OS),Darwin)
-GCC=gcc-15
-else # !Darwin
-GCC=gcc
-endif # ?Darwin
-endif # ?gcc
-CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
-LIBS += libpvn.$(DYNAMIC)
 ifdef QUADMATH
-ifeq ($(QUADMATH),-lquadmath)
-override QUADMATH=$(realpath $(shell $(GCC) -print-file-name=libquadmath.$(DYNAMIC)))
 FSYS=$(dir $(QUADMATH))
-ifeq ($(OS),Darwin)
-GNU=-L$(FSYS) -lquadmath
-else # !Darwin
-XRP=-rpath=$(FSYS)
-GNU += $(XRP) $(QUADMATH)
-endif # ?Darwin
-else # !-lquadmath
-ifeq ($(OS),Darwin)
-GNU=-load_hidden $(QUADMATH)
-else # !Darwin
-GNU=$(QUADMATH)
-endif # ?Darwin
-endif # ?-lquadmath
+GNU=-L$(FSYS) -lquadmath -rpath=$(FSYS) $(QUADMATH)
 endif # QUADMATH
-ifeq ($(OS),Darwin)
-ifeq ($(COMPILER),gcc)
-GNU += -load_hidden
-endif # gcc
-ifeq ($(realpath /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/System.framework),)
-FSYS=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks
-else # Xcode
-FSYS=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks
-endif # ?Xcode
-else # !Darwin
 LNK += -Wl,-rpath=.
-endif # ?Darwin
 ifneq ($(COMPILER),clang)
 GNU += $(realpath $(shell $(GCC) -print-file-name=libgcc.a))
 endif # !clang
 endif # DYNAMIC
-
 LNK += -lpvn
-ifdef XRP
-LNK += -Wl,$(XRP)
-endif # XRP
-LNK += $(QUADMATH)
-ifeq ($(COMPILER),icc)
-CLFLAGS=$(CFLAGS)
-else # !icc
-CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
-endif # ?icc
-
 ifdef MPC
 LNK += -L$(MPC)/lib -lmpc
 endif # MPC
@@ -259,19 +245,25 @@ endif # GMP
 ifdef LAPACK
 LNK += -L$(LAPACK) -ltmglib -llapack -lrefblas
 endif # LAPACK
+ifdef QUADMATH
+LNK += $(QUADMATH)
+endif # QUADMATH
+
+ifeq ($(COMPILER),icc)
+CLFLAGS=$(CFLAGS)
+else # !icc
+CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
+endif # ?icc
 
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=dylib|so] [QUADMATH=-lquadmath] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=so] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
-
-libpvn.dylib: libpvn.a
-	libtool -dynamic -o $@ -v $(GNU) -F$(FSYS) -framework System libpvn.a
 
 libpvn.so: libpvn.a
 	ld -shared -o $@ $(OBJS) $(GNU)

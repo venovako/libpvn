@@ -43,12 +43,4 @@ ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 LDFLAGS += -ldl
 endif # !MINGW64
 endif # ?BSD
-ifeq ($(findstring 86,$(ARCH)),86)
-ifndef QUADMATH
-QUADMATH=$(abspath $(shell $(CC) -print-file-name=libquadmath.a))
-ifeq ($(QUADMATH),libquadmath.a)
-QUADMATH=-lquadmath
-endif # ?QUADMATH
-endif # !QUADMATH
-endif # ?86
 LDFLAGS += -lm

@@ -38,11 +38,4 @@ LDFLAGS += $(realpath $(shell $(GCC) -print-file-name=libgcc.a))
 else # !Darwin
 LDFLAGS += -static-libgcc
 endif # ?Darwin
-LDFLAGS += -ldl
-ifndef QUADMATH
-QUADMATH=$(abspath $(shell $(GCC) -print-file-name=libquadmath.a))
-ifeq ($(QUADMATH),libquadmath.a)
-QUADMATH=-lquadmath
-endif # ?QUADMATH
-endif # !QUADMATH
-LDFLAGS += -lm
+LDFLAGS += -ldl -lm
