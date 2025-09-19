@@ -30,11 +30,6 @@ static inline float pvn_v1s_add_abs(const float x, const float y)
   return (__builtin_fabsf(x) + __builtin_fabsf(y));
 }
 
-static inline float pvn_v1s_max_abs(const float x, const float y)
-{
-  return __builtin_fmaxf(__builtin_fabsf(x), __builtin_fabsf(y));
-}
-
 static inline float pvn_v1s_hypot(const float x, const float y)
 {
   const float X = __builtin_fabsf(x);
@@ -46,6 +41,11 @@ static inline float pvn_v1s_hypot(const float x, const float y)
   const float S = __builtin_fmaf(Q, Q, 1.0f);
   const float s = __builtin_sqrtf(S);
   return (M * s);
+}
+
+static inline float pvn_v1s_max_abs(const float x, const float y)
+{
+  return __builtin_fmaxf(__builtin_fabsf(x), __builtin_fabsf(y));
 }
 
 static inline float pvn_v1s_rsqrt(const float x)
@@ -62,11 +62,6 @@ static inline double pvn_v1d_add_abs(const double x, const double y)
   return (__builtin_fabs(x) + __builtin_fabs(y));
 }
 
-static inline double pvn_v1d_max_abs(const double x, const double y)
-{
-  return __builtin_fmax(__builtin_fabs(x), __builtin_fabs(y));
-}
-
 static inline double pvn_v1d_hypot(const double x, const double y)
 {
   const double X = __builtin_fabs(x);
@@ -78,6 +73,11 @@ static inline double pvn_v1d_hypot(const double x, const double y)
   const double S = __builtin_fma(Q, Q, 1.0);
   const double s = __builtin_sqrt(S);
   return (M * s);
+}
+
+static inline double pvn_v1d_max_abs(const double x, const double y)
+{
+  return __builtin_fmax(__builtin_fabs(x), __builtin_fabs(y));
 }
 
 static inline double pvn_v1d_rsqrt(const double x)
@@ -94,11 +94,6 @@ static inline long double pvn_v1x_add_abs(const long double x, const long double
   return (__builtin_fabsl(x) + __builtin_fabsl(y));
 }
 
-static inline long double pvn_v1x_max_abs(const long double x, const long double y)
-{
-  return __builtin_fmaxl(__builtin_fabsl(x), __builtin_fabsl(y));
-}
-
 static inline long double pvn_v1x_hypot(const long double x, const long double y)
 {
   const long double X = __builtin_fabsl(x);
@@ -110,6 +105,11 @@ static inline long double pvn_v1x_hypot(const long double x, const long double y
   const long double S = __builtin_fmal(Q, Q, 1.0L);
   const long double s = __builtin_sqrtl(S);
   return (M * s);
+}
+
+static inline long double pvn_v1x_max_abs(const long double x, const long double y)
+{
+  return __builtin_fmaxl(__builtin_fabsl(x), __builtin_fabsl(y));
 }
 
 static inline long double pvn_v1x_rsqrt(const long double x)
@@ -127,11 +127,6 @@ static inline __float128 pvn_v1q_add_abs(const __float128 x, const __float128 y)
   return (fabsq(x) + fabsq(y));
 }
 
-static inline __float128 pvn_v1q_max_abs(const __float128 x, const __float128 y)
-{
-  return fmaxq(fabsq(x), fabsq(y));
-}
-
 static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
 {
   const __float128 X = fabsq(x);
@@ -143,6 +138,11 @@ static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
   const __float128 S = fmaq(Q, Q, 1.0q);
   const __float128 s = sqrtq(S);
   return (M * s);
+}
+
+static inline __float128 pvn_v1q_max_abs(const __float128 x, const __float128 y)
+{
+  return fmaxq(fabsq(x), fabsq(y));
 }
 
 static inline __float128 pvn_v1q_rsqrt(const __float128 x)
@@ -166,19 +166,11 @@ static inline __m128 pvn_v4s_add_abs(register const __m128 x, register const __m
   return _mm_add_ps(X, Y);
 }
 
-static inline __m128 pvn_v4s_max_abs(register const __m128 x, register const __m128 y)
-{
-  register const __m128 z = _mm_set1_ps(-0.0f);
-  register const __m128 X = _mm_andnot_ps(z, x);
-  register const __m128 Y = _mm_andnot_ps(z, y);
-  return _mm_max_ps(X, Y);
-}
-
-static inline float pvn_v4s_hypot_red(register const __m128 x)
+static inline float pvn_v4s_add_red(register const __m128 x)
 {
   alignas(16) float v[4];
   _mm_store_ps(v, x);
-  return pvn_v1s_hypot(pvn_v1s_hypot(v[0], v[2]), pvn_v1s_hypot(v[1], v[3]));
+  return (pvn_v1s_add_abs(v[0], v[2]) + pvn_v1s_add_abs(v[1], v[3]));
 }
 
 static inline __m128 pvn_v4s_hypot(register const __m128 x, register const __m128 y)
@@ -200,6 +192,28 @@ static inline __m128 pvn_v4s_hypot(register const __m128 x, register const __m12
 #endif /* ?Intel */
 }
 
+static inline float pvn_v4s_hypot_red(register const __m128 x)
+{
+  alignas(16) float v[4];
+  _mm_store_ps(v, x);
+  return pvn_v1s_hypot(pvn_v1s_hypot(v[0], v[2]), pvn_v1s_hypot(v[1], v[3]));
+}
+
+static inline __m128 pvn_v4s_max_abs(register const __m128 x, register const __m128 y)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+  register const __m128 X = _mm_andnot_ps(z, x);
+  register const __m128 Y = _mm_andnot_ps(z, y);
+  return _mm_max_ps(X, Y);
+}
+
+static inline float pvn_v4s_max_red(register const __m128 x)
+{
+  alignas(16) float v[4];
+  _mm_store_ps(v, x);
+  return __builtin_fmaxf(pvn_v1s_max_abs(v[0], v[2]), pvn_v1s_max_abs(v[1], v[3]));
+}
+
 static inline __m128 pvn_v4s_rsqrt(register const __m128 x)
 {
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
@@ -217,19 +231,11 @@ static inline __m128d pvn_v2d_add_abs(register const __m128d x, register const _
   return _mm_add_pd(X, Y);
 }
 
-static inline __m128d pvn_v2d_max_abs(register const __m128d x, register const __m128d y)
-{
-  register const __m128d z = _mm_set1_pd(-0.0);
-  register const __m128d X = _mm_andnot_pd(z, x);
-  register const __m128d Y = _mm_andnot_pd(z, y);
-  return _mm_max_pd(X, Y);
-}
-
-static inline double pvn_v2d_hypot_red(register const __m128d x)
+static inline double pvn_v2d_add_red(register const __m128d x)
 {
   alignas(16) double v[2];
   _mm_store_pd(v, x);
-  return pvn_v1d_hypot(v[0], v[1]);
+  return pvn_v1d_add_abs(v[0], v[1]);
 }
 
 static inline __m128d pvn_v2d_hypot(register const __m128d x, register const __m128d y)
@@ -251,6 +257,28 @@ static inline __m128d pvn_v2d_hypot(register const __m128d x, register const __m
 #endif /* ?Intel */
 }
 
+static inline double pvn_v2d_hypot_red(register const __m128d x)
+{
+  alignas(16) double v[2];
+  _mm_store_pd(v, x);
+  return pvn_v1d_hypot(v[0], v[1]);
+}
+
+static inline __m128d pvn_v2d_max_abs(register const __m128d x, register const __m128d y)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+  register const __m128d X = _mm_andnot_pd(z, x);
+  register const __m128d Y = _mm_andnot_pd(z, y);
+  return _mm_max_pd(X, Y);
+}
+
+static inline double pvn_v2d_max_red(register const __m128d x)
+{
+  alignas(16) double v[2];
+  _mm_store_pd(v, x);
+  return pvn_v1d_max_abs(v[0], v[1]);
+}
+
 static inline __m128d pvn_v2d_rsqrt(register const __m128d x)
 {
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
@@ -268,17 +296,9 @@ static inline __m256 pvn_v8s_add_abs(register const __m256 x, register const __m
   return _mm256_add_ps(X, Y);
 }
 
-static inline __m256 pvn_v8s_max_abs(register const __m256 x, register const __m256 y)
+static inline float pvn_v8s_add_red(register const __m256 x)
 {
-  register const __m256 z = _mm256_set1_ps(-0.0f);
-  register const __m256 X = _mm256_andnot_ps(z, x);
-  register const __m256 Y = _mm256_andnot_ps(z, y);
-  return _mm256_max_ps(X, Y);
-}
-
-static inline float pvn_v8s_hypot_red(register const __m256 x)
-{
-  return pvn_v4s_hypot_red(pvn_v4s_hypot(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
+  return pvn_v4s_add_red(pvn_v4s_add_abs(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
 
 static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m256 y)
@@ -300,6 +320,24 @@ static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m25
 #endif /* ?Intel */
 }
 
+static inline float pvn_v8s_hypot_red(register const __m256 x)
+{
+  return pvn_v4s_hypot_red(pvn_v4s_hypot(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
+}
+
+static inline __m256 pvn_v8s_max_abs(register const __m256 x, register const __m256 y)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+  register const __m256 X = _mm256_andnot_ps(z, x);
+  register const __m256 Y = _mm256_andnot_ps(z, y);
+  return _mm256_max_ps(X, Y);
+}
+
+static inline float pvn_v8s_max_red(register const __m256 x)
+{
+  return pvn_v4s_max_red(pvn_v4s_max_abs(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
+}
+
 static inline __m256 pvn_v8s_rsqrt(register const __m256 x)
 {
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
@@ -317,17 +355,9 @@ static inline __m256d pvn_v4d_add_abs(register const __m256d x, register const _
   return _mm256_add_pd(X, Y);
 }
 
-static inline __m256d pvn_v4d_max_abs(register const __m256d x, register const __m256d y)
+static inline double pvn_v4d_add_red(register const __m256d x)
 {
-  register const __m256d z = _mm256_set1_pd(-0.0);
-  register const __m256d X = _mm256_andnot_pd(z, x);
-  register const __m256d Y = _mm256_andnot_pd(z, y);
-  return _mm256_max_pd(X, Y);
-}
-
-static inline double pvn_v4d_hypot_red(register const __m256d x)
-{
-  return pvn_v2d_hypot_red(pvn_v2d_hypot(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
+  return pvn_v2d_add_red(pvn_v2d_add_abs(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
 
 static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m256d y)
@@ -349,6 +379,24 @@ static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m
 #endif /* ?Intel */
 }
 
+static inline double pvn_v4d_hypot_red(register const __m256d x)
+{
+  return pvn_v2d_hypot_red(pvn_v2d_hypot(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
+}
+
+static inline __m256d pvn_v4d_max_abs(register const __m256d x, register const __m256d y)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+  register const __m256d X = _mm256_andnot_pd(z, x);
+  register const __m256d Y = _mm256_andnot_pd(z, y);
+  return _mm256_max_pd(X, Y);
+}
+
+static inline double pvn_v4d_max_red(register const __m256d x)
+{
+  return pvn_v2d_max_red(pvn_v2d_max_abs(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
+}
+
 static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
 {
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
@@ -367,17 +415,9 @@ static inline __m512 pvn_v16s_add_abs(register const __m512 x, register const __
   return _mm512_add_ps(X, Y);
 }
 
-static inline __m512 pvn_v16s_max_abs(register const __m512 x, register const __m512 y)
+static inline float pvn_v16s_add_red(register const __m512 x)
 {
-  register const __m512 z = _mm512_set1_ps(-0.0f);
-  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
-  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
-  return _mm512_max_ps(X, Y);
-}
-
-static inline float pvn_v16s_hypot_red(register const __m512 x)
-{
-  return pvn_v8s_hypot_red(pvn_v8s_hypot(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
+  return pvn_v8s_add_red(pvn_v8s_add_abs(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
 
 static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m512 y)
@@ -399,6 +439,24 @@ static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m5
 #endif /* ?Intel */
 }
 
+static inline float pvn_v16s_hypot_red(register const __m512 x)
+{
+  return pvn_v8s_hypot_red(pvn_v8s_hypot(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
+}
+
+static inline __m512 pvn_v16s_max_abs(register const __m512 x, register const __m512 y)
+{
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
+  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  return _mm512_max_ps(X, Y);
+}
+
+static inline float pvn_v16s_max_red(register const __m512 x)
+{
+  return pvn_v8s_max_red(pvn_v8s_max_abs(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
+}
+
 static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
 {
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
@@ -416,17 +474,9 @@ static inline __m512d pvn_v8d_add_abs(register const __m512d x, register const _
   return _mm512_add_pd(X, Y);
 }
 
-static inline __m512d pvn_v8d_max_abs(register const __m512d x, register const __m512d y)
+static inline double pvn_v8d_add_red(register const __m512d x)
 {
-  register const __m512d z = _mm512_set1_pd(-0.0);
-  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
-  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
-  return _mm512_max_pd(X, Y);
-}
-
-static inline double pvn_v8d_hypot_red(register const __m512d x)
-{
-  return pvn_v4d_hypot_red(pvn_v4d_hypot(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
+  return pvn_v4d_add_red(pvn_v4d_add_abs(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
 
 static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m512d y)
@@ -446,6 +496,24 @@ static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m
   register const __m512d s = _mm512_sqrt_pd(S);
   return _mm512_mul_pd(M, s);
 #endif /* ?Intel */
+}
+
+static inline double pvn_v8d_hypot_red(register const __m512d x)
+{
+  return pvn_v4d_hypot_red(pvn_v4d_hypot(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
+}
+
+static inline __m512d pvn_v8d_max_abs(register const __m512d x, register const __m512d y)
+{
+  register const __m512d z = _mm512_set1_pd(-0.0);
+  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
+  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  return _mm512_max_pd(X, Y);
+}
+
+static inline double pvn_v8d_max_red(register const __m512d x)
+{
+  return pvn_v4d_max_red(pvn_v4d_max_abs(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
 
 static inline __m512d pvn_v8d_rsqrt(register const __m512d x)
