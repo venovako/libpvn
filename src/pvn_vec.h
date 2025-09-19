@@ -25,9 +25,14 @@
 #error PVN_SAFELEN already defined
 #endif /* ?PVN_SAFELEN */
 
-static inline float pvn_v1s_rsqrt(const float x)
+static inline float pvn_v1s_add_abs(const float x, const float y)
 {
-  return (1.0f / __builtin_sqrtf(x));
+  return (__builtin_fabsf(x) + __builtin_fabsf(y));
+}
+
+static inline float pvn_v1s_max_abs(const float x, const float y)
+{
+  return __builtin_fmaxf(__builtin_fabsf(x), __builtin_fabsf(y));
 }
 
 static inline float pvn_v1s_hypot(const float x, const float y)
@@ -43,9 +48,23 @@ static inline float pvn_v1s_hypot(const float x, const float y)
   return (M * s);
 }
 
-static inline double pvn_v1d_rsqrt(const double x)
+static inline float pvn_v1s_rsqrt(const float x)
 {
-  return (1.0 / __builtin_sqrt(x));
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return invsqrtf(x);
+#else /* !Intel */
+  return (1.0f / __builtin_sqrtf(x));
+#endif /* ?Intel */
+}
+
+static inline double pvn_v1d_add_abs(const double x, const double y)
+{
+  return (__builtin_fabs(x) + __builtin_fabs(y));
+}
+
+static inline double pvn_v1d_max_abs(const double x, const double y)
+{
+  return __builtin_fmax(__builtin_fabs(x), __builtin_fabs(y));
 }
 
 static inline double pvn_v1d_hypot(const double x, const double y)
@@ -61,9 +80,23 @@ static inline double pvn_v1d_hypot(const double x, const double y)
   return (M * s);
 }
 
-static inline long double pvn_v1x_rsqrt(const long double x)
+static inline double pvn_v1d_rsqrt(const double x)
 {
-  return (1.0L / __builtin_sqrtl(x));
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return invsqrt(x);
+#else /* !Intel */
+  return (1.0 / __builtin_sqrt(x));
+#endif /* ?Intel */
+}
+
+static inline long double pvn_v1x_add_abs(const long double x, const long double y)
+{
+  return (__builtin_fabsl(x) + __builtin_fabsl(y));
+}
+
+static inline long double pvn_v1x_max_abs(const long double x, const long double y)
+{
+  return __builtin_fmaxl(__builtin_fabsl(x), __builtin_fabsl(y));
 }
 
 static inline long double pvn_v1x_hypot(const long double x, const long double y)
@@ -79,10 +112,24 @@ static inline long double pvn_v1x_hypot(const long double x, const long double y
   return (M * s);
 }
 
-#ifdef PVN_QUADMATH
-static inline __float128 pvn_v1q_rsqrt(const __float128 x)
+static inline long double pvn_v1x_rsqrt(const long double x)
 {
-  return (1.0q / sqrtq(x));
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return invsqrtl(x);
+#else /* !Intel */
+  return (1.0L / __builtin_sqrtl(x));
+#endif /* ?Intel */
+}
+
+#ifdef PVN_QUADMATH
+static inline __float128 pvn_v1q_add_abs(const __float128 x, const __float128 y)
+{
+  return (fabsq(x) + fabsq(y));
+}
+
+static inline __float128 pvn_v1q_max_abs(const __float128 x, const __float128 y)
+{
+  return fmaxq(fabsq(x), fabsq(y));
 }
 
 static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
@@ -97,14 +144,34 @@ static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
   const __float128 s = sqrtq(S);
   return (M * s);
 }
+
+static inline __float128 pvn_v1q_rsqrt(const __float128 x)
+{
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return __invsqrtq(x);
+#else /* !Intel */
+  return (1.0q / sqrtq(x));
+#endif /* ?Intel */
+}
 #endif /* PVN_QUADMATH */
 
 #if (defined(__AVX__) && defined(__FMA__))
 #include <immintrin.h>
 
-static inline __m128 pvn_v4s_rsqrt(register const __m128 x)
+static inline __m128 pvn_v4s_add_abs(register const __m128 x, register const __m128 y)
 {
-  return _mm_div_ps(_mm_set1_ps(1.0f), _mm_sqrt_ps(x)); //_mm_invsqrt_ps(x)
+  register const __m128 z = _mm_set1_ps(-0.0f);
+  register const __m128 X = _mm_andnot_ps(z, x);
+  register const __m128 Y = _mm_andnot_ps(z, y);
+  return _mm_add_ps(X, Y);
+}
+
+static inline __m128 pvn_v4s_max_abs(register const __m128 x, register const __m128 y)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+  register const __m128 X = _mm_andnot_ps(z, x);
+  register const __m128 Y = _mm_andnot_ps(z, y);
+  return _mm_max_ps(X, Y);
 }
 
 static inline float pvn_v4s_hypot_red(register const __m128 x)
@@ -116,6 +183,9 @@ static inline float pvn_v4s_hypot_red(register const __m128 x)
 
 static inline __m128 pvn_v4s_hypot(register const __m128 x, register const __m128 y)
 {
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm_hypot_ps(x, y);
+#else /* !Intel */
   register const __m128 z = _mm_set1_ps(-0.0f);
   register const __m128 o = _mm_set1_ps(1.0f);
   register const __m128 X = _mm_andnot_ps(z, x);
@@ -126,13 +196,33 @@ static inline __m128 pvn_v4s_hypot(register const __m128 x, register const __m12
   register const __m128 Q = _mm_max_ps(q, z);
   register const __m128 S = _mm_fmadd_ps(Q, Q, o);
   register const __m128 s = _mm_sqrt_ps(S);
-  register const __m128 h = _mm_mul_ps(M, s);
-  return h;
+  return _mm_mul_ps(M, s);
+#endif /* ?Intel */
 }
 
-static inline __m128d pvn_v2d_rsqrt(register const __m128d x)
+static inline __m128 pvn_v4s_rsqrt(register const __m128 x)
 {
-  return _mm_div_pd(_mm_set1_pd(1.0), _mm_sqrt_pd(x)); //_mm_invsqrt_pd(x)
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm_invsqrt_ps(x);
+#else /* !Intel */
+  return _mm_div_ps(_mm_set1_ps(1.0f), _mm_sqrt_ps(x));
+#endif /* ?Intel */
+}
+
+static inline __m128d pvn_v2d_add_abs(register const __m128d x, register const __m128d y)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+  register const __m128d X = _mm_andnot_pd(z, x);
+  register const __m128d Y = _mm_andnot_pd(z, y);
+  return _mm_add_pd(X, Y);
+}
+
+static inline __m128d pvn_v2d_max_abs(register const __m128d x, register const __m128d y)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+  register const __m128d X = _mm_andnot_pd(z, x);
+  register const __m128d Y = _mm_andnot_pd(z, y);
+  return _mm_max_pd(X, Y);
 }
 
 static inline double pvn_v2d_hypot_red(register const __m128d x)
@@ -144,6 +234,9 @@ static inline double pvn_v2d_hypot_red(register const __m128d x)
 
 static inline __m128d pvn_v2d_hypot(register const __m128d x, register const __m128d y)
 {
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm_hypot_pd(x, y);
+#else /* !Intel */
   register const __m128d z = _mm_set1_pd(-0.0);
   register const __m128d o = _mm_set1_pd(1.0);
   register const __m128d X = _mm_andnot_pd(z, x);
@@ -154,13 +247,33 @@ static inline __m128d pvn_v2d_hypot(register const __m128d x, register const __m
   register const __m128d Q = _mm_max_pd(q, z);
   register const __m128d S = _mm_fmadd_pd(Q, Q, o);
   register const __m128d s = _mm_sqrt_pd(S);
-  register const __m128d h = _mm_mul_pd(M, s);
-  return h;
+  return _mm_mul_pd(M, s);
+#endif /* ?Intel */
 }
 
-static inline __m256 pvn_v8s_rsqrt(register const __m256 x)
+static inline __m128d pvn_v2d_rsqrt(register const __m128d x)
 {
-  return _mm256_div_ps(_mm256_set1_ps(1.0f), _mm256_sqrt_ps(x)); //_mm256_invsqrt_ps(x)
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm_invsqrt_pd(x);
+#else /* !Intel */
+  return _mm_div_pd(_mm_set1_pd(1.0), _mm_sqrt_pd(x));
+#endif /* ?Intel */
+}
+
+static inline __m256 pvn_v8s_add_abs(register const __m256 x, register const __m256 y)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+  register const __m256 X = _mm256_andnot_ps(z, x);
+  register const __m256 Y = _mm256_andnot_ps(z, y);
+  return _mm256_add_ps(X, Y);
+}
+
+static inline __m256 pvn_v8s_max_abs(register const __m256 x, register const __m256 y)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+  register const __m256 X = _mm256_andnot_ps(z, x);
+  register const __m256 Y = _mm256_andnot_ps(z, y);
+  return _mm256_max_ps(X, Y);
 }
 
 static inline float pvn_v8s_hypot_red(register const __m256 x)
@@ -170,6 +283,9 @@ static inline float pvn_v8s_hypot_red(register const __m256 x)
 
 static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m256 y)
 {
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm256_hypot_ps(x, y);
+#else /* !Intel */
   register const __m256 z = _mm256_set1_ps(-0.0f);
   register const __m256 o = _mm256_set1_ps(1.0f);
   register const __m256 X = _mm256_andnot_ps(z, x);
@@ -180,13 +296,33 @@ static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m25
   register const __m256 Q = _mm256_max_ps(q, z);
   register const __m256 S = _mm256_fmadd_ps(Q, Q, o);
   register const __m256 s = _mm256_sqrt_ps(S);
-  register const __m256 h = _mm256_mul_ps(M, s);
-  return h;
+  return _mm256_mul_ps(M, s);
+#endif /* ?Intel */
 }
 
-static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
+static inline __m256 pvn_v8s_rsqrt(register const __m256 x)
 {
-  return _mm256_div_pd(_mm256_set1_pd(1.0), _mm256_sqrt_pd(x)); //_mm256_invsqrt_pd(x)
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm256_invsqrt_ps(x);
+#else /* !Intel */
+  return _mm256_div_ps(_mm256_set1_ps(1.0f), _mm256_sqrt_ps(x));
+#endif /* ?Intel */
+}
+
+static inline __m256d pvn_v4d_add_abs(register const __m256d x, register const __m256d y)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+  register const __m256d X = _mm256_andnot_pd(z, x);
+  register const __m256d Y = _mm256_andnot_pd(z, y);
+  return _mm256_add_pd(X, Y);
+}
+
+static inline __m256d pvn_v4d_max_abs(register const __m256d x, register const __m256d y)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+  register const __m256d X = _mm256_andnot_pd(z, x);
+  register const __m256d Y = _mm256_andnot_pd(z, y);
+  return _mm256_max_pd(X, Y);
 }
 
 static inline double pvn_v4d_hypot_red(register const __m256d x)
@@ -196,6 +332,9 @@ static inline double pvn_v4d_hypot_red(register const __m256d x)
 
 static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m256d y)
 {
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm256_hypot_pd(x, y);
+#else /* !Intel */
   register const __m256d z = _mm256_set1_pd(-0.0);
   register const __m256d o = _mm256_set1_pd(1.0);
   register const __m256d X = _mm256_andnot_pd(z, x);
@@ -206,14 +345,34 @@ static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m
   register const __m256d Q = _mm256_max_pd(q, z);
   register const __m256d S = _mm256_fmadd_pd(Q, Q, o);
   register const __m256d s = _mm256_sqrt_pd(S);
-  register const __m256d h = _mm256_mul_pd(M, s);
-  return h;
+  return _mm256_mul_pd(M, s);
+#endif /* ?Intel */
+}
+
+static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
+{
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm256_invsqrt_pd(x);
+#else /* !Intel */
+  return _mm256_div_pd(_mm256_set1_pd(1.0), _mm256_sqrt_pd(x));
+#endif /* ?Intel */
 }
 
 #ifdef __AVX512F__
-static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
+static inline __m512 pvn_v8s_add_abs(register const __m512 x, register const __m512 y)
 {
-  return _mm512_div_ps(_mm512_set1_ps(1.0f), _mm512_sqrt_ps(x)); //_mm512_invsqrt_ps(x)
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
+  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  return _mm512_add_ps(X, Y);
+}
+
+static inline __m512 pvn_v8s_max_abs(register const __m512 x, register const __m512 y)
+{
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
+  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  return _mm512_max_ps(X, Y);
 }
 
 static inline float pvn_v16s_hypot_red(register const __m512 x)
@@ -223,6 +382,9 @@ static inline float pvn_v16s_hypot_red(register const __m512 x)
 
 static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m512 y)
 {
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm512_hypot_ps(x, y);
+#else /* !Intel */
   register const __m512 z = _mm512_set1_ps(-0.0f);
   register const __m512 o = _mm512_set1_ps(1.0f);
   register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
@@ -233,13 +395,33 @@ static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m5
   register const __m512 Q = _mm512_max_ps(q, z);
   register const __m512 S = _mm512_fmadd_ps(Q, Q, o);
   register const __m512 s = _mm512_sqrt_ps(S);
-  register const __m512 h = _mm512_mul_ps(M, s);
-  return h;
+  return _mm512_mul_ps(M, s);
+#endif /* ?Intel */
 }
 
-static inline __m512d pvn_v8d_rsqrt(register const __m512d x)
+static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
 {
-  return _mm512_div_pd(_mm512_set1_pd(1.0), _mm512_sqrt_pd(x)); //_mm512_invsqrt_pd(x)
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm512_invsqrt_ps(x);
+#else /* !Intel */
+  return _mm512_div_ps(_mm512_set1_ps(1.0f), _mm512_sqrt_ps(x));
+#endif /* ?Intel */
+}
+
+static inline __m512d pvn_v8d_add_abs(register const __m512d x, register const __m512d y)
+{
+  register const __m512d z = _mm512_set1_pd(-0.0);
+  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
+  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  return _mm512_add_pd(X, Y);
+}
+
+static inline __m512d pvn_v8d_max_abs(register const __m512d x, register const __m512d y)
+{
+  register const __m512d z = _mm512_set1_pd(-0.0);
+  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
+  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  return _mm512_max_pd(X, Y);
 }
 
 static inline double pvn_v8d_hypot_red(register const __m512d x)
@@ -249,6 +431,9 @@ static inline double pvn_v8d_hypot_red(register const __m512d x)
 
 static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m512d y)
 {
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm512_hypot_pd(x, y);
+#else /* !Intel */
   register const __m512d z = _mm512_set1_pd(-0.0);
   register const __m512d o = _mm512_set1_pd(1.0);
   register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
@@ -259,8 +444,17 @@ static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m
   register const __m512d Q = _mm512_max_pd(q, z);
   register const __m512d S = _mm512_fmadd_pd(Q, Q, o);
   register const __m512d s = _mm512_sqrt_pd(S);
-  register const __m512d h = _mm512_mul_pd(M, s);
-  return h;
+  return _mm512_mul_pd(M, s);
+#endif /* ?Intel */
+}
+
+static inline __m512d pvn_v8d_rsqrt(register const __m512d x)
+{
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+  return _mm512_invsqrt_pd(x);
+#else /* !Intel */
+  return _mm512_div_pd(_mm512_set1_pd(1.0), _mm512_sqrt_pd(x));
+#endif /* ?Intel */
 }
 #endif /* __AVX512F__ */
 #endif /* __AVX__ && __FMA__ */

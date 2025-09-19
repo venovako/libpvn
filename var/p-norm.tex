@@ -21,4 +21,10 @@ $$q=m/M,\quad Q={\rm fmax}(q,0);$$
 $$z={\rm cr\_pow}(Q,p/2),\quad Z={\rm fma}(z,z,1);$$
 $$C={\rm cr\_pow}(Z,1/p);$$
 $${\rm norm}p(x,y)\approx M\cdot C.$$
+
+\hrule\vskip+1ex
+If $p=1$ or $p=\infty$, the computation can be vectorized, with the
+per-lane operations
+$${\rm add\_abs}(x,y)=|x|+|y|,\qquad{\rm max\_abs}(x,y)=\max\{|x|,|y|\},$$
+respectively, instead of ${\rm hypot}(x,y)$ from the paper.
 \bye
