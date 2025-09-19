@@ -682,7 +682,7 @@ static inline double pvn_v8d_hypot_red(register const __m512d x)
 }
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-static inline __m512d pvn_v4d_lp(register const __m512d p, register const __m512d x, register const __m512d y)
+static inline __m512d pvn_v8d_lp(register const __m512d p, register const __m512d x, register const __m512d y)
 {
   /* z, h, o, s, and c should be computed only once for a fixed p */
   register const __m512d z = _mm512_set1_pd(-0.0);
