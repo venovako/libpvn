@@ -263,6 +263,27 @@ static inline float pvn_v4s_hypot_red(register const __m128 x)
   return pvn_v1s_hypot(pvn_v1s_hypot(v[0], v[2]), pvn_v1s_hypot(v[1], v[3]));
 }
 
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+static inline __m128 pvn_v4s_lp(register const __m128 p, register const __m128 x, register const __m128 y)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+  register const __m128 h = _mm_set1_ps(0.5f);
+  register const __m128 o = _mm_set1_ps(1.0f);
+  register const __m128 X = _mm_andnot_ps(z, x);
+  register const __m128 Y = _mm_andnot_ps(z, y);
+  register const __m128 m = _mm_min_ps(X, Y);
+  register const __m128 M = _mm_max_ps(X, Y);
+  register const __m128 q = _mm_div_ps(m, M);
+  register const __m128 s = _mm_mul_ps(p, h);
+  register const __m128 Q = _mm_max_ps(q, z);
+  register const __m128 z = _mm_pow_ps(Q, s);
+  register const __m128 c = _mm_div_ps(o, p);
+  register const __m128 Z = _mm_fmadd_ps(z, z, o);
+  register const __m128 C = _mm_pow_ps(Z, c);
+  return _mm_mul_ps(M, C);
+}
+#endif /* Intel */
+
 static inline __m128 pvn_v4s_max_abs(register const __m128 x, register const __m128 y)
 {
   register const __m128 z = _mm_set1_ps(-0.0f);
@@ -327,6 +348,27 @@ static inline double pvn_v2d_hypot_red(register const __m128d x)
   _mm_store_pd(v, x);
   return pvn_v1d_hypot(v[0], v[1]);
 }
+
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+static inline __m128d pvn_v2d_lp(register const __m128d p, register const __m128d x, register const __m128d y)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+  register const __m128d h = _mm_set1_pd(0.5);
+  register const __m128d o = _mm_set1_pd(1.0);
+  register const __m128d X = _mm_andnot_pd(z, x);
+  register const __m128d Y = _mm_andnot_pd(z, y);
+  register const __m128d m = _mm_min_pd(X, Y);
+  register const __m128d M = _mm_max_pd(X, Y);
+  register const __m128d q = _mm_div_pd(m, M);
+  register const __m128d s = _mm_mul_pd(p, h);
+  register const __m128d Q = _mm_max_pd(q, z);
+  register const __m128d z = _mm_pow_pd(Q, s);
+  register const __m128d c = _mm_div_pd(o, p);
+  register const __m128d Z = _mm_fmadd_pd(z, z, o);
+  register const __m128d C = _mm_pow_pd(Z, c);
+  return _mm_mul_pd(M, C);
+}
+#endif /* Intel */
 
 static inline __m128d pvn_v2d_max_abs(register const __m128d x, register const __m128d y)
 {
