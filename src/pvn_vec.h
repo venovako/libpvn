@@ -600,6 +600,28 @@ static inline float pvn_v16s_hypot_red(register const __m512 x)
   return pvn_v8s_hypot_red(pvn_v8s_hypot(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
 
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+static inline __m512 pvn_v16s_lp(register const __m512 p, register const __m512 x, register const __m512 y)
+{
+  /* z, h, o, s, and c should be computed only once for a fixed p */
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+  register const __m512 h = _mm512_set1_ps(0.5f);
+  register const __m512 o = _mm512_set1_ps(1.0f);
+  register const __m512 s = _mm512_mul_ps(p, h);
+  register const __m512 c = _mm512_div_ps(o, p);
+  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
+  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  register const __m512 m = _mm512_min_ps(X, Y);
+  register const __m512 M = _mm512_max_ps(X, Y);
+  register const __m512 q = _mm512_div_ps(m, M);
+  register const __m512 Q = _mm512_max_ps(q, z);
+  register const __m512 S = _mm512_pow_ps(Q, s);
+  register const __m512 Z = _mm512_fmadd_ps(S, S, o);
+  register const __m512 C = _mm512_pow_ps(Z, c);
+  return _mm512_mul_ps(M, C);
+}
+#endif /* Intel */
+
 static inline __m512 pvn_v16s_max_abs(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
@@ -658,6 +680,28 @@ static inline double pvn_v8d_hypot_red(register const __m512d x)
 {
   return pvn_v4d_hypot_red(pvn_v4d_hypot(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
+
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+static inline __m512d pvn_v4d_lp(register const __m512d p, register const __m512d x, register const __m512d y)
+{
+  /* z, h, o, s, and c should be computed only once for a fixed p */
+  register const __m512d z = _mm512_set1_pd(-0.0);
+  register const __m512d h = _mm512_set1_pd(0.5);
+  register const __m512d o = _mm512_set1_pd(1.0);
+  register const __m512d s = _mm512_mul_pd(p, h);
+  register const __m512d c = _mm512_div_pd(o, p);
+  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
+  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  register const __m512d m = _mm512_min_pd(X, Y);
+  register const __m512d M = _mm512_max_pd(X, Y);
+  register const __m512d q = _mm512_div_pd(m, M);
+  register const __m512d Q = _mm512_max_pd(q, z);
+  register const __m512d S = _mm512_pow_pd(Q, s);
+  register const __m512d Z = _mm512_fmadd_pd(S, S, o);
+  register const __m512d C = _mm512_pow_pd(Z, c);
+  return _mm512_mul_pd(M, C);
+}
+#endif /* Intel */
 
 static inline __m512d pvn_v8d_max_abs(register const __m512d x, register const __m512d y)
 {
