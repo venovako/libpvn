@@ -33,6 +33,7 @@ GCC=$(CC)
 endif # !GCC
 
 ifeq ($(findstring 86,$(ARCH)),86)
+ifneq ($(COMPILER),clang)
 ifndef QUADMATH
 ifdef DYNAMIC
 QUADMATH=$(realpath $(shell $(GCC) -print-file-name=libquadmath.$(DYNAMIC)))
@@ -49,6 +50,7 @@ QUADMATH=$(QMA)
 endif # ?QM
 endif # ?DYNAMIC
 endif # !QUADMATH
+endif # !clang
 endif # ?86
 
 CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
@@ -225,9 +227,10 @@ LNK=-L.
 ifdef DYNAMIC
 LIBS += libpvn.$(DYNAMIC)
 ifdef QUADMATH
-FSYS=$(dir $(QUADMATH))
-GNU=-L$(FSYS) -lquadmath -rpath=$(FSYS) $(QUADMATH)
-endif # QUADMATH
+GNU=$(QUADMATH)
+else # !QUADMATH
+GNU=
+endif # ?QUADMATH
 LNK += -Wl,-rpath=.
 ifneq ($(COMPILER),clang)
 GNU += $(realpath $(shell $(GCC) -print-file-name=libgcc.a))
