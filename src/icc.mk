@@ -32,10 +32,4 @@ else # !OPENMP
 CFLAGS += -qopenmp-simd
 endif # ?OPENMP
 CFLAGS += -DPVN_ICC="\"$(shell icc -diag-disable=10441 -dumpversion)\""
-LDFLAGS=-rdynamic
-ifeq ($(OS),Darwin)
-LDFLAGS += $(realpath $(shell $(GCC) -print-file-name=libgcc.a))
-else # !Darwin
-LDFLAGS += -static-libgcc
-endif # ?Darwin
-LDFLAGS += -ldl -lm
+LDFLAGS=-rdynamic -ldl -lm

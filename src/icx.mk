@@ -25,4 +25,4 @@ endif # !true
 else # !OPENMP
 CFLAGS += -qopenmp-simd
 endif # ?OPENMP
-LDFLAGS=-rdynamic -static-libgcc -ldl -lm #-pie
+LDFLAGS=-rdynamic -ldl -lm
