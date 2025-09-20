@@ -26,9 +26,8 @@ The library has been successfully built using:
 | gcc(4)   | FreeBSD | arm64    |
 | gcc(5)   | Linux   | ppc64le  |
 | gcc(6)   | Linux   | x86_64   |
-| icc(7)   | Darwin  | x86_64   |
-| icx(8)   | Linux   | x86_64   |
-| nvc(9)   | Linux   | x86_64   |
+| icx(7)   | Linux   | x86_64   |
+| nvc(8)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
 1. Apple (clang 13.0.0),
@@ -37,9 +36,8 @@ Recent versions of the compilers have been provided by or used on:
 4. FreeBSD (GCC 13.3.0),
 5. openSUSE Tumbleweed (GCC 15.2.0),
 6. Oracle Linux (GCC 14.2.1-7),
-7. Intel Classic (2021.10.0),
-8. Intel oneAPI (2025.1.1),
-9. NVIDIA HPC SDK (25.7).
+7. Intel oneAPI (2025.1.1),
+8. NVIDIA HPC SDK (25.7).
 
 Examples of building the library:
 ```bash
@@ -47,7 +45,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux with a high optimization level
