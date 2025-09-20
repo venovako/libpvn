@@ -35,7 +35,7 @@ Recent versions of the compilers have been provided by or used on:
 2. FreeBSD (clang 19.1.7),
 3. Homebrew (GCC 15.1.0),
 4. FreeBSD (GCC 13.3.0),
-5. openSUSE Tumbleweed (GCC 15.1.1),
+5. openSUSE Tumbleweed (GCC 15.2.0),
 6. Oracle Linux (GCC 14.2.1-7),
 7. Intel Classic (2021.10.0),
 8. Intel oneAPI (2025.1.1),
@@ -54,7 +54,7 @@ make help
 make COMPILER=icx NDEBUG=3 clean all
 #
 # a release build with the Homebrew's gcc on x86_64 macOS with a low optimization level
-make COMPILER=gcc COMPILER_SUFFIX=-14 NDEBUG=g clean all
+make COMPILER=gcc COMPILER_SUFFIX=-15 NDEBUG=g clean all
 #
 # a debug build with clang on FreeBSD (note the usage of gmake instead of make)
 gmake clean all
@@ -62,10 +62,10 @@ gmake clean all
 
 ## Using
 
-Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.a` static library, as shown in `GNUmakefile`.
+Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.so` (dynamic) or `libpvn.a` (static) library, as shown in `GNUmakefile`.
 There are no mutable global/static variables present, *unless profiling has been enabled or Windows are targeted*, but some static constant lookup tables are used.
 The functions that do not interface other non-system libraries can safely be called from multiple threads on *unrelated* data without locking.
-You might wish to tune the compiler flags to match yours, especially if you are building a dynamic library, a static executable, and/or want to use OpenMP.
+You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or want to use OpenMP.
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 
@@ -73,7 +73,7 @@ All functions declared with `PVN_FABI` and not taking their arguments by value s
 
 Setting the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path overrides the included choice of the CORE-MATH functions.
 If the object files have not been prepared beforehand, the source files will be compiled in either case.
-The object files will be integrated into `libpvn.a` for easier re-use by other software linked with it.
+The object files will be integrated into `libpvn.so` and `libpvn.a` for easier re-use by other software linked with it.
 
 The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang` and `gcc`) or `Host` (for `icx`).
 
