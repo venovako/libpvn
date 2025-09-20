@@ -233,16 +233,32 @@ LNK += -Wl,-rpath=.
 endif # !Darwin
 LNK += -lpvn
 ifdef MPC
-LNK += -L$(MPC)/$(LIB64) -Wl,-rpath=$(MPC)/$(LIB64) -lmpc
+LNK += -L$(MPC)/$(LIB64)
+ifneq ($(OS),Darwin)
+LNK += -Wl,-rpath=$(MPC)/$(LIB64)
+endif # !Darwin
+LNK += -lmpc
 endif # MPC
 ifdef MPFR
-LNK += -L$(MPFR)/$(LIB64) -Wl,-rpath=$(MPFR)/$(LIB64) -lmpfr
+LNK += -L$(MPFR)/$(LIB64)
+ifneq ($(OS),Darwin)
+LNK += -Wl,-rpath=$(MPFR)/$(LIB64)
+endif # !Darwin
+LNK += -lmpfr
 endif # MPFR
 ifdef GMP
-LNK += -L$(GMP)/$(LIB64) -Wl,-rpath=$(GMP)/$(LIB64) -lgmp
+LNK += -L$(GMP)/$(LIB64)
+ifneq ($(OS),Darwin)
+LNK += -Wl,-rpath=$(GMP)/$(LIB64)
+endif # !Darwin
+LNK += -lgmp
 endif # GMP
 ifdef LAPACK
-LNK += -L$(LAPACK) -Wl,-rpath=$(LAPACK) -ltmglib -llapack -lrefblas
+LNK += -L$(LAPACK)
+ifneq ($(OS),Darwin)
+LNK += -Wl,-rpath=$(LAPACK)
+endif # !Darwin
+LNK += -ltmglib -llapack -lrefblas
 endif # LAPACK
 ifdef QUADMATH
 ifdef QMA
@@ -250,7 +266,11 @@ LNK += $(QUADMATH)
 else # !QMA
 ifdef QMD
 QMP=$(dir $(QUADMATH))
-LNK += -L$(QMP) -Wl,-rpath=$(QMP) -lquadmath
+LNK += -L$(QMP)
+ifneq ($(OS),Darwin)
+LNK += -Wl,-rpath=$(QMP)
+endif # !Darwin
+LNK += -lquadmath
 else # !QMD
 LNK += $(QUADMATH)
 endif # ?QMD
