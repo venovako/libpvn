@@ -230,12 +230,15 @@ CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
 ifeq ($(OS),Darwin)
 LNK=-Wl,-warn_unused_dylibs -Wl,-warn_commons
 else # !Darwin
-LNK=-Wl,-M
 ifdef NDEBUG
-ifneq ($(NDEBUG),g)
-LNK += -Wl,-O$(NDEBUG)
+ifeq ($(NDEBUG),g)
+LNK=
+else # !g
+LNK=-Wl,-O$(NDEBUG)
+endif # ?g
+else # !NDEBUG
+LNK=-Wl,-M
 endif # ?NDEBUG
-endif # NDEBUG
 endif # ?Darwin
 ifdef MPC
 LNK += -L$(MPC)/$(LIB64)
