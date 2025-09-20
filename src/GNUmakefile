@@ -271,6 +271,9 @@ ifneq ($(OS),Darwin)
 LNK += -Wl,-rpath=$(QMP)
 endif # !Darwin
 LNK += -lquadmath
+ifneq ($(OS),Darwin)
+LNK += -lgcc_s
+endif # !Darwin
 else # !QMD
 LNK += $(QUADMATH)
 endif # ?QMD

@@ -35,7 +35,6 @@ LDFLAGS=
 else # !MINGW64
 LDFLAGS=-rdynamic
 endif # ?MINGW64
-LDFLAGS=-static-libgcc #-pie
 ifeq ($(findstring BSD,$(OS)),BSD)
 LDFLAGS += -lexecinfo
 else # !BSD
