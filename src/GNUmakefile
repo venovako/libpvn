@@ -9,6 +9,9 @@ else # !aarch64
 ARCH=$(MACHINE)
 endif # ?aarch64
 endif # ?amd64
+ifndef LIB64
+LIB64=lib
+endif # !LIB64
 RM=rm -rfv
 
 ifndef COMPILER
@@ -229,18 +232,37 @@ LNK += -Wl,-rpath=.
 endif # DYNAMIC
 LNK += -lpvn
 ifdef MPC
-LNK += -L$(MPC)/lib -lmpc
+LNK += -L$(MPC)/$(LIB64)
+ifdef DYNAMIC
+LNK += -Wl,-rpath=$(MPC)/$(LIB64)
+endif # DYNAMIC
+LNK += -lmpc
 endif # MPC
 ifdef MPFR
-LNK += -L$(MPFR)/lib -lmpfr
+LNK += -L$(MPFR)/$(LIB64)
+ifdef DYNAMIC
+LNK += -Wl,-rpath=$(MPFR)/$(LIB64)
+endif # DYNAMIC
+LNK += -lmpfr
 endif # MPFR
 ifdef GMP
-LNK += -L$(GMP)/lib -lgmp
+LNK += -L$(GMP)/$(LIB64)
+ifdef DYNAMIC
+LNK += -Wl,-rpath=$(GMP)/$(LIB64)
+endif # DYNAMIC
+LNK += -lgmp
 endif # GMP
 ifdef LAPACK
 LNK += -L$(LAPACK) -ltmglib -llapack -lrefblas
 endif # LAPACK
 ifdef QUADMATH
+ifdef QMA
+ifeq ($(QMA),)
+LNK += -Wl,-rpath=$(dir $(QUADMATH))
+endif # dynamic
+else # !QMA
+LNK += -Wl,-rpath=$(dir $(QUADMATH))
+endif # ?QMA
 LNK += $(QUADMATH)
 endif # QUADMATH
 
@@ -255,7 +277,7 @@ endif # ?icc
 all: $(LIBS) $(EXES)
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=so] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|icc|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [DYNAMIC=so] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
