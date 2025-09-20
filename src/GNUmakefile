@@ -280,6 +280,8 @@ endif # ?QMD
 endif # ?QMA
 endif # QUADMATH
 
+CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
+
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)
