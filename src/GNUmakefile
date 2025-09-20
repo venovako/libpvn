@@ -258,12 +258,15 @@ endif # LAPACK
 ifdef QUADMATH
 ifdef QMA
 ifeq ($(QMA),)
-LNK += -Wl,-rpath=$(dir $(QUADMATH))
-endif # dynamic
-else # !QMA
-LNK += -Wl,-rpath=$(dir $(QUADMATH))
-endif # ?QMA
+QMD=$(dir $(QUADMATH))
+LNK += -L$(QMD) -Wl,-rpath=$(QMD) -lquadmath
+else # static
 LNK += $(QUADMATH)
+endif # ?dynamic
+else # !QMA
+QMD=$(dir $(QUADMATH))
+LNK += -L$(QMD) -Wl,-rpath=$(QMD) -lquadmath
+endif # ?QMA
 endif # QUADMATH
 
 ifeq ($(COMPILER),icc)
