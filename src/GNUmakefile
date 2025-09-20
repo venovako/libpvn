@@ -224,40 +224,53 @@ EXES += \
 ../var/reh_relerr.exe \
 ../var/rhh_relerr.exe
 endif # MPFR
-LIBS=libpvn.a
-LNK=-L.
-ifneq ($(OS),Darwin)
+LIBS=libpvn.a libpvn.$(DYNAMIC)
+
 CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
-LIBS += libpvn.$(DYNAMIC)
-LNK += -Wl,-rpath=.
-endif # !Darwin
-LNK += -lpvn
+ifeq ($(OS),Darwin)
+LNK=-Wl,-warn_unused_dylibs -Wl,-warn_commons
+else # !Darwin
+LNK=-Wl,-M
+ifdef NDEBUG
+ifneq ($(NDEBUG),g)
+LNK += -Wl,-O$(NDEBUG)
+endif # ?NDEBUG
+endif # NDEBUG
+endif # ?Darwin
 ifdef MPC
 LNK += -L$(MPC)/$(LIB64)
-ifneq ($(OS),Darwin)
+ifeq ($(OS),Darwin)
+LNK += -Wl,-rpath,$(MPC)/$(LIB64)
+else # !Darwin
 LNK += -Wl,-rpath=$(MPC)/$(LIB64)
-endif # !Darwin
+endif # ?Darwin
 LNK += -lmpc
 endif # MPC
 ifdef MPFR
 LNK += -L$(MPFR)/$(LIB64)
-ifneq ($(OS),Darwin)
+ifeq ($(OS),Darwin)
+LNK += -Wl,-rpath,$(MPFR)/$(LIB64)
+else # !Darwin
 LNK += -Wl,-rpath=$(MPFR)/$(LIB64)
-endif # !Darwin
+endif # ?Darwin
 LNK += -lmpfr
 endif # MPFR
 ifdef GMP
 LNK += -L$(GMP)/$(LIB64)
-ifneq ($(OS),Darwin)
+ifeq ($(OS),Darwin)
+LNK += -Wl,-rpath,$(GMP)/$(LIB64)
+else # !Darwin
 LNK += -Wl,-rpath=$(GMP)/$(LIB64)
-endif # !Darwin
+endif # ?Darwin
 LNK += -lgmp
 endif # GMP
 ifdef LAPACK
 LNK += -L$(LAPACK)
-ifneq ($(OS),Darwin)
+ifeq ($(OS),Darwin)
+LNK += -Wl,-rpath,$(LAPACK)
+else # !Darwin
 LNK += -Wl,-rpath=$(LAPACK)
-endif # !Darwin
+endif # ?Darwin
 LNK += -ltmglib -llapack -lrefblas
 endif # LAPACK
 ifdef QUADMATH
@@ -267,18 +280,31 @@ else # !QMA
 ifdef QMD
 QMP=$(dir $(QUADMATH))
 LNK += -L$(QMP)
-ifneq ($(OS),Darwin)
+ifeq ($(OS),Darwin)
+LNK += -Wl,-rpath,$(QMP)
+else # !Darwin
 LNK += -Wl,-rpath=$(QMP)
-endif # !Darwin
+endif # ?Darwin
 LNK += -lquadmath
-ifneq ($(OS),Darwin)
+ifeq ($(OS),Darwin)
+LGCC=$(dir $(realpath $(shell $(GCC) -print-file-name=libgcc_s.1.1.dylib)))
+LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
+else # !Darwin
 LNK += -lgcc_s
-endif # !Darwin
+endif # ?Darwin
 else # !QMD
 LNK += $(QUADMATH)
 endif # ?QMD
 endif # ?QMA
 endif # QUADMATH
+
+LNKX=-L.
+ifeq ($(OS),Darwin)
+LNKX += -Wl,-rpath,.
+else # !Darwin
+LNKX += -Wl,-rpath=.
+endif # ?Darwin
+LNKX += -lpvn $(LNK)
 
 CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
 
@@ -292,6 +318,9 @@ help:
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
+libpvn.dylib: libpvn.a
+	clang -dynamiclib -o $@ $(OBJS) $(LNK) 
+
 libpvn.so: libpvn.a
 	ld -shared -o $@ $(OBJS)
 
@@ -299,22 +328,22 @@ libpvn.so: libpvn.a
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.exe : %.c $(HDRS)
-	$(CC) $(CLFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNKX) $(LDFLAGS)
 
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
 
 ../var/crh_relerr.exe: ../var/crh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
 
 ../var/laf_relerr.exe: ../var/laf_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
 
 ../var/reh_relerr.exe: ../var/reh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
 
 ../var/rhh_relerr.exe: ../var/rhh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNK) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
 
 clean:
 	-$(RM) *.exe
