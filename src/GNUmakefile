@@ -225,11 +225,13 @@ EXES += \
 ../var/rhh_relerr.exe
 endif # MPFR
 LIBS=libpvn.a
+LNK=-L.
 ifneq ($(OS),Darwin)
 CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
 LIBS += libpvn.$(DYNAMIC)
+LNK += -Wl,-rpath=.
 endif # !Darwin
-LNK=-L. -Wl,-rpath=. -lpvn
+LNK += -lpvn
 ifdef MPC
 LNK += -L$(MPC)/$(LIB64) -Wl,-rpath=$(MPC)/$(LIB64) -lmpc
 endif # MPC
