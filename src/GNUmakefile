@@ -289,17 +289,17 @@ else # !Darwin
 LNK += -Wl,-rpath=$(QMP)
 endif # ?Darwin
 LNK += -lquadmath
+else # !QMD
+LNK += $(QUADMATH)
+endif # ?QMD
+endif # ?QMA
+endif # QUADMATH
 ifeq ($(OS),Darwin)
 LGCC=$(dir $(realpath $(shell $(GCC) -print-file-name=libgcc_s.1.1.dylib)))
 LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
 else # !Darwin
 LNK += -lgcc_s
 endif # ?Darwin
-else # !QMD
-LNK += $(QUADMATH)
-endif # ?QMD
-endif # ?QMA
-endif # QUADMATH
 
 LNKX=-L.
 ifeq ($(OS),Darwin)
