@@ -3,27 +3,25 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (argc == 1) {
-    (void)printf("PVN_GMP=%s\n", PVN_GMP);
-    (void)printf("PVN_MPFR=%s\n", PVN_MPFR);
-#ifdef PVN_MPC
-    (void)printf("PVN_MPC=%s\n", PVN_MPC);
-#endif /* PVN_MPC */
-    mpfr_rnd_t rnd = __MPFR_RND_INVALID;
-    mpfr_prec_t prec = __MPFR_PREC_INVALID;
-    mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
-    const int r = PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax);
-    (void)printf("PVN_MPFR_START=%d\n", r);
-    (void)printf("rnd=%d\n", (int)rnd);
-    (void)printf("prec=%ld\n", (long)prec);
-    (void)printf("emin=%ld\n", (long)emin);
-    (void)printf("emax=%ld\n", (long)emax);
-    return (r ? EXIT_FAILURE : PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)());
-  }
-  else {
+  if (argc != 1) {
     (void)fprintf(stderr, "%s\n", *argv);
     return EXIT_FAILURE;
   }
+  (void)printf("PVN_GMP=%s\n", PVN_GMP);
+  (void)printf("PVN_MPFR=%s\n", PVN_MPFR);
+#ifdef PVN_MPC
+  (void)printf("PVN_MPC=%s\n", PVN_MPC);
+#endif /* PVN_MPC */
+  mpfr_rnd_t rnd = __MPFR_RND_INVALID;
+  mpfr_prec_t prec = __MPFR_PREC_INVALID;
+  mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
+  const int r = PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax);
+  (void)printf("PVN_MPFR_START=%d\n", r);
+  (void)printf("rnd=%d\n", (int)rnd);
+  (void)printf("prec=%ld\n", (long)prec);
+  (void)printf("emin=%ld\n", (long)emin);
+  (void)printf("emax=%ld\n", (long)emax);
+  return (r ? EXIT_FAILURE : PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)());
 }
 #else /* !PVN_TEST */
 int PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(mpfr_rnd_t *const rnd, mpfr_prec_t *const prec, mpfr_exp_t *const emin, mpfr_exp_t *const emax)

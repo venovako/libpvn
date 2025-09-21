@@ -77,6 +77,12 @@ PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 #endif /* ?__MATHIMF_H_INCLUDED */
 #endif /* ?PVN_CR_MATH */
 
-PVN_EXTERN_C int PVN_FABI(c_math_err,C_MATH_ERR)();
+/* TODO: waiting for the following to be correctly rounded */
+PVN_EXTERN_C float rhypotf(float x, float y);
+PVN_EXTERN_C double rhypot(double x, double y);
+PVN_EXTERN_C long double rhypotl(long double x, long double y);
+#ifdef PVN_QUADMATH
+PVN_EXTERN_C __float128 rhypotq(__float128 x, __float128 y);
+#endif /* PVN_QUADMATH */
 
 #endif /* !PVN_CRM_H */

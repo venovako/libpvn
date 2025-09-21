@@ -29,12 +29,28 @@ int main(/* int argc, char *argv[] */)
   (void)printf("cr_sqrtq  =%18p\n", cr_sqrtq);
 #endif /* PVN_QUADMATH */
 #endif /* PVN_CR_MATH */
-  (void)printf("math_errhandling=%d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
-int PVN_FABI(c_math_err,C_MATH_ERR)()
+float rhypotf(float x, float y)
 {
-  return math_errhandling;
+  return (1.0f / hypotf(x, y));
 }
+
+double rhypot(double x, double y)
+{
+  return (1.0 / hypot(x, y));
+}
+
+long double rhypotl(long double x, long double y)
+{
+  return (1.0L / hypotl(x, y));
+}
+
+#ifdef PVN_QUADMATH
+__float128 rhypotq(__float128 x, __float128 y)
+{
+  return (1.0q / hypotq(x, y));
+}
+#endif /* PVN_QUADMATH */
 #endif /* ?PVN_TEST */

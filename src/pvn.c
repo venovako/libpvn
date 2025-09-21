@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
     (void)printf("PVN_QUADMATH: %s\n", PVN_QUADMATH);
 #endif /* PVN_QUADMATH */
+  (void)printf("math_errhandling=%d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
   }
   else {
     struct option longopts[] = {
@@ -103,5 +104,10 @@ int PVN_FABI(pvn_le,PVN_LE)()
 int PVN_FABI(pvn_omp,PVN_OMP)()
 {
   return pvn_omp();
+}
+
+int PVN_FABI(c_math_err,C_MATH_ERR)()
+{
+  return math_errhandling;
 }
 #endif /* ?PVN_TEST */

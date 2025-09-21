@@ -3,30 +3,28 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if ((argc == 5) || (argc == 7)) {
-    const double ar = atof(argv[1]);
-    const double ai = atof(argv[2]);
-    const double br = atof(argv[3]);
-    const double bi = atof(argv[4]);
-    char s[26] = { '\0' };
-    if (argc == 7) {
-      const double cr = atof(argv[5]);
-      const double ci = atof(argv[6]);
-      double dr = 0.0, di = 0.0;
-      pvn_zfma(&dr, &di, ar, ai, br, bi, cr, ci);
-      (void)printf("pvn_zfma=(%s,", pvn_dtoa(s, dr));
-      (void)printf("%s)\n", pvn_dtoa(s, di));
-    }
-    else {
-      double cr = 0.0, ci = 0.0;
-      pvn_zmul(&cr, &ci, ar, ai, br, bi);
-      (void)printf("pvn_zmul=(%s,", pvn_dtoa(s, cr));
-      (void)printf("%s)\n", pvn_dtoa(s, ci));
-    }
-  }
-  else {
+  if ((argc != 5) && (argc != 7)) {
     (void)fprintf(stderr, "%s ar ai br bi [cr ci]\n", *argv);
     return EXIT_FAILURE;
+  }
+  const double ar = atof(argv[1]);
+  const double ai = atof(argv[2]);
+  const double br = atof(argv[3]);
+  const double bi = atof(argv[4]);
+  char s[26] = { '\0' };
+  if (argc == 7) {
+    const double cr = atof(argv[5]);
+    const double ci = atof(argv[6]);
+    double dr = 0.0, di = 0.0;
+    pvn_zfma(&dr, &di, ar, ai, br, bi, cr, ci);
+    (void)printf("pvn_zfma=(%s,", pvn_dtoa(s, dr));
+    (void)printf("%s)\n", pvn_dtoa(s, di));
+  }
+  else {
+    double cr = 0.0, ci = 0.0;
+    pvn_zmul(&cr, &ci, ar, ai, br, bi);
+    (void)printf("pvn_zmul=(%s,", pvn_dtoa(s, cr));
+    (void)printf("%s)\n", pvn_dtoa(s, ci));
   }
   return EXIT_SUCCESS;
 }

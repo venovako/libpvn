@@ -314,4 +314,6 @@ static inline int pvn_omp()
 }
 PVN_EXTERN_C int PVN_FABI(pvn_omp,PVN_OMP)();
 
+PVN_EXTERN_C int PVN_FABI(c_math_err,C_MATH_ERR)();
+
 #endif /* !PVN_H */

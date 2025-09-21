@@ -4,110 +4,106 @@
 int main(int argc, char *argv[])
 {
 #ifdef PVN_MPFR
-  if ((argc == 2) || (argc == 3)) {
-    const size_t n = pvn_atoz(argv[1]);
-    if (!n)
-      return EXIT_SUCCESS;
-    mpfr_rnd_t rnd = MPFR_RNDN;
-    mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
-    mpfr_prec_t prec = ((argc == 3) ? atol(argv[2]) : 113l);
-    int t = PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax);
-    if (t) {
-      (void)fprintf(stderr, "PVN_MPFR_START=%d\n", t);
-      return EXIT_FAILURE;
-    }
-    double a = __builtin_nan("a"), b = __builtin_nan("b"), c = __builtin_nan("c"), d = __builtin_nan("d"), r = __builtin_nan("r"), x = __builtin_nan("x"), e = __builtin_inf(), E = 0.0;
-    mpfr_t ma, mb, mc, md, mr, mx;
-    t = mpfr_init_set_d(ma, a, MPFR_RNDN);
-    t = mpfr_init_set_d(mb, b, MPFR_RNDN);
-    t = mpfr_init_set_d(mc, c, MPFR_RNDN);
-    t = mpfr_init_set_d(md, d, MPFR_RNDN);
-    t = mpfr_init_set_d(mr, r, MPFR_RNDN);
-    t = mpfr_init_set_d(mx, x, MPFR_RNDN);
-    int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
-    char s[26] = { '\0' };
-    for (size_t i = 0u; i < n; ++i) {
-      do {
-        a = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-      } while (!isfinite(a));
-#ifndef NDEBUG
-      (void)printf("%s,", pvn_dtoa(s, a));
-#endif /* !NDEBUG */
-      do {
-        b = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-      } while (!isfinite(b));
-#ifndef NDEBUG
-      (void)printf("%s,", pvn_dtoa(s, b));
-#endif /* !NDEBUG */
-      do {
-        c = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-      } while (!isfinite(c));
-#ifndef NDEBUG
-      (void)printf("%s,", pvn_dtoa(s, c));
-#endif /* !NDEBUG */
-      do {
-        d = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-      } while (!isfinite(d));
-#ifndef NDEBUG
-      (void)printf("%s;", pvn_dtoa(s, d));
-#endif /* !NDEBUG */
-      t = 0;
-      r = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
-#ifndef NDEBUG
-      (void)printf("%s,%5d;", pvn_dtoa(s, x), t);
-#endif /* !NDEBUG */
-      (void)mpfr_set_d(ma, a, MPFR_RNDN);
-      (void)mpfr_set_d(mb, b, MPFR_RNDN);
-      (void)mpfr_set_d(mc, c, MPFR_RNDN);
-      (void)mpfr_set_d(md, d, MPFR_RNDN);
-      (void)mpfr_set_d(mx, x, MPFR_RNDN);
-      (void)mpfr_mul_2si(mx, mx, (long)t, MPFR_RNDN);
-      (void)mpfr_fmms(mr, ma, md, mb, mc, MPFR_RNDN);
-      (void)mpfr_sub(mx, mr, mx, MPFR_RNDN);
-      (void)mpfr_div(mx, mx, mr, MPFR_RNDN);
-      (void)mpfr_abs(mx, mx, MPFR_RNDN);
-      r = mpfr_get_d(mx, MPFR_RNDN);
-#ifndef NDEBUG
-      (void)printf("%s\n", pvn_dtoa(s, r));
-#endif /* !NDEBUG */
-      e = fmin(e, r);
-      E = fmax(E, r);
-    }
-    u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
-    mpfr_clear(mx);
-    mpfr_clear(mr);
-    mpfr_clear(md);
-    mpfr_clear(mc);
-    mpfr_clear(mb);
-    mpfr_clear(ma);
-    t = PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
-    (void)printf("min rel err=%s\n", pvn_dtoa(s, e));
-    (void)printf("max rel err=%s\n", pvn_dtoa(s, E));
-  }
-  else {
+  if ((argc != 2) && (argc != 3)) {
     (void)fprintf(stderr, "%s n [prec]\n", *argv);
     return EXIT_FAILURE;
   }
-#else /* !PVN_MPFR */
-  if (argc == 5) {
-    const double a = atof(argv[1]);
-    const double b = atof(argv[2]);
-    const double c = atof(argv[3]);
-    const double d = atof(argv[4]);
-    char s[26] = { '\0' };
-    double x = __builtin_nan("x"),
-      y = pvn_ddet(a, b, c, d);
-    (void)printf("pvn_ddet=%s\n", pvn_dtoa(s, y));
-    int t = 0;
-    y = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
-    (void)printf("PVN_DDET=%s (", pvn_dtoa(s, y));
-    (void)printf("%s,%d)\n", pvn_dtoa(s, x), t);
+  const size_t n = pvn_atoz(argv[1]);
+  if (!n)
     return EXIT_SUCCESS;
+  mpfr_rnd_t rnd = MPFR_RNDN;
+  mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
+  mpfr_prec_t prec = ((argc == 3) ? atol(argv[2]) : 113l);
+  int t = PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax);
+  if (t) {
+    (void)fprintf(stderr, "PVN_MPFR_START=%d\n", t);
+    return EXIT_FAILURE;
   }
-  else {
+  double a = __builtin_nan("a"), b = __builtin_nan("b"), c = __builtin_nan("c"), d = __builtin_nan("d"), r = __builtin_nan("r"), x = __builtin_nan("x"), e = __builtin_inf(), E = 0.0;
+  mpfr_t ma, mb, mc, md, mr, mx;
+  t = mpfr_init_set_d(ma, a, MPFR_RNDN);
+  t = mpfr_init_set_d(mb, b, MPFR_RNDN);
+  t = mpfr_init_set_d(mc, c, MPFR_RNDN);
+  t = mpfr_init_set_d(md, d, MPFR_RNDN);
+  t = mpfr_init_set_d(mr, r, MPFR_RNDN);
+  t = mpfr_init_set_d(mx, x, MPFR_RNDN);
+  int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
+  char s[26] = { '\0' };
+  for (size_t i = 0u; i < n; ++i) {
+    do {
+      a = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+    } while (!isfinite(a));
+#ifndef NDEBUG
+    (void)printf("%s,", pvn_dtoa(s, a));
+#endif /* !NDEBUG */
+    do {
+      b = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+    } while (!isfinite(b));
+#ifndef NDEBUG
+    (void)printf("%s,", pvn_dtoa(s, b));
+#endif /* !NDEBUG */
+    do {
+      c = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+    } while (!isfinite(c));
+#ifndef NDEBUG
+    (void)printf("%s,", pvn_dtoa(s, c));
+#endif /* !NDEBUG */
+    do {
+      d = PVN_FABI(pvn_ran,PVN_RAN)(&u);
+    } while (!isfinite(d));
+#ifndef NDEBUG
+    (void)printf("%s;", pvn_dtoa(s, d));
+#endif /* !NDEBUG */
+    t = 0;
+    r = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
+#ifndef NDEBUG
+    (void)printf("%s,%5d;", pvn_dtoa(s, x), t);
+#endif /* !NDEBUG */
+    (void)mpfr_set_d(ma, a, MPFR_RNDN);
+    (void)mpfr_set_d(mb, b, MPFR_RNDN);
+    (void)mpfr_set_d(mc, c, MPFR_RNDN);
+    (void)mpfr_set_d(md, d, MPFR_RNDN);
+    (void)mpfr_set_d(mx, x, MPFR_RNDN);
+    (void)mpfr_mul_2si(mx, mx, (long)t, MPFR_RNDN);
+    (void)mpfr_fmms(mr, ma, md, mb, mc, MPFR_RNDN);
+    (void)mpfr_sub(mx, mr, mx, MPFR_RNDN);
+    (void)mpfr_div(mx, mx, mr, MPFR_RNDN);
+    (void)mpfr_abs(mx, mx, MPFR_RNDN);
+    r = mpfr_get_d(mx, MPFR_RNDN);
+#ifndef NDEBUG
+    (void)printf("%s\n", pvn_dtoa(s, r));
+#endif /* !NDEBUG */
+    e = fmin(e, r);
+    E = fmax(E, r);
+  }
+  u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
+  mpfr_clear(mx);
+  mpfr_clear(mr);
+  mpfr_clear(md);
+  mpfr_clear(mc);
+  mpfr_clear(mb);
+  mpfr_clear(ma);
+  t = PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
+  (void)printf("min rel err=%s\n", pvn_dtoa(s, e));
+  (void)printf("max rel err=%s\n", pvn_dtoa(s, E));
+#else /* !PVN_MPFR */
+  if (argc != 5) {
     (void)fprintf(stderr, "%s a b c d\n", *argv);
     return EXIT_FAILURE;
   }
+  const double a = atof(argv[1]);
+  const double b = atof(argv[2]);
+  const double c = atof(argv[3]);
+  const double d = atof(argv[4]);
+  char s[26] = { '\0' };
+  double x = __builtin_nan("x"),
+    y = pvn_ddet(a, b, c, d);
+  (void)printf("pvn_ddet=%s\n", pvn_dtoa(s, y));
+  int t = 0;
+  y = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
+  (void)printf("PVN_DDET=%s (", pvn_dtoa(s, y));
+  (void)printf("%s,%d)\n", pvn_dtoa(s, x), t);
+  return EXIT_SUCCESS;
 #endif /* ?PVN_MPFR */
 }
 #else /* !PVN_TEST */
