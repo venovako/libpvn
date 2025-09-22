@@ -1,13 +1,15 @@
 ARFLAGS=rsv
 CC=$(COMPILER_PREFIX)gcc$(COMPILER_SUFFIX)
 ifdef NDEBUG
-CFLAGS=-DNDEBUG=$(NDEBUG) -O$(NDEBUG) -fno-math-errno -fvect-cost-model=unlimited
+PFLAGS=-DNDEBUG=$(NDEBUG)
+CFLAGS=-O$(NDEBUG) -fno-math-errno -fvect-cost-model=unlimited
 else # DEBUG
+PFLAGS=
 CFLAGS=-Og -ggdb3 -ftrapv
 endif # ?NDEBUG
 CFLAGS += -Wall -Wextra -Wno-stringop-truncation
 ifeq ($(OS),Linux)
-CFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
+PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
 CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 23; else echo 18; fi) -fPIC -ffp-contract=fast -pthread
 ifndef LAPACK
@@ -30,16 +32,5 @@ else # !ppc64le
 CFLAGS += -march=$(MARCH)
 endif # ?ppc64le
 ifeq ($(findstring MINGW64,$(OS)),MINGW64)
-CFLAGS += -DPVN_EXTERN_C=EXTERN_C '-DPVN_FABI(P,W)=P\#\#_'
-LDFLAGS=
-else # !MINGW64
-LDFLAGS=-rdynamic
+PFLAGS += -DPVN_EXTERN_C=EXTERN_C '-DPVN_FABI(P,W)=P\#\#_'
 endif # ?MINGW64
-ifeq ($(findstring BSD,$(OS)),BSD)
-LDFLAGS += -lexecinfo
-else # !BSD
-ifneq ($(findstring MINGW64,$(OS)),MINGW64)
-LDFLAGS += -ldl
-endif # !MINGW64
-endif # ?BSD
-LDFLAGS += -lm

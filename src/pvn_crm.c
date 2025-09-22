@@ -3,13 +3,6 @@
 #ifdef PVN_TEST
 int main(/* int argc, char *argv[] */)
 {
-  (void)printf("PVN_CR_MATH=%s\n",
-#ifdef PVN_CR_MATH
-               PVN_CR_MATH
-#else /* !PVN_CR_MATH */
-               "false"
-#endif /* ?PVN_CR_MATH */
-               );
 #ifdef PVN_CR_MATH
   /* check the linkage */
   (void)printf("cr_hypotf =%18p\n", cr_hypotf);

@@ -56,7 +56,8 @@ endif # !QUADMATH
 endif # !clang
 endif # ?86
 
-CFLAGS += -I. -DPVN_OS="\"$(OS)\"" -DPVN_ARCH="\"$(ARCH)\"" -DPVN_COMPILER="\"$(COMPILER)\""
+INCS=-I.
+PFLAGS += -DPVN_OS=$(OS) -DPVN_ARCH=$(ARCH) -DPVN_COMPILER=$(COMPILER)
 
 SRCS=pvn.c \
 pvn_aux.c  \
@@ -88,49 +89,52 @@ SRCS += pvn_prof.c
 endif # !MINGW64
 
 ifdef MPC
-CFLAGS += -I$(MPC)/include -DPVN_MPC="\"$(MPC)\""
+INCS += -I$(MPC)/include
+PFLAGS += -DPVN_MPC=1
 ifndef MPFR
 MPFR=/usr/local
 endif # !MPFR
 endif # MPC
 ifdef MPFR
 SRCS += pvn_mpfr.c
-CFLAGS += -I$(MPFR)/include -DPVN_MPFR="\"$(MPFR)\""
+INCS += -I$(MPFR)/include
+PFLAGS += -DPVN_MPFR=1
 ifndef GMP
 GMP=/usr/local
 endif # !GMP
 endif # MPFR
 ifdef GMP
-CFLAGS += -I$(GMP)/include -DPVN_GMP="\"$(GMP)\""
+INCS += -I$(GMP)/include
+PFLAGS += -DPVN_GMP=1
 endif # GMP
 ifdef LAPACK
-CFLAGS += -DPVN_LAPACK="\"$(LAPACK)\""
+PFLAGS += -DPVN_LAPACK=1
 endif # LAPACK
 
 ifdef SAFE
 ifeq ($(findstring ev2,$(SAFE)),ev2)
-CFLAGS += -DPVN_EV2_SAFE="\"hypotq\""
+PFLAGS += -DPVN_EV2_SAFE=1
 endif # ev2
 ifeq ($(findstring jv2,$(SAFE)),jv2)
-CFLAGS += -DPVN_JV2_SAFE="\"hypotq\""
+PFLAGS += -DPVN_JV2_SAFE=1
 endif # jv2
 ifeq ($(findstring nrm,$(SAFE)),nrm)
-CFLAGS += -DPVN_NRM_SAFE="\"cr_hypot\""
+PFLAGS += -DPVN_NRM_SAFE=1
 endif # nrm
 ifeq ($(findstring ran,$(SAFE)),ran)
-CFLAGS += -DPVN_RAN_SAFE="\"all_outputs\""
+PFLAGS += -DPVN_RAN_SAFE=1
 endif # ran
 ifeq ($(findstring sv2,$(SAFE)),sv2)
-CFLAGS += -DPVN_SV2_SAFE="\"precise\""
+PFLAGS += -DPVN_SV2_SAFE=1
 endif # sv2
 endif # SAFE
 
 ifdef VECLEN
-CFLAGS += -DPVN_VECLEN=$(VECLEN)u
+PFLAGS += -DPVN_VECLEN=$(VECLEN)u
 endif # VECLEN
 
 ifdef CR_MATH
-CFLAGS += -DPVN_CR_MATH="\"$(CR_MATH)\""
+PFLAGS += -DPVN_CR_MATH=3
 CR_SRCS= \
 $(realpath $(CR_MATH)/src/binary32/hypot/hypotf.c) \
 $(realpath $(CR_MATH)/src/binary32/pow/powf.c) \
@@ -154,9 +158,9 @@ $(realpath $(CR_MATH)/src/binary80/rsqrt/rsqrtl.c)
 endif # 86
 else # !CR_MATH
 ifdef NDEBUG
-CFLAGS += -DPVN_CR_MATH="\"bundled_noerrno\""
+PFLAGS += -DPVN_CR_MATH=1
 else # !NDEBUG
-CFLAGS += -DPVN_CR_MATH="\"bundled\"" -DCORE_MATH_SUPPORT_ERRNO
+PFLAGS += -DPVN_CR_MATH=2 -DCORE_MATH_SUPPORT_ERRNO
 endif # ?NDEBUG
 CR_SRCS= \
 ../inc/hypotf_noerrno.c \
@@ -198,7 +202,7 @@ endif # PROFILE
 endif # OPENMP
 
 ifdef PROFILE
-CFLAGS += -DPVN_PROFILE=$(PROFILE)u
+PFLAGS += -DPVN_PROFILE=$(PROFILE)u
 ifeq ($(COMPILER),nvc)
 CFLAGS += -Minstrument
 else # !nvc
@@ -207,11 +211,15 @@ endif # ?nvc
 endif # PROFILE
 
 ifdef PRINTOUT
-CFLAGS += -DPVN_PRINTOUT=STD$(PRINTOUT)_FILENO
+PFLAGS += -DPVN_PRINTOUT=STD$(PRINTOUT)_FILENO
 endif # PRINTOUT
 
 ifdef QUADMATH
-CFLAGS += -DPVN_QUADMATH="\"$(QUADMATH)\""
+ifeq ($(COMPILER),gcc)
+PFLAGS += -DPVN_QUADMATH=1
+else # !gcc
+PFLAGS += -DPVN_QUADMATH=2
+endif # ?gcc
 endif # QUADMATH
 
 HDRS=$(SRCS:.c=.h)
@@ -226,7 +234,7 @@ EXES += \
 endif # MPFR
 LIBS=libpvn.a libpvn.$(DYNAMIC)
 
-CFLAGS += -DPVN_DYNAMIC="\"$(DYNAMIC)\""
+PFLAGS += -DPVN_DYNAMIC=$(DYNAMIC)
 ifeq ($(OS),Darwin)
 LNK=-Wl,-warn_unused_dylibs -Wl,-warn_commons
 else # !Darwin
@@ -308,8 +316,30 @@ else # !Darwin
 LNKX += -Wl,-rpath=.
 endif # ?Darwin
 LNKX += -lpvn $(LNK)
+ifeq ($(findstring BSD,$(OS)),BSD)
+LNKX += -lexecinfo
+else # !BSD
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
+LNKX += -ldl
+endif # !MINGW64
+endif # ?BSD
+LNKX += -lm
 
-CLFLAGS=$(subst PIC,PIE,$(CFLAGS))
+ifeq ($(COMPILER),nvc)
+LDFLAGS=-Wl,-E
+else # !nvc
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
+LDFLAGS=-rdynamic
+else # MINGW64
+LDFLAGS=
+endif # ?MINGW64
+endif # ?nvc
+
+PFLAGS += $(INCS)
+AFLAGS=-DPVN_CPPFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(PFLAGS)))\"" -DPVN_CFLAGS="\"$(shell echo $(CFLAGS))\"" -DPVN_LDFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(LNKX)))\""
+
+CCFLAGS=$(CFLAGS) $(PFLAGS)
+CLFLAGS=$(subst PIC,PIE,$(CCFLAGS)) $(AFLAGS)
 
 .PHONY: all help clean
 
@@ -328,25 +358,25 @@ libpvn.so: libpvn.a
 	ld -shared -o $@ $(OBJS)
 
 %.o : %.c $(HDRS)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CCFLAGS) -c $< -o $@
 
 %.exe : %.c $(HDRS)
-	$(CC) $(CLFLAGS) -DPVN_TEST="\"dynamic_exe\"" $< -o $@ $(LNKX) $(LDFLAGS)
+	$(CC) $(CLFLAGS) -DPVN_TEST=1 $< -o $@ $(LDFLAGS) $(LNKX)
 
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
 ../var/crh_relerr.exe: ../var/crh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
 ../var/laf_relerr.exe: ../var/laf_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
 ../var/reh_relerr.exe: ../var/reh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
 ../var/rhh_relerr.exe: ../var/rhh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LNKX) $(LDFLAGS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
 clean:
 	-$(RM) *.exe

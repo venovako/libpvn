@@ -11,20 +11,21 @@ NDEBUG=d
 !IFNDEF CRT
 CRT=MT
 !ENDIF # !CRT
-CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /DNDEBUG=$(NDEBUG) /DPVN_OS="\"Windows\"" /DPVN_ARCH="\"x64\"" /DPVN_COMPILER="\"icx\"" /DPVN_CR_MATH="\"bundled_noerrno\"" /DPVN_QUADMATH="\"Intel\"" /I. /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+PFLAGS=/DNDEBUG=$(NDEBUG) /DPVN_OS=Windows /DPVN_ARCH=x64 /DPVN_COMPILER=icx /DPVN_CR_MATH=1 /DPVN_QUADMATH=2
+CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
 !IF "$(CRT)"=="MD"
-CFLAGS=$(CFLAGS) /MD
-CCFLAGS=$(CFLAGS) /DPVN_DYNAMIC="\"dll\""
+CFLAGS=$(CFLAGS) $(PFLAGS) /I. /MD
+CCFLAGS=$(CFLAGS) /DPVN_DYNAMIC=1
 CDFLAGS=$(CFLAGS) /LD /Wno-unused-command-line-argument
-CLFLAGS=$(CFLAGS) /DPVN_TEST="\"dynamic_exe\""
+CLFLAGS=$(CFLAGS) /DPVN_TEST=1 /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(MAKEDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /MD\"" /DPVN_LDFLAGS="/link /RELEASE /LIBPATH:$(MAKEDIR)"
 LIBS=pvn.dll
 !IFNDEF MSYS64
 MSYS64=C:\msys64
 !ENDIF # !MSYS64
 !ELSE # MT
-CFLAGS=$(CFLAGS) /MT
+CFLAGS=$(CFLAGS) $(PFLAGS) /I. /MT
 CCFLAGS=$(CFLAGS)
-CLFLAGS=$(CFLAGS) /DPVN_TEST="\"static_exe\""
+CLFLAGS=$(CFLAGS) /DPVN_TEST=2 /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(MAKEDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /MT\"" /DPVN_LDFLAGS="/link /RELEASE /LIBPATH:$(MAKEDIR)"
 LIBS=pvn.lib
 !ENDIF # MD
 

@@ -7,11 +7,6 @@ int main(int argc, char *argv[])
     (void)fprintf(stderr, "%s\n", *argv);
     return EXIT_FAILURE;
   }
-  (void)printf("PVN_GMP=%s\n", PVN_GMP);
-  (void)printf("PVN_MPFR=%s\n", PVN_MPFR);
-#ifdef PVN_MPC
-  (void)printf("PVN_MPC=%s\n", PVN_MPC);
-#endif /* PVN_MPC */
   mpfr_rnd_t rnd = __MPFR_RND_INVALID;
   mpfr_prec_t prec = __MPFR_PREC_INVALID;
   mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;

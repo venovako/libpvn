@@ -4,58 +4,43 @@
 int main(int argc, char *argv[])
 {
   if (argc == 1) {
-#ifdef _WIN32
-    (void)printf("pvn.");
-#else /* !_WIN32 */
-    (void)printf("libpvn.");
-#endif /* ?_WIN32 */
-#ifdef PVN_DYNAMIC
-    (void)printf("%s ", PVN_DYNAMIC);
-#else /* !PVN_DYNAMIC */
-#ifdef _WIN32
-#ifdef _DLL
-    (void)printf("dll ");
-#else /* !_DLL */
-    (void)printf("lib ");
-#endif /* ?_DLL */
-#else /* !_WIN32 */
-    (void)printf("a ");
-#endif /* ?_WIN32 */
-#endif /* ?PVN_DYNAMIC */
-    (void)printf("built on %s with %s for %s on %s ", __DATE__, PVN_COMPILER, PVN_OS, PVN_ARCH);
+    (void)printf("built on    : %s\n", __DATE__);
+    (void)printf("debug       : ");
 #ifdef NDEBUG
-    (void)printf("with optimizations ");
+    (void)printf("false\n");
 #else /* !NDEBUG */
-    (void)printf("for debugging ");
+    (void)printf("true\n");
 #endif /* ?NDEBUG */
-    (void)printf("and with ");
 #ifdef PVN_CILK
-    (void)printf("OpenCilk %d\n", PVN_CILK);
+    (void)printf("OpenCilk    : %d\n", PVN_CILK);
 #else /* !PVN_CILK */
-    (void)printf("OpenMP ");
 #ifdef _OPENMP
-    (void)printf("%d\n", _OPENMP);
-#else /* !_OPENMP */
-    (void)printf("disabled\n");
+    (void)printf("OpenMP      : %d\n", _OPENMP);
 #endif /* ?_OPENMP */
 #endif /* ?PVN_CILK */
     (void)printf("endianness  : %s\n", (pvn_le() ? "little" : "big"));
 #ifdef PVN_CR_MATH
-    (void)printf("PVN_CR_MATH : %s\n", PVN_CR_MATH);
+    (void)printf("PVN_CR_MATH : %d\n", PVN_CR_MATH);
 #endif /* PVN_CR_MATH */
 #ifdef PVN_QUADMATH
-    (void)printf("PVN_QUADMATH: %s\n", PVN_QUADMATH);
+    (void)printf("PVN_QUADMATH: %d\n", PVN_QUADMATH);
 #endif /* PVN_QUADMATH */
-  (void)printf("math_errhandling=%d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
+    (void)printf("PVN_CPPFLAGS: %s\n", PVN_CPPFLAGS);
+    (void)printf("PVN_CFLAGS  : %s\n", PVN_CFLAGS);
+    (void)printf("PVN_LDFLAGS : %s\n", PVN_LDFLAGS);
+    (void)printf("\nmath_errhandling=%d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
   }
   else {
     struct option longopts[] = {
       { "dynamic",  no_argument, (int*)NULL, 'd' },
       { "debug",    no_argument, (int*)NULL, 'g' },
+      { "cppflags", no_argument, (int*)NULL, 'i' },
+      { "cflags",   no_argument, (int*)NULL, 'c' },
+      { "ldflags",  no_argument, (int*)NULL, 'l' },
       { "parallel", no_argument, (int*)NULL, 'p' },
       { (char*)NULL, 0, (int*)NULL, 0 }
     };
-    for (int ch = 0; (ch = getopt_long(argc, argv, "dgp", longopts, (int*)NULL)) != -1; ) {
+    for (int ch = 0; (ch = getopt_long(argc, argv, "dgiclp", longopts, (int*)NULL)) != -1; ) {
       switch ((char)ch) {
       case 'g':
 #ifdef NDEBUG
@@ -71,6 +56,15 @@ int main(int argc, char *argv[])
         (void)printf("dynamic=false\n");
 #endif /* ?DYNAMIC */
         break;
+      case 'i':
+        (void)printf("%s\n", PVN_CPPFLAGS);
+        break;
+      case 'c':
+        (void)printf("%s\n", PVN_CFLAGS);
+        break;
+      case 'l':
+        (void)printf("%s\n", PVN_LDFLAGS);
+        break;
       case 'p':
 #ifdef _OPENMP
         (void)printf("OpenMP=%d\n", _OPENMP);
@@ -84,7 +78,7 @@ int main(int argc, char *argv[])
         break;
       default:
       err:
-        (void)fprintf(stderr, "pvn.exe [-d|--dynamic] [-g|--debug] [-p|--parallel]\n");
+        (void)fprintf(stderr, "pvn.exe [-d|--dynamic] [-g|--debug] [-i|--cppflags] [-l|--ldflags] [-p|--parallel]\n");
         return EXIT_FAILURE;
       }
     }
