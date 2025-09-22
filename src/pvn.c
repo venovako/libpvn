@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         break;
       default:
       err:
-        (void)fprintf(stderr, "pvn.exe [-d|--dynamic] [-g|--debug] [-i|--cppflags] [-l|--ldflags] [-p|--parallel]\n");
+        (void)fprintf(stderr, "pvn.exe [-d|--dynamic] [-g|--debug] [-i|--cppflags] [-c|--cflags] [-l|--ldflags] [-p|--parallel]\n");
         return EXIT_FAILURE;
       }
     }
