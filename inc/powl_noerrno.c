@@ -1548,16 +1548,16 @@ bool is_odd_integer(long double x) {
 
 // return non-zero iff x is a NaN
 inline static
-int _isnan(long double x) {
+int _isnan_(long double x) {
 	const b80u80_t v = {.f = x};
 	return ((v.e&0x7fff) == 0x7fff && (v.m<<1));
 }
 
 // return non-zero iff x is a signaling NaN
 inline static
-int _issnan(long double x) {
+int _issnan_(long double x) {
 	const b80u80_t v = {.f = x};
-	return _isnan(x) && ((int64_t)(v.m<<1) > 0);
+	return _isnan_(x) && ((int64_t)(v.m<<1) > 0);
 }
 
 __attribute__((cold))
@@ -1718,7 +1718,7 @@ long double cr_powl(long double x, long double y) {
 
 	/* x is negative */
 	if(__builtin_expect(cvt_x.e>>15, 0)) {
-		if(__builtin_expect(_isnan(y)
+		if(__builtin_expect(_isnan_(y)
 		                    || (!is_integer(y) && cvt_x.m && x_exp != 0x7fff-16383)
 		                    ,0)) {
 			feraiseexcept(FE_INVALID);
@@ -1736,12 +1736,12 @@ long double cr_powl(long double x, long double y) {
 
 	// x is either (s)NaN or +-infty
 	if(__builtin_expect(x_exp == 0x7fff - 16383, 0)) {
-		if(_issnan(x)) {
+		if(_issnan_(x)) {
 			feraiseexcept(FE_INVALID);
 			return __builtin_nanl("");
 		}
 		if(!cvt_y.m) {return 1L;}
-		if(_isnan(x) || _isnan(y)) {
+		if(_isnan_(x) || _isnan_(y)) {
 			feraiseexcept(FE_INVALID);
 			return __builtin_nanl("");
 		}
@@ -1751,7 +1751,7 @@ long double cr_powl(long double x, long double y) {
 
 	// From now on, x is normal
 	if(__builtin_expect(!cvt_x.m, 0)) { // x == +-0
-		if(_isnan(y)) {feraiseexcept(FE_INVALID); return __builtin_nanl("");}
+		if(_isnan_(y)) {feraiseexcept(FE_INVALID); return __builtin_nanl("");}
 		if(!cvt_y.m) {return 1L;} // y == 0
 		if(cvt_y.e>>15 && cvt_y.e != 0xffff) {
 		  feraiseexcept(FE_DIVBYZERO);
@@ -1769,9 +1769,9 @@ long double cr_powl(long double x, long double y) {
 	   Here y is either +-inf, (s)NaN, or very large.
 	*/
 	else if(__builtin_expect(y_exp >= 78, 0)) {
-		if(_issnan(y)) {feraiseexcept(FE_INVALID); return __builtin_nanl("");}
+		if(_issnan_(y)) {feraiseexcept(FE_INVALID); return __builtin_nanl("");}
 		if(x == 1.L) {return 1.L;}
-		if(_isnan(y)) {feraiseexcept(FE_INVALID); return __builtin_nanl("");}
+		if(_isnan_(y)) {feraiseexcept(FE_INVALID); return __builtin_nanl("");}
 		if(x == -1.L) {return sign;}
 		// y == +-infty
 		if(y_exp == 0x7fff - 16383) {
