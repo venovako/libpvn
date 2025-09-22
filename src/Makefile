@@ -13,7 +13,7 @@ CRT=MT
 !ENDIF # !CRT
 PFLAGS=/DNDEBUG=$(NDEBUG) /DPVN_OS=Windows /DPVN_ARCH=x64 /DPVN_COMPILER=icx /DPVN_CR_MATH=1 /DPVN_QUADMATH=2
 CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-SRCDIR=$(subst $(MAKEDIR),\,/)
+SRCDIR=$(subst \,/,$(MAKEDIR))
 AFLAGS=/DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /$(CRT)\"" /DPVN_LDFLAGS="\"/link /RELEASE /LIBPATH:$(SRCDIR)\""
 !IF "$(CRT)"=="MD"
 CFLAGS=$(CFLAGS) /MD $(PFLAGS) /I.

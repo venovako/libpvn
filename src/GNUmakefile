@@ -236,18 +236,25 @@ LIBS=libpvn.a libpvn.$(DYNAMIC)
 
 PFLAGS += -DPVN_DYNAMIC=$(DYNAMIC)
 ifeq ($(OS),Darwin)
-LNK=-Wl,-warn_unused_dylibs -Wl,-warn_commons
+DLDFLAGS=-Wl,-warn_unused_dylibs -Wl,-warn_commons
+LDFLAGS=-rdynamic $(DLDFLAGS)
 else # !Darwin
+DLDFLAGS=--warn-common
 ifdef NDEBUG
-ifeq ($(NDEBUG),g)
-LNK=
-else # !g
-LNK=-Wl,-O$(NDEBUG)
-endif # ?g
-else # !NDEBUG
-LNK=-Wl,-M
-endif # ?NDEBUG
+DLDFLAGS += -O$(subst g,0,$(NDEBUG))
+endif # NDEBUG
+ifeq ($(COMPILER),nvc)
+LDFLAGS=-Wl,-E
+else # !nvc
+ifeq ($(findstring MINGW64,$(OS)),MINGW64)
+LDFLAGS=
+else # !MINGW64
+LDFLAGS=-rdynamic
+endif # ?MINGW64
+endif # ?nvc
+LDFLAGS += -Wl,--warn-common
 endif # ?Darwin
+LNK=
 ifdef MPC
 LNK += -L$(MPC)/$(LIB64)
 ifeq ($(OS),Darwin)
@@ -308,7 +315,6 @@ LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
 else # !Darwin
 LNK += -lgcc_s
 endif # ?Darwin
-
 LNKX=-L.
 ifeq ($(OS),Darwin)
 LNKX += -Wl,-rpath,.
@@ -324,16 +330,6 @@ LNKX += -ldl
 endif # !MINGW64
 endif # ?BSD
 LNKX += -lm
-
-ifeq ($(COMPILER),nvc)
-LDFLAGS=-Wl,-E
-else # !nvc
-ifneq ($(findstring MINGW64,$(OS)),MINGW64)
-LDFLAGS=-rdynamic
-else # MINGW64
-LDFLAGS=
-endif # ?MINGW64
-endif # ?nvc
 
 PFLAGS += $(INCS)
 AFLAGS=-DPVN_CPPFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(PFLAGS)))\"" -DPVN_CFLAGS="\"$(shell echo $(CFLAGS))\"" -DPVN_LDFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(LNKX)))\""
@@ -352,10 +348,10 @@ libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 libpvn.dylib: libpvn.a
-	clang -dynamiclib -o $@ $(OBJS) $(LNK) 
+	clang -dynamiclib $(DLDFLAGS) -o $@ $(OBJS) $(LNK) 
 
 libpvn.so: libpvn.a
-	ld -shared -o $@ $(OBJS)
+	ld -shared $(DLDFLAGS) -o $@ $(OBJS)
 
 %.o : %.c $(HDRS)
 	$(CC) $(CCFLAGS) -c $< -o $@
