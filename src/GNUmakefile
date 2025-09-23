@@ -248,6 +248,7 @@ LDFLAGS=-Wl,-E
 else # !nvc
 ifeq ($(findstring MINGW64,$(OS)),MINGW64)
 LDFLAGS=
+WL=-Wl,
 else # !MINGW64
 LDFLAGS=-rdynamic
 endif # ?MINGW64
@@ -315,6 +316,14 @@ LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
 else # !Darwin
 LNK += -lgcc_s
 endif # ?Darwin
+ifeq ($(findstring BSD,$(OS)),BSD)
+LNK += -lexecinfo
+else # !BSD
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
+LNK += -ldl
+endif # !MINGW64
+endif # ?BSD
+LNK += -lm
 LNKX=-L.
 ifeq ($(OS),Darwin)
 LNKX += -Wl,-rpath,.
@@ -322,14 +331,6 @@ else # !Darwin
 LNKX += -Wl,-rpath=.
 endif # ?Darwin
 LNKX += -lpvn $(LNK)
-ifeq ($(findstring BSD,$(OS)),BSD)
-LNKX += -lexecinfo
-else # !BSD
-ifneq ($(findstring MINGW64,$(OS)),MINGW64)
-LNKX += -ldl
-endif # !MINGW64
-endif # ?BSD
-LNKX += -lm
 
 PFLAGS += $(INCS)
 AFLAGS=-DPVN_CPPFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(PFLAGS)))\"" -DPVN_CFLAGS="\"$(shell echo $(CFLAGS))\"" -DPVN_LDFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(LNKX)))\""
@@ -351,7 +352,11 @@ libpvn.dylib: libpvn.a
 	clang -dynamiclib $(DLDFLAGS) -o $@ $(OBJS) $(LNK) 
 
 libpvn.so: libpvn.a
+ifeq ($(findstring MINGW64,$(OS)),MINGW64)
+	ld -shared $(DLDFLAGS) -o $@ $(OBJS) $(subst $(WL),,$(LNK))
+else # !MINGW64
 	ld -shared $(DLDFLAGS) -o $@ $(OBJS)
+endif # ?MINGW64
 
 %.o : %.c $(HDRS)
 	$(CC) $(CCFLAGS) -c $< -o $@
