@@ -308,12 +308,12 @@ LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
 else # !Darwin
 LNK += -lgcc_s
 endif # ?Darwin
+LNK += -lpthread -lm
 ifeq ($(findstring BSD,$(OS)),BSD)
 LNK += -lexecinfo
 else # !BSD
 LNK += -ldl
 endif # ?BSD
-LNK += -lm
 LNKX=-L.
 ifeq ($(OS),Darwin)
 LNKX += -Wl,-rpath,.
