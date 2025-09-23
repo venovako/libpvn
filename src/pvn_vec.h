@@ -563,11 +563,16 @@ static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
 }
 
 #ifdef __AVX512F__
+#ifndef __AVX512DQ__
+#define _mm512_andnot_ps(b,a) _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(b), _mm512_castps_si512(a)))
+#define _mm512_andnot_pd(b,a) _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(b), _mm512_castpd_si512(a)))
+#endif /* !__AVX512DQ__ */
+
 static inline __m512 pvn_v16s_add_abs(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
-  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
-  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  register const __m512 X = _mm512_andnot_ps(z, x);
+  register const __m512 Y = _mm512_andnot_ps(z, y);
   return _mm512_add_ps(X, Y);
 }
 
@@ -583,8 +588,8 @@ static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m5
 #else /* !Intel */
   register const __m512 z = _mm512_set1_ps(-0.0f);
   register const __m512 o = _mm512_set1_ps(1.0f);
-  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
-  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  register const __m512 X = _mm512_andnot_ps(z, x);
+  register const __m512 Y = _mm512_andnot_ps(z, y);
   register const __m512 m = _mm512_min_ps(X, Y);
   register const __m512 M = _mm512_max_ps(X, Y);
   register const __m512 q = _mm512_div_ps(m, M);
@@ -609,8 +614,8 @@ static inline __m512 pvn_v16s_lp(register const __m512 p, register const __m512 
   register const __m512 o = _mm512_set1_ps(1.0f);
   register const __m512 s = _mm512_mul_ps(p, h);
   register const __m512 c = _mm512_div_ps(o, p);
-  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
-  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  register const __m512 X = _mm512_andnot_ps(z, x);
+  register const __m512 Y = _mm512_andnot_ps(z, y);
   register const __m512 m = _mm512_min_ps(X, Y);
   register const __m512 M = _mm512_max_ps(X, Y);
   register const __m512 q = _mm512_div_ps(m, M);
@@ -625,8 +630,8 @@ static inline __m512 pvn_v16s_lp(register const __m512 p, register const __m512 
 static inline __m512 pvn_v16s_max_abs(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
-  register const __m512 X = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(x)));
-  register const __m512 Y = _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(z), _mm512_castps_si512(y)));
+  register const __m512 X = _mm512_andnot_ps(z, x);
+  register const __m512 Y = _mm512_andnot_ps(z, y);
   return _mm512_max_ps(X, Y);
 }
 
@@ -647,8 +652,8 @@ static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
 static inline __m512d pvn_v8d_add_abs(register const __m512d x, register const __m512d y)
 {
   register const __m512d z = _mm512_set1_pd(-0.0);
-  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
-  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  register const __m512d X = _mm512_andnot_pd(z, x);
+  register const __m512d Y = _mm512_andnot_pd(z, y);
   return _mm512_add_pd(X, Y);
 }
 
@@ -664,8 +669,8 @@ static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m
 #else /* !Intel */
   register const __m512d z = _mm512_set1_pd(-0.0);
   register const __m512d o = _mm512_set1_pd(1.0);
-  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
-  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  register const __m512d X = _mm512_andnot_pd(z, x);
+  register const __m512d Y = _mm512_andnot_pd(z, y);
   register const __m512d m = _mm512_min_pd(X, Y);
   register const __m512d M = _mm512_max_pd(X, Y);
   register const __m512d q = _mm512_div_pd(m, M);
@@ -690,8 +695,8 @@ static inline __m512d pvn_v8d_lp(register const __m512d p, register const __m512
   register const __m512d o = _mm512_set1_pd(1.0);
   register const __m512d s = _mm512_mul_pd(p, h);
   register const __m512d c = _mm512_div_pd(o, p);
-  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
-  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  register const __m512d X = _mm512_andnot_pd(z, x);
+  register const __m512d Y = _mm512_andnot_pd(z, y);
   register const __m512d m = _mm512_min_pd(X, Y);
   register const __m512d M = _mm512_max_pd(X, Y);
   register const __m512d q = _mm512_div_pd(m, M);
@@ -706,8 +711,8 @@ static inline __m512d pvn_v8d_lp(register const __m512d p, register const __m512
 static inline __m512d pvn_v8d_max_abs(register const __m512d x, register const __m512d y)
 {
   register const __m512d z = _mm512_set1_pd(-0.0);
-  register const __m512d X = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(x)));
-  register const __m512d Y = _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(z), _mm512_castpd_si512(y)));
+  register const __m512d X = _mm512_andnot_pd(z, x);
+  register const __m512d Y = _mm512_andnot_pd(z, y);
   return _mm512_max_pd(X, Y);
 }
 
