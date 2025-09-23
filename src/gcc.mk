@@ -33,4 +33,5 @@ CFLAGS += -march=$(MARCH)
 endif # ?ppc64le
 ifeq ($(findstring MINGW64,$(OS)),MINGW64)
 PFLAGS += -DPVN_EXTERN_C=EXTERN_C -DPVN_MINGW64=UCRT64 #'-DPVN_FABI(P,W)=P\#\#_'
+$(error MINGW64 not supported for now)
 endif # ?MINGW64

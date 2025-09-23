@@ -82,11 +82,8 @@ pvn_tar.c  \
 pvn_vec.c  \
 pvn_vis.c  \
 pvn_lock.c \
+pvn_prof.c \
 pvn_timer.c
-
-ifneq ($(findstring MINGW64,$(OS)),MINGW64)
-SRCS += pvn_prof.c
-endif # !MINGW64
 
 ifdef MPC
 INCS += -I$(MPC)/include
@@ -246,12 +243,7 @@ endif # NDEBUG
 ifeq ($(COMPILER),nvc)
 LDFLAGS=-Wl,-E
 else # !nvc
-ifeq ($(findstring MINGW64,$(OS)),MINGW64)
-LDFLAGS=
-WL=-Wl,
-else # !MINGW64
 LDFLAGS=-rdynamic
-endif # ?MINGW64
 endif # ?nvc
 LDFLAGS += -Wl,--warn-common
 endif # ?Darwin
@@ -319,9 +311,7 @@ endif # ?Darwin
 ifeq ($(findstring BSD,$(OS)),BSD)
 LNK += -lexecinfo
 else # !BSD
-ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 LNK += -ldl
-endif # !MINGW64
 endif # ?BSD
 LNK += -lm
 LNKX=-L.
@@ -352,11 +342,7 @@ libpvn.dylib: libpvn.a
 	clang -dynamiclib $(DLDFLAGS) -o $@ $(OBJS) $(LNK) 
 
 libpvn.so: libpvn.a
-ifeq ($(findstring MINGW64,$(OS)),MINGW64)
-	ld -shared $(DLDFLAGS) -o $@ $(OBJS) $(subst $(WL),,$(LNK))
-else # !MINGW64
 	ld -shared $(DLDFLAGS) -o $@ $(OBJS)
-endif # ?MINGW64
 
 %.o : %.c $(HDRS)
 	$(CC) $(CCFLAGS) -c $< -o $@
