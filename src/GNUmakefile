@@ -1,4 +1,7 @@
 OS=$(shell uname)
+ifeq ($(findstring MINGW64,$(OS)),MINGW64)
+$(error MINGW64 not supported for now)
+endif # ?MINGW64
 MACHINE=$(shell uname -m)
 ifeq ($(MACHINE),amd64)
 ARCH=x86_64
@@ -347,7 +350,7 @@ libpvn.so: libpvn.a
 %.o : %.c $(HDRS)
 	$(CC) $(CCFLAGS) -c $< -o $@
 
-%.exe : %.c $(HDRS)
+%.exe : %.c $(HDRS) $(LIBS)
 	$(CC) $(CLFLAGS) -DPVN_TEST=1 $< -o $@ $(LDFLAGS) $(LNKX)
 
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
