@@ -268,12 +268,13 @@ static inline float pvn_v4s_hypot_red(register const __m128 x)
 }
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-static inline __m128 pvn_v4s_lp(register const __m128 p, register const __m128 x, register const __m128 y)
+static inline __m128 pvn_v4s_lp(const float _p, register const __m128 x, register const __m128 y)
 {
-  /* z, h, o, s, and c should be computed only once for a fixed p */
+  /* s and c should be computed only once for a fixed p */
   register const __m128 z = _mm_set1_ps(-0.0f);
   register const __m128 h = _mm_set1_ps(0.5f);
   register const __m128 o = _mm_set1_ps(1.0f);
+  register const __m128 p = _mm_set1_ps(_p);
   register const __m128 s = _mm_mul_ps(p, h);
   register const __m128 c = _mm_div_ps(o, p);
   register const __m128 X = _mm_andnot_ps(z, x);
@@ -286,6 +287,13 @@ static inline __m128 pvn_v4s_lp(register const __m128 p, register const __m128 x
   register const __m128 Z = _mm_fmadd_ps(S, S, o);
   register const __m128 C = _mm_pow_ps(Z, c);
   return _mm_mul_ps(M, C);
+}
+
+static inline float pvn_v4s_lp_red(const float p, register const __m128 x)
+{
+  alignas(16) float v[4];
+  _mm_store_ps(v, x);
+  return pvn_v1s_lp(p, pvn_v1s_lp(p, v[0], v[2]), pvn_v1s_lp(p, v[1], v[3]));
 }
 #endif /* Intel */
 
@@ -355,12 +363,13 @@ static inline double pvn_v2d_hypot_red(register const __m128d x)
 }
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-static inline __m128d pvn_v2d_lp(register const __m128d p, register const __m128d x, register const __m128d y)
+static inline __m128d pvn_v2d_lp(const double _p, register const __m128d x, register const __m128d y)
 {
-  /* z, h, o, s, and c should be computed only once for a fixed p */
+  /* s and c should be computed only once for a fixed p */
   register const __m128d z = _mm_set1_pd(-0.0);
   register const __m128d h = _mm_set1_pd(0.5);
   register const __m128d o = _mm_set1_pd(1.0);
+  register const __m128d p = _mm_set1_pd(_p);
   register const __m128d s = _mm_mul_pd(p, h);
   register const __m128d c = _mm_div_pd(o, p);
   register const __m128d X = _mm_andnot_pd(z, x);
@@ -373,6 +382,13 @@ static inline __m128d pvn_v2d_lp(register const __m128d p, register const __m128
   register const __m128d Z = _mm_fmadd_pd(S, S, o);
   register const __m128d C = _mm_pow_pd(Z, c);
   return _mm_mul_pd(M, C);
+}
+
+static inline double pvn_v2d_lp_red(const double p, register const __m128d x)
+{
+  alignas(16) double v[2];
+  _mm_store_pd(v, x);
+  return pvn_v1d_lp(p, v[0], v[1]);
 }
 #endif /* Intel */
 
@@ -438,12 +454,13 @@ static inline float pvn_v8s_hypot_red(register const __m256 x)
 }
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-static inline __m256 pvn_v8s_lp(register const __m256 p, register const __m256 x, register const __m256 y)
+static inline __m256 pvn_v8s_lp(const float _p, register const __m256 x, register const __m256 y)
 {
-  /* z, h, o, s, and c should be computed only once for a fixed p */
+  /* s and c should be computed only once for a fixed p */
   register const __m256 z = _mm256_set1_ps(-0.0f);
   register const __m256 h = _mm256_set1_ps(0.5f);
   register const __m256 o = _mm256_set1_ps(1.0f);
+  register const __m256 h = _mm256_set1_ps(_p);
   register const __m256 s = _mm256_mul_ps(p, h);
   register const __m256 c = _mm256_div_ps(o, p);
   register const __m256 X = _mm256_andnot_ps(z, x);
@@ -456,6 +473,11 @@ static inline __m256 pvn_v8s_lp(register const __m256 p, register const __m256 x
   register const __m256 Z = _mm256_fmadd_ps(S, S, o);
   register const __m256 C = _mm256_pow_ps(Z, c);
   return _mm256_mul_ps(M, C);
+}
+
+static inline float pvn_v8s_hypot_red(const float p, register const __m256 x)
+{
+  return pvn_v4s_lp_red(p, pvn_v4s_lp(p, _mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
 #endif /* Intel */
 
@@ -519,12 +541,13 @@ static inline double pvn_v4d_hypot_red(register const __m256d x)
 }
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-static inline __m256d pvn_v4d_lp(register const __m256d p, register const __m256d x, register const __m256d y)
+static inline __m256d pvn_v4d_lp(const double _p, register const __m256d x, register const __m256d y)
 {
-  /* z, h, o, s, and c should be computed only once for a fixed p */
+  /* s and c should be computed only once for a fixed p */
   register const __m256d z = _mm256_set1_pd(-0.0);
   register const __m256d h = _mm256_set1_pd(0.5);
   register const __m256d o = _mm256_set1_pd(1.0);
+  register const __m256d p = _mm256_set1_pd(_p);
   register const __m256d s = _mm256_mul_pd(p, h);
   register const __m256d c = _mm256_div_pd(o, p);
   register const __m256d X = _mm256_andnot_pd(z, x);
@@ -537,6 +560,11 @@ static inline __m256d pvn_v4d_lp(register const __m256d p, register const __m256
   register const __m256d Z = _mm256_fmadd_pd(S, S, o);
   register const __m256d C = _mm256_pow_pd(Z, c);
   return _mm256_mul_pd(M, C);
+}
+
+static inline double pvn_v4d_lp_red(const double p, register const __m256d x)
+{
+  return pvn_v2d_lp_red(p, pvn_v2d_lp(p, _mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
 #endif /* Intel */
 
@@ -606,12 +634,13 @@ static inline float pvn_v16s_hypot_red(register const __m512 x)
 }
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-static inline __m512 pvn_v16s_lp(register const __m512 p, register const __m512 x, register const __m512 y)
+static inline __m512 pvn_v16s_lp(const float _p, register const __m512 x, register const __m512 y)
 {
-  /* z, h, o, s, and c should be computed only once for a fixed p */
+  /* s and c should be computed only once for a fixed p */
   register const __m512 z = _mm512_set1_ps(-0.0f);
   register const __m512 h = _mm512_set1_ps(0.5f);
   register const __m512 o = _mm512_set1_ps(1.0f);
+  register const __m512 p = _mm512_set1_ps(_p);
   register const __m512 s = _mm512_mul_ps(p, h);
   register const __m512 c = _mm512_div_ps(o, p);
   register const __m512 X = _mm512_andnot_ps(z, x);
@@ -624,6 +653,11 @@ static inline __m512 pvn_v16s_lp(register const __m512 p, register const __m512 
   register const __m512 Z = _mm512_fmadd_ps(S, S, o);
   register const __m512 C = _mm512_pow_ps(Z, c);
   return _mm512_mul_ps(M, C);
+}
+
+static inline float pvn_v16s_hypot_red(const float p, register const __m512 x)
+{
+  return pvn_v8s_lp_red(p, pvn_v8s_lp(p, _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
 #endif /* Intel */
 
@@ -687,12 +721,13 @@ static inline double pvn_v8d_hypot_red(register const __m512d x)
 }
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-static inline __m512d pvn_v8d_lp(register const __m512d p, register const __m512d x, register const __m512d y)
+static inline __m512d pvn_v8d_lp(const double _p, register const __m512d x, register const __m512d y)
 {
-  /* z, h, o, s, and c should be computed only once for a fixed p */
+  /* s and c should be computed only once for a fixed p */
   register const __m512d z = _mm512_set1_pd(-0.0);
   register const __m512d h = _mm512_set1_pd(0.5);
   register const __m512d o = _mm512_set1_pd(1.0);
+  register const __m512d p = _mm512_set1_pd(_p);
   register const __m512d s = _mm512_mul_pd(p, h);
   register const __m512d c = _mm512_div_pd(o, p);
   register const __m512d X = _mm512_andnot_pd(z, x);
@@ -705,6 +740,11 @@ static inline __m512d pvn_v8d_lp(register const __m512d p, register const __m512
   register const __m512d Z = _mm512_fmadd_pd(S, S, o);
   register const __m512d C = _mm512_pow_pd(Z, c);
   return _mm512_mul_pd(M, C);
+}
+
+static inline double pvn_v8d_lp_red(const double p, register const __m512d x)
+{
+  return pvn_v4d_lp_red(p, pvn_v4d_lp(p, _mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
 #endif /* Intel */
 
