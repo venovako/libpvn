@@ -1890,7 +1890,7 @@ static __m128 rxsunrmf(const size_t n, const float *const x)
   register __m128 fl, fr;
   if (m == (size_t)2u) {
     fl = _mm_loadu_ps(x);
-    fr = (r ? rxs_nrmf(r, (x + 4u)) : _mm_loadu_ps(x + 4u));
+    fr = (r ? rxsunrmf(r, (x + 4u)) : _mm_loadu_ps(x + 4u));
     return pvn_v4s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
@@ -1972,7 +1972,7 @@ static __m128d rxdunrmf(const size_t n, const double *const x)
   register __m128d fl, fr;
   if (m == (size_t)2u) {
     fl = _mm_loadu_pd(x);
-    fr = (r ? rxd_nrmf(r, (x + 2u)) : _mm_loadu_pd(x + 2u));
+    fr = (r ? rxdunrmf(r, (x + 2u)) : _mm_loadu_pd(x + 2u));
     return pvn_v2d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
@@ -2084,7 +2084,7 @@ static __m256 rysunrmf(const size_t n, const float *const x)
   register __m256 fl, fr;
   if (m == (size_t)2u) {
     fl = _mm256_loadu_ps(x);
-    fr = (r ? rys_nrmf(r, (x + 8u)) : _mm256_loadu_ps(x + 8u));
+    fr = (r ? rysunrmf(r, (x + 8u)) : _mm256_loadu_ps(x + 8u));
     return pvn_v8s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
@@ -2181,7 +2181,7 @@ static __m256d rydunrmf(const size_t n, const double *const x)
   register __m256d fl, fr;
   if (m == (size_t)2u) {
     fl = _mm256_loadu_pd(x);
-    fr = (r ? ryd_nrmf(r, (x + 4u)) : _mm256_loadu_pd(x + 4u));
+    fr = (r ? rydunrmf(r, (x + 4u)) : _mm256_loadu_pd(x + 4u));
     return pvn_v4d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
@@ -2326,7 +2326,7 @@ static __m512 rzsunrmf(const size_t n, const float *const x)
   register __m512 fl, fr;
   if (m == (size_t)2u) {
     fl = _mm512_loadu_ps(x);
-    fr = (r ? rzs_nrmf(r, (x + 16u)) : _mm512_loadu_ps(x + 16u));
+    fr = (r ? rzsunrmf(r, (x + 16u)) : _mm512_loadu_ps(x + 16u));
     return pvn_v16s_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 4u);
@@ -2439,7 +2439,7 @@ static __m512d rzdunrmf(const size_t n, const double *const x)
   register __m512d fl, fr;
   if (m == (size_t)2u) {
     fl = _mm512_loadu_pd(x);
-    fr = (r ? rzd_nrmf(r, (x + 8u)) : _mm512_loadu_pd(x + 8u));
+    fr = (r ? rzdunrmf(r, (x + 8u)) : _mm512_loadu_pd(x + 8u));
     return pvn_v8d_hypot(fl, fr);
   }
   const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
