@@ -655,7 +655,7 @@ static inline __m512 pvn_v16s_lp(const float _p, register const __m512 x, regist
   return _mm512_mul_ps(M, C);
 }
 
-static inline float pvn_v16s_hypot_red(const float p, register const __m512 x)
+static inline float pvn_v16s_lp_red(const float p, register const __m512 x)
 {
   return pvn_v8s_lp_red(p, pvn_v8s_lp(p, _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
