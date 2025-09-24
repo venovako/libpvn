@@ -3904,6 +3904,199 @@ double PVN_FABI(pvn_rzd_nrmi,PVN_RZD_NRMI)(const size_t *const n, const double *
 #endif /* __AVX512F__ */
 
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+static __m128 rxs_nrmp(const float p, const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_load_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m128 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_load_ps(x);
+    fr = (r ? rxs_nrmp(p, r, (x + 4u)) : _mm_load_ps(x + 4u));
+    return pvn_v4s_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxs_nrmp(p, nl, x);
+    fr = rxs_nrmp(p, nr, (x + nl));
+  }
+  return pvn_v4s_lp(p, fl, fr);
+}
+
+static __m128 rxsunrmp(const float p, const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_loadu_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m128 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_loadu_ps(x);
+    fr = (r ? rxsunrmp(p, r, (x + 4u)) : _mm_loadu_ps(x + 4u));
+    return pvn_v4s_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+
+  cilk_scope {
+    fl = cilk_spawn rxsunrmp(p, nl, x);
+    fr = rxsunrmp(p, nr, (x + nl));
+  }
+  return pvn_v4s_lp(p, fl, fr);
+}
+
+float PVN_FABI(pvn_rxs_nrmp,PVN_RXS_NRMP)(const float *const p, const size_t *const n, const float *const x)
+{
+  if (!p || !(*p > 0.0f))
+    return -1.0f;
+  if (!n)
+    return -2.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -3.0f;
+  if (*p == 1.0f)
+    return PVN_FABI(pvn_rxs_nrm1,PVN_RXS_NRM1)(n, x);
+  if (*p == 2.0f)
+    return PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_rxs_nrmi,PVN_RXS_NRMI)(n, x);
+  register const __m128 r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxsunrmp(*p, *n, x) : rxs_nrmp(*p, *n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(16) float f[4u];
+  _mm_store_ps(f, r);
+  const size_t m = (size_t)4u;
+  return PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v4s_lp_red(*p, r);
+#endif /* ?PVN_NRM_SAFE */
+}
+
+static __m128d rxd_nrmp(const double p, const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
+  if (m == (size_t)1u) {
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_load_pd(x));
+  }
+  register __m128d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_load_pd(x);
+    fr = (r ? rxd_nrmp(p, r, (x + 2u)) : _mm_load_pd(x + 2u));
+    return pvn_v2d_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxd_nrmp(p, nl, x);
+    fr = rxd_nrmp(p, nr, (x + nl));
+  }
+  return pvn_v2d_lp(p, fl, fr);
+}
+
+static __m128d rxdunrmp(const double p, const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
+  if (m == (size_t)1u) {
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_loadu_pd(x));
+  }
+  register __m128d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_loadu_pd(x);
+    fr = (r ? rxdunrmp(p, r, (x + 2u)) : _mm_loadu_pd(x + 2u));
+    return pvn_v2d_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxdunrmp(p, nl, x);
+    fr = rxdunrmp(p, nr, (x + nl));
+  }
+  return pvn_v2d_lp(p, fl, fr);
+}
+
+double PVN_FABI(pvn_rxd_nrmp,PVN_RXD_NRMP)(const double *const p, const size_t *const n, const double *const x)
+{
+  if (!p || !(*p > 0.0))
+    return -1.0;
+  if (!n)
+    return -2.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -3.0;
+  if (*p == 1.0)
+    return PVN_FABI(pvn_rxd_nrm1,PVN_RXD_NRM1)(n, x);
+  if (*p == 2.0)
+    return PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_rxd_nrmi,PVN_RXD_NRMI)(n, x);
+  register const __m128d r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrmp(*n, x) : rxd_nrmp(*n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(16) double f[2u];
+  _mm_store_pd(f, r);
+  return pvn_v1d_lp(*p, f[0u], f[1u]);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v2d_lp_red(*p, r);
+#endif /* ?PVN_NRM_SAFE */
+}
 #ifdef __AVX512F__
 static __m512 rzs_nrmp(const float p, const size_t n, const float *const x)
 {
