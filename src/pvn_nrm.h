@@ -116,6 +116,16 @@ PVN_EXTERN_C double PVN_FABI(pvn_rzd_nrm1,PVN_RZD_NRM1)(const size_t *const n, c
 PVN_EXTERN_C float PVN_FABI(pvn_rzs_nrmi,PVN_RZS_NRMI)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_rzd_nrmi,PVN_RZD_NRMI)(const size_t *const n, const double *const x);
 #endif /* __AVX512F__ */
-/* TODO: the icx-only vector p-norm routines */
+
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+/*PVN_EXTERN_C float PVN_FABI(pvn_rxs_nrmp,PVN_RXS_NRMP)(const float *const p, const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_rxd_nrmp,PVN_RXD_NRMP)(const double *const p, const size_t *const n, const double *const x);
+PVN_EXTERN_C float PVN_FABI(pvn_rys_nrmp,PVN_RYS_NRMP)(const float *const p, const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_ryd_nrmp,PVN_RYD_NRMP)(const double *const p, const size_t *const n, const double *const x);*/
+#ifdef __AVX512F__
+PVN_EXTERN_C float PVN_FABI(pvn_rzs_nrmp,PVN_RZS_NRMP)(const float *const p, const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_rzd_nrmp,PVN_RZD_NRMP)(const double *const p, const size_t *const n, const double *const x);
+#endif /* __AVX512F__ */
+#endif /* Intel */
 #endif /* __AVX__ && __FMA__ */
 #endif /* !PVN_NRM_H */
