@@ -475,7 +475,7 @@ static inline __m256 pvn_v8s_lp(const float _p, register const __m256 x, registe
   return _mm256_mul_ps(M, C);
 }
 
-static inline float pvn_v8s_hypot_red(const float p, register const __m256 x)
+static inline float pvn_v8s_lp_red(const float p, register const __m256 x)
 {
   return pvn_v4s_lp_red(p, pvn_v4s_lp(p, _mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
