@@ -4042,11 +4042,11 @@ float PVN_FABI(pvn_rzs_nrmp,PVN_RZS_NRMP)(const float *const p, const size_t *co
   if (!x)
     return -3.0f;
   if (*p == 1.0f)
-    return PVN_FABI(pvn_rzs_nrm1,PVN_RZS_NRM1)(p, n, x);
+    return PVN_FABI(pvn_rzs_nrm1,PVN_RZS_NRM1)(n, x);
   if (*p == 2.0f)
-    return PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(p, n, x);
+    return PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(n, x);
   if (isinf(*p))
-    return PVN_FABI(pvn_rzs_nrmi,PVN_RZS_NRMI)(p, n, x);
+    return PVN_FABI(pvn_rzs_nrmi,PVN_RZS_NRMI)(n, x);
   register const __m512 r = (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzsunrmp(*p, *n, x) : rzs_nrmp(*p, *n, x));
 #ifdef PVN_NRM_SAFE
   alignas(64) float f[16u];
@@ -4162,6 +4162,12 @@ double PVN_FABI(pvn_rzd_nrmp,PVN_RZD_NRMP)(const double *const p, const size_t *
     return -0.0;
   if (!x)
     return -3.0;
+  if (*p == 1.0)
+    return PVN_FABI(pvn_rzd_nrm1,PVN_RZD_NRM1)(n, x);
+  if (*p == 2.0)
+    return PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_rzd_nrmi,PVN_RZD_NRMI)(n, x);
   register const __m512d r = (((uintptr_t)x & (uintptr_t)0x3Fu) ? rzdunrmp(*p, *n, x) : rzd_nrmp(*p, *n, x));
 #ifdef PVN_NRM_SAFE
   alignas(64) double f[8u];
