@@ -93,6 +93,7 @@ The `SAFE` variable lists, as one or more comma-separated short names, the compo
 So, `SAFE=ev2,jv2,sv2,nrm`, e.g., requests the `ev2`, `jv2`, `sv2`, and `nrm` safe implementations, but not the `ran` one.
 
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
+For example, to turn on the vector 2-norm testing in `pvn_nrm.exe`, at least `GMP`, `MPFR`, and `LAPACK` have to be set to the installation prefixes of the respective libraries.
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
 Also, several functions will not work on Windows, and probably on other untested systems as well.
