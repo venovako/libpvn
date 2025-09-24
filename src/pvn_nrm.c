@@ -2002,6 +2002,362 @@ double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *
 #endif /* ?PVN_NRM_SAFE */
 }
 
+static __m128 rxs_nrm1(const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_load_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m128 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_load_ps(x);
+    fr = (r ? rxs_nrm1(r, (x + 4u)) : _mm_load_ps(x + 4u));
+    return pvn_v4s_add_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxs_nrm1(nl, x);
+    fr = rxs_nrm1(nr, (x + nl));
+  }
+  return pvn_v4s_add_abs(fl, fr);
+}
+
+static __m128 rxsunrm1(const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_loadu_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m128 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_loadu_ps(x);
+    fr = (r ? rxsunrm1(r, (x + 4u)) : _mm_loadu_ps(x + 4u));
+    return pvn_v4s_add_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+
+  cilk_scope {
+    fl = cilk_spawn rxsunrm1(nl, x);
+    fr = rxsunrm1(nr, (x + nl));
+  }
+  return pvn_v4s_add_abs(fl, fr);
+}
+
+float PVN_FABI(pvn_rxs_nrm1,PVN_RXS_NRM1)(const size_t *const n, const float *const x)
+{
+  if (!n)
+    return -1.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -2.0f;
+  register const __m128 r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxsunrm1(*n, x) : rxs_nrm1(*n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(16) float f[4u];
+  _mm_store_ps(f, r);
+  const size_t m = (size_t)4u;
+  return PVN_FABI(pvn_res_nrm1,PVN_RES_NRM1)(&m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v4s_add_red(r);
+#endif /* ?PVN_NRM_SAFE */
+}
+
+static __m128d rxd_nrm1(const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
+  if (m == (size_t)1u) {
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_load_pd(x));
+  }
+  register __m128d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_load_pd(x);
+    fr = (r ? rxd_nrm1(r, (x + 2u)) : _mm_load_pd(x + 2u));
+    return pvn_v2d_add_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxd_nrm1(nl, x);
+    fr = rxd_nrm1(nr, (x + nl));
+  }
+  return pvn_v2d_add_abs(fl, fr);
+}
+
+static __m128d rxdunrm1(const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
+  if (m == (size_t)1u) {
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_loadu_pd(x));
+  }
+  register __m128d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_loadu_pd(x);
+    fr = (r ? rxdunrm1(r, (x + 2u)) : _mm_loadu_pd(x + 2u));
+    return pvn_v2d_add_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxdunrm1(nl, x);
+    fr = rxdunrm1(nr, (x + nl));
+  }
+  return pvn_v2d_add_abs(fl, fr);
+}
+
+double PVN_FABI(pvn_rxd_nrm1,PVN_RXD_NRM1)(const size_t *const n, const double *const x)
+{
+  if (!n)
+    return -1.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -2.0;
+  register const __m128d r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrm1(*n, x) : rxd_nrm1(*n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(16) double f[2u];
+  _mm_store_pd(f, r);
+  return pvn_v1d_add_abs(f[0u], f[1u]);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v2d_add_red(r);
+#endif /* ?PVN_NRM_SAFE */
+}
+
+static __m128 rxs_nrmI(const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_load_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m128 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_load_ps(x);
+    fr = (r ? rxs_nrmI(r, (x + 4u)) : _mm_load_ps(x + 4u));
+    return pvn_v4s_max_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxs_nrmI(nl, x);
+    fr = rxs_nrmI(nr, (x + nl));
+  }
+  return pvn_v4s_max_abs(fl, fr);
+}
+
+static __m128 rxsunrmI(const size_t n, const float *const x)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm_andnot_ps(z, _mm_loadu_ps(x));
+    case 1u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]));
+    case 2u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]));
+    case 3u:
+      return _mm_andnot_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m128 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_loadu_ps(x);
+    fr = (r ? rxsunrmI(r, (x + 4u)) : _mm_loadu_ps(x + 4u));
+    return pvn_v4s_max_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+
+  cilk_scope {
+    fl = cilk_spawn rxsunrmI(nl, x);
+    fr = rxsunrmI(nr, (x + nl));
+  }
+  return pvn_v4s_max_abs(fl, fr);
+}
+
+float PVN_FABI(pvn_rxs_nrmI,PVN_RXS_NRMI)(const size_t *const n, const float *const x)
+{
+  if (!n)
+    return -1.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -2.0f;
+  register const __m128 r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxsunrmI(*n, x) : rxs_nrmI(*n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(16) float f[4u];
+  _mm_store_ps(f, r);
+  const size_t m = (size_t)4u;
+  return PVN_FABI(pvn_res_nrmI,PVN_RES_NRMI)(&m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v4s_max_red(r);
+#endif /* ?PVN_NRM_SAFE */
+}
+
+static __m128d rxd_nrmI(const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
+  if (m == (size_t)1u) {
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_load_pd(x));
+  }
+  register __m128d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_load_pd(x);
+    fr = (r ? rxd_nrmI(r, (x + 2u)) : _mm_load_pd(x + 2u));
+    return pvn_v2d_max_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxd_nrmI(nl, x);
+    fr = rxd_nrmI(nr, (x + nl));
+  }
+  return pvn_v2d_max_abs(fl, fr);
+}
+
+static __m128d rxdunrmI(const size_t n, const double *const x)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)1u),
+    m = ((n >> 1u) + r);
+  if (m == (size_t)1u) {
+    if (r)
+      return _mm_andnot_pd(z, _mm_set_pd(-0.0, *x));
+    else
+      return _mm_andnot_pd(z, _mm_loadu_pd(x));
+  }
+  register __m128d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm_loadu_pd(x);
+    fr = (r ? rxdunrmI(r, (x + 2u)) : _mm_loadu_pd(x + 2u));
+    return pvn_v2d_max_abs(fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 1u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rxdunrmI(nl, x);
+    fr = rxdunrmI(nr, (x + nl));
+  }
+  return pvn_v2d_max_abs(fl, fr);
+}
+
+double PVN_FABI(pvn_rxd_nrmI,PVN_RXD_NRMI)(const size_t *const n, const double *const x)
+{
+  if (!n)
+    return -1.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -2.0;
+  register const __m128d r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrmI(*n, x) : rxd_nrmI(*n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(16) double f[2u];
+  _mm_store_pd(f, r);
+  return pvn_v1d_max_abs(f[0u], f[1u]);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v2d_max_red(r);
+#endif /* ?PVN_NRM_SAFE */
+}
+
 static __m256 rys_nrmf(const size_t n, const float *const x)
 {
   register const __m256 z = _mm256_set1_ps(-0.0f);
