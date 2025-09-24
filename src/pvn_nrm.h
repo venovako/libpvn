@@ -100,6 +100,10 @@ PVN_EXTERN_C float PVN_FABI(pvn_rxs_nrmI,PVN_RXS_NRMI)(const size_t *const n, co
 PVN_EXTERN_C double PVN_FABI(pvn_rxd_nrmI,PVN_RXD_NRMI)(const size_t *const n, const double *const x);
 PVN_EXTERN_C float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x);
+PVN_EXTERN_C float PVN_FABI(pvn_rys_nrm1,PVN_RYS_NRM1)(const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_ryd_nrm1,PVN_RYD_NRM1)(const size_t *const n, const double *const x);
+PVN_EXTERN_C float PVN_FABI(pvn_rys_nrmI,PVN_RYS_NRMI)(const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_ryd_nrmI,PVN_RYD_NRMI)(const size_t *const n, const double *const x);
 #ifdef __AVX512F__
 PVN_EXTERN_C float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x);
