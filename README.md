@@ -15,6 +15,8 @@ A `getopt(3)`, `getopt_long(3)`, and `getopt_long_only(3)` implementation for Wi
 Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
 Their slightly modified implementations included here, in the `inc` subdirectory, will be taken if the `CR_MATH` make variable is not set.
 
+Some norm-related testers, results, and documentation has been moved to the [VecNrmP](https://github.com/venovako/VecNrmP) repository.
+
 ## Building
 
 The library has been successfully built using:

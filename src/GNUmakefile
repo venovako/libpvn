@@ -224,13 +224,6 @@ endif # QUADMATH
 HDRS=$(SRCS:.c=.h)
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
 EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
-ifdef MPFR
-EXES += \
-../var/crh_relerr.exe \
-../var/laf_relerr.exe \
-../var/reh_relerr.exe \
-../var/rhh_relerr.exe
-endif # MPFR
 LIBS=libpvn.a libpvn.$(DYNAMIC)
 
 ifeq ($(OS),Darwin)
@@ -359,22 +352,9 @@ libpvn.so: libpvn.a
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS)
 	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
-../var/crh_relerr.exe: ../var/crh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
-
-../var/laf_relerr.exe: ../var/laf_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
-
-../var/reh_relerr.exe: ../var/reh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
-
-../var/rhh_relerr.exe: ../var/rhh_relerr.c $(LIBS)
-	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
-
 clean:
 	-$(RM) *.exe
 	-$(RM) ../etc/*.exe
-	-$(RM) ../var/*.exe
 	-$(RM) *.so
 	-$(RM) *.dylib
 	-$(RM) *.a
