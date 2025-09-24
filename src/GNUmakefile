@@ -236,7 +236,7 @@ LIBS=libpvn.a libpvn.$(DYNAMIC)
 ifeq ($(OS),Darwin)
 PFLAGS += -DPVN_DYNAMIC=2
 DLDFLAGS=-Wl,-install_name,$(CURDIR)/libpvn.$(DYNAMIC) -Wl,-warn_unused_dylibs -Wl,-warn_commons
-LDFLAGS=-rdynamic $(DLDFLAGS)
+LDFLAGS=-rdynamic -Wl,-warn_unused_dylibs -Wl,-warn_commons
 else # !Darwin
 PFLAGS += -DPVN_DYNAMIC=1
 DLDFLAGS=--warn-common
@@ -336,6 +336,7 @@ CLFLAGS=$(subst PIC,PIE,$(CCFLAGS)) $(AFLAGS)
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)
+	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
 	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [all|clean|help]"
