@@ -4097,6 +4097,232 @@ double PVN_FABI(pvn_rxd_nrmp,PVN_RXD_NRMP)(const double *const p, const size_t *
   return pvn_v2d_lp_red(*p, r);
 #endif /* ?PVN_NRM_SAFE */
 }
+
+static __m256 rys_nrmp(const float p, const size_t n, const float *const x)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)7u),
+    m = ((n >> 3u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_ps(z, _mm256_load_ps(x));
+    case 1u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]), 0));
+    case 2u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]), 0));
+    case 3u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]), 0));
+    case 4u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_load_ps(x), 0));
+    case 5u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, -0.0f, x[4u]), _mm_load_ps(x)));
+    case 6u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, x[5u], x[4u]), _mm_load_ps(x)));
+    case 7u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, x[6u], x[5u], x[4u]), _mm_load_ps(x)));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m256 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm256_load_ps(x);
+    fr = (r ? rys_nrmp(p, r, (x + 8u)) : _mm256_load_ps(x + 8u));
+    return pvn_v8s_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rys_nrmp(p, nl, x);
+    fr = rys_nrmp(p, nr, (x + nl));
+  }
+  return pvn_v8s_lp(p, fl, fr);
+}
+
+static __m256 rysunrmp(const float p, const size_t n, const float *const x)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)7u),
+    m = ((n >> 3u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_ps(z, _mm256_loadu_ps(x));
+    case 1u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, -0.0f, x[0u]), 0));
+    case 2u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, -0.0f, x[1u], x[0u]), 0));
+    case 3u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_set_ps(-0.0f, x[2u], x[1u], x[0u]), 0));
+    case 4u:
+      return _mm256_andnot_ps(z, _mm256_insertf128_ps(z, _mm_loadu_ps(x), 0));
+    case 5u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, -0.0f, x[4u]), _mm_loadu_ps(x)));
+    case 6u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, -0.0f, x[5u], x[4u]), _mm_loadu_ps(x)));
+    case 7u:
+      return _mm256_andnot_ps(z, _mm256_set_m128(_mm_set_ps(-0.0f, x[6u], x[5u], x[4u]), _mm_loadu_ps(x)));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m256 fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm256_loadu_ps(x);
+    fr = (r ? rysunrmp(p, r, (x + 8u)) : _mm256_loadu_ps(x + 8u));
+    return pvn_v8s_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 3u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rysunrmp(p, nl, x);
+    fr = rysunrmp(p, nr, (x + nl));
+  }
+  return pvn_v8s_lp(p, fl, fr);
+}
+
+float PVN_FABI(pvn_rys_nrmp,PVN_RYS_NRMP)(const float *const p, const size_t *const n, const float *const x)
+{
+  if (!p || !(*p > 0.0f))
+    return -1.0f;
+  if (!n)
+    return -2.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -3.0f;
+  if (*p == 1.0f)
+    return PVN_FABI(pvn_rys_nrm1,PVN_RYS_NRM1)(n, x);
+  if (*p == 2.0f)
+    return PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_rys_nrmi,PVN_RYS_NRMI)(n, x);
+  register const __m256 r = (((uintptr_t)x & (uintptr_t)0x1Fu) ? rysunrmp(*p, *n, x) : rys_nrmp(*p, *n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(32) float f[8u];
+  _mm256_store_ps(f, r);
+  const size_t m = (size_t)8u;
+  return PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v8s_lp_red(r);
+#endif /* ?PVN_NRM_SAFE */
+}
+
+static __m256d ryd_nrmp(const double p, const size_t n, const double *const x)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_pd(z, _mm256_load_pd(x));
+    case 1u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_set_pd(-0.0, x[0u]), 0));
+    case 2u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_load_pd(x), 0));
+    case 3u:
+      return _mm256_andnot_pd(z, _mm256_set_m128d(_mm_set_pd(-0.0, x[2u]), _mm_load_pd(x)));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m256d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm256_load_pd(x);
+    fr = (r ? ryd_nrmp(p, r, (x + 4u)) : _mm256_load_pd(x + 4u));
+    return pvn_v4d_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn ryd_nrmp(p, nl, x);
+    fr = ryd_nrmp(p, nr, (x + nl));
+  }
+  return pvn_v4d_lp(p, fl, fr);
+}
+
+static __m256d rydunrmp(const double p, const size_t n, const double *const x)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+#ifndef NDEBUG
+  if (!n)
+    return z;
+#endif /* !NDEBUG */
+  const size_t
+    r = (n & (size_t)3u),
+    m = ((n >> 2u) + (r != (size_t)0u));
+  if (m == (size_t)1u) {
+    switch ((unsigned)r) {
+    case 0u:
+      return _mm256_andnot_pd(z, _mm256_loadu_pd(x));
+    case 1u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_set_pd(-0.0, x[0u]), 0));
+    case 2u:
+      return _mm256_andnot_pd(z, _mm256_insertf128_pd(z, _mm_loadu_pd(x), 0));
+    case 3u:
+      return _mm256_andnot_pd(z, _mm256_set_m128d(_mm_set_pd(-0.0, x[2u]), _mm_loadu_pd(x)));
+    default: /* should never happen */
+      return z;
+    }
+  }
+  register __m256d fl, fr;
+  if (m == (size_t)2u) {
+    fl = _mm256_loadu_pd(x);
+    fr = (r ? rydunrmp(p, r, (x + 4u)) : _mm256_loadu_pd(x + 4u));
+    return pvn_v4d_lp(p, fl, fr);
+  }
+  const size_t nl = (((m >> 1u) + (m & (size_t)1u)) << 2u);
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn rydunrmp(p, nl, x);
+    fr = rydunrmp(p, nr, (x + nl));
+  }
+  return pvn_v4d_lp(p, fl, fr);
+}
+
+double PVN_FABI(pvn_ryd_nrmp,PVN_RYD_NRMP)(const double *const p, const size_t *const n, const double *const x)
+{
+  if (!p || !(*p > 0.0))
+    return -1.0;
+  if (!n)
+    return -2.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -3.0;
+  if (*p == 1.0)
+    return PVN_FABI(pvn_ryd_nrm1,PVN_RYD_NRM1)(n, x);
+  if (*p == 2.0)
+    return PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_ryd_nrmi,PVN_RYD_NRMI)(n, x);
+  register const __m256d r = (((uintptr_t)x & (uintptr_t)0x1Fu) ? rydunrmp(*p, *n, x) : ryd_nrmp(*p, *n, x));
+#ifdef PVN_NRM_SAFE
+  alignas(32) double f[4u];
+  _mm256_store_pd(f, r);
+  const size_t m = (size_t)4u;
+  return PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &m, f);
+#else /* !PVN_NRM_SAFE */
+  return pvn_v4d_lp_red(*p, r);
+#endif /* ?PVN_NRM_SAFE */
+}
 #ifdef __AVX512F__
 static __m512 rzs_nrmp(const float p, const size_t n, const float *const x)
 {
