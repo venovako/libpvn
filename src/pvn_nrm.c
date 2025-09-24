@@ -221,7 +221,8 @@ float PVN_FABI(pvn_mps_nrmp,PVN_MPS_NRMP)(const float *const p, const size_t *co
   }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_d(mf, (double)*p, MPFR_RNDN);
+    (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+    (void)mpfr_set_flt(mf, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_flt(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
@@ -1400,6 +1401,12 @@ float PVN_FABI(pvn_snrmp,PVN_SNRMP)(const float *const p, const size_t *const n,
     return -0.0f;
   if (!x)
     return -3.0f;
+  if (*p == 1.0f)
+    return PVN_FABI(pvn_snrm1,PVN_SNRM1)(n, x);
+  if (*p == 2.0f)
+    return PVN_FABI(pvn_snrm2,PVN_SNRM2)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_snrmi,PVN_SNRMI)(n, x);
 #ifdef _OPENMP
   const size_t mt = (size_t)omp_get_max_threads();
   float _p[mt];
@@ -1440,6 +1447,12 @@ double PVN_FABI(pvn_dnrmp,PVN_DNRMP)(const double *const p, const size_t *const 
     return -0.0;
   if (!x)
     return -3.0;
+  if (*p == 1.0)
+    return PVN_FABI(pvn_dnrm1,PVN_DNRM1)(n, x);
+  if (*p == 2.0)
+    return PVN_FABI(pvn_dnrm2,PVN_DNRM2)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_dnrmi,PVN_DNRMI)(n, x);
 #ifdef _OPENMP
   const size_t mt = (size_t)omp_get_max_threads();
   double _p[mt];
@@ -1480,6 +1493,12 @@ long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size
     return -0.0L;
   if (!x)
     return -3.0L;
+  if (*p == 1.0L)
+    return PVN_FABI(pvn_xnrm1,PVN_XNRM1)(n, x);
+  if (*p == 2.0L)
+    return PVN_FABI(pvn_xnrm2,PVN_XNRM2)(n, x);
+  if (isinf(*p))
+    return PVN_FABI(pvn_xnrmi,PVN_XNRMI)(n, x);
 #ifdef _OPENMP
   const size_t mt = (size_t)omp_get_max_threads();
   long double _p[mt];
@@ -1550,7 +1569,8 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
   }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_ld(mf, (long double)*p, MPFR_RNDN);
+    (void)mpfr_init_set_ld(mf, 0.0L, MPFR_RNDN);
+    (void)mpfr_set_float128(mf, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
