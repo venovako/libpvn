@@ -221,7 +221,7 @@ float PVN_FABI(pvn_mps_nrmp,PVN_MPS_NRMP)(const float *const p, const size_t *co
   }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+    (void)mpfr_init_set_d(mp, 0.0, MPFR_RNDN);
     (void)mpfr_set_flt(mf, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_flt(mx, x[i], MPFR_RNDN);
@@ -277,7 +277,7 @@ double PVN_FABI(pvn_mpd_nrmp,PVN_MPD_NRMP)(const double *const p, const size_t *
   }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_d(mf, *p, MPFR_RNDN);
+    (void)mpfr_init_set_d(mp, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_d(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
@@ -332,7 +332,7 @@ long double PVN_FABI(pvn_mpx_nrmp,PVN_MPX_NRMP)(const long double *const p, cons
   }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_ld(mf, *p, MPFR_RNDN);
+    (void)mpfr_init_set_ld(mp, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_ld(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
@@ -1569,7 +1569,7 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
   }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_ld(mf, 0.0L, MPFR_RNDN);
+    (void)mpfr_init_set_ld(mp, 0.0L, MPFR_RNDN);
     (void)mpfr_set_float128(mf, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
