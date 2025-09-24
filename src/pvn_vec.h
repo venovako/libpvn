@@ -460,7 +460,7 @@ static inline __m256 pvn_v8s_lp(const float _p, register const __m256 x, registe
   register const __m256 z = _mm256_set1_ps(-0.0f);
   register const __m256 h = _mm256_set1_ps(0.5f);
   register const __m256 o = _mm256_set1_ps(1.0f);
-  register const __m256 h = _mm256_set1_ps(_p);
+  register const __m256 p = _mm256_set1_ps(_p);
   register const __m256 s = _mm256_mul_ps(p, h);
   register const __m256 c = _mm256_div_ps(o, p);
   register const __m256 X = _mm256_andnot_ps(z, x);
