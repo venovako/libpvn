@@ -4088,7 +4088,7 @@ double PVN_FABI(pvn_rxd_nrmp,PVN_RXD_NRMP)(const double *const p, const size_t *
     return PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(n, x);
   if (isinf(*p))
     return PVN_FABI(pvn_rxd_nrmi,PVN_RXD_NRMI)(n, x);
-  register const __m128d r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrmp(*n, x) : rxd_nrmp(*n, x));
+  register const __m128d r = (((uintptr_t)x & (uintptr_t)0x0Fu) ? rxdunrmp(*p, *n, x) : rxd_nrmp(*p, *n, x));
 #ifdef PVN_NRM_SAFE
   alignas(16) double f[2u];
   _mm_store_pd(f, r);
