@@ -29,6 +29,10 @@ PVN_EXTERN_C float PVN_FABI(pvn_res_nrmi,PVN_RES_NRMI)(const size_t *const n, co
 PVN_EXTERN_C double PVN_FABI(pvn_red_nrmi,PVN_RED_NRMI)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rex_nrmi,PVN_REX_NRMI)(const size_t *const n, const long double *const x);
 
+PVN_EXTERN_C float PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(const float *const p, const size_t *const n, const float *const x);
+PVN_EXTERN_C double PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(const double *const p, const size_t *const n, const double *const x);
+PVN_EXTERN_C long double PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(const long double *const p, const size_t *const n, const long double *const x);
+
 /* with __builtin_hypot[fl] */
 PVN_EXTERN_C float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(const size_t *const n, const double *const x);

@@ -595,6 +595,84 @@ long double PVN_FABI(pvn_rex_nrmi,PVN_REX_NRMI)(const size_t *const n, const lon
   return __builtin_fmaxl(fl, fr);
 }
 
+float PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(const float *const p, const size_t *const n, const float *const x)
+{
+#ifndef NDEBUG
+  if (!p || !(*p > 0.0f))
+    return -1.0f;
+  if (!n)
+    return -2.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -3.0f;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabsf(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1s_lp(*p, x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  float fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &nl, x);
+    fr = PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &nr, (x + nl));
+  }
+  return pvn_v1s_lp(*p, fl, fr);
+}
+
+double PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(const double *const p, const size_t *const n, const double *const x)
+{
+#ifndef NDEBUG
+  if (!p || !(*p > 0.0))
+    return -1.0;
+  if (!n)
+    return -2.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -3.0;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabs(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1d_lp(*p, x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &nl, x);
+    fr = PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &nr, (x + nl));
+  }
+  return pvn_v1d_lp(*p, fl, fr);
+}
+
+long double PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(const long double *const p, const size_t *const n, const long double *const x)
+{
+#ifndef NDEBUG
+  if (!p || !(*p > 0.0L))
+    return -1.0L;
+  if (!n)
+    return -2.0L;
+  if (!*n)
+    return -0.0L;
+  if (!x)
+    return -3.0L;
+#endif /* !NDEBUG */
+  if (*n == (size_t)1u)
+    return __builtin_fabsl(*x);
+  if (*n == (size_t)2u)
+    return pvn_v1x_lp(*p, x[0u], x[1u]);
+  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
+  const size_t nr = (*n - nl);
+  long double fl, fr;
+  cilk_scope {
+    fl = cilk_spawn PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &nl, x);
+    fr = PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &nr, (x + nl));
+  }
+  return pvn_v1x_lp(*p, fl, fr);
+}
+
 float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x)
 {
 #ifndef NDEBUG
@@ -1314,7 +1392,6 @@ long double PVN_FABI(pvn_xnrmi,PVN_XNRMI)(const size_t *const n, const long doub
 
 float PVN_FABI(pvn_snrmp,PVN_SNRMP)(const float *const p, const size_t *const n, const float *const x)
 {
-#ifndef NDEBUG
   if (!p || !(*p > 0.0f))
     return -1.0f;
   if (!n)
@@ -1323,24 +1400,38 @@ float PVN_FABI(pvn_snrmp,PVN_SNRMP)(const float *const p, const size_t *const n,
     return -0.0f;
   if (!x)
     return -3.0f;
-#endif /* !NDEBUG */
-  if (*n == (size_t)1u)
-    return __builtin_fabsf(*x);
-  if (*n == (size_t)2u)
-    return pvn_v1s_lp(*p, x[0], x[1]);
-  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t nr = (*n - nl);
-  float fl, fr;
-  cilk_scope {
-    fl = cilk_spawn PVN_FABI(pvn_snrmp,PVN_SNRMP)(p, &nl, x);
-    fr = PVN_FABI(pvn_snrmp,PVN_SNRMP)(p, &nr, (x + nl));
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  float _p[mt];
+  for (size_t i = 0u; i < mt; ++i)
+    _p[i] = 0.0f;
+#pragma omp parallel default(none) shared(n,x,_p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)*n, (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m)
+      _p[tn] = PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &m, (x + o));
   }
-  return pvn_v1s_lp(*p, fl, fr);
+  return PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &mt, _p);
+#else /* !_OPENMP */
+  return PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, n, x);
+#endif /* _OPENMP */
 }
 
 double PVN_FABI(pvn_dnrmp,PVN_DNRMP)(const double *const p, const size_t *const n, const double *const x)
 {
-#ifndef NDEBUG
   if (!p || !(*p > 0.0))
     return -1.0;
   if (!n)
@@ -1349,24 +1440,38 @@ double PVN_FABI(pvn_dnrmp,PVN_DNRMP)(const double *const p, const size_t *const 
     return -0.0;
   if (!x)
     return -3.0;
-#endif /* !NDEBUG */
-  if (*n == (size_t)1u)
-    return __builtin_fabs(*x);
-  if (*n == (size_t)2u)
-    return pvn_v1d_lp(*p, x[0], x[1]);
-  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t nr = (*n - nl);
-  double fl, fr;
-  cilk_scope {
-    fl = cilk_spawn PVN_FABI(pvn_dnrmp,PVN_DNRMP)(p, &nl, x);
-    fr = PVN_FABI(pvn_dnrmp,PVN_DNRMP)(p, &nr, (x + nl));
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  double _p[mt];
+  for (size_t i = 0u; i < mt; ++i)
+    _p[i] = 0.0;
+#pragma omp parallel default(none) shared(n,x,_p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)*n, (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m)
+      _p[tn] = PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &m, (x + o));
   }
-  return pvn_v1d_lp(*p, fl, fr);
+  return PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &mt, _p);
+#else /* !_OPENMP */
+  return PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, n, x);
+#endif /* ?_OPENMP */
 }
 
 long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size_t *const n, const long double *const x)
 {
-#ifndef NDEBUG
   if (!p || !(*p > 0.0L))
     return -1.0L;
   if (!n)
@@ -1375,19 +1480,34 @@ long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size
     return -0.0L;
   if (!x)
     return -3.0L;
-#endif /* !NDEBUG */
-  if (*n == (size_t)1u)
-    return __builtin_fabsl(*x);
-  if (*n == (size_t)2u)
-    return pvn_v1x_lp(*p, x[0], x[1]);
-  const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
-  const size_t nr = (*n - nl);
-  long double fl, fr;
-  cilk_scope {
-    fl = cilk_spawn PVN_FABI(pvn_xnrmp,PVN_XNRMP)(p, &nl, x);
-    fr = PVN_FABI(pvn_xnrmp,PVN_XNRMP)(p, &nr, (x + nl));
+#ifdef _OPENMP
+  const size_t mt = (size_t)omp_get_max_threads();
+  long double _p[mt];
+  for (size_t i = 0u; i < mt; ++i)
+    _p[i] = 0.0L;
+#pragma omp parallel default(none) shared(n,x,_p)
+  {
+    const size_t nt = (size_t)omp_get_num_threads();
+    const size_t tn = (size_t)omp_get_thread_num();
+    lldiv_t qr = lldiv((long long)*n, (long long)nt);
+    const size_t q = (size_t)(qr.quot);
+    const size_t r = (size_t)(qr.rem);
+    size_t m = q, o = (tn * q);
+    if (r) {
+      if (tn < r) {
+        ++m;
+        o += tn;
+      }
+      else
+        o += r;
+    }
+    if (m)
+      _p[tn] = PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &m, (x + o));
   }
-  return pvn_v1x_lp(*p, fl, fr);
+  return PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &mt, _p);
+#else /* !_OPENMP */
+  return PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, n, x);
+#endif /* ?_OPENMP */
 }
 
 #ifdef PVN_QUADMATH
