@@ -4,63 +4,60 @@
 int main(int argc, char *argv[])
 {
   if (argc == 1) {
-    (void)printf("built on    : %s\n", __DATE__);
-    (void)printf("debug       : ");
+    (void)printf("built on        : %s\n", __DATE__);
+    (void)printf("debug           : ");
 #ifdef NDEBUG
     (void)printf("false\n");
 #else /* !NDEBUG */
     (void)printf("true\n");
 #endif /* ?NDEBUG */
 #ifdef PVN_CILK
-    (void)printf("OpenCilk    : %d\n", PVN_CILK);
+    (void)printf("OpenCilk        : %d\n", PVN_CILK);
 #else /* !PVN_CILK */
 #ifdef _OPENMP
-    (void)printf("OpenMP      : %d\n", _OPENMP);
+    (void)printf("OpenMP          : %d\n", _OPENMP);
 #endif /* ?_OPENMP */
 #endif /* ?PVN_CILK */
-    (void)printf("endianness  : %s\n", (pvn_le() ? "little" : "big"));
+    (void)printf("endianness      : %s\n", (pvn_le() ? "little" : "big"));
+    (void)printf("math_errhandling: %d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
 #ifdef PVN_CR_MATH
-    (void)printf("PVN_CR_MATH : %d\n", PVN_CR_MATH);
+    (void)printf("PVN_CR_MATH     : %d\n", PVN_CR_MATH);
 #endif /* PVN_CR_MATH */
 #ifdef PVN_QUADMATH
-    (void)printf("PVN_QUADMATH: %d\n", PVN_QUADMATH);
+    (void)printf("PVN_QUADMATH    : %d\n", PVN_QUADMATH);
 #endif /* PVN_QUADMATH */
-    (void)printf("PVN_CPPFLAGS: %s\n", PVN_CPPFLAGS);
-    (void)printf("PVN_CFLAGS  : %s\n", PVN_CFLAGS);
-    (void)printf("PVN_LDFLAGS : %s\n", PVN_LDFLAGS);
-    (void)printf("\nmath_errhandling=%d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
+    (void)printf("PVN_CC          : %s\n", PVN_CC);
+    (void)printf("PVN_CPPFLAGS    : %s\n", PVN_CPPFLAGS);
+    (void)printf("PVN_CFLAGS      : %s\n", PVN_CFLAGS);
+    (void)printf("PVN_LDFLAGS     : %s\n", PVN_LDFLAGS);
   }
   else {
     struct option longopts[] = {
-      { "dynamic",  no_argument, (int*)NULL, 'd' },
-      { "debug",    no_argument, (int*)NULL, 'g' },
-      { "cppflags", no_argument, (int*)NULL, 'i' },
+      { "cc",       no_argument, (int*)NULL, 'C' },
       { "cflags",   no_argument, (int*)NULL, 'c' },
+      { "dynamic",  no_argument, (int*)NULL, 'd' },
+      { "cppflags", no_argument, (int*)NULL, 'i' },
       { "ldflags",  no_argument, (int*)NULL, 'l' },
       { "parallel", no_argument, (int*)NULL, 'p' },
       { (char*)NULL, 0, (int*)NULL, 0 }
     };
-    for (int ch = 0; (ch = getopt_long(argc, argv, "dgiclp", longopts, (int*)NULL)) != -1; ) {
+    for (int ch = 0; (ch = getopt_long(argc, argv, "Ccdilp", longopts, (int*)NULL)) != -1; ) {
       switch ((char)ch) {
-      case 'g':
-#ifdef NDEBUG
-        (void)printf("debug=false\n");
-#else /* !NDEBUG */
-        (void)printf("debug=true\n");
-#endif /* ?NDEBUG */
+      case 'C':
+        (void)printf("%s\n", PVN_CC);
+        break;
+      case 'c':
+        (void)printf("%s\n", PVN_CFLAGS);
         break;
       case 'd':
 #if (defined(PVN_DYNAMIC) || (defined(_WIN32) && defined(_DLL)))
-        (void)printf("dynamic=true\n");
+        (void)printf("true\n");
 #else /* !DYNAMIC */
-        (void)printf("dynamic=false\n");
+        (void)printf("false\n");
 #endif /* ?DYNAMIC */
         break;
       case 'i':
         (void)printf("%s\n", PVN_CPPFLAGS);
-        break;
-      case 'c':
-        (void)printf("%s\n", PVN_CFLAGS);
         break;
       case 'l':
         (void)printf("%s\n", PVN_LDFLAGS);
@@ -72,13 +69,13 @@ int main(int argc, char *argv[])
 #ifdef PVN_CILK
         (void)printf("OpenCilk=%d\n", PVN_CILK);
 #else /* !PVN_CILK */
-        (void)printf("parallel=false\n");
+        (void)printf("simd\n");
 #endif /* ?PVN_CILK */
 #endif /* ?_OPENMP */
         break;
       default:
       err:
-        (void)fprintf(stderr, "pvn.exe [-d|--dynamic] [-g|--debug] [-i|--cppflags] [-c|--cflags] [-l|--ldflags] [-p|--parallel]\n");
+        (void)fprintf(stderr, "pvn.exe [-C|--cc] [-c|--cflags] [-d|--dynamic] [-i|--cppflags] [-l|--ldflags] [-p|--parallel]\n");
         return EXIT_FAILURE;
       }
     }

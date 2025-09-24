@@ -60,7 +60,6 @@ endif # !clang
 endif # ?86
 
 INCS=-I.
-PFLAGS += -DPVN_OS=$(OS) -DPVN_ARCH=$(ARCH) -DPVN_COMPILER=$(COMPILER)
 
 SRCS=pvn.c \
 pvn_aux.c  \
@@ -234,14 +233,17 @@ EXES += \
 endif # MPFR
 LIBS=libpvn.a libpvn.$(DYNAMIC)
 
-PFLAGS += -DPVN_DYNAMIC=$(DYNAMIC)
 ifeq ($(OS),Darwin)
+PFLAGS += -DPVN_DYNAMIC=2
 DLDFLAGS=-Wl,-warn_unused_dylibs -Wl,-warn_commons
 LDFLAGS=-rdynamic $(DLDFLAGS)
 else # !Darwin
+PFLAGS += -DPVN_DYNAMIC=1
 DLDFLAGS=--warn-common
 ifdef NDEBUG
-DLDFLAGS += -O$(subst g,0,$(NDEBUG))
+ifneq ($(NDEBUG),g)
+DLDFLAGS += -O$(NDEBUG)
+endif # !g
 endif # NDEBUG
 ifeq ($(COMPILER),nvc)
 LDFLAGS=-Wl,-E
@@ -326,7 +328,7 @@ endif # ?Darwin
 LNKX += -lpvn $(LNK)
 
 PFLAGS += $(INCS)
-AFLAGS=-DPVN_CPPFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(PFLAGS)))\"" -DPVN_CFLAGS="\"$(shell echo $(CFLAGS))\"" -DPVN_LDFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(LNKX)))\""
+AFLAGS=-DPVN_CC="\"$(CC)\"" -DPVN_CPPFLAGS="\"$(subst / , ,$(subst . ,$(CURDIR) ,$(PFLAGS)))\"" -DPVN_CFLAGS="\"$(shell echo $(CFLAGS))\"" -DPVN_LDFLAGS="\"$(LDFLAGS) $(subst / , ,$(subst . ,$(CURDIR) ,$(LNKX)))\""
 
 CCFLAGS=$(CFLAGS) $(PFLAGS)
 CLFLAGS=$(subst PIC,PIE,$(CCFLAGS)) $(AFLAGS)
