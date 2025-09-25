@@ -28,3 +28,7 @@ endif # !true
 else # !OPENMP
 CFLAGS += -qopenmp-simd
 endif # ?OPENMP
+ifdef STATIC
+# 1=scalar, 2=simd, 3=both
+PFLAGS += -DPVN_USE_INTEL=3
+endif # STATIC

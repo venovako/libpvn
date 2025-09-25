@@ -231,7 +231,9 @@ PFLAGS += -DPVN_DYNAMIC=2
 DLDFLAGS=-Wl,-install_name,$(CURDIR)/libpvn.$(DYNAMIC) -Wl,-warn_unused_dylibs -Wl,-warn_commons
 LDFLAGS=-rdynamic -Wl,-warn_unused_dylibs -Wl,-warn_commons
 else # !Darwin
+ifndef STATIC
 PFLAGS += -DPVN_DYNAMIC=1
+endif # !STATIC
 DLDFLAGS=--warn-common
 ifdef NDEBUG
 ifneq ($(NDEBUG),g)
@@ -243,7 +245,11 @@ LDFLAGS=-Wl,-E
 else # !nvc
 LDFLAGS=-rdynamic
 endif # ?nvc
+ifdef STATIC
+LDFLAGS += -static $(STATIC)
+else # !STATIC
 LDFLAGS += -Wl,--warn-common
+endif # ?STATIC
 endif # ?Darwin
 LNK=
 ifdef MPC
@@ -251,7 +257,9 @@ LNK += -L$(MPC)/$(LIB64)
 ifeq ($(OS),Darwin)
 LNK += -Wl,-rpath,$(MPC)/$(LIB64)
 else # !Darwin
+ifndef STATIC
 LNK += -Wl,-rpath=$(MPC)/$(LIB64)
+endif # !STATIC
 endif # ?Darwin
 LNK += -lmpc
 endif # MPC
@@ -260,7 +268,9 @@ LNK += -L$(MPFR)/$(LIB64)
 ifeq ($(OS),Darwin)
 LNK += -Wl,-rpath,$(MPFR)/$(LIB64)
 else # !Darwin
+ifndef STATIC
 LNK += -Wl,-rpath=$(MPFR)/$(LIB64)
+endif # !STATIC
 endif # ?Darwin
 LNK += -lmpfr
 endif # MPFR
@@ -269,7 +279,9 @@ LNK += -L$(GMP)/$(LIB64)
 ifeq ($(OS),Darwin)
 LNK += -Wl,-rpath,$(GMP)/$(LIB64)
 else # !Darwin
+ifndef STATIC
 LNK += -Wl,-rpath=$(GMP)/$(LIB64)
+endif # !STATIC
 endif # ?Darwin
 LNK += -lgmp
 endif # GMP
@@ -278,7 +290,9 @@ LNK += -L$(LAPACK)
 ifeq ($(OS),Darwin)
 LNK += -Wl,-rpath,$(LAPACK)
 else # !Darwin
+ifndef STATIC
 LNK += -Wl,-rpath=$(LAPACK)
+endif # !STATIC
 endif # ?Darwin
 LNK += -ltmglib -llapack -lrefblas
 endif # LAPACK
@@ -292,7 +306,9 @@ LNK += -L$(QMP)
 ifeq ($(OS),Darwin)
 LNK += -Wl,-rpath,$(QMP)
 else # !Darwin
+ifndef STATIC
 LNK += -Wl,-rpath=$(QMP)
+endif # !STATIC
 endif # ?Darwin
 LNK += -lquadmath
 else # !QMD
@@ -304,7 +320,11 @@ ifeq ($(OS),Darwin)
 LGCC=$(dir $(realpath $(shell $(GCC) -print-file-name=libgcc_s.1.1.dylib)))
 LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
 else # !Darwin
+ifdef STATIC
+LNK += -static-libgcc
+else # !STATIC
 LNK += -lgcc_s
+endif # ?STATIC
 endif # ?Darwin
 LNK += -lpthread -lm
 ifeq ($(findstring BSD,$(OS)),BSD)
@@ -316,7 +336,9 @@ LNKX=-L$(CURDIR)
 ifeq ($(OS),Darwin)
 LNKX += -Wl,-rpath,$(CURDIR)
 else # !Darwin
+ifndef STATIC
 LNKX += -Wl,-rpath=$(CURDIR)
+endif # !STATIC
 endif # ?Darwin
 LNKX += -lpvn $(subst / , ,$(LNK))
 
