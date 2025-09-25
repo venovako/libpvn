@@ -74,9 +74,7 @@ int main(int argc, char *argv[])
 #endif /* ?_OPENMP */
         break;
       default:
-      err:
-        (void)fprintf(stderr, "pvn.exe [-C|--cc] [-c|--cflags] [-d|--dynamic] [-i|--cppflags] [-l|--ldflags] [-p|--parallel]\n");
-        return EXIT_FAILURE;
+        goto err;
       }
     }
     argv += optind;
@@ -85,6 +83,9 @@ int main(int argc, char *argv[])
       goto err;
   }
   return EXIT_SUCCESS;
+ err:
+  (void)fprintf(stderr, "pvn.exe [-C|--cc] [-c|--cflags] [-d|--dynamic] [-i|--cppflags] [-l|--ldflags] [-p|--parallel]\n");
+  return EXIT_FAILURE;
 }
 #else /* !PVN_TEST */
 int PVN_FABI(pvn_le,PVN_LE)()

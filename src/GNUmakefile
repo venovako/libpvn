@@ -2,6 +2,11 @@ OS=$(shell uname)
 ifeq ($(findstring MINGW64,$(OS)),MINGW64)
 $(error MINGW64 not supported for now)
 endif # ?MINGW64
+ifeq ($(OS),Darwin)
+ifdef STATIC
+$(error static linking is not supported on Darwin)
+endif # STATIC
+endif # Darwin
 MACHINE=$(shell uname -m)
 ifeq ($(MACHINE),amd64)
 ARCH=x86_64
@@ -45,6 +50,7 @@ endif # !GCC
 
 ifeq ($(findstring 86,$(ARCH)),86)
 ifneq ($(COMPILER),clang)
+ifneq ($(COMPILER),nvc)
 ifndef QUADMATH
 QMD=$(realpath $(shell $(GCC) -print-file-name=libquadmath.$(DYNAMIC)))
 ifeq ($(QMD),)
@@ -56,6 +62,7 @@ else # QMD
 QUADMATH=$(QMD)
 endif # ?QMD
 endif # !QUADMATH
+endif # !nvc
 endif # !clang
 endif # ?86
 
@@ -326,12 +333,10 @@ else # !STATIC
 LNK += -lgcc_s
 endif # ?STATIC
 endif # ?Darwin
-LNK += -lpthread -lm
 ifeq ($(findstring BSD,$(OS)),BSD)
-LNK += -lexecinfo
-else # !BSD
-LNK += -ldl
-endif # ?BSD
+LNK += -lexecinfo -lelf
+endif # BSD
+LNK += -lpthread -lm -ldl
 LNKX=-L$(CURDIR)
 ifeq ($(OS),Darwin)
 LNKX += -Wl,-rpath,$(CURDIR)
