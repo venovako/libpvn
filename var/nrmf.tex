@@ -1,0 +1,218 @@
+\documentclass[a4paper,12pt,twoside]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{url}
+\newtheorem{thm}{Theorem}
+\title{Computing the Frobenius norm using $\mathrm{cr\_hypot}$}
+\author{Vedran Novakovi\'{c}}
+\begin{document}
+\maketitle
+
+Consider a well-defined $\mathrm{hypot}$ function, i.e.,
+\begin{displaymath}
+  \mathop{\mathrm{hypot}}(x,y)=\sqrt{x^2+y^2}(1+\epsilon'),
+\end{displaymath}
+where $|\epsilon'|\ll 1$.  If it is correctly rounded for all inputs,
+denote it by $\mathrm{cr\_hypot}$.
+
+\begin{thm}\label{t:1}
+  Let $\mathbf{x}=\begin{bmatrix}x_1&\cdots&x_n\end{bmatrix}^T$ be a
+  vector of finite floating-point values, and $\|\mathbf{x}\|_F$ its
+  Frobenius norm.  If its approximation $\underline{\|\mathbf{x}\|_F}$
+  is computed as $\underline{\|\mathbf{x}\|_F}=\underline{f_n}$, where
+  $\underline{f_0}=f_0=0$, $\underline{f_1}=f_1=|x_1|$, and
+  \begin{equation}
+    2\le i\le n\implies\underline{f_i}=\mathop{\mathrm{hypot}}(\underline{f_{i-1}},x_i),
+    \label{e:1}
+  \end{equation}
+  then, barring any overflow and inexact underflow, when $x_i\ne 0$ it
+  holds
+  \begin{equation}
+    \underline{f_i^{}}=f_i^{}(1+\epsilon_i^{}),\qquad
+    1+\epsilon_i^{}=\sqrt{1+\epsilon_{i-1}^{}(2+\epsilon_{i-1}^{})\frac{f_{i-1}^2}{f_i^2}}(1+\epsilon_i').
+    \label{e:2}
+  \end{equation}
+
+  Assume that $\mathrm{hypot}$ is $\mathrm{cr\_hypot}$.  Then,
+  $|\epsilon_i'|\le\varepsilon$, with $\varepsilon$ being the machine
+  precision.  If $x_i=0$, then $\underline{f_i}=\underline{f_{i-1}}$.
+  If a lower bound of $\epsilon_{i-1}^{}$ is denoted by
+  $\epsilon_{i-1}^-$ and an upper bound by $\epsilon_{i-1}^+$, where
+  $\epsilon_1^-=\epsilon_1^+=0$, then, when
+  $0\ge\epsilon_{i-1}^-\ge-1$, the relative error factor
+  $1+\epsilon_i^{}$ from~\eqref{e:2} can be bounded irrespectively of
+  $x_i^{}\ne 0$ and $f_i^{}$ as
+  \begin{equation}
+    \begin{aligned}
+      1+\epsilon_i^-&=\sqrt{1+\epsilon_{i-1}^-(2+\epsilon_{i-1}^-)}(1-\varepsilon)\le 1+\epsilon_i^{}\\
+      &\le\sqrt{1+\epsilon_{i-1}^+(2+\epsilon_{i-1}^+)}(1+\varepsilon)=1+\epsilon_i^+.
+    \end{aligned}
+    \label{e:3}
+  \end{equation}
+\end{thm}
+\begin{proof}
+  Using any well-defined $\mathrm{hypot}$ function, assuming
+  that~\eqref{e:2} holds for all $j$ such that $0\le j<i$, where
+  $2\le i\le n$, and that $x_i\ne 0$, it follows
+  \begin{equation}
+    \underline{f_i^{}}=\sqrt{\underline{f_{i-1}^2}+x_i^2}(1+\epsilon_i')=\sqrt{f_{i-1}^2(1+\epsilon_{i-1}^{})^2+x_i^2}(1+\epsilon_i').
+    \label{e:4}
+  \end{equation}
+  If the term under the square root on the right hand side
+  of~\eqref{e:4} is written as
+  \begin{equation}
+    f_{i-1}^2(1+\epsilon_{i-1}^{})^2+x_i^2=(f_{i-1}^2+x_i^2)(1+y),
+    \label{e:5}
+  \end{equation}
+  then an easy algebraic manipulation gives
+  \begin{equation}
+    y=\epsilon_{i-1}^{}(2+\epsilon_{i-1}^{})\frac{f_{i-1}^2}{f_{i-1}^2+x_i^2}=\epsilon_{i-1}^{}(2+\epsilon_{i-1}^{})\frac{f_{i-1}^2}{f_i^2},
+    \label{e:6}
+  \end{equation}
+  what, after taking the absolute value of both sides of~\eqref{e:6},
+  leads to
+  \begin{equation}
+    |y|\le|\epsilon_{i-1}^{}|(2+|\epsilon_{i-1}^{}|)\frac{f_{i-1}^2}{f_i^2}\le|\epsilon_{i-1}^{}|(2+|\epsilon_{i-1}^{}|).
+    \label{e:7}
+  \end{equation}
+  Substituting~\eqref{e:5} into~\eqref{e:4} yields
+  \begin{displaymath}
+    \underline{f_i^{}}=\sqrt{f_{i-1}^2+x_i^2}\sqrt{1+y}(1+\epsilon_i')=f_i^{}\sqrt{1+y}(1+\epsilon_i')=f_i^{}(1+\epsilon_i^{}),
+  \end{displaymath}
+  where $(1+\epsilon_i^{})=\sqrt{1+y}(1+\epsilon_i')$, as claimed
+  in~\eqref{e:2}.  The recurrence~\eqref{e:3} for bounds on
+  $1+\epsilon_i$ when $\mathrm{hypot}$ is $\mathrm{cr\_hypot}$ follows
+  from~\eqref{e:7} and the fact that the function $x\mapsto x(2+x)$ is
+  monotonically increasing for $x\ge-1$.
+\end{proof}
+
+More practically, \eqref{e:3} can be further simplified as
+$-\epsilon_i^-<\epsilon_i^+<i\varepsilon$ when
+\begin{displaymath}
+  ((\varepsilon=2^{-24})\wedge(3\le i\le 5793))\quad\vee\quad((\varepsilon=2^{-53})\wedge(3\le i\le 134217729)),
+\end{displaymath}
+what follows from evaluating~\eqref{e:3} iteratively over $i$ using
+the MPFR library~\cite{Fousse-et-al-07} with $2048$ bits of precision.
+
+A result similar to Theorem~\ref{t:1} can be obtained in the case of
+combining two partial norms as
+\begin{displaymath}
+  \underline{f_{[i,j]}}=\mathop{\mathrm{hypot}}(\underline{f_{[i]}},\underline{f_{[j]}}),
+\end{displaymath}
+e.g., when OpenMP-reducing the partial, per-thread results.  Bear in
+mind that the OpenMP standard~\cite[\S 7.6.7]{OpenMP6} leaves the
+reduction order unspecified.
+%% OpenMP-API-Specification-6.0.pdf
+%% 7.6.7 Reduction Scoping Clauses
+%% p.~251, l.~5--9
+%% The location in the OpenMP program at which values are combined and the order in which values are combined are unspecified.
+
+\begin{thm}\label{t:2}
+  Assume that $\underline{f_{[i]}}=f_{[i]}(1+\epsilon_{[i]})$ and
+  $\underline{f_{[j]}}=f_{[j]}(1+\epsilon_{[j]})$ approximate the
+  Frobenius norms of some vectors of length $i$ and $j$, respectively,
+  and let
+  \begin{displaymath}
+    \underline{f_{[i,j]}}=\mathop{\mathrm{hypot}}(\underline{f_{[i]}},\underline{f_{[j]}})
+  \end{displaymath}
+  be an approximation of the Frobenius norm of the concatenation (of
+  length $i+j$) of those two vectors.  Then, barring any overflow and
+  inexact underflow,
+  \begin{equation}
+    \underline{f_{[i,j]}^{}}=f_{[i,j]^{}}(1+\epsilon_{[i,j]}^{}),\quad
+    1+\epsilon_{[i,j]}^{}=\sqrt{1+\epsilon_{[\ell]}(2+\epsilon_{[\ell]})\frac{f_{[l]}^2}{f_{[i,j]}^2}}(1+\epsilon_{[k]}^{})(1+\epsilon_{[i,j]}'),
+    \label{e:8}
+  \end{equation}
+  where
+  $1+\epsilon_{[l]}=\min\{1+\epsilon_{[i]},1+\epsilon_{[j]}\}$,
+  $1+\epsilon_{[k]}=\max\{1+\epsilon_{[i]},1+\epsilon_{[j]}\}$, and
+  $1+\epsilon_{[\ell]}=(1+\epsilon_{[l]})/(1+\epsilon_{[k]})$, i.e.,
+  $l=i$ and $k=j$ or $l=j$ and $k=i$, while
+  $|\epsilon_{[i,j]}'|\le\varepsilon$ if $\mathrm{hypot}$ is
+  $\mathrm{cr\_hypot}$.
+\end{thm}
+\begin{proof}
+  Expanding $\underline{f_{[i]}^2}+\underline{f_{[j]}^2}$ gives
+  \begin{equation}
+    \underline{f_{[i]}^2}+\underline{f_{[j]}^2}=f_{[i]}^2(1+\epsilon_{[i]}^{})^2+f_{[j]}^2(1+\epsilon_{[j]}^{})^2=(f_{[l]}^2(1+\epsilon_{[\ell]}^{})^2+f_{[k]}^2)(1+\epsilon_{[k]}^{})^2.
+    \label{e:9}
+  \end{equation}
+  Similarly to~\eqref{e:5}, expressing the first factor on the right hand
+  side of~\eqref{e:9} as
+  \begin{equation}
+    f_{[l]}^2(1+\epsilon_{[\ell]}^{})^2+f_{[k]}^2=(f_{[l]}^2+f_{[k]}^2)(1+z)
+    \label{e:10}
+  \end{equation}
+  leads to
+  \begin{displaymath}
+    z=\epsilon_{[\ell]}(2+\epsilon_{[\ell]})\frac{f_{[l]}^2}{f_{[l]}^2+f_{[k]}^2}=\epsilon_{[\ell]}(2+\epsilon_{[\ell]})\frac{f_{[l]}^2}{f_{[i,j]}^2},
+  \end{displaymath}
+  and therefore, by substituting~\eqref{e:10} into~\eqref{e:9},
+  \begin{displaymath}
+    \underline{f_{[i,j]}^{}}=\sqrt{\underline{f_{[i]}^2}+\underline{f_{[j]}^2}}(1+\epsilon_{[i,j]}')=\sqrt{f_{[i]}^2+f_{[j]}^2}\sqrt{1+z}(1+\epsilon_{[k]}^{})(1+\epsilon_{[i,j]}'),
+  \end{displaymath}
+  what is equivalent to~\eqref{e:8}.
+\end{proof}
+
+Compare this to computing the sum of squares, as in \texttt{xNRM2}
+from BLAS (see, e.g.,
+\url{https://github.com/Reference-LAPACK/lapack/blob/master/BLAS/SRC/dnrm2.f90}).
+
+\begin{thm}\label{t:3}
+  Let $\mathbf{x}=\begin{bmatrix}x_1&\cdots&x_n\end{bmatrix}^T$ be a
+  vector of finite floating-point values, and $\|\mathbf{x}\|_F$ its
+  Frobenius norm.  If its approximation $\underline{\|\mathbf{x}\|_F}$
+  is computed as
+  $\underline{\|\mathbf{x}\|_F}=\mathop\mathrm{sqrt}(\underline{g_n})$,
+  where $\underline{g_0}=g_0=0$ and
+  \begin{displaymath}
+    1\le i\le n\implies\underline{g_i}=\mathop{\mathrm{fma}}(x_i,x_i,\underline{g_{i-1}}),
+  \end{displaymath}
+  then, barring any overflow and inexact underflow, when $x_i\ne 0$ it
+  holds
+  \begin{equation}
+    \underline{g_i^{}}=g_i^{}(1+\epsilon_i''),\qquad
+    1+\epsilon_i''=\left(1+\epsilon_{i-1}''\frac{g_{i-1}^{}}{g_i^{}}\right)(1+\epsilon_i'''),
+    \label{e:11}
+  \end{equation}
+  where $\epsilon_i'''$, $|\epsilon_i'''|\le\varepsilon$, is the
+  rounding error of the $\mathrm{fma}$.  Also, with
+  $|\epsilon_{\sqrt{}}|\le\varepsilon$,
+  \begin{displaymath}
+    \underline{\|\mathbf{x}\|_F^{}}=\mathop{\mathrm{sqrt}}(\underline{g_n^{}})=\|\mathbf{x}\|_F^{}\sqrt{1+\epsilon_n''}(1+\epsilon_{\sqrt{}}^{}).
+  \end{displaymath}
+\end{thm}
+\begin{proof}
+  From
+  \begin{displaymath}
+    x_i^2+\underline{g_{i-1}^{}}=x_i^2+g_{i-1}^{}(1+\epsilon_{i-1}'')=(x_i^2+g_{i-1}^{})(1+w)
+  \end{displaymath}
+  it follows
+  \begin{displaymath}
+    w=\epsilon_{i-1}''\frac{g_{i-1}^{}}{g_{i-1}^{}+x_i^2}=\epsilon_{i-1}''\frac{g_{i-1}^{}}{g_i^{}},
+  \end{displaymath}
+  what had to be proven.
+\end{proof}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\begin{thebibliography}{1}
+
+\bibitem{Fousse-et-al-07}
+Laurent Fousse, Guillaume Hanrot, Vincent Lef\`{e}vre, Patrick P\'{e}lissier,
+  and Paul Zimmermann.
+\newblock {MPFR}: A multiple-precision binary floating-point library with
+  correct rounding.
+\newblock {\em ACM Trans. Math. Softw.}, 33(2):13, 2007.
+
+\bibitem{OpenMP6}
+{OpenMP Architecture Review Board}.
+\newblock {OpenMP API 6.0 Specification}.
+\newblock online:
+  \url{https://www.openmp.org/wp-content/uploads/OpenMP-API-Specification-6-0.pdf},
+  Nov 2024.
+
+\end{thebibliography}
+%
+\end{document}
