@@ -769,6 +769,41 @@ static inline __m512d pvn_v8d_rsqrt(register const __m512d x)
   return _mm512_div_pd(_mm512_set1_pd(1.0), _mm512_sqrt_pd(x));
 #endif /* ?Intel */
 }
+
+/* PVN_V8D_BITONIC and PVN_V8D_SORT have been refactored from the code of Berenger Bramas.
+   Please see sort512.hpp in https://gitlab.inria.fr/bramas/avx-512-sort and its LICENSE. */
+
+#ifdef PVN_V8D_BITONIC
+#error PVN_V8D_BITONIC already defined
+#else /* !PVN_V8D_BITONIC */
+#define PVN_V8D_BITONIC(x,i,m)                               \
+  {                                                          \
+    register const __m512d px = _mm512_permutexvar_pd(i, x); \
+    register const __m512d xm = _mm512_min_pd(x, px);        \
+    register const __m512d xx = _mm512_max_pd(px, x);        \
+    x = _mm512_mask_mov_pd(xm, m, xx);                       \
+  }
+#endif /* ?PVN_V8D_BITONIC */
+
+#ifdef PVN_V8D_SORT
+#error PVN_V8D_SORT already defined
+#else /* !PVN_V8D_SORT */
+#define PVN_V8D_SORT(x)                                            \
+  {                                                                \
+    register __m512i i = _mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1); \
+    PVN_V8D_BITONIC(x,i,0xAAu);                                    \
+    i = _mm512_set_epi64(4, 5, 6, 7, 0, 1, 2, 3);                  \
+    PVN_V8D_BITONIC(x,i,0xCCu);                                    \
+    i = _mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1);                  \
+    PVN_V8D_BITONIC(x,i,0xAAu);                                    \
+    i = _mm512_set_epi64(0, 1, 2, 3, 4, 5, 6, 7);                  \
+    PVN_V8D_BITONIC(x,i,0xF0u);                                    \
+    i = _mm512_set_epi64(5, 4, 7, 6, 1, 0, 3, 2);                  \
+    PVN_V8D_BITONIC(x,i,0xCCu);                                    \
+    i = _mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1);                  \
+    PVN_V8D_BITONIC(x,i,0xAAu);                                    \
+  }
+#endif /* ?PVN_V8D_SORT */
 #endif /* __AVX512F__ */
 #endif /* __AVX__ && __FMA__ */
 
