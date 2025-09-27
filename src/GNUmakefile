@@ -92,8 +92,10 @@ pvn_tar.c  \
 pvn_vec.c  \
 pvn_vis.c  \
 pvn_lock.c \
-pvn_prof.c \
 pvn_timer.c
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
+SRCS += pvn_prof.c
+endif # !MINGW64
 
 ifdef MPC
 INCS += -I$(MPC)/include
