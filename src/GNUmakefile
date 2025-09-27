@@ -258,7 +258,11 @@ endif # NDEBUG
 ifeq ($(COMPILER),nvc)
 LDFLAGS=-Wl,-E
 else # !nvc
+ifeq ($(findstring MINGW64,$(OS)),MINGW64)
+LDFLAGS=-Wl,--major-os-version=10
+else # !MINGW64
 LDFLAGS=-rdynamic
+endif # ?MINGW64
 endif # ?nvc
 ifdef STATIC
 LDFLAGS += -static $(STATIC)
