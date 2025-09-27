@@ -27,12 +27,12 @@ PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 #define sincos cr_sincos
 #define cr_sqrtl sqrtl
 /* cr_hypotl, cr_powl, and cr_rsqrtl in core-math assume the 80-bit double-extended arithmetic */
-#ifdef __x86_64__
+#if (defined(__x86_64__) && !defined(PVN_MINGW64))
 PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 PVN_EXTERN_C long double cr_powl(long double x, long double y);
 #define powl cr_powl
 PVN_EXTERN_C long double cr_rsqrtl(long double x);
-#else /* !__x86_64__ */
+#else /* !__x86_64__ || PVN_MINGW64 */
 /* TODO: might not be correctly rounded */
 #define cr_powl powl
 #if (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9))
@@ -44,7 +44,7 @@ PVN_EXTERN_C long double cr_rsqrtl(long double x);
 /* TODO: might not be correctly rounded */
 #define cr_rsqrtl pvn_v1x_rsqrt
 #endif /* ?(__PPC64__ && __LITTLE_ENDIAN__ && _ARCH_PWR9) */
-#endif /* ?__x86_64__ */
+#endif /* ?(__x86_64__ && !PVN_MINGW64) */
 #define hypotl cr_hypotl
 #define cabsl(z) hypotl(creall(z), cimagl(z))
 #define rsqrtl cr_rsqrtl

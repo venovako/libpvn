@@ -1,9 +1,13 @@
 OS=$(shell uname)
-ifeq ($(OS),Darwin)
 ifdef STATIC
+ifeq ($(OS),Darwin)
 $(error static linking is not supported on Darwin)
-endif # STATIC
 endif # Darwin
+else # !STATIC
+ifeq ($(findstring MINGW64,$(OS)),MINGW64)
+STATIC=-s
+endif # MINGW64
+endif # ?STATIC
 MACHINE=$(shell uname -m)
 ifeq ($(MACHINE),amd64)
 ARCH=x86_64
@@ -154,10 +158,12 @@ $(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c) \
 $(realpath $(CR_MATH)/src/binary128/sqrt/sqrtq.c)
 endif # QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 CR_SRCS += \
 $(realpath $(CR_MATH)/src/binary80/hypot/hypotl.c) \
 $(realpath $(CR_MATH)/src/binary80/pow/powl.c) \
 $(realpath $(CR_MATH)/src/binary80/rsqrt/rsqrtl.c)
+endif # !MINGW64
 endif # 86
 else # !CR_MATH
 ifdef NDEBUG
@@ -188,10 +194,12 @@ CR_SRCS += \
 endif # ppc64le
 endif # ?QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 CR_SRCS += \
 ../inc/hypotl_noerrno.c \
 ../inc/powl_noerrno.c \
 ../inc/rsqrtl_noerrno.c
+endif # !MINGW64
 endif # 86
 endif # ?CR_MATH
 CR_OBJS=$(CR_SRCS:.c=.o)
