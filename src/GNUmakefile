@@ -348,7 +348,10 @@ endif # ?Darwin
 ifeq ($(findstring BSD,$(OS)),BSD)
 LNK += -lexecinfo -lelf
 endif # BSD
-LNK += -lpthread -lm -ldl
+LNK += -lpthread -lm
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
+LNK += -ldl
+endif # !MINGW64
 LNKX=-L$(CURDIR)
 ifeq ($(OS),Darwin)
 LNKX += -Wl,-rpath,$(CURDIR)
