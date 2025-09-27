@@ -236,7 +236,10 @@ endif # QUADMATH
 HDRS=$(SRCS:.c=.h)
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
 EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
-LIBS=libpvn.a libpvn.$(DYNAMIC)
+LIBS=libpvn.a
+ifneq ($(findstring MINGW64,$(OS)),MINGW64)
+LIBS += libpvn.$(DYNAMIC)
+endif # !MINGW64
 
 ifeq ($(OS),Darwin)
 PFLAGS += -DPVN_DYNAMIC=2
