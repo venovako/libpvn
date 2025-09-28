@@ -29,22 +29,27 @@ int main(int argc, char *argv[])
     (void)printf("PVN_CC          : %s\n", PVN_CC);
     (void)printf("PVN_CPPFLAGS    : %s\n", PVN_CPPFLAGS);
     (void)printf("PVN_CFLAGS      : %s\n", PVN_CFLAGS);
+    (void)printf("PVN_LIBS        : %s\n", PVN_LIBS);
     (void)printf("PVN_LDFLAGS     : %s\n", PVN_LDFLAGS);
   }
   else {
     struct option longopts[] = {
       { "cc",       no_argument, (int*)NULL, 'C' },
+      { "ldflags",  no_argument, (int*)NULL, 'L' },
       { "cflags",   no_argument, (int*)NULL, 'c' },
       { "dynamic",  no_argument, (int*)NULL, 'd' },
       { "cppflags", no_argument, (int*)NULL, 'i' },
-      { "ldflags",  no_argument, (int*)NULL, 'l' },
+      { "libs",     no_argument, (int*)NULL, 'l' },
       { "parallel", no_argument, (int*)NULL, 'p' },
       { (char*)NULL, 0, (int*)NULL, 0 }
     };
-    for (int ch = 0; (ch = getopt_long(argc, argv, "Ccdilp", longopts, (int*)NULL)) != -1; ) {
+    for (int ch = 0; (ch = getopt_long(argc, argv, "CLcdilp", longopts, (int*)NULL)) != -1; ) {
       switch ((char)ch) {
       case 'C':
         (void)printf("%s\n", PVN_CC);
+        break;
+      case 'L':
+        (void)printf("%s\n", PVN_LDFLAGS);
         break;
       case 'c':
         (void)printf("%s\n", PVN_CFLAGS);
@@ -60,7 +65,7 @@ int main(int argc, char *argv[])
         (void)printf("%s\n", PVN_CPPFLAGS);
         break;
       case 'l':
-        (void)printf("%s\n", PVN_LDFLAGS);
+        (void)printf("%s\n", PVN_LIBS);
         break;
       case 'p':
 #ifdef _OPENMP
@@ -84,7 +89,7 @@ int main(int argc, char *argv[])
   }
   return EXIT_SUCCESS;
  err:
-  (void)fprintf(stderr, "pvn.exe [-C|--cc] [-c|--cflags] [-d|--dynamic] [-i|--cppflags] [-l|--ldflags] [-p|--parallel]\n");
+  (void)fprintf(stderr, "pvn.exe [-C|--cc] [-L|--ldflags] [-c|--cflags] [-d|--dynamic] [-i|--cppflags] [-l|--libs] [-p|--parallel]\n");
   return EXIT_FAILURE;
 }
 #else /* !PVN_TEST */

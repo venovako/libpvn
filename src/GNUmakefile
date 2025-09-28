@@ -365,7 +365,7 @@ endif # ?Darwin
 LNKX += -lpvn $(subst / , ,$(LNK))
 
 PFLAGS += $(subst / , ,$(INCS))
-AFLAGS=-DPVN_CC="\"$(CC)\"" -DPVN_CPPFLAGS="\"$(PFLAGS)\"" -DPVN_CFLAGS="\"$(shell echo $(CFLAGS))\"" -DPVN_LDFLAGS="\"$(LDFLAGS) $(LNKX)\""
+AFLAGS=-DPVN_CC="\"$(CC)\"" -DPVN_CPPFLAGS="\"$(PFLAGS)\"" -DPVN_CFLAGS="\"$(shell echo $(CFLAGS))\"" -DPVN_LDFLAGS="\"$(LDFLAGS)\"" -DPVN_LIBS="\"$(LNKX)\""
 
 CCFLAGS=$(CFLAGS) $(PFLAGS)
 CLFLAGS=$(subst PIC,PIE,$(CCFLAGS)) $(AFLAGS)
