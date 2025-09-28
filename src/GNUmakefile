@@ -116,9 +116,6 @@ ifdef GMP
 INCS += -I$(GMP)/include
 PFLAGS += -DPVN_GMP=1
 endif # GMP
-ifdef LAPACK
-PFLAGS += -DPVN_LAPACK=1
-endif # LAPACK
 
 ifdef SAFE
 ifeq ($(findstring ev2,$(SAFE)),ev2)
@@ -306,17 +303,6 @@ endif # !STATIC
 endif # ?Darwin
 LNK += -lgmp
 endif # GMP
-ifdef LAPACK
-LNK += -L$(LAPACK)
-ifeq ($(OS),Darwin)
-LNK += -Wl,-rpath,$(LAPACK)
-else # !Darwin
-ifndef STATIC
-LNK += -Wl,-rpath=$(LAPACK)
-endif # !STATIC
-endif # ?Darwin
-LNK += -ltmglib -llapack -lrefblas
-endif # LAPACK
 ifdef QUADMATH
 ifdef QMA
 LNK += $(QUADMATH)
@@ -376,7 +362,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [STATIC=-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [STATIC=-s] [all|clean|help]"
 
 libpvn.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

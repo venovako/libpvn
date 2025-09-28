@@ -11,12 +11,6 @@ PVN_EXTERN_C double PVN_FABI(pvn_mpd_nrmp,PVN_MPD_NRMP)(const double *const p, c
 PVN_EXTERN_C long double PVN_FABI(pvn_mpx_nrmp,PVN_MPX_NRMP)(const long double *const p, const size_t *const n, const long double *const x);
 #endif /* PVN_MPFR */
 
-#ifdef PVN_LAPACK
-/* just calls xNRM2 */
-PVN_EXTERN_C float PVN_FABI(pvn_las_nrmf,PVN_LAS_NRMF)(const size_t *const n, const float *const x);
-PVN_EXTERN_C double PVN_FABI(pvn_lad_nrmf,PVN_LAD_NRMF)(const size_t *const n, const double *const x);
-#endif /* PVN_LAPACK */
-
 PVN_EXTERN_C float PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(const size_t *const n, const long double *const x);
@@ -41,10 +35,6 @@ PVN_EXTERN_C long double PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(const size_t *const
 PVN_EXTERN_C float PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(const size_t *const n, const float *const x);
 PVN_EXTERN_C double PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(const size_t *const n, const double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(const size_t *const n, const long double *const x);
-
-PVN_EXTERN_C float PVN_FABI(pvn_crs_nrmf,PVN_CRS_NRMF)(const size_t *const n, const float *const x);
-PVN_EXTERN_C double PVN_FABI(pvn_crd_nrmf,PVN_CRD_NRMF)(const size_t *const n, const double *const x);
-PVN_EXTERN_C long double PVN_FABI(pvn_crx_nrmf,PVN_CRX_NRMF)(const size_t *const n, const long double *const x);
 
 PVN_EXTERN_C float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x);
 PVN_EXTERN_C float PVN_FABI(pvn_cnrm2,PVN_CNRM2)(const size_t *const n, const float *const x);
@@ -74,7 +64,6 @@ PVN_EXTERN_C __float128 PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(const size_t *const 
 PVN_EXTERN_C __float128 PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(const size_t *const n, const __float128 *const x);
 PVN_EXTERN_C __float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const __float128 *const x);
 PVN_EXTERN_C __float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __float128 *const x);
-PVN_EXTERN_C __float128 PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const __float128 *const x);
 PVN_EXTERN_C __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128 *const x);
 PVN_EXTERN_C __float128 PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const __float128 *const x);
 PVN_EXTERN_C __float128 PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const __float128 *const x);
@@ -88,7 +77,6 @@ PVN_EXTERN_C long double PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(const size_t *const
 PVN_EXTERN_C long double PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(const size_t *const n, const long double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const long double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const long double *const x);
-PVN_EXTERN_C long double PVN_FABI(pvn_crq_nrmf,PVN_CRQ_NRMF)(const size_t *const n, const long double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const long double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const long double *const x);
 PVN_EXTERN_C long double PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const long double *const x);

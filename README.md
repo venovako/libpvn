@@ -15,7 +15,7 @@ A `getopt(3)`, `getopt_long(3)`, and `getopt_long_only(3)` implementation for Wi
 Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
 Their slightly modified implementations included here, in the `inc` subdirectory, will be taken if the `CR_MATH` make variable is not set.
 
-Some norm-related testers, results, and documentation has been moved to the [VecNrmP](https://github.com/venovako/VecNrmP) repository.
+Some norm-related testers, results, and documentation has been *moved* to the [VecNrmP](https://github.com/venovako/VecNrmP) repository.
 
 ## Building
 
@@ -47,7 +47,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [LAPACK=...] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux with a high optimization level
@@ -93,9 +93,9 @@ The `SAFE` variable lists, as one or more comma-separated short names, the compo
 So, `SAFE=ev2,jv2,sv2,nrm`, e.g., requests the `ev2`, `jv2`, `sv2`, and `nrm` safe implementations, but not the `ran` one.
 
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
-For example, to turn on the vector 2-norm testing in `pvn_nrm.exe`, at least `GMP`, `MPFR`, and `LAPACK` have to be set to the installation prefixes of the respective libraries.
-Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp`, [MPFR](https://mpfr.org) at `/opt/mpfr`, and the Reference [LAPACK](https://github.com/Reference-LAPACK/lapack) at `/opt/lapack`.
-Then, `GMP=/opt/gmp`, `MPFR=/opt/mpfr`, and `LAPACK=/opt/lapack`.
+For example, some numerical testers require that at least `GMP` and `MPFR` are set to the installation prefixes of the respective libraries.
+Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp` and [MPFR](https://mpfr.org) at `/opt/mpfr`.
+Then, `GMP=/opt/gmp` and `MPFR=/opt/mpfr`.
 It is advisable to build those libraries from their recent sources.
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
