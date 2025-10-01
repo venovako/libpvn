@@ -50,12 +50,7 @@ static inline __float128 pvn_qdet(const __float128 a, const __float128 b, const 
 #else /* !PVN_QUADMATH */
 static inline long double pvn_qdet(const long double a, const long double b, const long double c, const long double d)
 {
-  const long double
-    w = (b * c),
-    e = fmal(-b, c, w),
-    f = fmal(a, d, -w),
-    x = (f + e);
-  return x;
+  return pvn_xdet(a, b, c, d);
 }
 #endif /* ?PVN_QUADMATH */
 
