@@ -11,7 +11,12 @@ NDEBUG=d
 !IFNDEF CRT
 CRT=MT
 !ENDIF # !CRT
-PFLAGS=/DNDEBUG=$(NDEBUG) /DPVN_OS=Windows /DPVN_ARCH=x64 /DPVN_COMPILER=icx /DPVN_CR_MATH=1 /DPVN_QUADMATH=2 /DPVN_NRM_SAFE=15 /DPVN_SV2_SAFE=7
+IFLAGS=/DNDEBUG=$(NDEBUG) /DPVN_OS=Windows /DPVN_ARCH=x64 /DPVN_COMPILER=icx /DPVN_CR_MATH=1 /DPVN_QUADMATH=2 /DPVN_NRM_SAFE=15
+!IF "$(CRT)"=="MD"
+PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7
+!ELSE # MT
+PFLAGS=$(IFLAGS)
+!ENDIF # ?MD
 CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
 SRCDIR=$(subst \,\\,$(MAKEDIR))
 AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /$(CRT)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
@@ -29,7 +34,7 @@ CXFLAGS=$(CFLAGS) /MT $(PFLAGS) /I.
 CCFLAGS=$(CXFLAGS)
 CLFLAGS=$(CXFLAGS) /DPVN_TEST=2 $(AFLAGS)
 LIBS=pvn.lib
-!ENDIF # MD
+!ENDIF # ?MD
 
 SRCS= \
 pvn.c \
