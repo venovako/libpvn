@@ -723,7 +723,7 @@ static inline int ef_cmpf(const int e1, const float f1, const int e2, const floa
   return 0;
 }
 
-/* the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
+/* TODO: the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
 static float sQR(float *const A11, float *const A21, float *const A12, float *const A22, float *const w1)
 {
   PVN_ASSERT(A11);
@@ -2505,7 +2505,7 @@ static inline int ef_cmp(const int e1, const double f1, const int e2, const doub
   return 0;
 }
 
-/* the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
+/* TODO: the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
 static double dQR(double *const A11, double *const A21, double *const A12, double *const A22, double *const w1)
 {
   PVN_ASSERT(A11);

@@ -85,12 +85,10 @@ If the [OpenCilk](https://www.opencilk.org) compiler is used, please set `OPENMP
 If `long double` is not the 128-bit floating-point datatype (e.g., on Intel-compatible hardware), the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic, unless `COMPILER=clang` is used.
 
 The `SAFE` variable lists, as one or more comma-separated short names, the components for which a safe implementation is requested:
-- `ev2` and `jv2` guard against a not-correctly-rounded `hypotq`;
-- `nrm` selects the default norm computation backend (`cr_hypot` or `hypot`);
-- `ran` requests that all random numbers (not only those explicitly created as such) lie in the range `[xxx_MIN*2^p,xxx_MAX/4]`, where `p=0` by default;
+- `nrm` selects the default norm computation backend (`cr_hypot` or `hypot`), and
 - `sv2` uses a slightly more precise triangulation.
 
-So, `SAFE=ev2,jv2,sv2,nrm`, e.g., requests the `ev2`, `jv2`, `sv2`, and `nrm` safe implementations, but not the `ran` one.
+So, `SAFE=sv2,nrm`, e.g., requests the `sv2` and `nrm` safe implementations.
 
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
 For example, some numerical testers require that at least `GMP` and `MPFR` are set to the installation prefixes of the respective libraries.

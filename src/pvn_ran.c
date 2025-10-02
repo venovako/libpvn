@@ -105,9 +105,6 @@ float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *con
 
 float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u)
 {
-#ifdef PVN_RAN_SAFE
-  return PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(u, (const int*)NULL);
-#else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   float r = ((*u < 0) ? __builtin_nanf("") : 0.0f);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
@@ -124,7 +121,6 @@ float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u)
     r = __builtin_nanf("");
 #endif /* ?__RDRND__ */
   return r;
-#endif /* ?PVN_RAN_SAFE */
 }
 
 double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const p)
@@ -160,9 +156,6 @@ double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const 
 
 double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
 {
-#ifdef PVN_RAN_SAFE
-  return PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(u, (const int*)NULL);
-#else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   double r = ((*u < 0) ? __builtin_nan("") : 0.0);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
@@ -179,7 +172,6 @@ double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
     r = __builtin_nan("");
 #endif /* ?__RDRND__ */
   return r;
-#endif /* ?PVN_RAN_SAFE */
 }
 
 long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const int *const p)
@@ -224,9 +216,6 @@ long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const in
 
 long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u)
 {
-#ifdef PVN_RAN_SAFE
-  return PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(u, (const int*)NULL);
-#else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   long double r = ((*u < 0) ? __builtin_nanl("") : 0.0L);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
@@ -252,7 +241,6 @@ long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u)
     r = __builtin_nanl("");
 #endif /* ?__RDRND__ */
   return r;
-#endif /* ?PVN_RAN_SAFE */
 }
 
 #ifdef PVN_QUADMATH
@@ -290,9 +278,6 @@ __float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int
 
 __float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
 {
-#ifdef PVN_RAN_SAFE
-  return PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(u, (const int*)NULL);
-#else /* !PVN_RAN_SAFE */
   PVN_ASSERT(u);
   __float128 r = ((*u < 0) ? (0.0q / 0.0q) : 0.0q);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
@@ -310,7 +295,6 @@ __float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
     r = (0.0q / 0.0q);
 #endif /* ?__RDRND__ */
   return r;
-#endif /* ?PVN_RAN_SAFE */
 }
 #else /* !PVN_QUADMATH */
 long double PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p)

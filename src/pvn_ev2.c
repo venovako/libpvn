@@ -1088,12 +1088,10 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
     ar_ = fabsq(ar),
     ai_ = fabsq(ai),
     aa = hypotq(ar_, ai_);
-#ifdef PVN_EV2_SAFE
   if ((aa <= 0.0q) || !isfiniteq(aa)) {
     *cs = aa;
     return -9;
   }
-#endif /* PVN_EV2_SAFE */
   /* a non-zero element underflows due to scaling */
   e1 = ((((ei & 1) && (fabsq(a1) < FLT128_MIN)) || ((ei & 2) && (fabsq(a2) < FLT128_MIN)) || ((ei & 4) && (ar_ < FLT128_MIN)) || ((ei & 8) && (ai_ < FLT128_MIN))) << 1);
   ar = copysignq(fminq(ar_ / aa, 1.0q), ar);

@@ -118,12 +118,6 @@ PFLAGS += -DPVN_GMP=1
 endif # GMP
 
 ifdef SAFE
-ifeq ($(findstring ev2,$(SAFE)),ev2)
-PFLAGS += -DPVN_EV2_SAFE=1
-endif # ev2
-ifeq ($(findstring jv2,$(SAFE)),jv2)
-PFLAGS += -DPVN_JV2_SAFE=1
-endif # jv2
 ifeq ($(findstring NRM,$(SAFE)),NRM)
 PFLAGS += -DPVN_NRM_SAFE=15
 endif # NRM
@@ -148,9 +142,15 @@ endif # Nrm
 ifeq ($(findstring nrm,$(SAFE)),nrm)
 PFLAGS += -DPVN_NRM_SAFE=1
 endif # nrm
-ifeq ($(findstring ran,$(SAFE)),ran)
-PFLAGS += -DPVN_RAN_SAFE=1
-endif # ran
+ifeq ($(findstring SV2,$(SAFE)),SV2)
+PFLAGS += -DPVN_SV2_SAFE=7
+endif # SV2
+ifeq ($(findstring sV2,$(SAFE)),sV2)
+PFLAGS += -DPVN_SV2_SAFE=5
+endif # sV2
+ifeq ($(findstring Sv2,$(SAFE)),Sv2)
+PFLAGS += -DPVN_SV2_SAFE=3
+endif # Sv2
 ifeq ($(findstring sv2,$(SAFE)),sv2)
 PFLAGS += -DPVN_SV2_SAFE=1
 endif # sv2
