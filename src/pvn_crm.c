@@ -1,8 +1,12 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
+    return EXIT_FAILURE;
+  }
 #ifdef PVN_CR_MATH
   /* check the linkage */
   (void)printf("cr_hypotf =%18p\n", cr_hypotf);

@@ -1,8 +1,12 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
+    return EXIT_FAILURE;
+  }
   const double x[4][2] = {{-1.0, 1.0}, { 1.0,-1.0}, { 2.0, 2.0}, {-2.0,-2.0}};
   const size_t n = (size_t)4u;
   /* expected output: 4.472136 */

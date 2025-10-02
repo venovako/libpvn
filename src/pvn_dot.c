@@ -1,8 +1,12 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
+    return EXIT_FAILURE;
+  }
   const double x[4][2] = {{-1.0, 1.0}, { 1.0,-1.0}, { 2.0, 2.0}, {-2.0,-2.0}};
   double zr = 0.0, zi = 0.0;
   const int m = 4;

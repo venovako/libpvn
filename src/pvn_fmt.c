@@ -1,8 +1,12 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
+    return EXIT_FAILURE;
+  }
   char s[46u] = { '\0' };
   (void)printf(" FLT_TRUE_MIN=%s\n", pvn_stoa(s, FLT_TRUE_MIN));
   (void)printf(" FLT_MIN     =%s\n", pvn_stoa(s, FLT_MIN));

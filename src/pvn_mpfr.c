@@ -3,8 +3,8 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (argc != 1) {
-    (void)fprintf(stderr, "%s\n", *argv);
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
     return EXIT_FAILURE;
   }
   mpfr_rnd_t rnd = __MPFR_RND_INVALID;

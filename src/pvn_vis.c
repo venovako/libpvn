@@ -22,10 +22,17 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
+#ifdef _WIN32
+  if (1 <= argc) {
+    (void)fprintf(stderr, "%s cannot be run on Windows\n", *argv);
+    return EXIT_FAILURE;
+  }
+#else /* !_WIN32 */
   if (3 != argc) {
     (void)fprintf(stderr, "%s cnt bpp\n", *argv);
     return EXIT_FAILURE;
   }
+#endif /* ?_WIN32 */
   const unsigned m = 200u;
   const unsigned n = 320u;
   const unsigned sx = 2u;

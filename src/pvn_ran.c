@@ -5,8 +5,12 @@
 #endif /* __RDRND__ */
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
+    return EXIT_FAILURE;
+  }
   const int u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
   (void)printf("open=%d\n", u);
   char s[46] = { '\0' };

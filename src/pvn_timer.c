@@ -1,8 +1,12 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
+    return EXIT_FAILURE;
+  }
 #ifdef _WIN32
   (void)printf("QueryPerformanceFrequency: %ld Hz.\n", (long)PVN_FABI(pvn_time_mono_freq,PVN_TIME_MONO_FREQ)());
 #else /* !_WIN32 */

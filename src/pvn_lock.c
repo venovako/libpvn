@@ -1,8 +1,12 @@
 #include "pvn.h"
 
 #ifdef PVN_TEST
-int main(/* int argc, char *argv[] */)
+int main(int argc, char *argv[])
 {
+  if (1 < argc) {
+    (void)fprintf(stderr, "%s takes no arguments\n", *argv);
+    return EXIT_FAILURE;
+  }
   size_t a = (size_t)0u;
   (void)printf("sizeof(pvn_lock_t)=%zu\n", PVN_FABI(pvn_lock_size,PVN_LOCK_SIZE)(&a));
   (void)printf("alignof(pvn_lock_t)=%zu\n", a);
