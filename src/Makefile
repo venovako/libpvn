@@ -153,7 +153,7 @@ pvn.lib: $(OBJS) Makefile
 pvn.dll: $(OBJS) Makefile
 	@echo "=== EXPERIMENTALLY LINKING WITH THE GCC's LIBQUADMATH ==="
 	@echo "=== DO NOT ATTEMPT THIS FOR ANYTHING REDISTRIBUTABLE! ==="
-	$(CC) $(CDFLAGS) /Fe$@ $(OBJS) /link /RELEASE /LIBPATH:$(MSYS64)\ucrt64\lib libquadmath.dll.a
+	$(CC) $(CDFLAGS) /Fe$@ $(OBJS) /link /RELEASE /LIBPATH:$(MSYS64)\ucrt64\lib libquadmath.dll.a libgcc_s.a
 	copy /Y /V $(MSYS64)\ucrt64\bin\libgcc_s_seh-1.dll .
 	copy /Y /V $(MSYS64)\ucrt64\bin\libquadmath-0.dll .
 	copy /Y /V $(MSYS64)\ucrt64\bin\libwinpthread-1.dll .
