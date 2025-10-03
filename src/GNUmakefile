@@ -158,7 +158,7 @@ endif # sv2
 endif # SAFE
 
 ifdef VECLEN
-PFLAGS += -DPVN_VECLEN=$(VECLEN)u
+PFLAGS += -DPVN_VECLEN=$(VECLEN)
 endif # VECLEN
 
 ifdef CR_MATH

@@ -95,6 +95,8 @@ For example, some numerical testers require that at least `GMP` and `MPFR` are s
 Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp` and [MPFR](https://mpfr.org) at `/opt/mpfr`.
 Then, `GMP=/opt/gmp` and `MPFR=/opt/mpfr`.
 It is advisable to build those libraries from their recent sources.
+Also, `VECLEN` should sometimes be set to the size in bytes of the widest vector datatype, as shown in the [VecNrmP](https://github.com/venovako/VecNrmP) examples.
+Beware: as a side effect, some additional and often undesired optimizations are turned on by explicitly setting it!
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
 Also, several functions will not work on Windows, and probably on other untested systems as well.
