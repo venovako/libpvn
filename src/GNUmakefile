@@ -48,6 +48,7 @@ include $(COMPILER).mk
 ifndef GCC
 GCC=$(CC)
 endif # !GCC
+MKFS=GNUmakefile $(COMPILER).mk
 
 ifeq ($(findstring 86,$(ARCH)),86)
 ifneq ($(COMPILER),clang)
@@ -161,7 +162,11 @@ PFLAGS += -DPVN_VECLEN=$(VECLEN)u
 endif # VECLEN
 
 ifdef CR_MATH
-PFLAGS += -DPVN_CR_MATH=3
+ifdef NDEBUG
+PFLAGS += -DPVN_CR_MATH=2
+else # !NDEBUG
+PFLAGS += -DPVN_CR_MATH=4 -DCORE_MATH_SUPPORT_ERRNO
+endif # ?NDEBUG
 CR_SRCS= \
 $(realpath $(CR_MATH)/src/binary32/hypot/hypotf.c) \
 $(realpath $(CR_MATH)/src/binary32/pow/powf.c) \
@@ -189,7 +194,7 @@ else # !CR_MATH
 ifdef NDEBUG
 PFLAGS += -DPVN_CR_MATH=1
 else # !NDEBUG
-PFLAGS += -DPVN_CR_MATH=2 -DCORE_MATH_SUPPORT_ERRNO
+PFLAGS += -DPVN_CR_MATH=3 -DCORE_MATH_SUPPORT_ERRNO
 endif # ?NDEBUG
 CR_SRCS= \
 ../inc/hypotf_noerrno.c \
@@ -385,27 +390,27 @@ all: $(LIBS) $(EXES)
 help:
 	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [STATIC=-s] [all|clean|help]"
 
-libpvn.a: $(OBJS)
+libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
-libpvn.dylib: libpvn.a
+libpvn.dylib: libpvn.a $(MKFS)
 	clang -dynamiclib $(DLDFLAGS) -o $@ $(OBJS) $(LNK) 
 
-libpvn.so: libpvn.a
+libpvn.so: libpvn.a $(MKFS)
 	ld -shared $(DLDFLAGS) -o $@ $(OBJS)
 
-%.o : %.c $(HDRS) GNUmakefile
+%.o : %.c $(HDRS) $(MKFS)
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 ifdef STATIC
-%.exe : %.c $(HDRS) libpvn.a GNUmakefile
+%.exe : %.c $(HDRS) libpvn.a $(MKFS)
 	$(CC) $(CLFLAGS) -DPVN_TEST=2 $< -o $@ $(LDFLAGS) $(LNKX)
 else # !STATIC
-%.exe : %.c $(HDRS) libpvn.$(DYNAMIC) GNUmakefile
+%.exe : %.c $(HDRS) libpvn.$(DYNAMIC) $(MKFS)
 	$(CC) $(CLFLAGS) -DPVN_TEST=1 $< -o $@ $(LDFLAGS) $(LNKX)
 endif # ?STATIC
 
-../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS) GNUmakefile
+../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS) $(MKFS)
 	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
 clean:
