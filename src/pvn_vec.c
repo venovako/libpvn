@@ -15,6 +15,6 @@ int main(int argc, char *argv[])
 #else /* !PVN_TEST */
 unsigned PVN_FABI(pvn_vec_len,PVN_VEC_LEN)()
 {
-  return (PVN_VECLEN);
+  return (unsigned)(PVN_VECLEN);
 }
 #endif /* ?PVN_TEST */
