@@ -38,7 +38,7 @@ Recent versions of the compilers have been provided by or used on:
 4. FreeBSD (GCC 13.3.0),
 5. openSUSE Tumbleweed (GCC 15.2.0),
 6. Oracle Linux (GCC 14.2.1-7),
-7. Intel oneAPI (2025.1.1),
+7. Intel oneAPI (2025.2.1),
 8. NVIDIA HPC SDK (25.9).
 
 Examples of building the library:
@@ -89,6 +89,7 @@ The `SAFE` variable lists, as one or more comma-separated short names, the compo
 - `sv2` uses a slightly more precise triangulation.
 
 So, `SAFE=sv2,nrm`, e.g., requests the `sv2` and `nrm` safe implementations.
+If in all-caps, `NRM` turns on the vector sorting before the final reductions where applicable.
 
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
 For example, some numerical testers require that at least `GMP` and `MPFR` are set to the installation prefixes of the respective libraries.
@@ -96,7 +97,7 @@ Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp` and [MPFR]
 Then, `GMP=/opt/gmp` and `MPFR=/opt/mpfr`.
 It is advisable to build those libraries from their recent sources.
 Also, `VECLEN` should sometimes be set to the size in bytes of the widest vector datatype, as shown in the [VecNrmP](https://github.com/venovako/VecNrmP) examples.
-Beware: as a side effect, some additional and often undesired optimizations are turned on by explicitly setting it!
+As a side effect, some additional and often undesired optimizations are turned on by explicitly setting it!
 
 *Caveat*: certain parts of the library will *not* work on big-endian systems!
 Also, several functions will not work on Windows, and probably on other untested systems as well.
