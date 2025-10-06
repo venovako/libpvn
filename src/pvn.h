@@ -95,7 +95,11 @@
 #if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
 #define PVN_ASSERT(cond) __assume(cond)
 #elif (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
+#if (__GNUC__ >= 13)
 #define PVN_ASSERT(cond) __attribute__((assume(cond)))
+#else /* __GNUC__ < 13 */
+#define PVN_ASSERT(cond)
+#endif /* ?__GNUC__ */
 #elif (defined(__clang__) || defined(__NVCOMPILER))
 #define PVN_ASSERT(cond) __builtin_assume(cond)
 #else /* unsupported compiler */
