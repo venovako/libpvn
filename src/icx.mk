@@ -34,5 +34,5 @@ endif # ?OPENMP
 CFLAGS += -Wno-overriding-option
 ifdef STATIC
 # 1=scalar, 2=simd, 3=both
-PFLAGS += -DPVN_USE_INTEL=3
+PFLAGS += -DPVN_INTEL=3
 endif # STATIC

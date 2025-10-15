@@ -98,6 +98,10 @@ ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 SRCS += pvn_prof.c
 endif # !MINGW64
 
+ifdef SLEEF
+INCS += -I$(SLEEF)/include
+PFLAGS += -DPVN_SLEEF=1
+endif # SLEEF
 ifdef MPC
 INCS += -I$(MPC)/include
 PFLAGS += -DPVN_MPC=1
@@ -296,6 +300,17 @@ LDFLAGS += -Wl,--warn-common
 endif # ?STATIC
 endif # ?Darwin
 LNK=
+ifdef SLEEF
+LNK += -L$(SLEEF)/$(LIB64)
+ifeq ($(OS),Darwin)
+LNK += -Wl,-rpath,$(SLEEF)/$(LIB64)
+else # !Darwin
+ifndef STATIC
+LNK += -Wl,-rpath=$(SLEEF)/$(LIB64)
+endif # !STATIC
+endif # ?Darwin
+LNK += -lsleef -ltlfloat
+endif # SLEEF
 ifdef MPC
 LNK += -L$(MPC)/$(LIB64)
 ifeq ($(OS),Darwin)
@@ -388,7 +403,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [STATIC=-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=...] [STATIC=-s] [all|clean|help]"
 
 libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

@@ -67,7 +67,7 @@ static inline float pvn_v1s_max_abs(const float x, const float y)
 
 static inline float pvn_v1s_rsqrt(const float x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return invsqrtf(x);
 #else /* !Intel */
   return (1.0f / __builtin_sqrtf(x));
@@ -116,7 +116,7 @@ static inline double pvn_v1d_max_abs(const double x, const double y)
 
 static inline double pvn_v1d_rsqrt(const double x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return invsqrt(x);
 #else /* !Intel */
   return (1.0 / __builtin_sqrt(x));
@@ -165,7 +165,7 @@ static inline long double pvn_v1x_max_abs(const long double x, const long double
 
 static inline long double pvn_v1x_rsqrt(const long double x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return invsqrtl(x);
 #else /* !Intel */
   return (1.0L / __builtin_sqrtl(x));
@@ -215,7 +215,7 @@ static inline __float128 pvn_v1q_max_abs(const __float128 x, const __float128 y)
 
 static inline __float128 pvn_v1q_rsqrt(const __float128 x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return __invsqrtq(x);
 #else /* !Intel */
   return (1.0q / sqrtq(x));
@@ -225,6 +225,26 @@ static inline __float128 pvn_v1q_rsqrt(const __float128 x)
 
 #if (defined(__AVX__) && defined(__FMA__))
 #include <immintrin.h>
+
+#ifdef PVN_SLEEF
+#if (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
+#include "sleefinline_avx2128.h"
+#include "sleefinline_avx2.h"
+#ifdef __AVX512F__
+#include "sleefinline_avx512f.h"
+#endif /* __AVX512F__ */
+#else /* !GCC */
+#include "sleef.h"
+#endif /* ?GCC */
+#ifndef PVN_INTEL
+#define _mm_pow_ps Sleef_powf4_u10avx2128
+#define _mm_pow_pd Sleef_powd2_u10avx2128
+#define _mm256_pow_ps Sleef_powf8_u10avx2
+#define _mm256_pow_pd Sleef_powd4_u10avx2
+#define _mm512_pow_ps Sleef_powf16_u10avx512f
+#define _mm512_pow_pd Sleef_powd8_u10avx512f
+#endif /* !Intel */
+#endif /* Sleef */
 
 static inline __m128 pvn_v4s_add_abs(register const __m128 x, register const __m128 y)
 {
@@ -241,11 +261,14 @@ static inline float pvn_v4s_add_red(register const __m128 x)
   return (pvn_v1s_add_abs(v[0], v[2]) + pvn_v1s_add_abs(v[1], v[3]));
 }
 
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v4s_hypot _mm_hypot_ps
+#else /* !Intel */
+#if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v4s_hypot Sleef_hypotf4_u05avx2128
+#else /* !Sleef */
 static inline __m128 pvn_v4s_hypot(register const __m128 x, register const __m128 y)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-  return _mm_hypot_ps(x, y);
-#else /* !Intel */
   register const __m128 z = _mm_set1_ps(-0.0f);
   register const __m128 o = _mm_set1_ps(1.0f);
   register const __m128 X = _mm_andnot_ps(z, x);
@@ -257,8 +280,9 @@ static inline __m128 pvn_v4s_hypot(register const __m128 x, register const __m12
   register const __m128 S = _mm_fmadd_ps(Q, Q, o);
   register const __m128 s = _mm_sqrt_ps(S);
   return _mm_mul_ps(M, s);
-#endif /* ?Intel */
 }
+#endif /* ?Sleef */
+#endif /* ?Intel */
 
 static inline float pvn_v4s_hypot_red(register const __m128 x)
 {
@@ -267,7 +291,7 @@ static inline float pvn_v4s_hypot_red(register const __m128 x)
   return pvn_v1s_hypot(pvn_v1s_hypot(v[0], v[2]), pvn_v1s_hypot(v[1], v[3]));
 }
 
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m128 pvn_v4s_lp(const float _p, register const __m128 x, register const __m128 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -288,6 +312,7 @@ static inline __m128 pvn_v4s_lp(const float _p, register const __m128 x, registe
   register const __m128 C = _mm_pow_ps(Z, c);
   return _mm_mul_ps(M, C);
 }
+#endif /* Sleef || Intel */
 
 static inline float pvn_v4s_lp_red(const float p, register const __m128 x)
 {
@@ -295,7 +320,6 @@ static inline float pvn_v4s_lp_red(const float p, register const __m128 x)
   _mm_store_ps(v, x);
   return pvn_v1s_lp(p, pvn_v1s_lp(p, v[0], v[2]), pvn_v1s_lp(p, v[1], v[3]));
 }
-#endif /* Intel */
 
 static inline __m128 pvn_v4s_max_abs(register const __m128 x, register const __m128 y)
 {
@@ -314,7 +338,7 @@ static inline float pvn_v4s_max_red(register const __m128 x)
 
 static inline __m128 pvn_v4s_rsqrt(register const __m128 x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return _mm_invsqrt_ps(x);
 #else /* !Intel */
   return _mm_div_ps(_mm_set1_ps(1.0f), _mm_sqrt_ps(x));
@@ -336,11 +360,14 @@ static inline double pvn_v2d_add_red(register const __m128d x)
   return pvn_v1d_add_abs(v[0], v[1]);
 }
 
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v2d_hypot _mm_hypot_pd
+#else /* !Intel */
+#if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v2d_hypot Sleef_hypotd2_u05avx2128
+#else /* !Sleef */
 static inline __m128d pvn_v2d_hypot(register const __m128d x, register const __m128d y)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-  return _mm_hypot_pd(x, y);
-#else /* !Intel */
   register const __m128d z = _mm_set1_pd(-0.0);
   register const __m128d o = _mm_set1_pd(1.0);
   register const __m128d X = _mm_andnot_pd(z, x);
@@ -352,8 +379,9 @@ static inline __m128d pvn_v2d_hypot(register const __m128d x, register const __m
   register const __m128d S = _mm_fmadd_pd(Q, Q, o);
   register const __m128d s = _mm_sqrt_pd(S);
   return _mm_mul_pd(M, s);
-#endif /* ?Intel */
 }
+#endif /* ?Sleef */
+#endif /* ?Intel */
 
 static inline double pvn_v2d_hypot_red(register const __m128d x)
 {
@@ -362,7 +390,7 @@ static inline double pvn_v2d_hypot_red(register const __m128d x)
   return pvn_v1d_hypot(v[0], v[1]);
 }
 
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m128d pvn_v2d_lp(const double _p, register const __m128d x, register const __m128d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -383,6 +411,7 @@ static inline __m128d pvn_v2d_lp(const double _p, register const __m128d x, regi
   register const __m128d C = _mm_pow_pd(Z, c);
   return _mm_mul_pd(M, C);
 }
+#endif /* Sleef || Intel */
 
 static inline double pvn_v2d_lp_red(const double p, register const __m128d x)
 {
@@ -390,7 +419,6 @@ static inline double pvn_v2d_lp_red(const double p, register const __m128d x)
   _mm_store_pd(v, x);
   return pvn_v1d_lp(p, v[0], v[1]);
 }
-#endif /* Intel */
 
 static inline __m128d pvn_v2d_max_abs(register const __m128d x, register const __m128d y)
 {
@@ -409,7 +437,7 @@ static inline double pvn_v2d_max_red(register const __m128d x)
 
 static inline __m128d pvn_v2d_rsqrt(register const __m128d x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return _mm_invsqrt_pd(x);
 #else /* !Intel */
   return _mm_div_pd(_mm_set1_pd(1.0), _mm_sqrt_pd(x));
@@ -429,11 +457,14 @@ static inline float pvn_v8s_add_red(register const __m256 x)
   return pvn_v4s_add_red(pvn_v4s_add_abs(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
 
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v8s_hypot _mm256_hypot_ps
+#else /* !Intel */
+#if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v8s_hypot Sleef_hypotf8_u05avx2
+#else /* !Sleef */
 static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m256 y)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-  return _mm256_hypot_ps(x, y);
-#else /* !Intel */
   register const __m256 z = _mm256_set1_ps(-0.0f);
   register const __m256 o = _mm256_set1_ps(1.0f);
   register const __m256 X = _mm256_andnot_ps(z, x);
@@ -445,15 +476,16 @@ static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m25
   register const __m256 S = _mm256_fmadd_ps(Q, Q, o);
   register const __m256 s = _mm256_sqrt_ps(S);
   return _mm256_mul_ps(M, s);
-#endif /* ?Intel */
 }
+#endif /* ?Sleef */
+#endif /* ?Intel */
 
 static inline float pvn_v8s_hypot_red(register const __m256 x)
 {
   return pvn_v4s_hypot_red(pvn_v4s_hypot(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
 
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m256 pvn_v8s_lp(const float _p, register const __m256 x, register const __m256 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -479,7 +511,7 @@ static inline float pvn_v8s_lp_red(const float p, register const __m256 x)
 {
   return pvn_v4s_lp_red(p, pvn_v4s_lp(p, _mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
-#endif /* Intel */
+#endif /* Sleef || Intel */
 
 static inline __m256 pvn_v8s_max_abs(register const __m256 x, register const __m256 y)
 {
@@ -496,7 +528,7 @@ static inline float pvn_v8s_max_red(register const __m256 x)
 
 static inline __m256 pvn_v8s_rsqrt(register const __m256 x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return _mm256_invsqrt_ps(x);
 #else /* !Intel */
   return _mm256_div_ps(_mm256_set1_ps(1.0f), _mm256_sqrt_ps(x));
@@ -516,11 +548,14 @@ static inline double pvn_v4d_add_red(register const __m256d x)
   return pvn_v2d_add_red(pvn_v2d_add_abs(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
 
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v4d_hypot _mm256_hypot_pd
+#else /* !Intel */
+#if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v4d_hypot Sleef_hypotd4_u05avx2
+#else /* !Sleef */
 static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m256d y)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-  return _mm256_hypot_pd(x, y);
-#else /* !Intel */
   register const __m256d z = _mm256_set1_pd(-0.0);
   register const __m256d o = _mm256_set1_pd(1.0);
   register const __m256d X = _mm256_andnot_pd(z, x);
@@ -532,15 +567,16 @@ static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m
   register const __m256d S = _mm256_fmadd_pd(Q, Q, o);
   register const __m256d s = _mm256_sqrt_pd(S);
   return _mm256_mul_pd(M, s);
-#endif /* ?Intel */
 }
+#endif /* ?Sleef */
+#endif /* ?Intel */
 
 static inline double pvn_v4d_hypot_red(register const __m256d x)
 {
   return pvn_v2d_hypot_red(pvn_v2d_hypot(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
 
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m256d pvn_v4d_lp(const double _p, register const __m256d x, register const __m256d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -566,7 +602,7 @@ static inline double pvn_v4d_lp_red(const double p, register const __m256d x)
 {
   return pvn_v2d_lp_red(p, pvn_v2d_lp(p, _mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
-#endif /* Intel */
+#endif /* Sleef || Intel */
 
 static inline __m256d pvn_v4d_max_abs(register const __m256d x, register const __m256d y)
 {
@@ -583,7 +619,7 @@ static inline double pvn_v4d_max_red(register const __m256d x)
 
 static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return _mm256_invsqrt_pd(x);
 #else /* !Intel */
   return _mm256_div_pd(_mm256_set1_pd(1.0), _mm256_sqrt_pd(x));
@@ -609,11 +645,14 @@ static inline float pvn_v16s_add_red(register const __m512 x)
   return pvn_v8s_add_red(pvn_v8s_add_abs(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
 
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v16s_hypot _mm512_hypot_ps
+#else /* !Intel */
+#if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v16s_hypot Sleef_hypotf16_u05avx512f
+#else /* !Sleef */
 static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m512 y)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-  return _mm512_hypot_ps(x, y);
-#else /* !Intel */
   register const __m512 z = _mm512_set1_ps(-0.0f);
   register const __m512 o = _mm512_set1_ps(1.0f);
   register const __m512 X = _mm512_andnot_ps(z, x);
@@ -625,15 +664,16 @@ static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m5
   register const __m512 S = _mm512_fmadd_ps(Q, Q, o);
   register const __m512 s = _mm512_sqrt_ps(S);
   return _mm512_mul_ps(M, s);
-#endif /* ?Intel */
 }
+#endif /* ?Sleef */
+#endif /* ?Intel */
 
 static inline float pvn_v16s_hypot_red(register const __m512 x)
 {
   return pvn_v8s_hypot_red(pvn_v8s_hypot(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
 
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m512 pvn_v16s_lp(const float _p, register const __m512 x, register const __m512 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -659,7 +699,7 @@ static inline float pvn_v16s_lp_red(const float p, register const __m512 x)
 {
   return pvn_v8s_lp_red(p, pvn_v8s_lp(p, _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
-#endif /* Intel */
+#endif /* Sleef || Intel */
 
 static inline __m512 pvn_v16s_max_abs(register const __m512 x, register const __m512 y)
 {
@@ -676,7 +716,7 @@ static inline float pvn_v16s_max_red(register const __m512 x)
 
 static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return _mm512_invsqrt_ps(x);
 #else /* !Intel */
   return _mm512_div_ps(_mm512_set1_ps(1.0f), _mm512_sqrt_ps(x));
@@ -696,11 +736,14 @@ static inline double pvn_v8d_add_red(register const __m512d x)
   return pvn_v4d_add_red(pvn_v4d_add_abs(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
 
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v8d_hypot _mm512_hypot_pd
+#else /* !Intel */
+#if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v8d_hypot Sleef_hypotd8_u05avx512f
+#else /* !Sleef */
 static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m512d y)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
-  return _mm512_hypot_pd(x, y);
-#else /* !Intel */
   register const __m512d z = _mm512_set1_pd(-0.0);
   register const __m512d o = _mm512_set1_pd(1.0);
   register const __m512d X = _mm512_andnot_pd(z, x);
@@ -712,15 +755,16 @@ static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m
   register const __m512d S = _mm512_fmadd_pd(Q, Q, o);
   register const __m512d s = _mm512_sqrt_pd(S);
   return _mm512_mul_pd(M, s);
-#endif /* ?Intel */
 }
+#endif /* ?Sleef */
+#endif /* ?Intel */
 
 static inline double pvn_v8d_hypot_red(register const __m512d x)
 {
   return pvn_v4d_hypot_red(pvn_v4d_hypot(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
 
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m512d pvn_v8d_lp(const double _p, register const __m512d x, register const __m512d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -746,7 +790,7 @@ static inline double pvn_v8d_lp_red(const double p, register const __m512d x)
 {
   return pvn_v4d_lp_red(p, pvn_v4d_lp(p, _mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
-#endif /* Intel */
+#endif /* Sleef || Intel */
 
 static inline __m512d pvn_v8d_max_abs(register const __m512d x, register const __m512d y)
 {
@@ -763,7 +807,7 @@ static inline double pvn_v8d_max_red(register const __m512d x)
 
 static inline __m512d pvn_v8d_rsqrt(register const __m512d x)
 {
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return _mm512_invsqrt_pd(x);
 #else /* !Intel */
   return _mm512_div_pd(_mm512_set1_pd(1.0), _mm512_sqrt_pd(x));

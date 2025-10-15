@@ -3479,7 +3479,7 @@ double PVN_FABI(pvn_rzd_nrmi,PVN_RZD_NRMI)(const size_t *const n, const double *
 }
 #endif /* __AVX512F__ */
 
-#if (defined(PVN_USE_INTEL) && (PVN_USE_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static __m128 rxs_nrmp(const float p, const size_t n, const float *const x)
 {
   register const __m128 z = _mm_set1_ps(-0.0f);
@@ -4181,6 +4181,6 @@ double PVN_FABI(pvn_rzd_nrmp,PVN_RZD_NRMP)(const double *const p, const size_t *
 #endif /* ?PVN_NRM_SAFE */
 }
 #endif /* __AVX512F__ */
-#endif /* Intel */
+#endif /* Sleef || Intel */
 #endif /* __AVX__ && __FMA__ */
 #endif /* ?PVN_TEST */
