@@ -227,16 +227,12 @@ static inline __float128 pvn_v1q_rsqrt(const __float128 x)
 #include <immintrin.h>
 
 #ifdef PVN_SLEEF
-#if (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
+#ifndef PVN_INTEL
 #include "sleefinline_avx2128.h"
 #include "sleefinline_avx2.h"
 #ifdef __AVX512F__
 #include "sleefinline_avx512f.h"
 #endif /* __AVX512F__ */
-#else /* !GCC */
-#include "sleef.h"
-#endif /* ?GCC */
-#ifndef PVN_INTEL
 #define _mm_pow_ps Sleef_powf4_u10avx2128
 #define _mm_pow_pd Sleef_powd2_u10avx2128
 #define _mm256_pow_ps Sleef_powf8_u10avx2
