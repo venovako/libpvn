@@ -237,8 +237,10 @@ static inline __float128 pvn_v1q_rsqrt(const __float128 x)
 #define _mm_pow_pd Sleef_powd2_u10avx2128
 #define _mm256_pow_ps Sleef_powf8_u10avx2
 #define _mm256_pow_pd Sleef_powd4_u10avx2
+#ifdef __AVX512F__
 #define _mm512_pow_ps Sleef_powf16_u10avx512f
 #define _mm512_pow_pd Sleef_powd8_u10avx512f
+#endif /* __AVX512F__ */
 #endif /* !Intel */
 #endif /* Sleef */
 
