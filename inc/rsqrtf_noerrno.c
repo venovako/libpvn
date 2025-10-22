@@ -32,7 +32,7 @@ PVN_EXTERN_C float cr_rsqrtf(float x);
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
-#include <fenv.h>
+#include <fenv.h> // for feraiseexcept, FE_INVALID
 
 // Warning: clang also defines __GNUC__
 #if defined(__GNUC__) && !defined(__clang__)

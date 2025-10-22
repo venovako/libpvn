@@ -32,7 +32,7 @@ PVN_EXTERN_C double cr_hypot(double x, double y);
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
-#include <fenv.h>
+#include <fenv.h> // for fexcept_t
 
 #ifdef __x86_64__
 #include <x86intrin.h>

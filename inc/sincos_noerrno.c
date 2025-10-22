@@ -31,10 +31,10 @@ PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 /* stdio.h and stdlib.h are needed in case the rounding test of the accurate
    step fails, to print the corresponding input and exit. */
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> // for exit
 #include <stdint.h>
 #include <inttypes.h>
-#include <fenv.h>
+#include <fenv.h> // for fegetround, FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, ...
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif

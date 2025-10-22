@@ -31,7 +31,7 @@ PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
-#include <fenv.h>
+#include <fenv.h> // for feraiseexcept, FE_INVALID, FE_INEXACT
 #include <stdint.h>
 #ifdef __x86_64__
 #include <x86intrin.h>

@@ -31,9 +31,7 @@ SOFTWARE.
 #define CR_POW_H
 
 #include <stdint.h>
-#include <assert.h>
 
-#include <fenv.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif

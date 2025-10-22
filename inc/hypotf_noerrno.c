@@ -31,7 +31,7 @@ PVN_EXTERN_C float cr_hypotf(float x, float y);
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
-#include <fenv.h>
+#include <fenv.h> // for fegetround, FE_UPWARD, FE_TONEAREST
 
 // Warning: clang also defines __GNUC__
 #if defined(__GNUC__) && !defined(__clang__)

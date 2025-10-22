@@ -40,14 +40,14 @@ SOFTWARE.
 PVN_EXTERN_C long double cr_powl(long double x, long double y);
 
 #include <stdint.h>
-#include <fenv.h>
+#include <fenv.h> // for FE_TONEAREST, FE_UPWARD, FE_DOWNWARD, ...
 #include <stdbool.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
 #ifndef CORE_MATH_FAIL_QUIET
 #include <stdio.h> // needed in case of unexpected worst case
-#include <stdlib.h>
+#include <stdlib.h> // for exit
 #endif
 
 #ifdef __x86_64__

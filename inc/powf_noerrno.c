@@ -32,7 +32,7 @@ PVN_EXTERN_C float cr_powf(float x, float y);
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
-#include <fenv.h>
+#include <fenv.h> // for fegetround, FE_TONEAREST, FE_UPWARD
 #ifdef __x86_64__
 #include <x86intrin.h>
 #define FLAG_T uint32_t
@@ -520,7 +520,7 @@ float cr_powf(float x0, float y0){
   c0 += h2*(c2 + h2*c4);
   double w = s*h;
   b64u64_u rr = {.f = s + w*c0};
-  uint64_t off = 44;
+  uint64_t off = 0x117;
   if(((rr.u+off)&0xfffffff) <= 2*off)
     return as_powf_accurate2 (x0, y0, is_exact (x0, y0), flag);
   int et = ((ty.u>>52)&0x7ff) - 0x3ff;

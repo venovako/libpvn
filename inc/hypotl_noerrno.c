@@ -33,7 +33,7 @@ SOFTWARE.
 PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 
 #include <stdint.h>
-#include <fenv.h>
+#include <fenv.h> // for fexcept_t, fegetexceptflag, FE_INEXACT
 #include <errno.h>
 
 #if (defined(__clang__) && __clang_major__ >= 14) || (defined(__GNUC__) && __GNUC__ >= 14 && __BITINT_MAXWIDTH__ && __BITINT_MAXWIDTH__ >= 128)
@@ -207,7 +207,12 @@ cr_hypotl (long double x, long double y)
       }
     }
     if (sx.e == 0) // subnormal case, result is always inexact
+    {
       feraiseexcept (FE_UNDERFLOW);
+#ifdef CORE_MATH_SUPPORT_ERRNO
+      errno = ERANGE; // underflow
+#endif
+    }
     return sx.f;
   }
 

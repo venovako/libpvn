@@ -31,7 +31,7 @@ PVN_EXTERN_C double cr_rsqrt(double x);
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
-#include <fenv.h>
+#include <fenv.h> // for FE_TONEAREST, FE_UPWARD, feraiseexcept, FE_INVALID
 #include <stdint.h>
 #ifdef __x86_64__
 #include <x86intrin.h>

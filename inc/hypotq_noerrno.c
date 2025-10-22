@@ -31,7 +31,7 @@ PVN_EXTERN_C __float128 cr_hypotq(__float128 x, __float128 y);
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
-#include <fenv.h>
+#include <fenv.h> // for FE_INVALID, FE_INEXACT, FE_OVERFLOW, FE_UNDERFLOW
 #include <stdint.h>
 #ifdef __x86_64__
 #include <x86intrin.h>
