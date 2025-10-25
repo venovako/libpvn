@@ -92,10 +92,10 @@ So, `SAFE=sv2,nrm`, e.g., requests the `sv2` and `nrm` safe implementations.
 If in all-caps, `NRM` turns on the vector sorting before the final reductions where applicable.
 
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
-For example, some numerical testers require that at least `GMP` and `MPFR` are set to the installation prefixes of the respective libraries.
-Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp` and [MPFR](https://mpfr.org) at `/opt/mpfr`.
-Then, `GMP=/opt/gmp` and `MPFR=/opt/mpfr`.
-It is advisable to build those libraries from their recent sources.
+For example, some numerical testers require that `GMP`, `MPFR`, and `SLEEF` are set to the installation prefixes of the respective libraries.
+Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp`, [MPFR](https://mpfr.org) at `/opt/mpfr`, and [SLEEF](https://sleef.org) at `/opt/sleef`.
+Then, `GMP=/opt/gmp`, `MPFR=/opt/mpfr`, and `SLEEF=/opt/sleef`.
+It is advisable to build those libraries from their recent development sources.
 Also, `VECLEN` should sometimes be set to the size in bytes of the widest vector datatype, as shown in the [VecNrmP](https://github.com/venovako/VecNrmP) examples.
 As a side effect, some additional and often undesired optimizations are turned on by explicitly setting it!
 

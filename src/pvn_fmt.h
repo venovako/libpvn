@@ -5,6 +5,7 @@
 #error pvn_fmt.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+#ifndef _WIN32
 /* see https://fortranwiki.org/fortran/show/ansi_colors */
 #ifndef PVN_ANSI_BLACK
 #define PVN_ANSI_BLACK "\x1b[30m"
@@ -59,6 +60,7 @@
 #else /* PVN_ANSI_CLEAR */
 #error PVN_ANSI_CLEAR already defined
 #endif /* ?PVN_ANSI_CLEAR */
+#endif /* !_WIN32 */
 
 PVN_EXTERN_C size_t pvn_atoz(const char *const s);
 PVN_EXTERN_C char *pvn_stoa(char *const s, const float x);
