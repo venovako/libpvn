@@ -15,6 +15,441 @@ int main(int argc, char *argv[])
 }
 #else /* !PVN_TEST */
 #ifdef PVN_MPFR
+#ifdef PVN_CILK
+static int mps_nrm1(mpfr_t r, const size_t n, const float *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_flt(r, __builtin_fabsf(*x), MPFR_RNDN);
+    return 1;
+  }
+  if (n == (size_t)2u) {
+    (void)mpfr_set_flt(r, __builtin_fabsf(x[0u]), MPFR_RNDN);
+    (void)mpfr_add_d(r, r, (double)__builtin_fabsf(x[1u]), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  (void)mpfr_init(ml);
+  (void)mpfr_init(mr);
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn mps_nrm1(ml, nl, x);
+    fr = mps_nrm1(mr, nr, (x + nl));
+  }
+  (void)mpfr_add(r, ml, mr, MPFR_RNDN);
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mps_nrmf(mpfr_t r, const size_t n, const float *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_flt(r, __builtin_fabsf(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  if (n == (size_t)2u) {
+    (void)mpfr_init_set_d(ml, (double)(x[0u]), MPFR_RNDN);
+    (void)mpfr_init_set_d(mr, (double)(x[1u]), MPFR_RNDN);
+  }
+  else {
+    (void)mpfr_init(ml);
+    (void)mpfr_init(mr);
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mps_nrmf(ml, nl, x);
+      fr = mps_nrmf(mr, nr, (x + nl));
+    }
+  }
+  (void)mpfr_hypot(r, ml, mr, MPFR_RNDN);
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mps_nrmp(mpfr_t r, const float p, const size_t n, const float *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_flt(r, __builtin_fabsf(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t mp, ml, mr;
+  (void)mpfr_init_set_d(mp, (double)(p * 0.5f), MPFR_RNDN);
+  if (n == (size_t)2u) {
+    const float xl = __builtin_fabsf(x[0u]);
+    const float xr = __builtin_fabsf(x[1u]);
+    if (xl < xr) {
+      (void)mpfr_init_set_d(ml, (double)xr, MPFR_RNDN);
+      (void)mpfr_init_set_d(mr, (double)xl, MPFR_RNDN);
+    }
+    else {
+      (void)mpfr_init_set_d(ml, (double)xl, MPFR_RNDN);
+      (void)mpfr_init_set_d(mr, (double)xr, MPFR_RNDN);
+    }
+  }
+  else {
+    (void)mpfr_init(ml);
+    (void)mpfr_init(mr);
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mps_nrmp(ml, p, nl, x);
+      fr = mps_nrmp(mr, p, nr, (x + nl));
+    }
+    if (mpfr_less_p(ml, mr))
+      mpfr_swap(ml, mr);
+  }
+  if (mpfr_zero_p(ml))
+    (void)mpfr_set_flt(r, 0.0f, MPFR_RNDN);
+  else {
+    mpfr_t mq;
+    (void)mpfr_init(mq);
+    (void)mpfr_div(mq, mr, ml, MPFR_RNDN);
+    (void)mpfr_pow(mq, mq, mp, MPFR_RNDN);
+    (void)mpfr_set_d(mr, 1.0, MPFR_RNDN);
+    (void)mpfr_fma(mq, mq, mq, mr, MPFR_RNDN);
+    (void)mpfr_d_div(mp, 0.5, mp, MPFR_RNDN);
+    (void)mpfr_pow(mr, mq, mp, MPFR_RNDN);
+    mpfr_clear(mq);
+    (void)mpfr_mul(r, ml, mr, MPFR_RNDN);
+  }
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  mpfr_clear(mp);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+float PVN_FABI(pvn_mps_nrmp,PVN_MPS_NRMP)(const float *const p, const size_t *const n, const float *const x)
+{
+  if (!p || !(*p > 0.0f))
+    return -1.0f;
+  if (!n)
+    return -2.0f;
+  if (!*n)
+    return -0.0f;
+  if (!x)
+    return -3.0f;
+  float f = 0.0f;
+  if (isinf(*p)) {
+    for (size_t i = (size_t)0u; i < *n; ++i)
+      f = __builtin_fmaxf(f, __builtin_fabsf(x[i]));
+    return f;
+  }
+  mpfr_t mf;
+  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+  int l = 0;
+  if (*p == 1.0f)
+    l = mps_nrm1(mf, *n, x);
+  else if (*p == 2.0f)
+    l = mps_nrmf(mf, *n, x);
+  else
+    l = mps_nrmp(mf, *p, *n, x);
+  f = mpfr_get_flt(mf, MPFR_RNDN);
+  mpfr_clear(mf);
+  return f;
+}
+
+static int mpd_nrm1(mpfr_t r, const size_t n, const double *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_d(r, __builtin_fabs(*x), MPFR_RNDN);
+    return 1;
+  }
+  if (n == (size_t)2u) {
+    (void)mpfr_set_d(r, __builtin_fabs(x[0u]), MPFR_RNDN);
+    (void)mpfr_add_d(r, r, __builtin_fabs(x[1u]), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  (void)mpfr_init(ml);
+  (void)mpfr_init(mr);
+  const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+  const size_t nr = (n - nl);
+  cilk_scope {
+    fl = cilk_spawn mpd_nrm1(ml, nl, x);
+    fr = mpd_nrm1(mr, nr, (x + nl));
+  }
+  (void)mpfr_add(r, ml, mr, MPFR_RNDN);
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mpd_nrmf(mpfr_t r, const size_t n, const double *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_d(r, __builtin_fabs(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  if (n == (size_t)2u) {
+    (void)mpfr_init_set_d(ml, x[0u], MPFR_RNDN);
+    (void)mpfr_init_set_d(mr, x[1u], MPFR_RNDN);
+  }
+  else {
+    (void)mpfr_init(ml);
+    (void)mpfr_init(mr);
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpd_nrmf(ml, nl, x);
+      fr = mpd_nrmf(mr, nr, (x + nl));
+    }
+  }
+  (void)mpfr_hypot(r, ml, mr, MPFR_RNDN);
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mpd_nrmp(mpfr_t r, const double p, const size_t n, const double *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_d(r, __builtin_fabs(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t mp, ml, mr;
+  (void)mpfr_init_set_d(mp, (p * 0.5), MPFR_RNDN);
+  if (n == (size_t)2u) {
+    const double xl = __builtin_fabs(x[0u]);
+    const double xr = __builtin_fabs(x[1u]);
+    if (xl < xr) {
+      (void)mpfr_init_set_d(ml, xr, MPFR_RNDN);
+      (void)mpfr_init_set_d(mr, xl, MPFR_RNDN);
+    }
+    else {
+      (void)mpfr_init_set_d(ml, xl, MPFR_RNDN);
+      (void)mpfr_init_set_d(mr, xr, MPFR_RNDN);
+    }
+  }
+  else {
+    (void)mpfr_init(ml);
+    (void)mpfr_init(mr);
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpd_nrmp(ml, p, nl, x);
+      fr = mpd_nrmp(mr, p, nr, (x + nl));
+    }
+    if (mpfr_less_p(ml, mr))
+      mpfr_swap(ml, mr);
+  }
+  if (mpfr_zero_p(ml))
+    (void)mpfr_set_d(r, 0.0, MPFR_RNDN);
+  else {
+    mpfr_t mq;
+    (void)mpfr_init(mq);
+    (void)mpfr_div(mq, mr, ml, MPFR_RNDN);
+    (void)mpfr_pow(mq, mq, mp, MPFR_RNDN);
+    (void)mpfr_set_d(mr, 1.0, MPFR_RNDN);
+    (void)mpfr_fma(mq, mq, mq, mr, MPFR_RNDN);
+    (void)mpfr_d_div(mp, 0.5, mp, MPFR_RNDN);
+    (void)mpfr_pow(mr, mq, mp, MPFR_RNDN);
+    mpfr_clear(mq);
+    (void)mpfr_mul(r, ml, mr, MPFR_RNDN);
+  }
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  mpfr_clear(mp);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+double PVN_FABI(pvn_mpd_nrmp,PVN_MPD_NRMP)(const double *const p, const size_t *const n, const double *const x)
+{
+  if (!p || !(*p > 0.0))
+    return -1.0;
+  if (!n)
+    return -2.0;
+  if (!*n)
+    return -0.0;
+  if (!x)
+    return -3.0;
+  double f = 0.0;
+  if (isinf(*p)) {
+    for (size_t i = (size_t)0u; i < *n; ++i)
+      f = __builtin_fmax(f, __builtin_fabs(x[i]));
+    return f;
+  }
+  mpfr_t mf;
+  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+  int l = 0;
+  if (*p == 1.0)
+    l = mpd_nrm1(mf, *n, x);
+  else if (*p == 2.0)
+    l = mpd_nrmf(mf, *n, x);
+  else
+    l = mpd_nrmp(mf, *p, *n, x);
+  f = mpfr_get_d(mf, MPFR_RNDN);
+  mpfr_clear(mf);
+  return f;
+}
+
+static int mpx_nrm1(mpfr_t r, const size_t n, const long double *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_ld(r, __builtin_fabsl(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  if (n == (size_t)2u) {
+    (void)mpfr_init_set_ld(ml, __builtin_fabsl(x[0u]), MPFR_RNDN);
+    (void)mpfr_init_set_ld(mr, __builtin_fabsl(x[1u]), MPFR_RNDN);
+    (void)mpfr_add(r, ml, mr, MPFR_RNDN);
+  }
+  else {
+    (void)mpfr_init(ml);
+    (void)mpfr_init(mr);
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpx_nrm1(ml, nl, x);
+      fr = mpx_nrm1(mr, nr, (x + nl));
+    }
+    (void)mpfr_add(r, ml, mr, MPFR_RNDN);
+  }
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mpx_nrmf(mpfr_t r, const size_t n, const long double *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_ld(r, __builtin_fabsl(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  if (n == (size_t)2u) {
+    (void)mpfr_init_set_ld(ml, x[0u], MPFR_RNDN);
+    (void)mpfr_init_set_ld(mr, x[1u], MPFR_RNDN);
+  }
+  else {
+    (void)mpfr_init(ml);
+    (void)mpfr_init(mr);
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpx_nrmf(ml, nl, x);
+      fr = mpx_nrmf(mr, nr, (x + nl));
+    }
+  }
+  (void)mpfr_hypot(r, ml, mr, MPFR_RNDN);
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mpx_nrmp(mpfr_t r, const long double p, const size_t n, const long double *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_ld(r, __builtin_fabsl(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t mp, ml, mr;
+  (void)mpfr_init_set_ld(mp, (p * 0.5L), MPFR_RNDN);
+  if (n == (size_t)2u) {
+    const long double xl = __builtin_fabsl(x[0u]);
+    const long double xr = __builtin_fabsl(x[1u]);
+    if (xl < xr) {
+      (void)mpfr_init_set_ld(ml, xr, MPFR_RNDN);
+      (void)mpfr_init_set_ld(mr, xl, MPFR_RNDN);
+    }
+    else {
+      (void)mpfr_init_set_ld(ml, xl, MPFR_RNDN);
+      (void)mpfr_init_set_ld(mr, xr, MPFR_RNDN);
+    }
+  }
+  else {
+    (void)mpfr_init(ml);
+    (void)mpfr_init(mr);
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpx_nrmp(ml, p, nl, x);
+      fr = mpx_nrmp(mr, p, nr, (x + nl));
+    }
+    if (mpfr_less_p(ml, mr))
+      mpfr_swap(ml, mr);
+  }
+  if (mpfr_zero_p(ml))
+    (void)mpfr_set_d(r, 0.0, MPFR_RNDN);
+  else {
+    mpfr_t mq;
+    (void)mpfr_init(mq);
+    (void)mpfr_div(mq, mr, ml, MPFR_RNDN);
+    (void)mpfr_pow(mq, mq, mp, MPFR_RNDN);
+    (void)mpfr_set_d(mr, 1.0, MPFR_RNDN);
+    (void)mpfr_fma(mq, mq, mq, mr, MPFR_RNDN);
+    (void)mpfr_d_div(mp, 0.5, mp, MPFR_RNDN);
+    (void)mpfr_pow(mr, mq, mp, MPFR_RNDN);
+    mpfr_clear(mq);
+    (void)mpfr_mul(r, ml, mr, MPFR_RNDN);
+  }
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  mpfr_clear(mp);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+long double PVN_FABI(pvn_mpx_nrmp,PVN_MPX_NRMP)(const long double *const p, const size_t *const n, const long double *const x)
+{
+  if (!p || !(*p > 0.0L))
+    return -1.0L;
+  if (!n)
+    return -2.0L;
+  if (!*n)
+    return -0.0L;
+  if (!x)
+    return -3.0L;
+  long double f = 0.0L;
+  if (isinf(*p)) {
+    for (size_t i = (size_t)0u; i < *n; ++i)
+      f = __builtin_fmaxl(f, __builtin_fabsl(x[i]));
+    return f;
+  }
+  mpfr_t mf;
+  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+  int l = 0;
+  if (*p == 1.0L)
+    l = mpx_nrm1(mf, *n, x);
+  else if (*p == 2.0L)
+    l = mpx_nrmf(mf, *n, x);
+  else
+    l = mpx_nrmp(mf, *p, *n, x);
+  f = mpfr_get_ld(mf, MPFR_RNDN);
+  mpfr_clear(mf);
+  return f;
+}
+#else /* !PVN_CILK */
 float PVN_FABI(pvn_mps_nrmp,PVN_MPS_NRMP)(const float *const p, const size_t *const n, const float *const x)
 {
   if (!p || !(*p > 0.0f))
@@ -27,9 +462,14 @@ float PVN_FABI(pvn_mps_nrmp,PVN_MPS_NRMP)(const float *const p, const size_t *co
     return -3.0f;
   const size_t m = *n;
   float f = 0.0f;
+  if (isinf(*p)) {
+    for (size_t i = (size_t)0u; i < m; ++i)
+      f = __builtin_fmaxf(f, __builtin_fabsf(x[i]));
+    return f;
+  }
   mpfr_t mf, mx;
   (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
-  (void)mpfr_init_set_d(mx, 0.0, MPFR_RNDN);
+  (void)mpfr_init(mx);
   if (*p == 1.0f) {
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_flt(mx, x[i], MPFR_RNDN);
@@ -44,17 +484,9 @@ float PVN_FABI(pvn_mps_nrmp,PVN_MPS_NRMP)(const float *const p, const size_t *co
     }
     (void)mpfr_sqrt(mf, mf, MPFR_RNDN);
   }
-  else if (isinf(*p)) {
-    for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_set_flt(mx, x[i], MPFR_RNDN);
-      (void)mpfr_abs(mx, mx, MPFR_RNDN);
-      (void)mpfr_max(mf, mf, mx, MPFR_RNDN);
-    }
-  }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_d(mp, 0.0, MPFR_RNDN);
-    (void)mpfr_set_flt(mf, *p, MPFR_RNDN);
+    (void)mpfr_init_set_d(mp, (double)*p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_flt(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
@@ -83,9 +515,14 @@ double PVN_FABI(pvn_mpd_nrmp,PVN_MPD_NRMP)(const double *const p, const size_t *
     return -3.0;
   const size_t m = *n;
   double f = 0.0;
+  if (isinf(*p)) {
+    for (size_t i = (size_t)0u; i < m; ++i)
+      f = __builtin_fmax(f, __builtin_fabs(x[i]));
+    return f;
+  }
   mpfr_t mf, mx;
   (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
-  (void)mpfr_init_set_d(mx, 0.0, MPFR_RNDN);
+  (void)mpfr_init(mx);
   if (*p == 1.0) {
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_d(mx, x[i], MPFR_RNDN);
@@ -99,13 +536,6 @@ double PVN_FABI(pvn_mpd_nrmp,PVN_MPD_NRMP)(const double *const p, const size_t *
       (void)mpfr_fma(mf, mx, mx, mf, MPFR_RNDN);
     }
     (void)mpfr_sqrt(mf, mf, MPFR_RNDN);
-  }
-  else if (isinf(*p)) {
-    for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_set_d(mx, x[i], MPFR_RNDN);
-      (void)mpfr_abs(mx, mx, MPFR_RNDN);
-      (void)mpfr_max(mf, mf, mx, MPFR_RNDN);
-    }
   }
   else {
     mpfr_t mp;
@@ -138,9 +568,14 @@ long double PVN_FABI(pvn_mpx_nrmp,PVN_MPX_NRMP)(const long double *const p, cons
     return -3.0L;
   const size_t m = *n;
   long double f = 0.0L;
+  if (isinf(*p)) {
+    for (size_t i = (size_t)0u; i < m; ++i)
+      f = __builtin_fmaxl(f, __builtin_fabsl(x[i]));
+    return f;
+  }
   mpfr_t mf, mx;
-  (void)mpfr_init_set_ld(mf, 0.0L, MPFR_RNDN);
-  (void)mpfr_init_set_ld(mx, 0.0L, MPFR_RNDN);
+  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+  (void)mpfr_init(mx);
   if (*p == 1.0L) {
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_ld(mx, x[i], MPFR_RNDN);
@@ -154,13 +589,6 @@ long double PVN_FABI(pvn_mpx_nrmp,PVN_MPX_NRMP)(const long double *const p, cons
       (void)mpfr_fma(mf, mx, mx, mf, MPFR_RNDN);
     }
     (void)mpfr_sqrt(mf, mf, MPFR_RNDN);
-  }
-  else if (isinf(*p)) {
-    for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_set_ld(mx, x[i], MPFR_RNDN);
-      (void)mpfr_abs(mx, mx, MPFR_RNDN);
-      (void)mpfr_max(mf, mf, mx, MPFR_RNDN);
-    }
   }
   else {
     mpfr_t mp;
@@ -180,6 +608,7 @@ long double PVN_FABI(pvn_mpx_nrmp,PVN_MPX_NRMP)(const long double *const p, cons
   mpfr_clear(mf);
   return f;
 }
+#endif /* ?PVN_CILK */
 #endif /* PVN_MPFR */
 
 float PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(const size_t *const n, const float *const x)
@@ -1156,6 +1585,154 @@ long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size
 
 #ifdef PVN_QUADMATH
 #ifdef PVN_MPFR
+#ifdef PVN_CILK
+static int mpq_nrm1(mpfr_t r, const size_t n, const __float128 *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  (void)mpfr_init(ml);
+  (void)mpfr_init(mr);
+  if (n == (size_t)2u) {
+    (void)mpfr_set_float128(ml, fabsq(x[0u]), MPFR_RNDN);
+    (void)mpfr_set_float128(mr, fabsq(x[1u]), MPFR_RNDN);
+    (void)mpfr_add(r, ml, mr, MPFR_RNDN);
+  }
+  else {
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpq_nrm1(ml, nl, x);
+      fr = mpq_nrm1(mr, nr, (x + nl));
+    }
+    (void)mpfr_add(r, ml, mr, MPFR_RNDN);
+  }
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mpq_nrmf(mpfr_t r, const size_t n, const __float128 *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t ml, mr;
+  (void)mpfr_init(ml);
+  (void)mpfr_init(mr);
+  if (n == (size_t)2u) {
+    (void)mpfr_set_float128(ml, x[0u], MPFR_RNDN);
+    (void)mpfr_set_float128(mr, x[1u], MPFR_RNDN);
+  }
+  else {
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpq_nrmf(ml, nl, x);
+      fr = mpq_nrmf(mr, nr, (x + nl));
+    }
+  }
+  (void)mpfr_hypot(r, ml, mr, MPFR_RNDN);
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+static int mpq_nrmp(mpfr_t r, const __float128 p, const size_t n, const __float128 *const x)
+{
+  if (!n || !x)
+    return 0;
+  if (n == (size_t)1u) {
+    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
+    return 1;
+  }
+  int fl = 0, fr = 0;
+  mpfr_t mp, ml, mr;
+  (void)mpfr_init(mp);
+  (void)mpfr_init(ml);
+  (void)mpfr_init(mr);
+  (void)mpfr_set_float128(mp, (p * 0.5q), MPFR_RNDN);
+  if (n == (size_t)2u) {
+    const __float128 xl = fabsq(x[0u]);
+    const __float128 xr = fabsq(x[1u]);
+    if (xl < xr) {
+      (void)mpfr_set_float128(ml, xr, MPFR_RNDN);
+      (void)mpfr_set_float128(mr, xl, MPFR_RNDN);
+    }
+    else {
+      (void)mpfr_set_float128(ml, xl, MPFR_RNDN);
+      (void)mpfr_set_float128(mr, xr, MPFR_RNDN);
+    }
+  }
+  else {
+    const size_t nl = ((n >> 1u) + (n & (size_t)1u));
+    const size_t nr = (n - nl);
+    cilk_scope {
+      fl = cilk_spawn mpq_nrmp(ml, p, nl, x);
+      fr = mpq_nrmp(mr, p, nr, (x + nl));
+    }
+    if (mpfr_less_p(ml, mr))
+      mpfr_swap(ml, mr);
+  }
+  if (mpfr_zero_p(ml))
+    (void)mpfr_set_d(r, 0.0, MPFR_RNDN);
+  else {
+    mpfr_t mq;
+    (void)mpfr_init(mq);
+    (void)mpfr_div(mq, mr, ml, MPFR_RNDN);
+    (void)mpfr_pow(mq, mq, mp, MPFR_RNDN);
+    (void)mpfr_set_d(mr, 1.0, MPFR_RNDN);
+    (void)mpfr_fma(mq, mq, mq, mr, MPFR_RNDN);
+    (void)mpfr_d_div(mp, 0.5, mp, MPFR_RNDN);
+    (void)mpfr_pow(mr, mq, mp, MPFR_RNDN);
+    mpfr_clear(mq);
+    (void)mpfr_mul(r, ml, mr, MPFR_RNDN);
+  }
+  mpfr_clear(mr);
+  mpfr_clear(ml);
+  mpfr_clear(mp);
+  return (pvn_imax(fl, fr) + 1);
+}
+
+__float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const size_t *const n, const __float128 *const x)
+{
+  if (!p || !(*p > 0.0q))
+    return -1.0q;
+  if (!n)
+    return -2.0q;
+  if (!*n)
+    return -0.0q;
+  if (!x)
+    return -3.0q;
+  __float128 f = 0.0q;
+  if (!isfiniteq(*p)) {
+    for (size_t i = (size_t)0u; i < *n; ++i)
+      f = fmaxq(f, fabsq(x[i]));
+    return f;
+  }
+  mpfr_t mf;
+  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+  int l = 0;
+  if (*p == 1.0)
+    l = mpq_nrm1(mf, *n, x);
+  else if (*p == 2.0)
+    l = mpq_nrmf(mf, *n, x);
+  else
+    l = mpq_nrmp(mf, *p, *n, x);
+  f = mpfr_get_float128(mf, MPFR_RNDN);
+  mpfr_clear(mf);
+  return f;
+}
+#else /* !PVN_CILK */
 __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const size_t *const n, const __float128 *const x)
 {
   if (!p || !(*p > 0.0q))
@@ -1168,9 +1745,14 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
     return -3.0q;
   const size_t m = *n;
   __float128 f = 0.0q;
+  if (!isfiniteq(*p)) {
+    for (size_t i = (size_t)0u; i < m; ++i)
+      f = fmaxq(f, fabsq(x[i]));
+    return f;
+  }
   mpfr_t mf, mx;
-  (void)mpfr_init_set_ld(mf, 0.0L, MPFR_RNDN);
-  (void)mpfr_init_set_ld(mx, 0.0L, MPFR_RNDN);
+  (void)mpfr_init_set_d(mf, 0.0, MPFR_RNDN);
+  (void)mpfr_init(mx);
   if (*p == 1.0q) {
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
@@ -1185,16 +1767,9 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
     }
     (void)mpfr_sqrt(mf, mf, MPFR_RNDN);
   }
-  else if (!isfiniteq(*p)) {
-    for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
-      (void)mpfr_abs(mx, mx, MPFR_RNDN);
-      (void)mpfr_max(mf, mf, mx, MPFR_RNDN);
-    }
-  }
   else {
     mpfr_t mp;
-    (void)mpfr_init_set_ld(mp, 0.0L, MPFR_RNDN);
+    (void)mpfr_init(mp);
     (void)mpfr_set_float128(mf, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
       (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
@@ -1211,6 +1786,7 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
   mpfr_clear(mf);
   return f;
 }
+#endif /* ?PVN_CILK */
 #endif /* PVN_MPFR */
 
 __float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __float128 *const x)
