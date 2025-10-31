@@ -164,6 +164,6 @@ PVN_EXTERN_C void* PVN_FABI(pvn_pack80,PVN_PACK80)(long double *const a, const s
 PVN_EXTERN_C long double* PVN_FABI(pvn_unpack80,PVN_UNPACK80)(void *const a, const size_t *const n);
 
 #ifndef _WIN32
-PVN_EXTERN_C void PVN_FABI(pvn_whoami,PVN_WHOAMI)(const char **const w);
+PVN_EXTERN_C int PVN_FABI(pvn_whoami,PVN_WHOAMI)(const char **const w);
 #endif /* !_WIN32 */
 #endif /* !PVN_AUX_H */

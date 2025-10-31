@@ -25,8 +25,7 @@ int main(int argc, char *argv[])
   (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &x, sizeof(x)));
 #ifndef _WIN32
   const char *w = (const char*)NULL;
-  PVN_FABI(pvn_whoami,PVN_WHOAMI)(&w);
-  (void)printf("pvn_whoami = %s\n", (w ? w : "?"));
+  (void)printf("pvn_whoami = %s\n", ((PVN_FABI(pvn_whoami,PVN_WHOAMI)(&w) > 0) ? w : "?"));
 #endif /* !_WIN32 */
   return EXIT_SUCCESS;
 }
@@ -198,11 +197,12 @@ long double* PVN_FABI(pvn_unpack80,PVN_UNPACK80)(void *const a, const size_t *co
 }
 
 #ifndef _WIN32
-void PVN_FABI(pvn_whoami,PVN_WHOAMI)(const char **const w)
+int PVN_FABI(pvn_whoami,PVN_WHOAMI)(const char **const w)
 {
   PVN_ASSERT(w);
   Dl_info info;
   *w = (dladdr(__builtin_extract_return_addr(__builtin_return_address(0u)), &info) ? info.dli_sname : (const char*)NULL);
+  return (*w ? (int)strlen(*w) : -1);
 }
 #endif /* !_WIN32 */
 #endif /* ?PVN_TEST */
