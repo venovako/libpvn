@@ -95,7 +95,7 @@ The other options are for testing, debugging, and profiling, and should not be s
 For example, some numerical testers require that `GMP`, `MPFR`, and `SLEEF` are set to the installation prefixes of the respective libraries.
 Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp`, [MPFR](https://mpfr.org) at `/opt/mpfr`, and [SLEEF](https://sleef.org) at `/opt/sleef`.
 Then, `GMP=/opt/gmp`, `MPFR=/opt/mpfr`, and `SLEEF=/opt/sleef`.
-It is advisable to build those libraries from their recent development sources.
+It is advisable to build those packages from their recent development sources, and the libraries' installation directories should be uniformly named, i.e., either `lib` or `lib64`.
 Also, `VECLEN` should sometimes be set to the size in bytes of the widest vector datatype, as shown in the [VecNrmP](https://github.com/venovako/VecNrmP) examples.
 As a side effect, some additional and often undesired optimizations are turned on by explicitly setting it!
 
