@@ -9,38 +9,52 @@ static int info_print(FILE *const f, MPI_Info info)
   char key[MPI_MAX_INFO_KEY] = { '\0' };
   if (!f)
     return -1;
-  if (MPI_Info_get_nkeys(info, &nkeys) != MPI_SUCCESS)
+  if (info == MPI_INFO_NULL)
     return -2;
+  if (MPI_Info_get_nkeys(info, &nkeys) != MPI_SUCCESS)
+    return -3;
   for (int i = 0; i < nkeys; ++i) {
     if (MPI_Info_get_nthkey(info, i, key) != MPI_SUCCESS) {
-      nkeys = -3;
+      nkeys = -4;
       break;
     }
     old = len;
     len = 0;
     if (MPI_Info_get_string(info, key, &len, val, &flag) != MPI_SUCCESS) {
-      nkeys = -4;
+      nkeys = -5;
       break;
     }
-    if (flag && len) {
+    if (flag) {
+      if (!len) {
+        nkeys = -6;
+        break;
+      }
       if (len > old)
         val = (char*)realloc(val, (size_t)len);
       if (val) {
         if (MPI_Info_get_string(info, key, &len, val, &flag) != MPI_SUCCESS) {
-          nkeys = -5;
+          nkeys = -7;
           break;
         }
         if (fprintf(f, "%d:(%s,%s)\n", i, key, val) < 8) {
-          nkeys = -6;
+          nkeys = -8;
           break;
         }
       }
+      else {
+        nkeys = -9;
+        break;
+      }
+    }
+    else {
+      nkeys = -10;
+      break;
     }
   }
   if (val)
     free(val);
   if (fflush(f))
-    return -7;
+    return -11;
   return nkeys;
 }
 
@@ -100,6 +114,8 @@ int main(int argc, char* argv[])
   (void)fprintf(stderr, "MPI_Abi_get_info=%d\n", MPI_Abi_get_info(&info));
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
   (void)fprintf(stderr, "MPI_Info_free=%d\n", MPI_Info_free(&info));
+  (void)fprintf(stderr, "MPI_Abi_get_fortran_info=%d\n", MPI_Abi_get_fortran_info(&info));
+  (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
   j = MPI_THREAD_MULTIPLE;
   (void)fprintf(stderr, "mpi_initialize(%d)=%d\n", j, mpi_initialize(&argc, &argv, j, &i));
   switch (i) {
