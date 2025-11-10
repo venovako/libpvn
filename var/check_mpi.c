@@ -128,19 +128,28 @@ int main(int argc, char* argv[])
   j = 0;
   (void)fprintf(stderr, "MPI_Comm_get_attr=%d\n", MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &a, &j));
   if (j) {
-    (void)fprintf(stderr, "MPI_TAG_UB=%d\n", *a);
+    (void)fprintf(stdout, "MPI_TAG_UB=%d\n", (i = *a));
     a = (int*)NULL;
     j = 0;
   }
   (void)fprintf(stderr, "MPI_Comm_get_attr=%d\n", MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_IO, &a, &j));
   if (j) {
-    (void)fprintf(stderr, "MPI_IO=%d\n", *a);
+    switch (i = *a) {
+    case MPI_PROC_NULL:
+      (void)fprintf(stdout, "MPI_IO=MPI_PROC_NULL\n");
+      break;
+    case MPI_ANY_SOURCE:
+      (void)fprintf(stdout, "MPI_IO=MPI_ANY_SOURCE\n");
+      break;
+    default:
+      (void)fprintf(stdout, "MPI_IO=%d\n", i);
+    }
     a = (int*)NULL;
     j = 0;
   }
   (void)fprintf(stderr, "MPI_Comm_get_attr=%d\n", MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, &a, &j));
   if (j) {
-    (void)fprintf(stderr, "MPI_WTIME_IS_GLOBAL=%d\n", *a);
+    (void)fprintf(stdout, "MPI_WTIME_IS_GLOBAL=%d\n", (i = *a));
     a = (int*)NULL;
     j = 0;
   }
