@@ -74,6 +74,7 @@ static int mpi_finalize()
     return 0;
   if (MPI_Initialized(&flag) != MPI_SUCCESS)
     return -2;
+  /* TODO: should MPI_Finalize be called even if MPI_Init* was not? */
   if (!flag)
     return 2;
   return ((MPI_Finalize() != MPI_SUCCESS) ? -3 : 1);
@@ -86,8 +87,10 @@ int main(int argc, char* argv[])
   (void)fprintf(stdout, "%d.%d\n", i, j);
 #if (MPI_MAX_LIBRARY_VERSION_STRING >= MPI_MAX_PROCESSOR_NAME)
   char s[MPI_MAX_LIBRARY_VERSION_STRING];
+  j = MPI_MAX_LIBRARY_VERSION_STRING;
 #else
   char s[MPI_MAX_PROCESSOR_NAME];
+  j = MPI_MAX_PROCESSOR_NAME;
 #endif
   (void)fprintf(stderr, "MPI_Get_library_version=%d\n", MPI_Get_library_version(s, &j));
   (void)fprintf(stdout, "%s\n", s);
@@ -121,6 +124,26 @@ int main(int argc, char* argv[])
   (void)fprintf(stderr, "MPI_Get_hw_resource_info=%d\n", MPI_Get_hw_resource_info(&info));
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
   (void)fprintf(stderr, "MPI_info_free=%d\n", MPI_Info_free(&info));
+  int *a = (int*)NULL;
+  j = 0;
+  (void)fprintf(stderr, "MPI_Comm_get_attr=%d\n", MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &a, &j));
+  if (j) {
+    (void)fprintf(stderr, "MPI_TAG_UB=%d\n", *a);
+    a = (int*)NULL;
+    j = 0;
+  }
+  (void)fprintf(stderr, "MPI_Comm_get_attr=%d\n", MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_IO, &a, &j));
+  if (j) {
+    (void)fprintf(stderr, "MPI_IO=%d\n", *a);
+    a = (int*)NULL;
+    j = 0;
+  }
+  (void)fprintf(stderr, "MPI_Comm_get_attr=%d\n", MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_WTIME_IS_GLOBAL, &a, &j));
+  if (j) {
+    (void)fprintf(stderr, "MPI_WTIME_IS_GLOBAL=%d\n", *a);
+    a = (int*)NULL;
+    j = 0;
+  }
   (void)fprintf(stderr, "mpi_finalize=%d\n", mpi_finalize());
   return EXIT_SUCCESS;
 }
