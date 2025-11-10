@@ -44,6 +44,41 @@ static int info_print(FILE *const f, MPI_Info info)
   return nkeys;
 }
 
+static int mpi_initialize(int *const argc, char ***const argv, const int required, int *const provided)
+{
+  int flag = 0;
+  if (MPI_Finalized(&flag) != MPI_SUCCESS)
+    return -1;
+  if (flag)
+    return 0;
+  if (MPI_Initialized(&flag) != MPI_SUCCESS)
+    return -2;
+  if (!provided)
+    return -4;
+  if (flag) {
+    if (MPI_Query_thread(provided) != MPI_SUCCESS)
+      return -3;
+    if (MPI_Is_thread_main(&flag) != MPI_SUCCESS)
+      return -5;
+    return (flag ? 3 : 2);
+  }
+  return ((MPI_Init_thread(argc, argv, required, provided) != MPI_SUCCESS) ? -6 : 1);
+}
+
+static int mpi_finalize()
+{
+  int flag = 0;
+  if (MPI_Finalized(&flag) != MPI_SUCCESS)
+    return -1;
+  if (flag)
+    return 1;
+  if (MPI_Initialized(&flag) != MPI_SUCCESS)
+    return -2;
+  if (!flag)
+    return 0;
+  return ((MPI_Finalize() != MPI_SUCCESS) ? -3 : 2);
+}
+
 int main(int argc, char* argv[])
 {
   int i, j;
@@ -54,8 +89,13 @@ int main(int argc, char* argv[])
   (void)fprintf(stdout, "%s\n", s);
   (void)fprintf(stderr, "MPI_Abi_get_version=%d\n", MPI_Abi_get_version(&i, &j));
   (void)fprintf(stdout, "%d.%d\n", i, j);
-  MPI_Info info;
+  MPI_Info info = MPI_INFO_NULL;
   (void)fprintf(stderr, "MPI_Abi_get_info=%d\n", MPI_Abi_get_info(&info));
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
+  (void)fprintf(stderr, "MPI_Info_free=%d\n", MPI_Info_free(&info));
+  j = MPI_THREAD_MULTIPLE;
+  (void)fprintf(stderr, "mpi_initialize(%d)=%d\n", j, mpi_initialize(&argc, &argv, j, &i));
+  (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, MPI_INFO_ENV));
+  (void)fprintf(stderr, "mpi_finalize=%d\n", mpi_finalize());
   return EXIT_SUCCESS;
 }
