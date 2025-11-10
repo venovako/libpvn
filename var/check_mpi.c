@@ -138,9 +138,11 @@ int main(int argc, char* argv[])
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
   (void)fprintf(stderr, "MPI_info_free=%d\n", MPI_Info_free(&info));
   int *a = (int*)NULL;
-  (void)fprintf(stderr, "MPI_Abi_get_fortran_booleans=%d\n", MPI_Abi_get_fortran_booleans(4, &i, &j/*, (int*)&a */));
-  /* if (a) */
+  /* unsupported with Intel(R) MPI Library 2021.17 for Linux* OS
+  (void)fprintf(stderr, "MPI_Abi_get_fortran_booleans=%d\n", MPI_Abi_get_fortran_booleans(4, &i, &j, (int*)&a));
+  if (a)
     (void)fprintf(stdout, "T:%d F:%d\n", i, j);
+  */
   (void)fprintf(stderr, "MPI_Get_processor_name=%d\n", MPI_Get_processor_name(s, &j));
   (void)fprintf(stdout, "%s\n", s);
   (void)fprintf(stderr, "MPI_Get_hw_resource_info=%d\n", MPI_Get_hw_resource_info(&info));
