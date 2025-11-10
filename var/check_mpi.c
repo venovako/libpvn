@@ -96,7 +96,7 @@ static int mpi_finalize()
 
 int main(int argc, char* argv[])
 {
-  int i, j;
+  int i = 0, j = 0;
   (void)fprintf(stderr, "MPI_Get_version=%d\n", MPI_Get_version(&i, &j));
   (void)fprintf(stdout, "%d.%d\n", i, j);
 #if (MPI_MAX_LIBRARY_VERSION_STRING >= MPI_MAX_PROCESSOR_NAME)
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
   (void)fprintf(stderr, "MPI_info_free=%d\n", MPI_Info_free(&info));
   int *a = (int*)NULL;
-  /* unsupported with Intel(R) MPI Library 2021.17 for Linux* OS
+  /* TODO: unsupported with Intel(R) MPI Library 2021.17 for Linux* OS
   (void)fprintf(stderr, "MPI_Abi_get_fortran_booleans=%d\n", MPI_Abi_get_fortran_booleans(4, &i, &j, (int*)&a));
   if (a)
     (void)fprintf(stdout, "T:%d F:%d\n", i, j);
