@@ -84,7 +84,11 @@ int main(int argc, char* argv[])
   int i, j;
   (void)fprintf(stderr, "MPI_Get_version=%d\n", MPI_Get_version(&i, &j));
   (void)fprintf(stdout, "%d.%d\n", i, j);
+#if (MPI_MAX_LIBRARY_VERSION_STRING >= MPI_MAX_PROCESSOR_NAME)
   char s[MPI_MAX_LIBRARY_VERSION_STRING];
+#else
+  char s[MPI_MAX_PROCESSOR_NAME];
+#endif
   (void)fprintf(stderr, "MPI_Get_library_version=%d\n", MPI_Get_library_version(s, &j));
   (void)fprintf(stdout, "%s\n", s);
   (void)fprintf(stderr, "MPI_Abi_get_version=%d\n", MPI_Abi_get_version(&i, &j));
@@ -112,6 +116,11 @@ int main(int argc, char* argv[])
     (void)fprintf(stdout, "%d\n", i);
   }
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, MPI_INFO_ENV));
+  (void)fprintf(stderr, "MPI_Get_processor_name=%d\n", MPI_Get_processor_name(s, &j));
+  (void)fprintf(stdout, "%s\n", s);
+  (void)fprintf(stderr, "MPI_Get_hw_resource_info=%d\n", MPI_Get_hw_resource_info(&info));
+  (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
+  (void)fprintf(stderr, "MPI_info_free=%d\n", MPI_Info_free(&info));
   (void)fprintf(stderr, "mpi_finalize=%d\n", mpi_finalize());
   return EXIT_SUCCESS;
 }
