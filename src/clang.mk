@@ -17,7 +17,7 @@ endif # !VECLEN
 ifdef OPENMP
 ifeq ($(OPENMP),cilk)
 PFLAGS += -DPVN_CILK=3
-CFLAGS += -fopencilk
+CFLAGS += -fopencilk -fopenmp-simd
 else # !cilk
 PFLAGS += -DPVN_OPENMP=$(OPENMP)
 CFLAGS += -fopenmp
