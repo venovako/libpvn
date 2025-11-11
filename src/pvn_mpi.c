@@ -114,7 +114,7 @@ int pvn_mpi_initialize(int *const argc, char ***const argv, const int required, 
   return ((MPI_Init_thread(argc, argv, required, provided) != MPI_SUCCESS) ? -6 : 1);
 }
 
-int pvn_mpi_info_print(const int fd, MPI_Info info)
+int pvn_mpi_info_print(const int fd, const MPI_Info info)
 {
   char *val = (char*)NULL;
   int nkeys = 0, old = 0, len = 0, flag = 0;
@@ -148,7 +148,12 @@ int pvn_mpi_info_print(const int fd, MPI_Info info)
           nkeys = -7;
           break;
         }
-        if (dprintf(fd, "%d:(%s,%s)\n", i, key, val) < 8) {
+        if (((nkeys <= 10) && (dprintf(fd, "%d:(%s,%s)\n", i, key, val) < 8)) ||
+            ((nkeys <= 100) && (dprintf(fd, "%2d:(%s,%s)\n", i, key, val) < 9)) ||
+            ((nkeys <= 1000) && (dprintf(fd, "%3d:(%s,%s)\n", i, key, val) < 10)) ||
+            ((nkeys <= 10000) && (dprintf(fd, "%4d:(%s,%s)\n", i, key, val) < 11)) ||
+            ((nkeys <= 100000) && (dprintf(fd, "%5d:(%s,%s)\n", i, key, val) < 12)) ||
+            ((nkeys > 100000) && (dprintf(fd, "%6d:(%s,%s)\n", i, key, val) < 13)) {
           nkeys = -8;
           break;
         }
