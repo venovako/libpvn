@@ -370,14 +370,17 @@ endif # ?QMD
 endif # ?QMA
 endif # QUADMATH
 ifeq ($(OS),Darwin)
-LGCC=$(dir $(realpath $(shell $(GCC) -print-file-name=libgcc_s.1.1.dylib)))
-LNK += -L$(LGCC) -Wl,-rpath,$(LGCC)
-endif # Darwin
 ifdef OPENMP
-LNK += -lgomp
+ifeq ($(COMPILER),clang)
+LOMP=omp
+else # gcc
+LOMP=gomp
+endif # ?COMPILER
+DOMP=$(dir $(realpath $(shell $(CC) -print-file-name=lib$(LOMP).dylib)))
+LNK += -L$(DOMP) -Wl,-rpath,$(DOMP) -l$(LOMP)
 endif # OPENMP
-ifeq ($(OS),Darwin)
-LNK += -lgcc_s.1.1
+LGCC=$(dir $(realpath $(shell $(GCC) -print-file-name=libgcc_s.1.1.dylib)))
+LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
 else # !Darwin
 ifdef STATIC
 LNK += -static-libgcc

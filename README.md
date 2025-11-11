@@ -65,7 +65,7 @@ gmake clean all
 Include the `pvn.h` header file in your C/C++ sources where needed and link with the `libpvn.so` (dynamic) or `libpvn.a` (static) library, as shown in `GNUmakefile`.
 There are no mutable global/static variables present, *unless profiling has been enabled or Windows are targeted*, but some static constant lookup tables are used.
 The functions that do not interface other non-system libraries can safely be called from multiple threads on *unrelated* data without locking.
-You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or want to use OpenMP.
+You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or want to use [OpenMP](https://openmp.org).
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 
@@ -77,7 +77,7 @@ The object files will be integrated into `libpvn.so` and `libpvn.a` for easier r
 
 The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang` and `gcc`) or `Host` (for `icx`).
 
-The `OPENMP` option enables [OpenMP](https://openmp.org):
+The `OPENMP` option enables OpenMP:
 - `OPENMP=0` only enables the compiler's OpenMP support,
 - `OPENMP=1` makes the functions OpenMP-safe, but they are not parallelized (some testers might be),
 - `OPENMP>1` parallelizes certain functions.

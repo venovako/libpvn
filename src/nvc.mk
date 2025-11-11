@@ -11,7 +11,7 @@ ifndef MARCH
 MARCH=native
 endif # !MARCH
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
-CFLAGS += -c18 -fpic -Kieee -Mfma -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH)
+CFLAGS += -c23 -fpic -Kieee -Mfma -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH)
 ifndef VECLEN
 CFLAGS += -Meh_frame -Mframe -traceback
 endif # !VECLEN
