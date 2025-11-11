@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 #else /* !PVN_CILK */
 #ifdef _OPENMP
     (void)printf("OpenMP          : %d\n", _OPENMP);
-#endif /* ?_OPENMP */
+#endif /* _OPENMP */
 #endif /* ?PVN_CILK */
     (void)printf("endianness      : %s\n", (pvn_le() ? "little" : "big"));
     (void)printf("math_errhandling: %d\n", PVN_FABI(c_math_err,C_MATH_ERR)());

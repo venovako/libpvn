@@ -371,7 +371,13 @@ endif # ?QMA
 endif # QUADMATH
 ifeq ($(OS),Darwin)
 LGCC=$(dir $(realpath $(shell $(GCC) -print-file-name=libgcc_s.1.1.dylib)))
-LNK += -L$(LGCC) -Wl,-rpath,$(LGCC) -lgcc_s.1.1
+LNK += -L$(LGCC) -Wl,-rpath,$(LGCC)
+endif # Darwin
+ifdef OPENMP
+LNK += -lgomp
+endif # OPENMP
+ifeq ($(OS),Darwin)
+LNK += -lgcc_s.1.1
 else # !Darwin
 ifdef STATIC
 LNK += -static-libgcc
@@ -408,7 +414,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=true|...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=...] [STATIC=-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=...] [STATIC=-s] [all|clean|help]"
 
 libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

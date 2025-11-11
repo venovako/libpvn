@@ -69,9 +69,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 #endif /* ?_WIN32 */
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #include <omp.h>
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
 #ifndef PVN_CILK
 #define cilk_for for
 #define cilk_scope

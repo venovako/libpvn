@@ -90,9 +90,9 @@ float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *con
     a = fabsf(r);
 #else /* !__RDRND__ */
     ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
     {
       s = read(*u, &r, sizeof(r));
     }
@@ -115,9 +115,9 @@ float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u)
   while (!_rdrand32_step((unsigned*)&r)) /**/;
 #else /* !__RDRND__ */
   ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
   {
     s = read(*u, &r, sizeof(r));
   }
@@ -141,9 +141,9 @@ double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const 
     a = fabs(r);
 #else /* !__RDRND__ */
     ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
     {
       s = read(*u, &r, sizeof(r));
     }
@@ -166,9 +166,9 @@ double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
 #else /* !__RDRND__ */
   ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
   {
     s = read(*u, &r, sizeof(r));
   }
@@ -193,9 +193,9 @@ long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const in
     a = fabsl(r);
 #else /* !__RDRND__ */
     ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
     {
 #ifdef __x86_64__
       s = read(*u, &r, (size_t)10u);
@@ -227,9 +227,9 @@ long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u)
   while (!_rdrand16_step((unsigned short*)((unsigned long long*)&r + 1))) /**/;
 #else /* !__RDRND__ */
   ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
   {
 #ifdef __x86_64__
       s = read(*u, &r, (size_t)10u);
@@ -263,9 +263,9 @@ __float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int
     a = fabsq(r);
 #else /* !__RDRND__ */
     ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
     {
       s = read(*u, &r, sizeof(r));
     }
@@ -289,9 +289,9 @@ __float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
   while (!_rdrand64_step((unsigned long long*)&r + 1)) /**/;
 #else /* !__RDRND__ */
   ssize_t s = 0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
   {
     s = read(*u, &r, sizeof(r));
   }

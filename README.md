@@ -77,8 +77,11 @@ The object files will be integrated into `libpvn.so` and `libpvn.a` for easier r
 
 The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang` and `gcc`) or `Host` (for `icx`).
 
-The `OPENMP` option enables OpenMP and its content is appended to the compiler's flags.
-Set it to `true` if no additional compiler flags are desired.
+The `OPENMP` option enables [OpenMP](https://openmp.org):
+- `OPENMP=0` only enables the compiler's OpenMP support,
+- `OPENMP=1` makes the functions OpenMP-safe, but they are not parallelized (some testers might be),
+- `OPENMP>1` parallelizes certain functions.
+
 Bear in mind, however, that this will introduce a dependency on the OpenMP runtime library!
 If the [OpenCilk](https://www.opencilk.org) compiler is used, please set `OPENMP=cilk` instead.
 

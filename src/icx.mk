@@ -21,10 +21,8 @@ ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback
 endif # !VECLEN
 ifdef OPENMP
+PFLAGS += -DPVN_OPENMP=$(OPENMP)
 CFLAGS += -qopenmp
-ifneq ($(OPENMP),true)
-CFLAGS += $(OPENMP)
-endif # !true
 ifndef NDEBUG
 CFLAGS += -debug parallel
 endif # !NDEBUG

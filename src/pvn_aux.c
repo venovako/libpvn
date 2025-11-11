@@ -142,12 +142,12 @@ void PVN_FABI(pvn_qsort,PVN_QSORT)(void *const b, const size_t *const n, const s
   PVN_ASSERT(n);
   PVN_ASSERT(w);
   PVN_ASSERT(c);
-#if (defined(_OPENMP) && defined(__APPLE__))
-  /* if threading is desired and psort(3) is available */
+#if (defined(__APPLE__) && defined(PVN_OPENMP) && (PVN_OPENMP > 1))
+  /* if the nested threading is desired and psort(3) is available */
   psort(b, *n, *w, c);
-#else /* !_OPENMP || !__APPLE__ */
+#else /* !__APPLE__ || !PVN_OPENMP */
   qsort(b, *n, *w, c);
-#endif /* ?_OPENMP && ?__APPLE__ */
+#endif /* ?__APPLE__ && ?PVN_OPENMP */
 }
 
 void* PVN_FABI(pvn_pack80,PVN_PACK80)(long double *const a, const size_t *const n)

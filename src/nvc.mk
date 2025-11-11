@@ -16,9 +16,7 @@ ifndef VECLEN
 CFLAGS += -Meh_frame -Mframe -traceback
 endif # !VECLEN
 ifdef OPENMP
+PFLAGS += -DPVN_OPENMP=$(OPENMP)
 CFLAGS += -mp
-ifneq ($(OPENMP),true)
-CFLAGS += $(OPENMP)
-endif # !true
 endif # OPENMP
 CFLAGS += --diag_suppress integer_sign_change

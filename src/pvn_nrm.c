@@ -1057,7 +1057,7 @@ float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x)
     return -0.0f;
   if (!x)
     return -2.0f;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   float p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1090,13 +1090,13 @@ float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x)
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(&mt, p);
 #endif /* ?PVN_NRM_SAFE */
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
 #ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_res_nrmf,PVN_RES_NRMF)(n, x);
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(n, x);
 #endif /* ?PVN_NRM_SAFE */
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
 }
 
 float PVN_FABI(pvn_cnrm2,PVN_CNRM2)(const size_t *const n, const float *const x)
@@ -1113,7 +1113,7 @@ double PVN_FABI(pvn_dnrm2,PVN_DNRM2)(const size_t *const n, const double *const 
     return -0.0;
   if (!x)
     return -2.0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1146,13 +1146,13 @@ double PVN_FABI(pvn_dnrm2,PVN_DNRM2)(const size_t *const n, const double *const 
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(&mt, p);
 #endif /* ?PVN_NRM_SAFE */
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
 #ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_red_nrmf,PVN_RED_NRMF)(n, x);
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfd_nrmf,PVN_RFD_NRMF)(n, x);
 #endif /* ?PVN_NRM_SAFE */
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 double PVN_FABI(pvn_znrm2,PVN_ZNRM2)(const size_t *const n, const double *const x)
@@ -1169,7 +1169,7 @@ long double PVN_FABI(pvn_xnrm2,PVN_XNRM2)(const size_t *const n, const long doub
     return -0.0L;
   if (!x)
     return -2.0L;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   long double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1202,13 +1202,13 @@ long double PVN_FABI(pvn_xnrm2,PVN_XNRM2)(const size_t *const n, const long doub
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(&mt, p);
 #endif /* ?PVN_NRM_SAFE */
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
 #ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_rex_nrmf,PVN_REX_NRMF)(n, x);
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfx_nrmf,PVN_RFX_NRMF)(n, x);
 #endif /* ?PVN_NRM_SAFE */
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 long double PVN_FABI(pvn_wnrm2,PVN_WNRM2)(const size_t *const n, const long double *const x)
@@ -1225,7 +1225,7 @@ float PVN_FABI(pvn_snrm1,PVN_SNRM1)(const size_t *const n, const float *const x)
     return -0.0f;
   if (!x)
     return -2.0f;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   float p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1250,9 +1250,9 @@ float PVN_FABI(pvn_snrm1,PVN_SNRM1)(const size_t *const n, const float *const x)
       p[tn] = PVN_FABI(pvn_res_nrm1,PVN_RES_NRM1)(&m, (x + o));
   }
   return PVN_FABI(pvn_res_nrm1,PVN_RES_NRM1)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_res_nrm1,PVN_RES_NRM1)(n, x);
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
 }
 
 double PVN_FABI(pvn_dnrm1,PVN_DNRM1)(const size_t *const n, const double *const x)
@@ -1263,7 +1263,7 @@ double PVN_FABI(pvn_dnrm1,PVN_DNRM1)(const size_t *const n, const double *const 
     return -0.0;
   if (!x)
     return -2.0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1288,9 +1288,9 @@ double PVN_FABI(pvn_dnrm1,PVN_DNRM1)(const size_t *const n, const double *const 
       p[tn] = PVN_FABI(pvn_red_nrm1,PVN_RED_NRM1)(&m, (x + o));
   }
   return PVN_FABI(pvn_red_nrm1,PVN_RED_NRM1)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_red_nrm1,PVN_RED_NRM1)(n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 long double PVN_FABI(pvn_xnrm1,PVN_XNRM1)(const size_t *const n, const long double *const x)
@@ -1301,7 +1301,7 @@ long double PVN_FABI(pvn_xnrm1,PVN_XNRM1)(const size_t *const n, const long doub
     return -0.0L;
   if (!x)
     return -2.0L;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   long double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1326,9 +1326,9 @@ long double PVN_FABI(pvn_xnrm1,PVN_XNRM1)(const size_t *const n, const long doub
       p[tn] = PVN_FABI(pvn_rex_nrm1,PVN_REX_NRM1)(&m, (x + o));
   }
   return PVN_FABI(pvn_rex_nrm1,PVN_REX_NRM1)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_rex_nrm1,PVN_REX_NRM1)(n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 float PVN_FABI(pvn_snrmi,PVN_SNRMI)(const size_t *const n, const float *const x)
@@ -1339,7 +1339,7 @@ float PVN_FABI(pvn_snrmi,PVN_SNRMI)(const size_t *const n, const float *const x)
     return -0.0f;
   if (!x)
     return -2.0f;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   float p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1364,9 +1364,9 @@ float PVN_FABI(pvn_snrmi,PVN_SNRMI)(const size_t *const n, const float *const x)
       p[tn] = PVN_FABI(pvn_res_nrmi,PVN_RES_NRMI)(&m, (x + o));
   }
   return PVN_FABI(pvn_res_nrmi,PVN_RES_NRMI)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_res_nrmi,PVN_RES_NRMI)(n, x);
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
 }
 
 double PVN_FABI(pvn_dnrmi,PVN_DNRMI)(const size_t *const n, const double *const x)
@@ -1377,7 +1377,7 @@ double PVN_FABI(pvn_dnrmi,PVN_DNRMI)(const size_t *const n, const double *const 
     return -0.0;
   if (!x)
     return -2.0;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1402,9 +1402,9 @@ double PVN_FABI(pvn_dnrmi,PVN_DNRMI)(const size_t *const n, const double *const 
       p[tn] = PVN_FABI(pvn_red_nrmi,PVN_RED_NRMI)(&m, (x + o));
   }
   return PVN_FABI(pvn_red_nrmi,PVN_RED_NRMI)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_red_nrmi,PVN_RED_NRMI)(n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 long double PVN_FABI(pvn_xnrmi,PVN_XNRMI)(const size_t *const n, const long double *const x)
@@ -1415,7 +1415,7 @@ long double PVN_FABI(pvn_xnrmi,PVN_XNRMI)(const size_t *const n, const long doub
     return -0.0L;
   if (!x)
     return -2.0L;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   long double p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1440,9 +1440,9 @@ long double PVN_FABI(pvn_xnrmi,PVN_XNRMI)(const size_t *const n, const long doub
       p[tn] = PVN_FABI(pvn_rex_nrmi,PVN_REX_NRMI)(&m, (x + o));
   }
   return PVN_FABI(pvn_rex_nrmi,PVN_REX_NRMI)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_rex_nrmi,PVN_REX_NRMI)(n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 float PVN_FABI(pvn_snrmp,PVN_SNRMP)(const float *const p, const size_t *const n, const float *const x)
@@ -1461,12 +1461,12 @@ float PVN_FABI(pvn_snrmp,PVN_SNRMP)(const float *const p, const size_t *const n,
     return PVN_FABI(pvn_snrm2,PVN_SNRM2)(n, x);
   if (isinf(*p))
     return PVN_FABI(pvn_snrmi,PVN_SNRMI)(n, x);
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   float _p[mt];
   for (size_t i = 0u; i < mt; ++i)
     _p[i] = 0.0f;
-#pragma omp parallel default(none) shared(n,x,_p)
+#pragma omp parallel default(none) shared(p,n,x,_p)
   {
     const size_t nt = (size_t)omp_get_num_threads();
     const size_t tn = (size_t)omp_get_thread_num();
@@ -1486,9 +1486,9 @@ float PVN_FABI(pvn_snrmp,PVN_SNRMP)(const float *const p, const size_t *const n,
       _p[tn] = PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &m, (x + o));
   }
   return PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &mt, _p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, n, x);
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
 }
 
 double PVN_FABI(pvn_dnrmp,PVN_DNRMP)(const double *const p, const size_t *const n, const double *const x)
@@ -1507,12 +1507,12 @@ double PVN_FABI(pvn_dnrmp,PVN_DNRMP)(const double *const p, const size_t *const 
     return PVN_FABI(pvn_dnrm2,PVN_DNRM2)(n, x);
   if (isinf(*p))
     return PVN_FABI(pvn_dnrmi,PVN_DNRMI)(n, x);
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   double _p[mt];
   for (size_t i = 0u; i < mt; ++i)
     _p[i] = 0.0;
-#pragma omp parallel default(none) shared(n,x,_p)
+#pragma omp parallel default(none) shared(p,n,x,_p)
   {
     const size_t nt = (size_t)omp_get_num_threads();
     const size_t tn = (size_t)omp_get_thread_num();
@@ -1532,9 +1532,9 @@ double PVN_FABI(pvn_dnrmp,PVN_DNRMP)(const double *const p, const size_t *const 
       _p[tn] = PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &m, (x + o));
   }
   return PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &mt, _p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size_t *const n, const long double *const x)
@@ -1553,12 +1553,12 @@ long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size
     return PVN_FABI(pvn_xnrm2,PVN_XNRM2)(n, x);
   if (isinf(*p))
     return PVN_FABI(pvn_xnrmi,PVN_XNRMI)(n, x);
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   long double _p[mt];
   for (size_t i = 0u; i < mt; ++i)
     _p[i] = 0.0L;
-#pragma omp parallel default(none) shared(n,x,_p)
+#pragma omp parallel default(none) shared(p,n,x,_p)
   {
     const size_t nt = (size_t)omp_get_num_threads();
     const size_t tn = (size_t)omp_get_thread_num();
@@ -1578,9 +1578,9 @@ long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size
       _p[tn] = PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &m, (x + o));
   }
   return PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &mt, _p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 #ifdef PVN_QUADMATH
@@ -1933,7 +1933,7 @@ __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128
     return -0.0q;
   if (!x)
     return -2.0q;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   __float128 p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -1966,13 +1966,13 @@ __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(&mt, p);
 #endif /* ?PVN_NRM_SAFE */
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
 #ifdef PVN_NRM_SAFE
   return PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(n, x);
 #else /* !PVN_NRM_SAFE */
   return PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(n, x);
 #endif /* ?PVN_NRM_SAFE */
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 __float128 PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const __float128 *const x)
@@ -1989,7 +1989,7 @@ __float128 PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const __float128
     return -0.0q;
   if (!x)
     return -2.0q;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   __float128 p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -2014,9 +2014,9 @@ __float128 PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const __float128
       p[tn] = PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(&m, (x + o));
   }
   return PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 
 __float128 PVN_FABI(pvn_qnrmi,PVN_QNRMI)(const size_t *const n, const __float128 *const x)
@@ -2027,7 +2027,7 @@ __float128 PVN_FABI(pvn_qnrmi,PVN_QNRMI)(const size_t *const n, const __float128
     return -0.0q;
   if (!x)
     return -2.0q;
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
   __float128 p[mt];
   for (size_t i = 0u; i < mt; ++i)
@@ -2052,9 +2052,9 @@ __float128 PVN_FABI(pvn_qnrmi,PVN_QNRMI)(const size_t *const n, const __float128
       p[tn] = PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(&m, (x + o));
   }
   return PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(&mt, p);
-#else /* !_OPENMP */
+#else /* PVN_OPENMP <= 1 */
   return PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(n, x);
-#endif /* ?_OPENMP */
+#endif /* ?PVN_OPENMP */
 }
 #else /* !PVN_QUADMATH */
 #ifdef PVN_MPFR

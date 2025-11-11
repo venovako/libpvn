@@ -15,10 +15,8 @@ ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 endif # !VECLEN
 ifdef OPENMP
+PFLAGS += -DPVN_OPENMP=$(OPENMP)
 CFLAGS += -fopenmp
-ifneq ($(OPENMP),true)
-CFLAGS += $(OPENMP)
-endif # !true
 else # !OPENMP
 CFLAGS += -fopenmp-simd
 endif # ?OPENMP

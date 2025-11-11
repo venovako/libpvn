@@ -19,10 +19,8 @@ ifeq ($(OPENMP),cilk)
 PFLAGS += -DPVN_CILK=3
 CFLAGS += -fopencilk
 else # !cilk
+PFLAGS += -DPVN_OPENMP=$(OPENMP)
 CFLAGS += -fopenmp
-ifneq ($(OPENMP),true)
-CFLAGS += $(OPENMP)
-endif # !true
 endif # ?cilk
 else # !OPENMP
 CFLAGS += -fopenmp-simd

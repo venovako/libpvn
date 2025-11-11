@@ -251,9 +251,9 @@ int main(int argc, char *argv[])
     long double EC = 0.0L, EU = 0.0L, EV = 0.0L, EG = 0.0L;
 #endif /* ?PVN_QUADMATH */
     if (t == 'S') {
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
       for (int i = 0u; i < n; ++i) {
         const float a11 = PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(&u, pp);
         if (!(a11 != 0.0f))
@@ -285,9 +285,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
@@ -300,9 +300,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
@@ -315,9 +315,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
@@ -330,9 +330,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
@@ -341,9 +341,9 @@ int main(int argc, char *argv[])
       }
     }
     else if (t == 'D') {
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
       for (int i = 0u; i < n; ++i) {
         const double a11 = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, pp);
         if (!(a11 != 0.0))
@@ -375,9 +375,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
@@ -390,9 +390,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
@@ -405,9 +405,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
@@ -420,9 +420,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
@@ -431,9 +431,9 @@ int main(int argc, char *argv[])
       }
     }
     else if (t == 'C') {
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
       for (int i = 0u; i < n; ++i) {
         const float a11r = PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(&u, pp);
         if (!(a11r != 0.0f))
@@ -486,9 +486,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
@@ -501,9 +501,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
@@ -516,9 +516,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
@@ -531,9 +531,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
@@ -542,9 +542,9 @@ int main(int argc, char *argv[])
       }
     }
     else if (t == 'Z') {
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp parallel for default(none) shared(n,s,u,upper,T,pp) reduction(max:EC,EU,EV,EG)
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
       for (int i = 0u; i < n; ++i) {
         const double a11r = PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(&u, pp);
         if (!(a11r != 0.0))
@@ -597,9 +597,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: cond_2(G) =%s\n", i, pvn_qtoa(s, E[0]));
         }
@@ -612,9 +612,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U^%c U - I ||_F =%s\n", i, T, pvn_qtoa(s, E[1]));
         }
@@ -627,9 +627,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || V^%c V - I ||_F =%s\n", i, T, pvn_qtoa(s, E[2]));
         }
@@ -642,9 +642,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
-#ifdef _OPENMP
+#if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #pragma omp critical
-#endif /* _OPENMP */
+#endif /* PVN_OPENMP */
         {
           (void)printf("%10d: || U Σ V^%c - G ||_F / || G ||_F =%s\n", i, T, pvn_qtoa(s, E[3]));
         }
