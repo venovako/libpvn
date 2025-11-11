@@ -153,7 +153,7 @@ int pvn_mpi_info_print(const int fd, const MPI_Info info)
             ((nkeys <= 1000) && (dprintf(fd, "%3d:(%s,%s)\n", i, key, val) < 10)) ||
             ((nkeys <= 10000) && (dprintf(fd, "%4d:(%s,%s)\n", i, key, val) < 11)) ||
             ((nkeys <= 100000) && (dprintf(fd, "%5d:(%s,%s)\n", i, key, val) < 12)) ||
-            ((nkeys > 100000) && (dprintf(fd, "%6d:(%s,%s)\n", i, key, val) < 13)) {
+            ((nkeys > 100000) && (dprintf(fd, "%6d:(%s,%s)\n", i, key, val) < 13))) {
           nkeys = -8;
           break;
         }
