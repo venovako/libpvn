@@ -149,10 +149,10 @@ int pvn_mpi_info_print(const int fd, const MPI_Info info)
           break;
         }
         if (((nkeys <= 10) && (dprintf(fd, "%d:(%s,%s)\n", i, key, val) < 8)) ||
-            ((nkeys <= 100) && (dprintf(fd, "%2d:(%s,%s)\n", i, key, val) < 9)) ||
-            ((nkeys <= 1000) && (dprintf(fd, "%3d:(%s,%s)\n", i, key, val) < 10)) ||
-            ((nkeys <= 10000) && (dprintf(fd, "%4d:(%s,%s)\n", i, key, val) < 11)) ||
-            ((nkeys <= 100000) && (dprintf(fd, "%5d:(%s,%s)\n", i, key, val) < 12)) ||
+            ((nkeys > 10) && (nkeys <= 100) && (dprintf(fd, "%2d:(%s,%s)\n", i, key, val) < 9)) ||
+            ((nkeys > 100) && (nkeys <= 1000) && (dprintf(fd, "%3d:(%s,%s)\n", i, key, val) < 10)) ||
+            ((nkeys > 1000) && (nkeys <= 10000) && (dprintf(fd, "%4d:(%s,%s)\n", i, key, val) < 11)) ||
+            ((nkeys > 10000) && (nkeys <= 100000) && (dprintf(fd, "%5d:(%s,%s)\n", i, key, val) < 12)) ||
             ((nkeys > 100000) && (dprintf(fd, "%6d:(%s,%s)\n", i, key, val) < 13))) {
           nkeys = -8;
           break;
