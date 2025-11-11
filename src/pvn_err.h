@@ -12,7 +12,6 @@
       (void)fprintf(stderr, "\n%s(%d): %s\n", __FILE__, __LINE__, (msg)); \
     else                                                                  \
       (void)fprintf(stderr, "\n%s(%d)\n", __FILE__, __LINE__);            \
-    (void)fflush(stderr);                                                 \
     exit(EXIT_FAILURE);                                                   \
   }
 #else /* PVN_STOP */
