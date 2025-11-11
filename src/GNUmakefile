@@ -97,6 +97,11 @@ pvn_timer.c
 ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 SRCS += pvn_prof.c
 endif # !MINGW64
+ifeq ($(findstring mpi,$(COMPILER_PREFIX)),mpi)
+PFLAGS += -DPVN_MPI=50 -DPVN_MPI_ABI=10
+CFLAGS += -mpi-abi
+SRCS += pvn_mpi.c
+endif # MPI
 
 ifdef SLEEF
 INCS += -I$(SLEEF)/include

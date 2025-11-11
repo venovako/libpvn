@@ -1,3 +1,4 @@
+/* mpi[gcc|icx] -mpi-abi check_mpi.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include "mpi.h"
@@ -100,10 +101,10 @@ int main(int argc, char* argv[])
   (void)fprintf(stderr, "MPI_Get_version=%d\n", MPI_Get_version(&i, &j));
   (void)fprintf(stdout, "%d.%d\n", i, j);
 #if (MPI_MAX_LIBRARY_VERSION_STRING >= MPI_MAX_PROCESSOR_NAME)
-  char s[MPI_MAX_LIBRARY_VERSION_STRING];
+  char s[MPI_MAX_LIBRARY_VERSION_STRING] = { '\0' };
   j = MPI_MAX_LIBRARY_VERSION_STRING;
 #else
-  char s[MPI_MAX_PROCESSOR_NAME];
+  char s[MPI_MAX_PROCESSOR_NAME] = { '\0' };
   j = MPI_MAX_PROCESSOR_NAME;
 #endif
   (void)fprintf(stderr, "MPI_Get_library_version=%d\n", MPI_Get_library_version(s, &j));
@@ -134,6 +135,7 @@ int main(int argc, char* argv[])
   }
   info = MPI_INFO_ENV;
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
+  info = MPI_INFO_NULL;
   (void)fprintf(stderr, "MPI_Abi_get_fortran_info=%d\n", MPI_Abi_get_fortran_info(&info));
   (void)fprintf(stderr, "info_print=%d\n", info_print(stdout, info));
   (void)fprintf(stderr, "MPI_info_free=%d\n", MPI_Info_free(&info));

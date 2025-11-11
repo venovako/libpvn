@@ -77,6 +77,9 @@
 #define cilk_scope
 #define cilk_spawn
 #endif /* !PVN_CILK */
+#ifdef PVN_MPI
+#include "mpi.h"
+#endif /* PVN_MPI */
 
 #include "pvn_ext.h"
 
@@ -287,6 +290,9 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #include "pvn_prof.h"
 #endif /* !_WIN32 */
 #include "pvn_timer.h"
+#ifdef PVN_MPI
+#include "pvn_mpi.h"
+#endif /* PVN_MPI */
 
 #ifdef PVN_GMP
 #include "gmp.h"
