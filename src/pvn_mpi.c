@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
   (void)dprintf(STDERR_FILENO, "MPI_Comm_get_info=%d\n", MPI_Comm_get_info(MPI_COMM_WORLD, &info));
   (void)dprintf(STDERR_FILENO, "pvn_mpi_info_print=%d\n", pvn_mpi_info_print(STDOUT_FILENO, info));
   (void)dprintf(STDERR_FILENO, "MPI_info_free=%d\n", MPI_Info_free(&info));
-  (void)dprintf(STDERR_FILENO, "MPI_Comm_rank=%d\n", MPI_Comm_rank(&i));
-  (void)dprintf(STDERR_FILENO, "MPI_Comm_size=%d\n", MPI_Comm_size(&j));
+  (void)dprintf(STDERR_FILENO, "MPI_Comm_rank=%d\n", MPI_Comm_rank(MPI_COMM_WORLD, &i));
+  (void)dprintf(STDERR_FILENO, "MPI_Comm_size=%d\n", MPI_Comm_size(MPI_COMM_WORLD, &j));
   (void)dprintf(STDOUT_FILENO, "%d/%d\n", i, j);
   int *a = (int*)NULL;
   /* TODO: unsupported with Intel(R) MPI Library 2021.17 for Linux* OS
