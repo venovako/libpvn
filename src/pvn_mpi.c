@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
   (void)dprintf(STDERR_FILENO, "MPI_Abi_get_info=%d\n", MPI_Abi_get_info(&info));
   (void)dprintf(STDERR_FILENO, "pvn_mpi_info_print=%d\n", pvn_mpi_info_print(STDOUT_FILENO, info));
   (void)dprintf(STDERR_FILENO, "MPI_Info_free=%d\n", MPI_Info_free(&info));
-  j = (atoi(argv[1]) ? MPI_THREAD_SINGLE : MPI_THREAD_MULTIPLE);
+  j = (atoi(argv[1]) ? MPI_THREAD_MULTIPLE : MPI_THREAD_SINGLE);
   (void)dprintf(STDERR_FILENO, "pvn_mpi_initialize(%d)=%d\n", j, pvn_mpi_initialize(&argc, &argv, j, &i));
   switch (i) {
   case MPI_THREAD_SINGLE:
@@ -165,8 +165,6 @@ int pvn_mpi_info_print(const int fd, MPI_Info info)
   }
   if (val)
     free(val);
-  if (fsync(fd))
-    return -11;
   return nkeys;
 }
 
