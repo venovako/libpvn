@@ -1,4 +1,4 @@
-#include "pvn_mpi.h"
+#include "pvn.h"
 
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
