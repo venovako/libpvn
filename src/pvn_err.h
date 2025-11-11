@@ -27,10 +27,8 @@
 #define PVN_BTRACE {                                        \
     void* buffer[PVN_BTRACE_BUFSIZ];                        \
     const int bsz = backtrace(buffer, (PVN_BTRACE_BUFSIZ)); \
-    if (bsz > 0) {                                          \
+    if (bsz > 0)                                            \
       backtrace_symbols_fd(buffer, bsz, STDERR_FILENO);     \
-      (void)fsync(STDERR_FILENO);                           \
-    }                                                       \
   }
 #else /* PVN_BTRACE */
 #error PVN_BTRACE already defined
@@ -46,7 +44,6 @@
       (void)dprintf(STDERR_FILENO, "\n%s(%d) in thread %p\n",     \
                     __FILE__, __LINE__,                           \
                     (const void*)pthread_self());                 \
-    (void)fsync(STDERR_FILENO);                                   \
     PVN_BTRACE                                                    \
     exit(EXIT_FAILURE);                                           \
   }
