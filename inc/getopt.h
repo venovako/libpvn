@@ -36,8 +36,6 @@
 /* modified by venovako from /usr/src/include/getopt.h */
 /* https://cvsweb.openbsd.org/src/include/getopt.h */
 
-#include "pvn_ext.h"
-
 /*
  * GNU-like getopt_long()
  */

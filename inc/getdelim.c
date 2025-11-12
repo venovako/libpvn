@@ -1,3 +1,12 @@
+#include "pvn_ext.h"
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef _WIN32
+#ifndef ssize_t
+#define ssize_t long long
+#endif /* !ssize_t */
+#endif /* _WIN32 */
 #include "getdelim.h"
 
 ssize_t getdelim(char **restrict linep, size_t *restrict linecapp, int delimiter, FILE *restrict stream)
@@ -21,7 +30,7 @@ ssize_t getdelim(char **restrict linep, size_t *restrict linecapp, int delimiter
     }
     if (((*linep)[r++] = c) == delimiter)
       break;
-    if (r >= SSIZE_MAX)
+    if (r >= LLONG_MAX)
       return -1;
   }
   (*linep)[r] = '\0';

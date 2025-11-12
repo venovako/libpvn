@@ -52,12 +52,13 @@
 /* modified by venovako from /usr/src/lib/libc/stdlib/getopt_long.c */
 /* https://cvsweb.openbsd.org/src/lib/libc/stdlib/getopt_long.c */
 
+#include "pvn_ext.h"
 #include <errno.h>
-#include "getopt.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include "getopt.h"
 
 /* venovako: */ static const char *__progname = (const char*)NULL;
 

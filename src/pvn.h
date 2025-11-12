@@ -58,8 +58,6 @@
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <io.h>
-#include "../inc/getdelim.h"
-#include "../inc/getopt.h"
 #else /* !_WIN32 */
 #include <dlfcn.h>
 #include <getopt.h>
@@ -263,6 +261,8 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #ifndef off_t
 #define off_t ssize_t
 #endif /* !off_t */
+#include "../inc/getdelim.h"
+#include "../inc/getopt.h"
 #endif /* _WIN32 */
 
 #include "pvn_aux.h"
