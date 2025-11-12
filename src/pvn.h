@@ -58,6 +58,7 @@
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <io.h>
+#include "../inc/getdelim.h"
 #include "../inc/getopt.h"
 #else /* !_WIN32 */
 #include <dlfcn.h>
