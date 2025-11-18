@@ -27,26 +27,33 @@ int main(int argc, char *argv[])
     (void)printf("PVN_QUADMATH    : %d\n", PVN_QUADMATH);
 #endif /* PVN_QUADMATH */
     (void)printf("PVN_CC          : %s\n", PVN_CC);
+    (void)printf("PVN_FC          : %s\n", PVN_FC);
     (void)printf("PVN_CPPFLAGS    : %s\n", PVN_CPPFLAGS);
     (void)printf("PVN_CFLAGS      : %s\n", PVN_CFLAGS);
+    (void)printf("PVN_FCFLAGS     : %s\n", PVN_FCFLAGS);
     (void)printf("PVN_LIBS        : %s\n", PVN_LIBS);
     (void)printf("PVN_LDFLAGS     : %s\n", PVN_LDFLAGS);
   }
   else {
     struct option longopts[] = {
       { "cc",       no_argument, (int*)NULL, 'C' },
+      { "fc",       no_argument, (int*)NULL, 'F' },
       { "ldflags",  no_argument, (int*)NULL, 'L' },
       { "cflags",   no_argument, (int*)NULL, 'c' },
       { "dynamic",  no_argument, (int*)NULL, 'd' },
+      { "fcflags",  no_argument, (int*)NULL, 'f' },
       { "cppflags", no_argument, (int*)NULL, 'i' },
       { "libs",     no_argument, (int*)NULL, 'l' },
       { "parallel", no_argument, (int*)NULL, 'p' },
       { (char*)NULL, 0, (int*)NULL, 0 }
     };
-    for (int ch = 0; (ch = getopt_long(argc, argv, "CLcdilp", longopts, (int*)NULL)) != -1; ) {
+    for (int ch = 0; (ch = getopt_long(argc, argv, "CFLcdfilp", longopts, (int*)NULL)) != -1; ) {
       switch ((char)ch) {
       case 'C':
         (void)printf("%s\n", PVN_CC);
+        break;
+      case 'F':
+        (void)printf("%s\n", PVN_FC);
         break;
       case 'L':
         (void)printf("%s\n", PVN_LDFLAGS);
@@ -60,6 +67,9 @@ int main(int argc, char *argv[])
 #else /* !DYNAMIC */
         (void)printf("false\n");
 #endif /* ?DYNAMIC */
+        break;
+      case 'f':
+        (void)printf("%s\n", PVN_FCFLAGS);
         break;
       case 'i':
         (void)printf("%s\n", PVN_CPPFLAGS);
@@ -89,7 +99,7 @@ int main(int argc, char *argv[])
   }
   return EXIT_SUCCESS;
  err:
-  (void)fprintf(stderr, "pvn.exe [-C|--cc] [-L|--ldflags] [-c|--cflags] [-d|--dynamic] [-i|--cppflags] [-l|--libs] [-p|--parallel]\n");
+  (void)fprintf(stderr, "pvn.exe [-C|--cc] [-F|--fc] [-L|--ldflags] [-c|--cflags] [-d|--dynamic] [-f|--fcflags] [-i|--cppflags] [-l|--libs] [-p|--parallel]\n");
   return EXIT_FAILURE;
 }
 #else /* !PVN_TEST */
