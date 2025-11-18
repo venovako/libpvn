@@ -13,7 +13,7 @@ endif # !PROFILE
 else # DEBUG
 PFLAGS=-DPVN_DEBUG=STDERR_FILENO
 CFLAGS=-O0 -g3
-FCFLAGS=-fpp -O0 -g3 -init=arrays,zero #-check all
+FCFLAGS=-fpp -O0 -g3 -init=arrays,zero -check all
 endif # ?NDEBUG
 ifndef MARCH
 MARCH=Host

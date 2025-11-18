@@ -100,6 +100,7 @@ endif # !MINGW64
 ifeq ($(findstring mpi,$(COMPILER_PREFIX)),mpi)
 PFLAGS += -DPVN_MPI=50 -DPVN_MPI_ABI=10
 CFLAGS += -mpi-abi
+FCFLAGS += -mt_mpi
 SRCS += pvn_mpi.c
 endif # MPI
 
