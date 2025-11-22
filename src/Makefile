@@ -19,9 +19,9 @@ PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7
 PFLAGS=$(IFLAGS)
 !ENDIF # ?MD
 CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-FCFLAGS=/nologo /fpp /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics /Qexceptions /Qopt-report:3 /Qvec-threshold:0 /traceback
+FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics /Qopt-report:3 /Qvec-threshold:0 /traceback /$(CRT)
 SRCDIR=$(subst \,\\,$(MAKEDIR))
-AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /$(CRT)\"" /DPVN_FCFLAGS="\"$(FCFLAGS) /$(CRT)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
+AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /$(CRT)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
 !IF "$(CRT)"=="MD"
 CXFLAGS=$(CFLAGS) /MD $(PFLAGS) /I.
 CCFLAGS=$(CXFLAGS) /DPVN_DYNAMIC=3
@@ -147,6 +147,7 @@ pvn_lock.exe \
 pvn_timer.exe
 
 all: $(LIBS) $(EXES)
+	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
 	@echo "nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD] [all|clean|help]"
