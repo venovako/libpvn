@@ -1,14 +1,15 @@
 ARFLAGS=rsv
 CC=$(COMPILER_PREFIX)gcc$(COMPILER_SUFFIX)
 FC=$(COMPILER_PREFIX)gfortran$(COMPILER_SUFFIX)
+FCFLAGS=-cpp -ffree-line-length-none
 ifdef NDEBUG
 PFLAGS=-DNDEBUG=$(NDEBUG)
 CFLAGS=-O$(NDEBUG) -fno-math-errno
-FCFLAGS=-cpp -O$(NDEBUG) -fno-math-errno
+FCFLAGS += -O$(NDEBUG) -fno-math-errno
 else # DEBUG
 PFLAGS=-DPVN_DEBUG=STDERR_FILENO
 CFLAGS=-Og -ggdb3
-FCFLAGS=-cpp -Og -ggdb3 -finit-local-zero -finit-derived
+FCFLAGS += -Og -ggdb3 -finit-local-zero -finit-derived
 endif # ?NDEBUG
 ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
