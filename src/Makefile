@@ -148,17 +148,17 @@ pvn_timer.exe
 
 all: $(LIBS) $(EXES)
 	pvn.exe > tmp.mk
-	@echo "BUILT: $(LIBS) $(EXES)"
+	@echo BUILT: $(LIBS) $(EXES)
 
 help:
-	@echo "nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD] [all|clean|help]"
+	@echo nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD] [all|clean|help]
 
 pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
 
 pvn.dll: $(OBJS) Makefile
-	@echo "=== EXPERIMENTALLY LINKING WITH THE GCC's LIBQUADMATH ==="
-	@echo "=== DO NOT ATTEMPT THIS FOR ANYTHING REDISTRIBUTABLE! ==="
+	@echo === EXPERIMENTALLY LINKING WITH THE GCC's LIBQUADMATH ===
+	@echo === DO NOT ATTEMPT THIS FOR ANYTHING REDISTRIBUTABLE! ===
 	$(CC) $(CDFLAGS) /Fe$@ $(OBJS) /link /RELEASE /LIBPATH:$(MSYS64)\ucrt64\lib libquadmath.dll.a libgcc_s.a
 	copy /Y /V $(MSYS64)\ucrt64\bin\libgcc_s_seh-1.dll .
 	copy /Y /V $(MSYS64)\ucrt64\bin\libquadmath-0.dll .
@@ -178,3 +178,4 @@ clean:
 	-$(RM) ..\inc\*.obj
 	-$(RM) *.optrpt
 	-$(RM) *.pdb
+	-$(RM) tmp.mk
