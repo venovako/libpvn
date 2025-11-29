@@ -417,6 +417,7 @@ CLFLAGS=$(subst PIC,PIE,$(CCFLAGS)) $(AFLAGS)
 .PHONY: all help clean
 
 all: $(LIBS) $(EXES)
+	./pvn.exe > tmp.mk
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
@@ -456,3 +457,4 @@ clean:
 	-$(RM) ../inc/*.o
 	-$(RM) ../inc/*.optrpt
 	-$(RM) *.dSYM
+	-$(RM) tmp.mk
