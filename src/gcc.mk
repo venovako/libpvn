@@ -9,7 +9,7 @@ FCFLAGS += -O$(NDEBUG) -fno-math-errno
 else # DEBUG
 PFLAGS=-DPVN_DEBUG=STDERR_FILENO
 CFLAGS=-Og -ggdb3
-FCFLAGS += -Og -ggdb3 -finit-local-zero -finit-derived
+FCFLAGS += -Og -ggdb3 -finit-local-zero -finit-derived -fcheck=all
 endif # ?NDEBUG
 ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
