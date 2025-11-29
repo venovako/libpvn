@@ -4,35 +4,35 @@
 int main(int argc, char *argv[])
 {
   if (argc == 1) {
-    (void)printf("built on        : %s\n", __DATE__);
-    (void)printf("debug           : ");
+    (void)fprintf(stderr, "built on        : %s\n", __DATE__);
+    (void)fprintf(stderr, "debug           : ");
 #ifdef NDEBUG
-    (void)printf("false\n");
+    (void)fprintf(stderr, "false\n");
 #else /* !NDEBUG */
-    (void)printf("true\n");
+    (void)fprintf(stderr, "true\n");
 #endif /* ?NDEBUG */
 #ifdef PVN_CILK
-    (void)printf("OpenCilk        : %d\n", PVN_CILK);
+    (void)fprintf(stderr, "OpenCilk        : %d\n", PVN_CILK);
 #else /* !PVN_CILK */
 #ifdef _OPENMP
-    (void)printf("OpenMP          : %d\n", _OPENMP);
+    (void)fprintf(stderr, "OpenMP          : %d\n", _OPENMP);
 #endif /* _OPENMP */
 #endif /* ?PVN_CILK */
-    (void)printf("endianness      : %s\n", (pvn_le() ? "little" : "big"));
-    (void)printf("math_errhandling: %d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
+    (void)fprintf(stderr, "endianness      : %s\n", (pvn_le() ? "little" : "big"));
+    (void)fprintf(stderr, "math_errhandling: %d\n", PVN_FABI(c_math_err,C_MATH_ERR)());
 #ifdef PVN_CR_MATH
-    (void)printf("PVN_CR_MATH     : %d\n", PVN_CR_MATH);
+    (void)fprintf(stderr, "PVN_CR_MATH     : %d\n", PVN_CR_MATH);
 #endif /* PVN_CR_MATH */
 #ifdef PVN_QUADMATH
-    (void)printf("PVN_QUADMATH    : %d\n", PVN_QUADMATH);
+    (void)fprintf(stderr, "PVN_QUADMATH    : %d\n", PVN_QUADMATH);
 #endif /* PVN_QUADMATH */
-    (void)printf("PVN_CC          : %s\n", PVN_CC);
-    (void)printf("PVN_FC          : %s\n", PVN_FC);
-    (void)printf("PVN_CPPFLAGS    : %s\n", PVN_CPPFLAGS);
-    (void)printf("PVN_CFLAGS      : %s\n", PVN_CFLAGS);
-    (void)printf("PVN_FCFLAGS     : %s\n", PVN_FCFLAGS);
-    (void)printf("PVN_LIBS        : %s\n", PVN_LIBS);
-    (void)printf("PVN_LDFLAGS     : %s\n", PVN_LDFLAGS);
+    (void)fprintf(stdout, "PVN_CC=%s\n", PVN_CC);
+    (void)fprintf(stdout, "PVN_FC=%s\n", PVN_FC);
+    (void)fprintf(stdout, "PVN_CPPFLAGS=%s\n", PVN_CPPFLAGS);
+    (void)fprintf(stdout, "PVN_CFLAGS=%s\n", PVN_CFLAGS);
+    (void)fprintf(stdout, "PVN_FCFLAGS=%s\n", PVN_FCFLAGS);
+    (void)fprintf(stdout, "PVN_LIBS=%s\n", PVN_LIBS);
+    (void)fprintf(stdout, "PVN_LDFLAGS=%s\n", PVN_LDFLAGS);
   }
   else {
     struct option longopts[] = {
@@ -50,41 +50,41 @@ int main(int argc, char *argv[])
     for (int ch = 0; (ch = getopt_long(argc, argv, "CFLcdfilp", longopts, (int*)NULL)) != -1; ) {
       switch ((char)ch) {
       case 'C':
-        (void)printf("%s\n", PVN_CC);
+        (void)fprintf(stdout, "%s\n", PVN_CC);
         break;
       case 'F':
-        (void)printf("%s\n", PVN_FC);
+        (void)fprintf(stdout, "%s\n", PVN_FC);
         break;
       case 'L':
-        (void)printf("%s\n", PVN_LDFLAGS);
+        (void)fprintf(stdout, "%s\n", PVN_LDFLAGS);
         break;
       case 'c':
-        (void)printf("%s\n", PVN_CFLAGS);
+        (void)fprintf(stdout, "%s\n", PVN_CFLAGS);
         break;
       case 'd':
 #if (defined(PVN_DYNAMIC) || (defined(_WIN32) && defined(_DLL)))
-        (void)printf("true\n");
+        (void)fprintf(stdout, "true\n");
 #else /* !DYNAMIC */
-        (void)printf("false\n");
+        (void)fprintf(stdout, "false\n");
 #endif /* ?DYNAMIC */
         break;
       case 'f':
-        (void)printf("%s\n", PVN_FCFLAGS);
+        (void)fprintf(stdout, "%s\n", PVN_FCFLAGS);
         break;
       case 'i':
-        (void)printf("%s\n", PVN_CPPFLAGS);
+        (void)fprintf(stdout, "%s\n", PVN_CPPFLAGS);
         break;
       case 'l':
-        (void)printf("%s\n", PVN_LIBS);
+        (void)fprintf(stdout, "%s\n", PVN_LIBS);
         break;
       case 'p':
 #ifdef _OPENMP
-        (void)printf("OpenMP=%d\n", _OPENMP);
+        (void)fprintf(stdout, "OpenMP=%d\n", _OPENMP);
 #else /* !_OPENMP */
 #ifdef PVN_CILK
-        (void)printf("OpenCilk=%d\n", PVN_CILK);
+        (void)fprintf(stdout, "OpenCilk=%d\n", PVN_CILK);
 #else /* !PVN_CILK */
-        (void)printf("simd\n");
+        (void)fprintf(stdout, "simd\n");
 #endif /* ?PVN_CILK */
 #endif /* ?_OPENMP */
         break;

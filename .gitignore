@@ -81,4 +81,4 @@ dkms.conf
 *.pt
 *.st
 doc/html
-tmp
+tmp*

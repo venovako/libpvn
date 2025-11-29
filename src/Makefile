@@ -147,6 +147,7 @@ pvn_lock.exe \
 pvn_timer.exe
 
 all: $(LIBS) $(EXES)
+	pvn.exe > tmp.mk
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
