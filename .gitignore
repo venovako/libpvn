@@ -77,8 +77,9 @@ dkms.conf
 # Other
 .DS_Store
 .idea
+pvn.mk
 *.bt
 *.pt
 *.st
 doc/html
-tmp*
+tmp
