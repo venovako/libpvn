@@ -317,7 +317,7 @@ ifndef STATIC
 LNK += -Wl,-rpath=$(SLEEF)/$(LIB64)
 endif # !STATIC
 endif # ?Darwin
-LNK += -lsleef -ltlfloat
+LNK += -lsleefquad -lsleef -ltlfloat
 endif # SLEEF
 ifdef MPC
 LNK += -L$(MPC)/$(LIB64)
