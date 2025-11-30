@@ -189,4 +189,4 @@ clean:
 	-$(RM) ..\inc\*.obj
 	-$(RM) *.optrpt
 	-$(RM) *.pdb
-	-$(RM) tmp.mk
+	-$(RM) pvn.mk
