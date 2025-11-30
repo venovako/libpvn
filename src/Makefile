@@ -33,7 +33,7 @@ CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc
 FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /$(CRT)
 SRCDIR=$(subst \,\\,$(MAKEDIR))
 AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /$(CRT)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
-!IF "$(CRT)"=="MD"
+!IF "$(CRT)"!="MT"
 CXFLAGS=$(CFLAGS) /MD $(PFLAGS) /I.
 CCFLAGS=$(CXFLAGS) /DPVN_DYNAMIC=3
 CDFLAGS=$(CXFLAGS) /LD /Wno-unused-command-line-argument
@@ -47,7 +47,7 @@ CXFLAGS=$(CFLAGS) /MT $(PFLAGS) /I.
 CCFLAGS=$(CXFLAGS)
 CLFLAGS=$(CXFLAGS) /DPVN_TEST=2 $(AFLAGS)
 LIBS=pvn.lib
-!ENDIF # ?MD
+!ENDIF # ?MT
 
 SRCS= \
 pvn.c \
