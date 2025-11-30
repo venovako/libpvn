@@ -14,12 +14,14 @@ CRT=MT
 !ENDIF # !CRT
 IFLAGS=/DNDEBUG=$(NDEBUG) /DPVN_OS=Windows /DPVN_ARCH=x64 /DPVN_COMPILER=icx /DPVN_CR_MATH=1 /DPVN_QUADMATH=2 /DPVN_NRM_SAFE=15
 !IF "$(CRT)"=="MD"
-PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7
+PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7 /DPVN_OPENMP=1
+OFLAGS=/Qopenmp
 !ELSE # MT
 PFLAGS=$(IFLAGS)
+OFLAGS=/Qopenmp-simd
 !ENDIF # ?MD
-CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics /Qopt-report:3 /Qvec-threshold:0 /traceback /$(CRT)
+CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /$(CRT)
 SRCDIR=$(subst \,\\,$(MAKEDIR))
 AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /$(CRT)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
 !IF "$(CRT)"=="MD"
