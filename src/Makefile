@@ -14,7 +14,16 @@ CRT=MT
 !ENDIF # !CRT
 IFLAGS=/DNDEBUG=$(NDEBUG) /DPVN_OS=Windows /DPVN_ARCH=x64 /DPVN_COMPILER=icx /DPVN_CR_MATH=1 /DPVN_QUADMATH=2 /DPVN_NRM_SAFE=15
 !IF "$(CRT)"=="MD"
+PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7
+OFLAGS=/Qopenmp-simd
+!ELSEIF "$(CRT)"=="Md"
+PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7 /DPVN_OPENMP=0
+OFLAGS=/Qopenmp
+!ELSEIF "$(CRT)"=="mD"
 PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7 /DPVN_OPENMP=1
+OFLAGS=/Qopenmp
+!ELSEIF "$(CRT)"=="md"
+PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7 /DPVN_OPENMP=2
 OFLAGS=/Qopenmp
 !ELSE # MT
 PFLAGS=$(IFLAGS)
@@ -153,7 +162,7 @@ all: $(LIBS) $(EXES)
 	@echo BUILT: $(LIBS) $(EXES)
 
 help:
-	@echo nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD] [all|clean|help]
+	@echo nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD|Md|mD|md] [all|clean|help]
 
 pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
