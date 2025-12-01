@@ -16,23 +16,28 @@ IFLAGS=/DNDEBUG=$(NDEBUG) /DPVN_OS=Windows /DPVN_ARCH=x64 /DPVN_COMPILER=icx /DP
 !IF "$(CRT)"=="MD"
 PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7
 OFLAGS=/Qopenmp-simd
+RFLAGS=/MD
 !ELSEIF "$(CRT)"=="Md"
 PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7 /DPVN_OPENMP=0
 OFLAGS=/Qopenmp
+RFLAGS=/MD
 !ELSEIF "$(CRT)"=="mD"
 PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7 /DPVN_OPENMP=1
 OFLAGS=/Qopenmp
+RFLAGS=/MD
 !ELSEIF "$(CRT)"=="md"
 PFLAGS=$(IFLAGS) /DPVN_SV2_SAFE=7 /DPVN_OPENMP=2
 OFLAGS=/Qopenmp
+RFLAGS=/MD
 !ELSE # MT
 PFLAGS=$(IFLAGS)
 OFLAGS=/Qopenmp-simd
+RFLAGS=/MT
 !ENDIF # ?MD
 CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /$(CRT)
+FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback $(RFLAGS)
 SRCDIR=$(subst \,\\,$(MAKEDIR))
-AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) /$(CRT)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
+AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) $(RFLAGS)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
 !IF "$(CRT)"!="MT"
 CXFLAGS=$(CFLAGS) /MD $(PFLAGS) /I.
 CCFLAGS=$(CXFLAGS) /DPVN_DYNAMIC=3
