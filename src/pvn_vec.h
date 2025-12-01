@@ -226,7 +226,7 @@ static inline __float128 pvn_v1q_rsqrt(const __float128 x)
 #if (defined(__AVX__) && defined(__FMA__))
 #include <immintrin.h>
 
-#ifdef PVN_SLEEF
+#if (defined(PVN_SLEEF) && (PVN_SLEEF > 0))
 #ifndef PVN_INTEL
 #include "sleefinline_avx2128.h"
 #include "sleefinline_avx2.h"
@@ -289,7 +289,7 @@ static inline float pvn_v4s_hypot_red(register const __m128 x)
   return pvn_v1s_hypot(pvn_v1s_hypot(v[0], v[2]), pvn_v1s_hypot(v[1], v[3]));
 }
 
-#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+#if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m128 pvn_v4s_lp(const float _p, register const __m128 x, register const __m128 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -388,7 +388,7 @@ static inline double pvn_v2d_hypot_red(register const __m128d x)
   return pvn_v1d_hypot(v[0], v[1]);
 }
 
-#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+#if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m128d pvn_v2d_lp(const double _p, register const __m128d x, register const __m128d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -483,7 +483,7 @@ static inline float pvn_v8s_hypot_red(register const __m256 x)
   return pvn_v4s_hypot_red(pvn_v4s_hypot(_mm256_extractf128_ps(x, 0), _mm256_extractf128_ps(x, 1)));
 }
 
-#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+#if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m256 pvn_v8s_lp(const float _p, register const __m256 x, register const __m256 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -574,7 +574,7 @@ static inline double pvn_v4d_hypot_red(register const __m256d x)
   return pvn_v2d_hypot_red(pvn_v2d_hypot(_mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
 
-#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+#if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m256d pvn_v4d_lp(const double _p, register const __m256d x, register const __m256d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -671,7 +671,7 @@ static inline float pvn_v16s_hypot_red(register const __m512 x)
   return pvn_v8s_hypot_red(pvn_v8s_hypot(_mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 0)), _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(x), 1))));
 }
 
-#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+#if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m512 pvn_v16s_lp(const float _p, register const __m512 x, register const __m512 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -762,7 +762,7 @@ static inline double pvn_v8d_hypot_red(register const __m512d x)
   return pvn_v4d_hypot_red(pvn_v4d_hypot(_mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
 
-#if (defined(PVN_SLEEF) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+#if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
 static inline __m512d pvn_v8d_lp(const double _p, register const __m512d x, register const __m512d y)
 {
   /* s and c should be computed only once for a fixed p */
