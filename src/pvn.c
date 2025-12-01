@@ -27,9 +27,11 @@ int main(int argc, char *argv[])
     (void)fprintf(stderr, "PVN_QUADMATH    : %d\n", PVN_QUADMATH);
 #endif /* PVN_QUADMATH */
     (void)fprintf(stdout, "PVN_CC=%s\n", PVN_CC);
+    (void)fprintf(stdout, "PVN_CXX=%s\n", PVN_CXX);
     (void)fprintf(stdout, "PVN_FC=%s\n", PVN_FC);
     (void)fprintf(stdout, "PVN_CPPFLAGS=%s\n", PVN_CPPFLAGS);
     (void)fprintf(stdout, "PVN_CFLAGS=%s\n", PVN_CFLAGS);
+    (void)fprintf(stdout, "PVN_CXXFLAGS=%s\n", PVN_CXXFLAGS);
     (void)fprintf(stdout, "PVN_FCFLAGS=%s\n", PVN_FCFLAGS);
     (void)fprintf(stdout, "PVN_LIBS=%s\n", PVN_LIBS);
     (void)fprintf(stdout, "PVN_LDFLAGS=%s\n", PVN_LDFLAGS);
@@ -39,15 +41,17 @@ int main(int argc, char *argv[])
       { "cc",       no_argument, (int*)NULL, 'C' },
       { "fc",       no_argument, (int*)NULL, 'F' },
       { "ldflags",  no_argument, (int*)NULL, 'L' },
+      { "cxx",      no_argument, (int*)NULL, 'X' },
       { "cflags",   no_argument, (int*)NULL, 'c' },
       { "dynamic",  no_argument, (int*)NULL, 'd' },
       { "fcflags",  no_argument, (int*)NULL, 'f' },
       { "cppflags", no_argument, (int*)NULL, 'i' },
       { "libs",     no_argument, (int*)NULL, 'l' },
       { "parallel", no_argument, (int*)NULL, 'p' },
+      { "cxxflags", no_argument, (int*)NULL, 'x' },
       { (char*)NULL, 0, (int*)NULL, 0 }
     };
-    for (int ch = 0; (ch = getopt_long(argc, argv, "CFLcdfilp", longopts, (int*)NULL)) != -1; ) {
+    for (int ch = 0; (ch = getopt_long(argc, argv, "CFLXcdfilpx", longopts, (int*)NULL)) != -1; ) {
       switch ((char)ch) {
       case 'C':
         (void)fprintf(stdout, "%s\n", PVN_CC);
@@ -57,6 +61,9 @@ int main(int argc, char *argv[])
         break;
       case 'L':
         (void)fprintf(stdout, "%s\n", PVN_LDFLAGS);
+        break;
+      case 'X':
+        (void)fprintf(stdout, "%s\n", PVN_CXX);
         break;
       case 'c':
         (void)fprintf(stdout, "%s\n", PVN_CFLAGS);
@@ -88,6 +95,9 @@ int main(int argc, char *argv[])
 #endif /* ?PVN_CILK */
 #endif /* ?_OPENMP */
         break;
+      case 'x':
+        (void)fprintf(stdout, "%s\n", PVN_CXXFLAGS);
+        break;
       default:
         goto err;
       }
@@ -99,7 +109,7 @@ int main(int argc, char *argv[])
   }
   return EXIT_SUCCESS;
  err:
-  (void)fprintf(stderr, "pvn.exe [-C|--cc] [-F|--fc] [-L|--ldflags] [-c|--cflags] [-d|--dynamic] [-f|--fcflags] [-i|--cppflags] [-l|--libs] [-p|--parallel]\n");
+  (void)fprintf(stderr, "pvn.exe [-C|--cc] [-F|--fc] [-X|--cxx] [-L|--ldflags] [-c|--cflags] [-d|--dynamic] [-f|--fcflags] [-i|--cppflags] [-l|--libs] [-p|--parallel] [-x|--cxxflags]\n");
   return EXIT_FAILURE;
 }
 #else /* !PVN_TEST */

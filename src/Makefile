@@ -2,6 +2,7 @@ RM=del /F
 AR=lib.exe
 ARFLAGS=/NOLOGO /VERBOSE
 CC=icx.exe
+CXX=icx.exe
 FC=ifx.exe
 !IFNDEF MARCH
 MARCH=Host
@@ -34,10 +35,11 @@ PFLAGS=$(IFLAGS)
 OFLAGS=/Qopenmp-simd
 RFLAGS=/MT
 !ENDIF # ?MD
-CFLAGS=/nologo /Qstd:c18 /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+CFLAGS=/nologo /Qstd:gnu2y /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+CXXFLAGS=/nologo /Qstd:gnu++2c /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
 FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback $(RFLAGS)
 SRCDIR=$(subst \,\\,$(MAKEDIR))
-AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) $(RFLAGS)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
+AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_CXX="\"$(CXX)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) $(RFLAGS)\"" /DPVN_CXXFLAGS="\"$(CXXFLAGS) $(RFLAGS)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
 !IF "$(CRT)"!="MT"
 CXFLAGS=$(CFLAGS) /MD $(PFLAGS) /I.
 CCFLAGS=$(CXFLAGS) /DPVN_DYNAMIC=3
