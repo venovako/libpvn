@@ -106,8 +106,11 @@ SRCS += pvn_mpi.c
 endif # MPI
 
 ifdef SLEEF
+ifndef sleef
+sleef=1
+endif # !sleef
 INCS += -I$(SLEEF)/include
-PFLAGS += -DPVN_SLEEF=1
+PFLAGS += -DPVN_SLEEF=$(sleef)
 endif # SLEEF
 ifdef MPC
 INCS += -I$(MPC)/include
@@ -320,7 +323,10 @@ ifndef STATIC
 LNK += -Wl,-rpath=$(SLEEF)/$(LIB64)
 endif # !STATIC
 endif # ?Darwin
-LNK += -lsleefquad -lsleef -ltlfloat
+ifeq ($(sleef),0)
+LNK += -lsleefquad
+endif # ?sleef
+LNK += -lsleef -ltlfloat
 endif # SLEEF
 ifdef MPC
 LNK += -L$(MPC)/$(LIB64)
@@ -424,7 +430,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=...] [STATIC=-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-s] [all|clean|help]"
 
 libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

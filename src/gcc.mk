@@ -49,6 +49,12 @@ FCFLAGS += -march=$(MARCH)
 endif # ?ppc64le
 CFLAGS += -Wall -Wextra -Wno-stringop-truncation
 CXXFLAGS += -Wall -Wextra -Wno-stringop-truncation
+ifdef SLEEF
+ifneq ($(sleef),0)
+CFLAGS += -Wno-unknown-pragmas -Wno-unused-function -Wno-unused-parameter
+CXXFLAGS += -Wno-unknown-pragmas -Wno-unused-function -Wno-unused-parameter
+endif # ?sleef
+endif # SLEEF
 ifeq ($(findstring MINGW64,$(OS)),MINGW64)
 PFLAGS += -DPVN_EXTERN_C=EXTERN_C -DPVN_MINGW64=UCRT64
 endif # ?MINGW64
