@@ -38,8 +38,8 @@ Recent versions of the compilers have been provided by or used on:
 4. FreeBSD (GCC 13.3.0),
 5. openSUSE Tumbleweed (GCC 15.2.0),
 6. Oracle Linux (GCC 14.2.1-7),
-7. Intel oneAPI (2025.2.1),
-8. NVIDIA HPC SDK (25.9).
+7. Intel oneAPI (2025.3.0),
+8. NVIDIA HPC SDK (25.11).
 
 Examples of building the library:
 ```bash
