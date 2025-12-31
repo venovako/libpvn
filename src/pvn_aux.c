@@ -23,10 +23,16 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
 #endif /* ?(!_WIN32 || _DLL) */
   (void)printf("hexify(%s) = 0x%s\n", argv[3], pvn_hexify(s, &x, sizeof(x)));
-#ifndef _WIN32
+#ifdef _WIN32
+  char *line = (char*)NULL;
+  size_t linecap = (size_t)0u;
+  (void)printf("getline = %lld\n", getline(&line, &linecap, stdin));
+  (void)printf("line back (with size %zu): %s", linecap, line);
+  free(line);
+#else /* !_WIN32 */
   const char *w = (const char*)NULL;
   (void)printf("pvn_whoami = %s\n", ((PVN_FABI(pvn_whoami,PVN_WHOAMI)(&w) > 0) ? w : "?"));
-#endif /* !_WIN32 */
+#endif /* ?_WIN32 */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
