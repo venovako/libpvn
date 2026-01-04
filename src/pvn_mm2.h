@@ -15,10 +15,10 @@ static inline void pvn_smm2(float *const c11, float *const c21, float *const c12
   PVN_ASSERT(c21);
   PVN_ASSERT(c12);
   PVN_ASSERT(c22);
-  *c11 = fmaf(a11, b11, a12 * b21);
-  *c21 = fmaf(a21, b11, a22 * b21);
-  *c12 = fmaf(a11, b12, a12 * b22);
-  *c22 = fmaf(a21, b12, a22 * b22);
+  *c11 = __builtin_fmaf(a11, b11, a12 * b21);
+  *c21 = __builtin_fmaf(a21, b11, a22 * b21);
+  *c12 = __builtin_fmaf(a11, b12, a12 * b22);
+  *c22 = __builtin_fmaf(a21, b12, a22 * b22);
 }
 
 static inline void pvn_cmm2(float *const c11r, float *const c11i, float *const c21r, float *const c21i, float *const c12r, float *const c12i, float *const c22r, float *const c22i, const float a11r, const float a11i, const float a21r, const float a21i, const float a12r, const float a12i, const float a22r, const float a22i, const float b11r, const float b11i, const float b21r, const float b21i, const float b12r, const float b12i, const float b22r, const float b22i)
@@ -47,10 +47,10 @@ static inline void pvn_dmm2(double *const c11, double *const c21, double *const 
   PVN_ASSERT(c21);
   PVN_ASSERT(c12);
   PVN_ASSERT(c22);
-  *c11 = fma(a11, b11, a12 * b21);
-  *c21 = fma(a21, b11, a22 * b21);
-  *c12 = fma(a11, b12, a12 * b22);
-  *c22 = fma(a21, b12, a22 * b22);
+  *c11 = __builtin_fma(a11, b11, a12 * b21);
+  *c21 = __builtin_fma(a21, b11, a22 * b21);
+  *c12 = __builtin_fma(a11, b12, a12 * b22);
+  *c22 = __builtin_fma(a21, b12, a22 * b22);
 }
 
 static inline void pvn_zmm2(double *const c11r, double *const c11i, double *const c21r, double *const c21i, double *const c12r, double *const c12i, double *const c22r, double *const c22i, const double a11r, const double a11i, const double a21r, const double a21i, const double a12r, const double a12i, const double a22r, const double a22i, const double b11r, const double b11i, const double b21r, const double b21i, const double b12r, const double b12i, const double b22r, const double b22i)
@@ -79,10 +79,10 @@ static inline void pvn_xmm2(long double *const c11, long double *const c21, long
   PVN_ASSERT(c21);
   PVN_ASSERT(c12);
   PVN_ASSERT(c22);
-  *c11 = fmal(a11, b11, a12 * b21);
-  *c21 = fmal(a21, b11, a22 * b21);
-  *c12 = fmal(a11, b12, a12 * b22);
-  *c22 = fmal(a21, b12, a22 * b22);
+  *c11 = __builtin_fmal(a11, b11, a12 * b21);
+  *c21 = __builtin_fmal(a21, b11, a22 * b21);
+  *c12 = __builtin_fmal(a11, b12, a12 * b22);
+  *c22 = __builtin_fmal(a21, b12, a22 * b22);
 }
 
 static inline void pvn_wmm2(long double *const c11r, long double *const c11i, long double *const c21r, long double *const c21i, long double *const c12r, long double *const c12i, long double *const c22r, long double *const c22i, const long double a11r, const long double a11i, const long double a21r, const long double a21i, const long double a12r, const long double a12i, const long double a22r, const long double a22i, const long double b11r, const long double b11i, const long double b21r, const long double b21i, const long double b12r, const long double b12i, const long double b22r, const long double b22i)
@@ -158,10 +158,10 @@ static inline void pvn_smma2(float *const c11, float *const c21, float *const c1
   PVN_ASSERT(c21);
   PVN_ASSERT(c12);
   PVN_ASSERT(c22);
-  *c11 = fmaf(a11, b11, fmaf(a12, b21, *c11));
-  *c21 = fmaf(a21, b11, fmaf(a22, b21, *c21));
-  *c12 = fmaf(a11, b12, fmaf(a12, b22, *c12));
-  *c22 = fmaf(a21, b12, fmaf(a22, b22, *c22));
+  *c11 = __builtin_fmaf(a11, b11, __builtin_fmaf(a12, b21, *c11));
+  *c21 = __builtin_fmaf(a21, b11, __builtin_fmaf(a22, b21, *c21));
+  *c12 = __builtin_fmaf(a11, b12, __builtin_fmaf(a12, b22, *c12));
+  *c22 = __builtin_fmaf(a21, b12, __builtin_fmaf(a22, b22, *c22));
 }
 
 static inline void pvn_cmma2(float *const c11r, float *const c11i, float *const c21r, float *const c21i, float *const c12r, float *const c12i, float *const c22r, float *const c22i, const float a11r, const float a11i, const float a21r, const float a21i, const float a12r, const float a12i, const float a22r, const float a22i, const float b11r, const float b11i, const float b21r, const float b21i, const float b12r, const float b12i, const float b22r, const float b22i)
@@ -190,10 +190,10 @@ static inline void pvn_dmma2(double *const c11, double *const c21, double *const
   PVN_ASSERT(c21);
   PVN_ASSERT(c12);
   PVN_ASSERT(c22);
-  *c11 = fma(a11, b11, fma(a12, b21, *c11));
-  *c21 = fma(a21, b11, fma(a22, b21, *c21));
-  *c12 = fma(a11, b12, fma(a12, b22, *c12));
-  *c22 = fma(a21, b12, fma(a22, b22, *c22));
+  *c11 = __builtin_fma(a11, b11, __builtin_fma(a12, b21, *c11));
+  *c21 = __builtin_fma(a21, b11, __builtin_fma(a22, b21, *c21));
+  *c12 = __builtin_fma(a11, b12, __builtin_fma(a12, b22, *c12));
+  *c22 = __builtin_fma(a21, b12, __builtin_fma(a22, b22, *c22));
 }
 
 static inline void pvn_zmma2(double *const c11r, double *const c11i, double *const c21r, double *const c21i, double *const c12r, double *const c12i, double *const c22r, double *const c22i, const double a11r, const double a11i, const double a21r, const double a21i, const double a12r, const double a12i, const double a22r, const double a22i, const double b11r, const double b11i, const double b21r, const double b21i, const double b12r, const double b12i, const double b22r, const double b22i)
@@ -222,10 +222,10 @@ static inline void pvn_xmma2(long double *const c11, long double *const c21, lon
   PVN_ASSERT(c21);
   PVN_ASSERT(c12);
   PVN_ASSERT(c22);
-  *c11 = fmal(a11, b11, fmal(a12, b21, *c11));
-  *c21 = fmal(a21, b11, fmal(a22, b21, *c21));
-  *c12 = fmal(a11, b12, fmal(a12, b22, *c12));
-  *c22 = fmal(a21, b12, fmal(a22, b22, *c22));
+  *c11 = __builtin_fmal(a11, b11, __builtin_fmal(a12, b21, *c11));
+  *c21 = __builtin_fmal(a21, b11, __builtin_fmal(a22, b21, *c21));
+  *c12 = __builtin_fmal(a11, b12, __builtin_fmal(a12, b22, *c12));
+  *c22 = __builtin_fmal(a21, b12, __builtin_fmal(a22, b22, *c22));
 }
 
 static inline void pvn_wmma2(long double *const c11r, long double *const c11i, long double *const c21r, long double *const c21i, long double *const c12r, long double *const c12i, long double *const c22r, long double *const c22i, const long double a11r, const long double a11i, const long double a21r, const long double a21i, const long double a12r, const long double a12i, const long double a22r, const long double a22i, const long double b11r, const long double b11i, const long double b21r, const long double b21i, const long double b12r, const long double b12i, const long double b22r, const long double b22i)

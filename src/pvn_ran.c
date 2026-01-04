@@ -79,7 +79,7 @@ int PVN_FABI(pvn_ran_64,PVN_RAN_64)(const int *const u, uint64_t *const r)
 float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
-  const float rmin = (p ? scalbnf(FLT_MIN, *p) : FLT_MIN);
+  const float rmin = (p ? __builtin_scalbnf(FLT_MIN, *p) : FLT_MIN);
   const float rmax = (FLT_MAX * 0.25f);
   float a = FLT_MAX, r = 0.0f;
   if (*u < 0)
@@ -87,7 +87,7 @@ float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *con
   while (!(a >= rmin) || !(a <= rmax)) {
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
     while (!_rdrand32_step((unsigned*)&r)) /**/;
-    a = fabsf(r);
+    a = __builtin_fabsf(r);
 #else /* !__RDRND__ */
     ssize_t s = 0;
 #if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
@@ -97,7 +97,7 @@ float PVN_FABI(pvn_ran_safe_f,PVN_RAN_SAFE_F)(const int *const u, const int *con
       s = read(*u, &r, sizeof(r));
     }
     if (s == (ssize_t)sizeof(r))
-      a = fabsf(r);
+      a = __builtin_fabsf(r);
     else if (s < 0)
       return -0.0f;
     else /* s >= 0 */
@@ -130,7 +130,7 @@ float PVN_FABI(pvn_ran_f,PVN_RAN_F)(const int *const u)
 double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
-  const double rmin = (p ? scalbn(DBL_MIN, *p) : DBL_MIN);
+  const double rmin = (p ? __builtin_scalbn(DBL_MIN, *p) : DBL_MIN);
   const double rmax = (DBL_MAX * 0.25);
   double a = DBL_MAX, r = 0.0;
   if (*u < 0)
@@ -138,7 +138,7 @@ double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const 
   while (!(a >= rmin) || !(a <= rmax)) {
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
     while (!_rdrand64_step((unsigned long long*)&r)) /**/;
-    a = fabs(r);
+    a = __builtin_fabs(r);
 #else /* !__RDRND__ */
     ssize_t s = 0;
 #if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
@@ -148,7 +148,7 @@ double PVN_FABI(pvn_ran_safe,PVN_RAN_SAFE)(const int *const u, const int *const 
       s = read(*u, &r, sizeof(r));
     }
     if (s == (ssize_t)sizeof(r))
-      a = fabs(r);
+      a = __builtin_fabs(r);
     else if (s < 0)
       return -0.0;
     else /* s >= 0 */
@@ -181,7 +181,7 @@ double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
 long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
-  const long double rmin = (p ? scalbnl(LDBL_MIN, *p) : LDBL_MIN);
+  const long double rmin = (p ? __builtin_scalbnl(LDBL_MIN, *p) : LDBL_MIN);
   const long double rmax = (LDBL_MAX * 0.25L);
   long double a = LDBL_MAX, r = 0.0L;
   if (*u < 0)
@@ -190,7 +190,7 @@ long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const in
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
     while (!_rdrand64_step((unsigned long long*)&r)) /**/;
     while (!_rdrand16_step((unsigned short*)((unsigned long long*)&r + 1))) /**/;
-    a = fabsl(r);
+    a = __builtin_fabsl(r);
 #else /* !__RDRND__ */
     ssize_t s = 0;
 #if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
@@ -208,7 +208,7 @@ long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const in
 #else /* !__x86_64__ */
     if (s == (ssize_t)sizeof(r))
 #endif /* ?__x86_64__ */
-      a = fabsl(r);
+      a = __builtin_fabsl(r);
     else if (s < 0)
       return -0.0L;
     else /* s >= 0 */

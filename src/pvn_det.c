@@ -32,25 +32,25 @@ int main(int argc, char *argv[])
   for (size_t i = 0u; i < n; ++i) {
     do {
       a = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!isfinite(a));
+    } while (!__builtin_isfinite(a));
 #ifndef NDEBUG
     (void)printf("%s,", pvn_dtoa(s, a));
 #endif /* !NDEBUG */
     do {
       b = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!isfinite(b));
+    } while (!__builtin_isfinite(b));
 #ifndef NDEBUG
     (void)printf("%s,", pvn_dtoa(s, b));
 #endif /* !NDEBUG */
     do {
       c = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!isfinite(c));
+    } while (!__builtin_isfinite(c));
 #ifndef NDEBUG
     (void)printf("%s,", pvn_dtoa(s, c));
 #endif /* !NDEBUG */
     do {
       d = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!isfinite(d));
+    } while (!__builtin_isfinite(d));
 #ifndef NDEBUG
     (void)printf("%s;", pvn_dtoa(s, d));
 #endif /* !NDEBUG */
@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
 #ifndef NDEBUG
     (void)printf("%s\n", pvn_dtoa(s, r));
 #endif /* !NDEBUG */
-    e = fmin(e, r);
-    E = fmax(E, r);
+    e = __builtin_fmin(e, r);
+    E = __builtin_fmax(E, r);
   }
   u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
   mpfr_clear(mx);
@@ -121,11 +121,11 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     ec = 0,
     ed = 0;
   const float
-    fb = frexpf(*b, &eb),
-    fc = frexpf(*c, &ec);
+    fb = __builtin_frexpf(*b, &eb),
+    fc = __builtin_frexpf(*c, &ec);
   float
-    fa = frexpf(*a, &ea),
-    fd = frexpf(*d, &ed);
+    fa = __builtin_frexpf(*a, &ea),
+    fd = __builtin_frexpf(*d, &ed);
   const int
     u = (eb + ec),
     v = (ea + ed);
@@ -136,8 +136,8 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     *t += (*t & 1);
     const int
       t_2 = -(*t >> 1);
-    fa = scalbnf(fa, t_2);
-    fd = scalbnf(fd, t_2);
+    fa = __builtin_scalbnf(fa, t_2);
+    fd = __builtin_scalbnf(fd, t_2);
     s -= *t;
     *t += v;
   }
@@ -145,12 +145,12 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     *t = v;
   const float
     w = (fb * fc),
-    e = fmaf(-fb, fc, w),
-    f = fmaf(fa, fd, -scalbnf(w, s));
-  *x = fmaf(scalbnf(1.0f, s - 1), 2.0f * e, f);
-  *x = frexpf(*x, &s);
+    e = __builtin_fmaf(-fb, fc, w),
+    f = __builtin_fmaf(fa, fd, -__builtin_scalbnf(w, s));
+  *x = __builtin_fmaf(__builtin_scalbnf(1.0f, s - 1), 2.0f * e, f);
+  *x = __builtin_frexpf(*x, &s);
   *t += s;
-  return scalbnf(*x, *t);
+  return __builtin_scalbnf(*x, *t);
 }
 
 double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b, const double *const c, const double *const d, double *const x, int *const t)
@@ -167,11 +167,11 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     ec = 0,
     ed = 0;
   const double
-    fb = frexp(*b, &eb),
-    fc = frexp(*c, &ec);
+    fb = __builtin_frexp(*b, &eb),
+    fc = __builtin_frexp(*c, &ec);
   double
-    fa = frexp(*a, &ea),
-    fd = frexp(*d, &ed);
+    fa = __builtin_frexp(*a, &ea),
+    fd = __builtin_frexp(*d, &ed);
   const int
     u = (eb + ec),
     v = (ea + ed);
@@ -182,8 +182,8 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     *t += (*t & 1);
     const int
       t_2 = -(*t >> 1);
-    fa = scalbn(fa, t_2);
-    fd = scalbn(fd, t_2);
+    fa = __builtin_scalbn(fa, t_2);
+    fd = __builtin_scalbn(fd, t_2);
     s -= *t;
     *t += v;
   }
@@ -191,12 +191,12 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     *t = v;
   const double
     w = (fb * fc),
-    e = fma(-fb, fc, w),
-    f = fma(fa, fd, -scalbn(w, s));
-  *x = fma(scalbn(1.0, s - 1), 2.0 * e, f);
-  *x = frexp(*x, &s);
+    e = __builtin_fma(-fb, fc, w),
+    f = __builtin_fma(fa, fd, -__builtin_scalbn(w, s));
+  *x = __builtin_fma(__builtin_scalbn(1.0, s - 1), 2.0 * e, f);
+  *x = __builtin_frexp(*x, &s);
   *t += s;
-  return scalbn(*x, *t);
+  return __builtin_scalbn(*x, *t);
 }
 
 long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t)
@@ -213,11 +213,11 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     ec = 0,
     ed = 0;
   const long double
-    fb = frexpl(*b, &eb),
-    fc = frexpl(*c, &ec);
+    fb = __builtin_frexpl(*b, &eb),
+    fc = __builtin_frexpl(*c, &ec);
   long double
-    fa = frexpl(*a, &ea),
-    fd = frexpl(*d, &ed);
+    fa = __builtin_frexpl(*a, &ea),
+    fd = __builtin_frexpl(*d, &ed);
   const int
     u = (eb + ec),
     v = (ea + ed);
@@ -228,8 +228,8 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     *t += (*t & 1);
     const int
       t_2 = -(*t >> 1);
-    fa = scalbnl(fa, t_2);
-    fd = scalbnl(fd, t_2);
+    fa = __builtin_scalbnl(fa, t_2);
+    fd = __builtin_scalbnl(fd, t_2);
     s -= *t;
     *t += v;
   }
@@ -237,12 +237,12 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     *t = v;
   const long double
     w = (fb * fc),
-    e = fmal(-fb, fc, w),
-    f = fmal(fa, fd, -scalbnl(w, s));
-  *x = fmal(scalbnl(1.0L, s - 1), 2.0L * e, f);
-  *x = frexpl(*x, &s);
+    e = __builtin_fmal(-fb, fc, w),
+    f = __builtin_fmal(fa, fd, -__builtin_scalbnl(w, s));
+  *x = __builtin_fmal(__builtin_scalbnl(1.0L, s - 1), 2.0L * e, f);
+  *x = __builtin_frexpl(*x, &s);
   *t += s;
-  return scalbnl(*x, *t);
+  return __builtin_scalbnl(*x, *t);
 }
 #ifdef PVN_QUADMATH
 __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d, __float128 *const x, int *const t)

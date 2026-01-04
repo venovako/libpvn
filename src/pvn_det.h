@@ -11,8 +11,8 @@ static inline float pvn_sdet(const float a, const float b, const float c, const 
 {
   const float
     w = (b * c),
-    e = fmaf(-b, c, w),
-    f = fmaf(a, d, -w),
+    e = __builtin_fmaf(-b, c, w),
+    f = __builtin_fmaf(a, d, -w),
     x = (f + e);
   return x;
 }
@@ -21,8 +21,8 @@ static inline double pvn_ddet(const double a, const double b, const double c, co
 {
   const double
     w = (b * c),
-    e = fma(-b, c, w),
-    f = fma(a, d, -w),
+    e = __builtin_fma(-b, c, w),
+    f = __builtin_fma(a, d, -w),
     x = (f + e);
   return x;
 }
@@ -31,8 +31,8 @@ static inline long double pvn_xdet(const long double a, const long double b, con
 {
   const long double
     w = (b * c),
-    e = fmal(-b, c, w),
-    f = fmal(a, d, -w),
+    e = __builtin_fmal(-b, c, w),
+    f = __builtin_fmal(a, d, -w),
     x = (f + e);
   return x;
 }

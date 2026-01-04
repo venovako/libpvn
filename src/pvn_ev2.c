@@ -53,8 +53,8 @@ int main(int argc, char *argv[])
   (void)printf("l1   = %s\n", pvn_dtoa(s, l1));
   (void)printf("l2   = %s\n", pvn_dtoa(s, l2));
   if (es) {
-    l1 = scalbn(l1, es);
-    l2 = scalbn(l2, es);
+    l1 = __builtin_scalbn(l1, es);
+    l2 = __builtin_scalbn(l2, es);
     (void)printf("l11  = %s\n", pvn_dtoa(s, l1));
     (void)printf("l22  = %s\n", pvn_dtoa(s, l2));
   }
@@ -71,13 +71,13 @@ int PVN_FABI(pvn_sljeu2,PVN_SLJEU2)(const float *const a11, const float *const a
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
   float a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   float a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   float ar = *a21;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
   int
@@ -86,26 +86,26 @@ int PVN_FABI(pvn_sljeu2,PVN_SLJEU2)(const float *const a11, const float *const a
     er = (ar != 0.0f);
   *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
-    (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
-    (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
-    (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a1), FLT_TRUE_MIN), &e1);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a2), FLT_TRUE_MIN), &e2);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(ar), FLT_TRUE_MIN), &er);
     e1 = pvn_imax3(e1, e2, er);
     er = *es;
     *es = (FLT_BIG_EXP - e1);
-    a1 = scalbnf(a1, *es);
-    a2 = scalbnf(a2, *es);
-    ar = scalbnf(ar, *es);
+    a1 = __builtin_scalbnf(a1, *es);
+    a2 = __builtin_scalbnf(a2, *es);
+    ar = __builtin_scalbnf(ar, *es);
     *es = -*es;
   }
   const float
-    aa = fabsf(ar);
+    aa = __builtin_fabsf(ar);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((er & 1) && (fabsf(a1) < FLT_MIN)) || ((er & 2) && (fabsf(a2) < FLT_MIN)) || ((er & 4) && (aa < FLT_MIN))) << 1);
+  e1 = ((((er & 1) && (__builtin_fabsf(a1) < FLT_MIN)) || ((er & 2) && (__builtin_fabsf(a2) < FLT_MIN)) || ((er & 4) && (aa < FLT_MIN))) << 1);
   const float
-    as = copysignf(1.0f, ar),
+    as = __builtin_copysignf(1.0f, ar),
     an = (aa * 2.0f),
     ad = (a1 - a2),
-    t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
+    t2 = __builtin_copysignf(__builtin_fminf(__builtin_fmaxf(an / __builtin_fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
     sc = hypotf(t1, 1.0f),
     c1 = (1.0f / sc);
@@ -118,7 +118,7 @@ int PVN_FABI(pvn_sljeu2,PVN_SLJEU2)(const float *const a11, const float *const a
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((aa != 0.0f) && (fabsf(*sn) < FLT_MIN)) << 2);
+  e2 = (((aa != 0.0f) && (__builtin_fabsf(*sn) < FLT_MIN)) << 2);
   return (wt | e1 | e2);
 }
 
@@ -133,13 +133,13 @@ int PVN_FABI(pvn_sljev2,PVN_SLJEV2)(const float *const a11, const float *const a
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
   float a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   float a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   float ar = *a21;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
   int
@@ -148,26 +148,26 @@ int PVN_FABI(pvn_sljev2,PVN_SLJEV2)(const float *const a11, const float *const a
     er = (ar != 0.0f);
   *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
-    (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
-    (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
-    (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a1), FLT_TRUE_MIN), &e1);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a2), FLT_TRUE_MIN), &e2);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(ar), FLT_TRUE_MIN), &er);
     e1 = pvn_imax3(e1, e2, er);
     er = *es;
     *es = (FLT_BIG_EXP - e1);
-    a1 = scalbnf(a1, *es);
-    a2 = scalbnf(a2, *es);
-    ar = scalbnf(ar, *es);
+    a1 = __builtin_scalbnf(a1, *es);
+    a2 = __builtin_scalbnf(a2, *es);
+    ar = __builtin_scalbnf(ar, *es);
     *es = -*es;
   }
   const float
-    aa = fabsf(ar);
+    aa = __builtin_fabsf(ar);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((er & 1) && (fabsf(a1) < FLT_MIN)) || ((er & 2) && (fabsf(a2) < FLT_MIN)) || ((er & 4) && (aa < FLT_MIN))) << 1);
+  e1 = ((((er & 1) && (__builtin_fabsf(a1) < FLT_MIN)) || ((er & 2) && (__builtin_fabsf(a2) < FLT_MIN)) || ((er & 4) && (aa < FLT_MIN))) << 1);
   const float
-    as = copysignf(1.0f, ar),
+    as = __builtin_copysignf(1.0f, ar),
     an = (aa * 2.0f),
     ad = (a1 - a2),
-    t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
+    t2 = __builtin_copysignf(__builtin_fminf(__builtin_fmaxf(an / __builtin_fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
     sc = hypotf(t1, 1.0f),
     c1 = (1.0f / sc);
@@ -179,11 +179,11 @@ int PVN_FABI(pvn_sljev2,PVN_SLJEV2)(const float *const a11, const float *const a
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((aa != 0.0f) && (fabsf(*sn) < FLT_MIN)) << 2);
-  *l1 = fmaf( t1, aa, a1);
-  *l2 = fmaf(-t1, aa, a2);
+  e2 = (((aa != 0.0f) && (__builtin_fabsf(*sn) < FLT_MIN)) << 2);
+  *l1 = __builtin_fmaf( t1, aa, a1);
+  *l2 = __builtin_fmaf(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  er = ((er && (fminf(fabsf(*l1), fabsf(*l2)) < FLT_MIN)) << 3);
+  er = ((er && (__builtin_fminf(__builtin_fabsf(*l1), __builtin_fabsf(*l2)) < FLT_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
@@ -197,13 +197,13 @@ int PVN_FABI(pvn_dljeu2,PVN_DLJEU2)(const double *const a11, const double *const
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
   double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   double ar = *a21;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
   int
@@ -212,26 +212,26 @@ int PVN_FABI(pvn_dljeu2,PVN_DLJEU2)(const double *const a11, const double *const
     er = (ar != 0.0);
   *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
-    (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
-    (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
-    (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a1), DBL_TRUE_MIN), &e1);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a2), DBL_TRUE_MIN), &e2);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(ar), DBL_TRUE_MIN), &er);
     e1 = pvn_imax3(e1, e2, er);
     er = *es;
     *es = (DBL_BIG_EXP - e1);
-    a1 = scalbn(a1, *es);
-    a2 = scalbn(a2, *es);
-    ar = scalbn(ar, *es);
+    a1 = __builtin_scalbn(a1, *es);
+    a2 = __builtin_scalbn(a2, *es);
+    ar = __builtin_scalbn(ar, *es);
     *es = -*es;
   }
   const double
-    aa = fabs(ar);
+    aa = __builtin_fabs(ar);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((er & 1) && (fabs(a1) < DBL_MIN)) || ((er & 2) && (fabs(a2) < DBL_MIN)) || ((er & 4) && (aa < DBL_MIN))) << 1);
+  e1 = ((((er & 1) && (__builtin_fabs(a1) < DBL_MIN)) || ((er & 2) && (__builtin_fabs(a2) < DBL_MIN)) || ((er & 4) && (aa < DBL_MIN))) << 1);
   const double
-    as = copysign(1.0, ar),
+    as = __builtin_copysign(1.0, ar),
     an = (aa * 2.0),
     ad = (a1 - a2),
-    t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
+    t2 = __builtin_copysign(__builtin_fmin(__builtin_fmax(an / __builtin_fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
     sc = hypot(t1, 1.0),
     c1 = (1.0 / sc);
@@ -244,7 +244,7 @@ int PVN_FABI(pvn_dljeu2,PVN_DLJEU2)(const double *const a11, const double *const
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((aa != 0.0) && (fabs(*sn) < DBL_MIN)) << 2);
+  e2 = (((aa != 0.0) && (__builtin_fabs(*sn) < DBL_MIN)) << 2);
   return (wt | e1 | e2);
 }
 
@@ -259,13 +259,13 @@ int PVN_FABI(pvn_dljev2,PVN_DLJEV2)(const double *const a11, const double *const
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
   double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   double ar = *a21;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
   int
@@ -274,26 +274,26 @@ int PVN_FABI(pvn_dljev2,PVN_DLJEV2)(const double *const a11, const double *const
     er = (ar != 0.0);
   *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
-    (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
-    (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
-    (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a1), DBL_TRUE_MIN), &e1);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a2), DBL_TRUE_MIN), &e2);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(ar), DBL_TRUE_MIN), &er);
     e1 = pvn_imax3(e1, e2, er);
     er = *es;
     *es = (DBL_BIG_EXP - e1);
-    a1 = scalbn(a1, *es);
-    a2 = scalbn(a2, *es);
-    ar = scalbn(ar, *es);
+    a1 = __builtin_scalbn(a1, *es);
+    a2 = __builtin_scalbn(a2, *es);
+    ar = __builtin_scalbn(ar, *es);
     *es = -*es;
   }
   const double
-    aa = fabs(ar);
+    aa = __builtin_fabs(ar);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((er & 1) && (fabs(a1) < DBL_MIN)) || ((er & 2) && (fabs(a2) < DBL_MIN)) || ((er & 4) && (aa < DBL_MIN))) << 1);
+  e1 = ((((er & 1) && (__builtin_fabs(a1) < DBL_MIN)) || ((er & 2) && (__builtin_fabs(a2) < DBL_MIN)) || ((er & 4) && (aa < DBL_MIN))) << 1);
   const double
-    as = copysign(1.0, ar),
+    as = __builtin_copysign(1.0, ar),
     an = (aa * 2.0),
     ad = (a1 - a2),
-    t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
+    t2 = __builtin_copysign(__builtin_fmin(__builtin_fmax(an / __builtin_fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
     sc = hypot(t1, 1.0),
     c1 = (1.0 / sc);
@@ -305,11 +305,11 @@ int PVN_FABI(pvn_dljev2,PVN_DLJEV2)(const double *const a11, const double *const
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((aa != 0.0) && (fabs(*sn) < DBL_MIN)) << 2);
-  *l1 = fma( t1, aa, a1);
-  *l2 = fma(-t1, aa, a2);
+  e2 = (((aa != 0.0) && (__builtin_fabs(*sn) < DBL_MIN)) << 2);
+  *l1 = __builtin_fma( t1, aa, a1);
+  *l2 = __builtin_fma(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  er = ((er && (fmin(fabs(*l1), fabs(*l2)) < DBL_MIN)) << 3);
+  er = ((er && (__builtin_fmin(__builtin_fabs(*l1), __builtin_fabs(*l2)) < DBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
@@ -325,16 +325,16 @@ int PVN_FABI(pvn_cljeu2,PVN_CLJEU2)(const float *const a11, const float *const a
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
   float a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   float a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   float ar = *a21r;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   float ai = *a21i;
-  if (!isfinite(ai))
+  if (!__builtin_isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
   int
@@ -344,31 +344,31 @@ int PVN_FABI(pvn_cljeu2,PVN_CLJEU2)(const float *const a11, const float *const a
     ei = (ai != 0.0f);
   *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
-    (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
-    (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
-    (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
-    (void)frexpf(fmaxf(fabsf(ai), FLT_TRUE_MIN), &ei);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a1), FLT_TRUE_MIN), &e1);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a2), FLT_TRUE_MIN), &e2);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(ar), FLT_TRUE_MIN), &er);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(ai), FLT_TRUE_MIN), &ei);
     e1 = pvn_imax4(e1, e2, er, ei);
     ei = *es;
     *es = (FLT_BIG_EXP - e1);
-    a1 = scalbnf(a1, *es);
-    a2 = scalbnf(a2, *es);
-    ar = scalbnf(ar, *es);
-    ai = scalbnf(ai, *es);
+    a1 = __builtin_scalbnf(a1, *es);
+    a2 = __builtin_scalbnf(a2, *es);
+    ar = __builtin_scalbnf(ar, *es);
+    ai = __builtin_scalbnf(ai, *es);
     *es = -*es;
   }
   const float
-    ar_ = fabsf(ar),
-    ai_ = fabsf(ai),
+    ar_ = __builtin_fabsf(ar),
+    ai_ = __builtin_fabsf(ai),
     aa = hypotf(ar_, ai_);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((ei & 1) && (fabsf(a1) < FLT_MIN)) || ((ei & 2) && (fabsf(a2) < FLT_MIN)) || ((ei & 4) && (ar_ < FLT_MIN)) || ((ei & 8) && (ai_ < FLT_MIN))) << 1);
-  ar = copysignf(fminf(ar_ / aa, 1.0f), ar);
-  ai = ai / fmaxf(aa, FLT_TRUE_MIN);
+  e1 = ((((ei & 1) && (__builtin_fabsf(a1) < FLT_MIN)) || ((ei & 2) && (__builtin_fabsf(a2) < FLT_MIN)) || ((ei & 4) && (ar_ < FLT_MIN)) || ((ei & 8) && (ai_ < FLT_MIN))) << 1);
+  ar = __builtin_copysignf(__builtin_fminf(ar_ / aa, 1.0f), ar);
+  ai = ai / __builtin_fmaxf(aa, FLT_TRUE_MIN);
   const float
     an = (aa * 2.0f),
     ad = (a1 - a2),
-    t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
+    t2 = __builtin_copysignf(__builtin_fminf(__builtin_fmaxf(an / __builtin_fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
     sc = hypotf(t1, 1.0f),
     c1 = (1.0f / sc);
@@ -384,8 +384,8 @@ int PVN_FABI(pvn_cljeu2,PVN_CLJEU2)(const float *const a11, const float *const a
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((ar_ != 0.0f) && (fabsf(*snr) < FLT_MIN)) << 2);
-  er = (((ai_ != 0.0f) && (fabsf(*sni) < FLT_MIN)) << 3);
+  e2 = (((ar_ != 0.0f) && (__builtin_fabsf(*snr) < FLT_MIN)) << 2);
+  er = (((ai_ != 0.0f) && (__builtin_fabsf(*sni) < FLT_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
@@ -402,16 +402,16 @@ int PVN_FABI(pvn_cljev2,PVN_CLJEV2)(const float *const a11, const float *const a
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
   float a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   float a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   float ar = *a21r;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   float ai = *a21i;
-  if (!isfinite(ai))
+  if (!__builtin_isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
   int
@@ -421,31 +421,31 @@ int PVN_FABI(pvn_cljev2,PVN_CLJEV2)(const float *const a11, const float *const a
     ei = (ai != 0.0f);
   *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
-    (void)frexpf(fmaxf(fabsf(a1), FLT_TRUE_MIN), &e1);
-    (void)frexpf(fmaxf(fabsf(a2), FLT_TRUE_MIN), &e2);
-    (void)frexpf(fmaxf(fabsf(ar), FLT_TRUE_MIN), &er);
-    (void)frexpf(fmaxf(fabsf(ai), FLT_TRUE_MIN), &ei);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a1), FLT_TRUE_MIN), &e1);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(a2), FLT_TRUE_MIN), &e2);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(ar), FLT_TRUE_MIN), &er);
+    (void)__builtin_frexpf(__builtin_fmaxf(__builtin_fabsf(ai), FLT_TRUE_MIN), &ei);
     e1 = pvn_imax4(e1, e2, er, ei);
     ei = *es;
     *es = (FLT_BIG_EXP - e1);
-    a1 = scalbnf(a1, *es);
-    a2 = scalbnf(a2, *es);
-    ar = scalbnf(ar, *es);
-    ai = scalbnf(ai, *es);
+    a1 = __builtin_scalbnf(a1, *es);
+    a2 = __builtin_scalbnf(a2, *es);
+    ar = __builtin_scalbnf(ar, *es);
+    ai = __builtin_scalbnf(ai, *es);
     *es = -*es;
   }
   const float
-    ar_ = fabsf(ar),
-    ai_ = fabsf(ai),
+    ar_ = __builtin_fabsf(ar),
+    ai_ = __builtin_fabsf(ai),
     aa = hypotf(ar_, ai_);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((ei & 1) && (fabsf(a1) < FLT_MIN)) || ((ei & 2) && (fabsf(a2) < FLT_MIN)) || ((ei & 4) && (ar_ < FLT_MIN)) || ((ei & 8) && (ai_ < FLT_MIN))) << 1);
-  ar = copysignf(fminf(ar_ / aa, 1.0f), ar);
-  ai = ai / fmaxf(aa, FLT_TRUE_MIN);
+  e1 = ((((ei & 1) && (__builtin_fabsf(a1) < FLT_MIN)) || ((ei & 2) && (__builtin_fabsf(a2) < FLT_MIN)) || ((ei & 4) && (ar_ < FLT_MIN)) || ((ei & 8) && (ai_ < FLT_MIN))) << 1);
+  ar = __builtin_copysignf(__builtin_fminf(ar_ / aa, 1.0f), ar);
+  ai = ai / __builtin_fmaxf(aa, FLT_TRUE_MIN);
   const float
     an = (aa * 2.0f),
     ad = (a1 - a2),
-    t2 = copysignf(fminf(fmaxf(an / fabsf(ad), 0.0f), FLT_MAX), ad),
+    t2 = __builtin_copysignf(__builtin_fminf(__builtin_fmaxf(an / __builtin_fabsf(ad), 0.0f), FLT_MAX), ad),
     t1 = (t2 / (1.0f + hypotf(t2, 1.0f))),
     sc = hypotf(t1, 1.0f),
     c1 = (1.0f / sc);
@@ -460,12 +460,12 @@ int PVN_FABI(pvn_cljev2,PVN_CLJEV2)(const float *const a11, const float *const a
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((ar_ != 0.0f) && (fabsf(*snr) < FLT_MIN)) << 2);
-  er = (((ai_ != 0.0f) && (fabsf(*sni) < FLT_MIN)) << 3);
-  *l1 = fmaf( t1, aa, a1);
-  *l2 = fmaf(-t1, aa, a2);
+  e2 = (((ar_ != 0.0f) && (__builtin_fabsf(*snr) < FLT_MIN)) << 2);
+  er = (((ai_ != 0.0f) && (__builtin_fabsf(*sni) < FLT_MIN)) << 3);
+  *l1 = __builtin_fmaf( t1, aa, a1);
+  *l2 = __builtin_fmaf(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  ei = ((ei && (fminf(fabsf(*l1), fabsf(*l2)) < FLT_MIN)) << 4);
+  ei = ((ei && (__builtin_fminf(__builtin_fabsf(*l1), __builtin_fabsf(*l2)) < FLT_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 
@@ -481,16 +481,16 @@ int PVN_FABI(pvn_zljeu2,PVN_ZLJEU2)(const double *const a11, const double *const
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
   double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   double ar = *a21r;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   double ai = *a21i;
-  if (!isfinite(ai))
+  if (!__builtin_isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
   int
@@ -500,31 +500,31 @@ int PVN_FABI(pvn_zljeu2,PVN_ZLJEU2)(const double *const a11, const double *const
     ei = (ai != 0.0);
   *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
-    (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
-    (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
-    (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
-    (void)frexp(fmax(fabs(ai), DBL_TRUE_MIN), &ei);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a1), DBL_TRUE_MIN), &e1);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a2), DBL_TRUE_MIN), &e2);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(ar), DBL_TRUE_MIN), &er);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(ai), DBL_TRUE_MIN), &ei);
     e1 = pvn_imax4(e1, e2, er, ei);
     ei = *es;
     *es = (DBL_BIG_EXP - e1);
-    a1 = scalbn(a1, *es);
-    a2 = scalbn(a2, *es);
-    ar = scalbn(ar, *es);
-    ai = scalbn(ai, *es);
+    a1 = __builtin_scalbn(a1, *es);
+    a2 = __builtin_scalbn(a2, *es);
+    ar = __builtin_scalbn(ar, *es);
+    ai = __builtin_scalbn(ai, *es);
     *es = -*es;
   }
   const double
-    ar_ = fabs(ar),
-    ai_ = fabs(ai),
+    ar_ = __builtin_fabs(ar),
+    ai_ = __builtin_fabs(ai),
     aa = hypot(ar_, ai_);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((ei & 1) && (fabs(a1) < DBL_MIN)) || ((ei & 2) && (fabs(a2) < DBL_MIN)) || ((ei & 4) && (ar_ < DBL_MIN)) || ((ei & 8) && (ai_ < DBL_MIN))) << 1);
-  ar = copysign(fmin(ar_ / aa, 1.0), ar);
-  ai = ai / fmax(aa, DBL_TRUE_MIN);
+  e1 = ((((ei & 1) && (__builtin_fabs(a1) < DBL_MIN)) || ((ei & 2) && (__builtin_fabs(a2) < DBL_MIN)) || ((ei & 4) && (ar_ < DBL_MIN)) || ((ei & 8) && (ai_ < DBL_MIN))) << 1);
+  ar = __builtin_copysign(__builtin_fmin(ar_ / aa, 1.0), ar);
+  ai = ai / __builtin_fmax(aa, DBL_TRUE_MIN);
   const double
     an = (aa * 2.0),
     ad = (a1 - a2),
-    t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
+    t2 = __builtin_copysign(__builtin_fmin(__builtin_fmax(an / __builtin_fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
     sc = hypot(t1, 1.0),
     c1 = (1.0 / sc);
@@ -540,8 +540,8 @@ int PVN_FABI(pvn_zljeu2,PVN_ZLJEU2)(const double *const a11, const double *const
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((ar_ != 0.0) && (fabs(*snr) < DBL_MIN)) << 2);
-  er = (((ai_ != 0.0) && (fabs(*sni) < DBL_MIN)) << 3);
+  e2 = (((ar_ != 0.0) && (__builtin_fabs(*snr) < DBL_MIN)) << 2);
+  er = (((ai_ != 0.0) && (__builtin_fabs(*sni) < DBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
@@ -558,16 +558,16 @@ int PVN_FABI(pvn_zljev2,PVN_ZLJEV2)(const double *const a11, const double *const
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
   double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   double ar = *a21r;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   double ai = *a21i;
-  if (!isfinite(ai))
+  if (!__builtin_isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
   int
@@ -577,31 +577,31 @@ int PVN_FABI(pvn_zljev2,PVN_ZLJEV2)(const double *const a11, const double *const
     ei = (ai != 0.0);
   *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
-    (void)frexp(fmax(fabs(a1), DBL_TRUE_MIN), &e1);
-    (void)frexp(fmax(fabs(a2), DBL_TRUE_MIN), &e2);
-    (void)frexp(fmax(fabs(ar), DBL_TRUE_MIN), &er);
-    (void)frexp(fmax(fabs(ai), DBL_TRUE_MIN), &ei);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a1), DBL_TRUE_MIN), &e1);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(a2), DBL_TRUE_MIN), &e2);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(ar), DBL_TRUE_MIN), &er);
+    (void)__builtin_frexp(__builtin_fmax(__builtin_fabs(ai), DBL_TRUE_MIN), &ei);
     e1 = pvn_imax4(e1, e2, er, ei);
     ei = *es;
     *es = (DBL_BIG_EXP - e1);
-    a1 = scalbn(a1, *es);
-    a2 = scalbn(a2, *es);
-    ar = scalbn(ar, *es);
-    ai = scalbn(ai, *es);
+    a1 = __builtin_scalbn(a1, *es);
+    a2 = __builtin_scalbn(a2, *es);
+    ar = __builtin_scalbn(ar, *es);
+    ai = __builtin_scalbn(ai, *es);
     *es = -*es;
   }
   const double
-    ar_ = fabs(ar),
-    ai_ = fabs(ai),
+    ar_ = __builtin_fabs(ar),
+    ai_ = __builtin_fabs(ai),
     aa = hypot(ar_, ai_);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((ei & 1) && (fabs(a1) < DBL_MIN)) || ((ei & 2) && (fabs(a2) < DBL_MIN)) || ((ei & 4) && (ar_ < DBL_MIN)) || ((ei & 8) && (ai_ < DBL_MIN))) << 1);
-  ar = copysign(fmin(ar_ / aa, 1.0), ar);
-  ai = ai / fmax(aa, DBL_TRUE_MIN);
+  e1 = ((((ei & 1) && (__builtin_fabs(a1) < DBL_MIN)) || ((ei & 2) && (__builtin_fabs(a2) < DBL_MIN)) || ((ei & 4) && (ar_ < DBL_MIN)) || ((ei & 8) && (ai_ < DBL_MIN))) << 1);
+  ar = __builtin_copysign(__builtin_fmin(ar_ / aa, 1.0), ar);
+  ai = ai / __builtin_fmax(aa, DBL_TRUE_MIN);
   const double
     an = (aa * 2.0),
     ad = (a1 - a2),
-    t2 = copysign(fmin(fmax(an / fabs(ad), 0.0), DBL_MAX), ad),
+    t2 = __builtin_copysign(__builtin_fmin(__builtin_fmax(an / __builtin_fabs(ad), 0.0), DBL_MAX), ad),
     t1 = (t2 / (1.0 + hypot(t2, 1.0))),
     sc = hypot(t1, 1.0),
     c1 = (1.0 / sc);
@@ -616,12 +616,12 @@ int PVN_FABI(pvn_zljev2,PVN_ZLJEV2)(const double *const a11, const double *const
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((ar_ != 0.0) && (fabs(*snr) < DBL_MIN)) << 2);
-  er = (((ai_ != 0.0) && (fabs(*sni) < DBL_MIN)) << 3);
-  *l1 = fma( t1, aa, a1);
-  *l2 = fma(-t1, aa, a2);
+  e2 = (((ar_ != 0.0) && (__builtin_fabs(*snr) < DBL_MIN)) << 2);
+  er = (((ai_ != 0.0) && (__builtin_fabs(*sni) < DBL_MIN)) << 3);
+  *l1 = __builtin_fma( t1, aa, a1);
+  *l2 = __builtin_fma(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  ei = ((ei && (fmin(fabs(*l1), fabs(*l2)) < DBL_MIN)) << 4);
+  ei = ((ei && (__builtin_fmin(__builtin_fabs(*l1), __builtin_fabs(*l2)) < DBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 
@@ -635,13 +635,13 @@ int PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(const long double *const a11, const long dou
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
   long double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   long double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   long double ar = *a21;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
   int
@@ -650,26 +650,26 @@ int PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(const long double *const a11, const long dou
     er = (ar != 0.0L);
   *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
-    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(ar), LDBL_TRUE_MIN), &er);
     e1 = pvn_imax3(e1, e2, er);
     er = *es;
     *es = (LDBL_BIG_EXP - e1);
-    a1 = scalbnl(a1, *es);
-    a2 = scalbnl(a2, *es);
-    ar = scalbnl(ar, *es);
+    a1 = __builtin_scalbnl(a1, *es);
+    a2 = __builtin_scalbnl(a2, *es);
+    ar = __builtin_scalbnl(ar, *es);
     *es = -*es;
   }
   const long double
-    aa = fabsl(ar);
+    aa = __builtin_fabsl(ar);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((er & 1) && (fabsl(a1) < LDBL_MIN)) || ((er & 2) && (fabsl(a2) < LDBL_MIN)) || ((er & 4) && (aa < LDBL_MIN))) << 1);
+  e1 = ((((er & 1) && (__builtin_fabsl(a1) < LDBL_MIN)) || ((er & 2) && (__builtin_fabsl(a2) < LDBL_MIN)) || ((er & 4) && (aa < LDBL_MIN))) << 1);
   const long double
-    as = copysignl(1.0L, ar),
+    as = __builtin_copysignl(1.0L, ar),
     an = (aa * 2.0L),
     ad = (a1 - a2),
-    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t2 = __builtin_copysignl(__builtin_fminl(__builtin_fmaxl(an / __builtin_fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
     sc = hypotl(t1, 1.0L),
     c1 = (1.0L / sc);
@@ -682,7 +682,7 @@ int PVN_FABI(pvn_xljeu2,PVN_XLJEU2)(const long double *const a11, const long dou
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((aa != 0.0L) && (fabsl(*sn) < LDBL_MIN)) << 2);
+  e2 = (((aa != 0.0L) && (__builtin_fabsl(*sn) < LDBL_MIN)) << 2);
   return (wt | e1 | e2);
 }
 
@@ -697,13 +697,13 @@ int PVN_FABI(pvn_xljev2,PVN_XLJEV2)(const long double *const a11, const long dou
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
   long double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   long double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   long double ar = *a21;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
   int
@@ -712,26 +712,26 @@ int PVN_FABI(pvn_xljev2,PVN_XLJEV2)(const long double *const a11, const long dou
     er = (ar != 0.0L);
   *es = (e1 | (e2 << 1) | (er << 2));
   if (*es) {
-    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(ar), LDBL_TRUE_MIN), &er);
     e1 = pvn_imax3(e1, e2, er);
     er = *es;
     *es = (LDBL_BIG_EXP - e1);
-    a1 = scalbnl(a1, *es);
-    a2 = scalbnl(a2, *es);
-    ar = scalbnl(ar, *es);
+    a1 = __builtin_scalbnl(a1, *es);
+    a2 = __builtin_scalbnl(a2, *es);
+    ar = __builtin_scalbnl(ar, *es);
     *es = -*es;
   }
   const long double
-    aa = fabsl(ar);
+    aa = __builtin_fabsl(ar);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((er & 1) && (fabsl(a1) < LDBL_MIN)) || ((er & 2) && (fabsl(a2) < LDBL_MIN)) || ((er & 4) && (aa < LDBL_MIN))) << 1);
+  e1 = ((((er & 1) && (__builtin_fabsl(a1) < LDBL_MIN)) || ((er & 2) && (__builtin_fabsl(a2) < LDBL_MIN)) || ((er & 4) && (aa < LDBL_MIN))) << 1);
   const long double
-    as = copysignl(1.0L, ar),
+    as = __builtin_copysignl(1.0L, ar),
     an = (aa * 2.0L),
     ad = (a1 - a2),
-    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t2 = __builtin_copysignl(__builtin_fminl(__builtin_fmaxl(an / __builtin_fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
     sc = hypotl(t1, 1.0L),
     c1 = (1.0L / sc);
@@ -743,11 +743,11 @@ int PVN_FABI(pvn_xljev2,PVN_XLJEV2)(const long double *const a11, const long dou
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((aa != 0.0L) && (fabsl(*sn) < LDBL_MIN)) << 2);
-  *l1 = fmal( t1, aa, a1);
-  *l2 = fmal(-t1, aa, a2);
+  e2 = (((aa != 0.0L) && (__builtin_fabsl(*sn) < LDBL_MIN)) << 2);
+  *l1 = __builtin_fmal( t1, aa, a1);
+  *l2 = __builtin_fmal(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  er = ((er && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 3);
+  er = ((er && (__builtin_fminl(__builtin_fabsl(*l1), __builtin_fabsl(*l2)) < LDBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
@@ -763,16 +763,16 @@ int PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(const long double *const a11, const long dou
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
   long double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   long double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   long double ar = *a21r;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   long double ai = *a21i;
-  if (!isfinite(ai))
+  if (!__builtin_isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
   int
@@ -782,31 +782,31 @@ int PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(const long double *const a11, const long dou
     ei = (ai != 0.0L);
   *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
-    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
-    (void)frexpl(fmaxl(fabsl(ai), LDBL_TRUE_MIN), &ei);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(ar), LDBL_TRUE_MIN), &er);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(ai), LDBL_TRUE_MIN), &ei);
     e1 = pvn_imax4(e1, e2, er, ei);
     ei = *es;
     *es = (LDBL_BIG_EXP - e1);
-    a1 = scalbnl(a1, *es);
-    a2 = scalbnl(a2, *es);
-    ar = scalbnl(ar, *es);
-    ai = scalbnl(ai, *es);
+    a1 = __builtin_scalbnl(a1, *es);
+    a2 = __builtin_scalbnl(a2, *es);
+    ar = __builtin_scalbnl(ar, *es);
+    ai = __builtin_scalbnl(ai, *es);
     *es = -*es;
   }
   const long double
-    ar_ = fabsl(ar),
-    ai_ = fabsl(ai),
+    ar_ = __builtin_fabsl(ar),
+    ai_ = __builtin_fabsl(ai),
     aa = hypotl(ar_, ai_);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((ei & 1) && (fabsl(a1) < LDBL_MIN)) || ((ei & 2) && (fabsl(a2) < LDBL_MIN)) || ((ei & 4) && (ar_ < LDBL_MIN)) || ((ei & 8) && (ai_ < LDBL_MIN))) << 1);
-  ar = copysignl(fminl(ar_ / aa, 1.0L), ar);
-  ai = ai / fmaxl(aa, LDBL_TRUE_MIN);
+  e1 = ((((ei & 1) && (__builtin_fabsl(a1) < LDBL_MIN)) || ((ei & 2) && (__builtin_fabsl(a2) < LDBL_MIN)) || ((ei & 4) && (ar_ < LDBL_MIN)) || ((ei & 8) && (ai_ < LDBL_MIN))) << 1);
+  ar = __builtin_copysignl(__builtin_fminl(ar_ / aa, 1.0L), ar);
+  ai = ai / __builtin_fmaxl(aa, LDBL_TRUE_MIN);
   const long double
     an = (aa * 2.0L),
     ad = (a1 - a2),
-    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t2 = __builtin_copysignl(__builtin_fminl(__builtin_fmaxl(an / __builtin_fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
     sc = hypotl(t1, 1.0L),
     c1 = (1.0L / sc);
@@ -822,8 +822,8 @@ int PVN_FABI(pvn_wljeu2,PVN_WLJEU2)(const long double *const a11, const long dou
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((ar_ != 0.0L) && (fabsl(*snr) < LDBL_MIN)) << 2);
-  er = (((ai_ != 0.0L) && (fabsl(*sni) < LDBL_MIN)) << 3);
+  e2 = (((ar_ != 0.0L) && (__builtin_fabsl(*snr) < LDBL_MIN)) << 2);
+  er = (((ai_ != 0.0L) && (__builtin_fabsl(*sni) < LDBL_MIN)) << 3);
   return (wt | e1 | e2 | er);
 }
 
@@ -840,16 +840,16 @@ int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, const long dou
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
   long double a1 = *a11;
-  if (!isfinite(a1))
+  if (!__builtin_isfinite(a1))
     return -1;
   long double a2 = *a22;
-  if (!isfinite(a2))
+  if (!__builtin_isfinite(a2))
     return -2;
   long double ar = *a21r;
-  if (!isfinite(ar))
+  if (!__builtin_isfinite(ar))
     return -3;
   long double ai = *a21i;
-  if (!isfinite(ai))
+  if (!__builtin_isfinite(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
   int
@@ -859,31 +859,31 @@ int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, const long dou
     ei = (ai != 0.0L);
   *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
   if (*es) {
-    (void)frexpl(fmaxl(fabsl(a1), LDBL_TRUE_MIN), &e1);
-    (void)frexpl(fmaxl(fabsl(a2), LDBL_TRUE_MIN), &e2);
-    (void)frexpl(fmaxl(fabsl(ar), LDBL_TRUE_MIN), &er);
-    (void)frexpl(fmaxl(fabsl(ai), LDBL_TRUE_MIN), &ei);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a1), LDBL_TRUE_MIN), &e1);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(a2), LDBL_TRUE_MIN), &e2);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(ar), LDBL_TRUE_MIN), &er);
+    (void)__builtin_frexpl(__builtin_fmaxl(__builtin_fabsl(ai), LDBL_TRUE_MIN), &ei);
     e1 = pvn_imax4(e1, e2, er, ei);
     ei = *es;
     *es = (LDBL_BIG_EXP - e1);
-    a1 = scalbnl(a1, *es);
-    a2 = scalbnl(a2, *es);
-    ar = scalbnl(ar, *es);
-    ai = scalbnl(ai, *es);
+    a1 = __builtin_scalbnl(a1, *es);
+    a2 = __builtin_scalbnl(a2, *es);
+    ar = __builtin_scalbnl(ar, *es);
+    ai = __builtin_scalbnl(ai, *es);
     *es = -*es;
   }
   const long double
-    ar_ = fabsl(ar),
-    ai_ = fabsl(ai),
+    ar_ = __builtin_fabsl(ar),
+    ai_ = __builtin_fabsl(ai),
     aa = hypotl(ar_, ai_);
   /* a non-zero element underflows due to scaling */
-  e1 = ((((ei & 1) && (fabsl(a1) < LDBL_MIN)) || ((ei & 2) && (fabsl(a2) < LDBL_MIN)) || ((ei & 4) && (ar_ < LDBL_MIN)) || ((ei & 8) && (ai_ < LDBL_MIN))) << 1);
-  ar = copysignl(fminl(ar_ / aa, 1.0L), ar);
-  ai = ai / fmaxl(aa, LDBL_TRUE_MIN);
+  e1 = ((((ei & 1) && (__builtin_fabsl(a1) < LDBL_MIN)) || ((ei & 2) && (__builtin_fabsl(a2) < LDBL_MIN)) || ((ei & 4) && (ar_ < LDBL_MIN)) || ((ei & 8) && (ai_ < LDBL_MIN))) << 1);
+  ar = __builtin_copysignl(__builtin_fminl(ar_ / aa, 1.0L), ar);
+  ai = ai / __builtin_fmaxl(aa, LDBL_TRUE_MIN);
   const long double
     an = (aa * 2.0L),
     ad = (a1 - a2),
-    t2 = copysignl(fminl(fmaxl(an / fabsl(ad), 0.0L), LDBL_MAX), ad),
+    t2 = __builtin_copysignl(__builtin_fminl(__builtin_fmaxl(an / __builtin_fabsl(ad), 0.0L), LDBL_MAX), ad),
     t1 = (t2 / (1.0L + hypotl(t2, 1.0L))),
     sc = hypotl(t1, 1.0L),
     c1 = (1.0L / sc);
@@ -898,12 +898,12 @@ int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, const long dou
     *sni = (ai * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
-  e2 = (((ar_ != 0.0L) && (fabsl(*snr) < LDBL_MIN)) << 2);
-  er = (((ai_ != 0.0L) && (fabsl(*sni) < LDBL_MIN)) << 3);
-  *l1 = fmal( t1, aa, a1);
-  *l2 = fmal(-t1, aa, a2);
+  e2 = (((ar_ != 0.0L) && (__builtin_fabsl(*snr) < LDBL_MIN)) << 2);
+  er = (((ai_ != 0.0L) && (__builtin_fabsl(*sni) < LDBL_MIN)) << 3);
+  *l1 = __builtin_fmal( t1, aa, a1);
+  *l2 = __builtin_fmal(-t1, aa, a2);
   /* a non-zero matrix and the scaled eigenvalue with the smaller magnitude underflows */
-  ei = ((ei && (fminl(fabsl(*l1), fabsl(*l2)) < LDBL_MIN)) << 4);
+  ei = ((ei && (__builtin_fminl(__builtin_fabsl(*l1), __builtin_fabsl(*l2)) < LDBL_MIN)) << 4);
   return (wt | e1 | e2 | er | ei);
 }
 

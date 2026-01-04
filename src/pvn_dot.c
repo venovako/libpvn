@@ -37,7 +37,7 @@ void PVN_FABI(pvn_sdot,PVN_SDOT)(float *const d, const int *const m, const float
   const float *x_ = x;
   const float *y_ = y;
   for (unsigned i = 0u; i < n; ++i) {
-    *d = fmaf(*x_, *y_, *d);
+    *d = __builtin_fmaf(*x_, *y_, *d);
     x_ += *ix;
     y_ += *iy;
   }
@@ -144,7 +144,7 @@ void PVN_FABI(pvn_ddot,PVN_DDOT)(double *const d, const int *const m, const doub
   const double *x_ = x;
   const double *y_ = y;
   for (unsigned i = 0u; i < n; ++i) {
-    *d = fma(*x_, *y_, *d);
+    *d = __builtin_fma(*x_, *y_, *d);
     x_ += *ix;
     y_ += *iy;
   }
@@ -251,7 +251,7 @@ void PVN_FABI(pvn_xdot,PVN_XDOT)(long double *const d, const int *const m, const
   const long double *x_ = x;
   const long double *y_ = y;
   for (unsigned i = 0u; i < n; ++i) {
-    *d = fmal(*x_, *y_, *d);
+    *d = __builtin_fmal(*x_, *y_, *d);
     x_ += *ix;
     y_ += *iy;
   }

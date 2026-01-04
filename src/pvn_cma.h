@@ -17,8 +17,8 @@ static inline void pvn_cmul(float *const cr, float *const ci, const float ar, co
     ai_ = (double)ai,
     br_ = (double)br,
     bi_ = (double)bi,
-    cr_ = fma(ar_, br_, -ai_ * bi_),
-    ci_ = fma(ar_, bi_,  ai_ * br_);
+    cr_ = __builtin_fma(ar_, br_, -ai_ * bi_),
+    ci_ = __builtin_fma(ar_, bi_,  ai_ * br_);
   *cr = (float)cr_;
   *ci = (float)ci_;
 }
@@ -41,8 +41,8 @@ static inline void pvn_zmul(double *const cr, double *const ci, const double ar,
     ai_ = (long double)ai,
     br_ = (long double)br,
     bi_ = (long double)bi,
-    cr_ = fmal(ar_, br_, -ai_ * bi_),
-    ci_ = fmal(ar_, bi_,  ai_ * br_);
+    cr_ = __builtin_fmal(ar_, br_, -ai_ * bi_),
+    ci_ = __builtin_fmal(ar_, bi_,  ai_ * br_);
 #endif /* ?PVN_QUADMATH */
   *cr = (double)cr_;
   *ci = (double)ci_;
@@ -63,8 +63,8 @@ static inline void pvn_cfma(float *const dr, float *const di, const float ar, co
     bi_ = (double)bi,
     cr_ = (double)cr,
     ci_ = (double)ci,
-    dr_ = fma(ar_, br_, fma(-ai_, bi_, cr_)),
-    di_ = fma(ar_, bi_, fma( ai_, br_, ci_));
+    dr_ = __builtin_fma(ar_, br_, __builtin_fma(-ai_, bi_, cr_)),
+    di_ = __builtin_fma(ar_, bi_, __builtin_fma( ai_, br_, ci_));
   *dr = (float)dr_;
   *di = (float)di_;
 }
@@ -91,8 +91,8 @@ static inline void pvn_zfma(double *const dr, double *const di, const double ar,
     bi_ = (long double)bi,
     cr_ = (long double)cr,
     ci_ = (long double)ci,
-    dr_ = fmal(ar_, br_, fmal(-ai_, bi_, cr_)),
-    di_ = fmal(ar_, bi_, fmal( ai_, br_, ci_));
+    dr_ = __builtin_fmal(ar_, br_, __builtin_fmal(-ai_, bi_, cr_)),
+    di_ = __builtin_fmal(ar_, bi_, __builtin_fmal( ai_, br_, ci_));
 #endif /* ?PVN_QUADMATH */
   *dr = (double)dr_;
   *di = (double)di_;
@@ -110,8 +110,8 @@ static inline void pvn_wmul(long double *const cr, long double *const ci, const 
   *cr = fmaq(ar, br, -ai * bi);
   *ci = fmaq(ar, bi,  ai * br);
 #else /* !PVN_QUADMATH */
-  *cr = fmal(ar, br, -ai * bi);
-  *ci = fmal(ar, bi,  ai * br);
+  *cr = __builtin_fmal(ar, br, -ai * bi);
+  *ci = __builtin_fmal(ar, bi,  ai * br);
 #endif /* ?PVN_QUADMATH */
 }
 
@@ -123,8 +123,8 @@ static inline void pvn_wfma(long double *const dr, long double *const di, const 
   *dr = fmaq(ar, br, fmaq(-ai, bi, cr));
   *di = fmaq(ar, bi, fmaq( ai, br, ci));
 #else /* !PVN_QUADMATH */
-  *dr = fmal(ar, br, fmal(-ai, bi, cr));
-  *di = fmal(ar, bi, fmal( ai, br, ci));
+  *dr = __builtin_fmal(ar, br, __builtin_fmal(-ai, bi, cr));
+  *di = __builtin_fmal(ar, bi, __builtin_fmal( ai, br, ci));
 #endif /* ?PVN_QUADMATH */
 }
 
@@ -149,16 +149,16 @@ static inline void pvn_ymul(long double *const cr, long double *const ci, const 
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  *cr = fmal(ar, br, -ai * bi);
-  *ci = fmal(ar, bi,  ai * br);
+  *cr = __builtin_fmal(ar, br, -ai * bi);
+  *ci = __builtin_fmal(ar, bi,  ai * br);
 }
 
 static inline void pvn_yfma(long double *const dr, long double *const di, const long double ar, const long double ai, const long double br, const long double bi, const long double cr, const long double ci)
 {
   PVN_ASSERT(dr);
   PVN_ASSERT(di);
-  *dr = fmal(ar, br, fmal(-ai, bi, cr));
-  *di = fmal(ar, bi, fmal( ai, br, ci));
+  *dr = __builtin_fmal(ar, br, __builtin_fmal(-ai, bi, cr));
+  *di = __builtin_fmal(ar, bi, __builtin_fmal( ai, br, ci));
 }
 #endif /* ?PVN_QUADMATH */
 

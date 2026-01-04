@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
       (void)printf("%s ", pvn_stoa(s, s1));
       (void)printf("%s\n\tS =\n", pvn_stoa(s, s2));
       PVN_FABI(pvn_sqljr2,PVN_SQLJR2)(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
-      s1 = scalbnf(s1, (es[1] - es[0]));
-      s2 = scalbnf(s2, (es[2] - es[0]));
+      s1 = __builtin_scalbnf(s1, (es[1] - es[0]));
+      s2 = __builtin_scalbnf(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_stoa(s, s1));
       (void)printf("%s\n", pvn_stoa(s, s2));
     }
@@ -99,8 +99,8 @@ int main(int argc, char *argv[])
       (void)printf("%s ", pvn_dtoa(s, s1));
       (void)printf("%s\n\tS =\n", pvn_dtoa(s, s2));
       PVN_FABI(pvn_dqljr2,PVN_DQLJR2)(&a11, &a21, &a12, &a22, &u11, &u21, &u12, &u22, &v11, &v21, &v12, &v22, &s1, &s2, es, E);
-      s1 = scalbnf(s1, (es[1] - es[0]));
-      s2 = scalbnf(s2, (es[2] - es[0]));
+      s1 = __builtin_scalbnf(s1, (es[1] - es[0]));
+      s2 = __builtin_scalbnf(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_dtoa(s, s1));
       (void)printf("%s\n", pvn_dtoa(s, s2));
     }
@@ -162,8 +162,8 @@ int main(int argc, char *argv[])
                   &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
                   &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
                   &s1, &s2, es, E);
-      s1 = scalbnf(s1, (es[1] - es[0]));
-      s2 = scalbnf(s2, (es[2] - es[0]));
+      s1 = __builtin_scalbnf(s1, (es[1] - es[0]));
+      s2 = __builtin_scalbnf(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_stoa(s, s1));
       (void)printf("%s\n", pvn_stoa(s, s2));
     }
@@ -225,8 +225,8 @@ int main(int argc, char *argv[])
                   &u11r, &u11i, &u21r, &u21i, &u12r, &u12i, &u22r, &u22i,
                   &v11r, &v11i, &v21r, &v21i, &v12r, &v12i, &v22r, &v22i,
                   &s1, &s2, es, E);
-      s1 = scalbn(s1, (es[1] - es[0]));
-      s2 = scalbn(s2, (es[2] - es[0]));
+      s1 = __builtin_scalbn(s1, (es[1] - es[0]));
+      s2 = __builtin_scalbn(s2, (es[2] - es[0]));
       (void)printf("%s ", pvn_dtoa(s, s1));
       (void)printf("%s\n", pvn_dtoa(s, s2));
     }
@@ -281,7 +281,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EC = fmaxq(EC, E[0]);
 #else /* !PVN_QUADMATH */
-        EC = fmaxl(EC, E[0]);
+        EC = __builtin_fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
-        EU = fmaxl(EU, E[1]);
+        EU = __builtin_fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -311,7 +311,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
-        EV = fmaxl(EV, E[2]);
+        EV = __builtin_fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
-        EG = fmaxl(EG, E[3]);
+        EG = __builtin_fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EC = fmaxq(EC, E[0]);
 #else /* !PVN_QUADMATH */
-        EC = fmaxl(EC, E[0]);
+        EC = __builtin_fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -386,7 +386,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
-        EU = fmaxl(EU, E[1]);
+        EU = __builtin_fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -401,7 +401,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
-        EV = fmaxl(EV, E[2]);
+        EV = __builtin_fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -416,7 +416,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
-        EG = fmaxl(EG, E[3]);
+        EG = __builtin_fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -482,7 +482,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EC = fmaxq(EC, E[0]);
 #else /* !PVN_QUADMATH */
-        EC = fmaxl(EC, E[0]);
+        EC = __builtin_fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -497,7 +497,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
-        EU = fmaxl(EU, E[1]);
+        EU = __builtin_fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -512,7 +512,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
-        EV = fmaxl(EV, E[2]);
+        EV = __builtin_fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -527,7 +527,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
-        EG = fmaxl(EG, E[3]);
+        EG = __builtin_fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -593,7 +593,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EC = fmaxq(EC, E[0]);
 #else /* !PVN_QUADMATH */
-        EC = fmaxl(EC, E[0]);
+        EC = __builtin_fmaxl(EC, E[0]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EU = fmaxq(EU, E[1]);
 #else /* !PVN_QUADMATH */
-        EU = fmaxl(EU, E[1]);
+        EU = __builtin_fmaxl(EU, E[1]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -623,7 +623,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EV = fmaxq(EV, E[2]);
 #else /* !PVN_QUADMATH */
-        EV = fmaxl(EV, E[2]);
+        EV = __builtin_fmaxl(EV, E[2]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -638,7 +638,7 @@ int main(int argc, char *argv[])
 #ifdef PVN_QUADMATH
         EG = fmaxq(EG, E[3]);
 #else /* !PVN_QUADMATH */
-        EG = fmaxl(EG, E[3]);
+        EG = __builtin_fmaxl(EG, E[3]);
 #endif /* ?PVN_QUADMATH */
 #if (!defined(_WIN32) || defined(_DLL))
 #ifndef NDEBUG
@@ -692,7 +692,7 @@ static inline void ef_mulf(int *const e, float *const f, const int e1, const flo
   PVN_ASSERT(e);
   PVN_ASSERT(f);
   *f = (f1 * f2);
-  *f = frexpf(*f, e);
+  *f = __builtin_frexpf(*f, e);
   *e += (e1 + e2);
 }
 
@@ -701,7 +701,7 @@ static inline void ef_divf(int *const e, float *const f, const int e1, const flo
   PVN_ASSERT(e);
   PVN_ASSERT(f);
   *f = (f1 / f2);
-  *f = frexpf(*f, e);
+  *f = __builtin_frexpf(*f, e);
   *e += (e1 - e2);
 }
 
@@ -741,8 +741,8 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
     const double d = (double)*A11;
     *A11 = *w1;
     *w1 = hypotf(t, 1.0f);
-    if (copysignf(1.0f, *A12) == copysignf(1.0f, *A22)) {
-      const float a12 = fmaf(*A22, t, *A12);
+    if (__builtin_copysignf(1.0f, *A12) == __builtin_copysignf(1.0f, *A22)) {
+      const float a12 = __builtin_fmaf(*A22, t, *A12);
       const double
         a = ((double)*A22 * d),
         b = ((double)*A12 * (double)*A21),
@@ -757,7 +757,7 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
       *A21 = 1.0f;
     }
     else {
-      const float a22 = fmaf(-*A12, t, *A22);
+      const float a22 = __builtin_fmaf(-*A12, t, *A22);
       const double
         a = ((double)*A12 * d),
         b = ((double)*A22 * (double)*A21),
@@ -780,8 +780,8 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
 #endif /* ?PVN_SV2_SAFE */
   *A11 = *w1;
   *w1 = hypotf(t, 1.0f);
-  const float a12 = fmaf( *A22, t, *A12);
-  const float a22 = fmaf(-*A12, t, *A22);
+  const float a12 = __builtin_fmaf( *A22, t, *A12);
+  const float a22 = __builtin_fmaf(-*A12, t, *A22);
   if (*w1 == 1.0f) {
     *A12 = a12;
     *A22 = a22;
@@ -816,14 +816,14 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
     t2 = ((2.0f * A22) / A12);
   else if (A12 == A22) {
     /* (2 * A12 * A22) / (A11 * A11) */
-    af = frexpf(A11, &ae);
-    abf = frexpf(A12, &abe);
-    bf = frexpf(A22, &be);
+    af = __builtin_frexpf(A11, &ae);
+    abf = __builtin_frexpf(A12, &abe);
+    bf = __builtin_frexpf(A22, &be);
     ef_mulf(&ne, &nf, abe, abf, be, bf);
     ++ne;
     ef_mulf(&de, &df, ae, af, ae, af);
     ef_divf(&t2e, &t2f, ne, nf, de, df);
-    t2 = scalbnf(t2f, t2e);
+    t2 = __builtin_scalbnf(t2f, t2e);
   }
   else if ((A11 / A12) < (FLT_EPSILON * 0.5f))
     t2 = ((2.0f * A22) / A12);
@@ -831,38 +831,38 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   else {
     /* should never overflow */
     const float a = hypotf(A11, A12);
-    af = frexpf(a, &ae);
+    af = __builtin_frexpf(a, &ae);
     const float b = A22;
-    bf = frexpf(b, &be);
+    bf = __builtin_frexpf(b, &be);
     abf = (a + b);
-    if (!isfinite(abf)) {
+    if (!__builtin_isfinite(abf)) {
       abf = ((0.5f * a) + (0.5f * b));
       de = 1;
     }
-    abf = frexpf(abf, &abe);
+    abf = __builtin_frexpf(abf, &abe);
     abe += de;
     a_bf = (a - b);
     if (a == b)
       de = 0;
     else if (a_bf >= FLT_MIN) {
-      a_bf = frexpf(a_bf, &a_be);
+      a_bf = __builtin_frexpf(a_bf, &a_be);
       de = 1;
     }
     else {
       de = ((FLT_MIN_EXP + FLT_MANT_DIG) - pvn_imin(ae, be));
-      a_bf = (scalbnf(af, (ae + de)) - scalbnf(bf, (be + de)));
-      a_bf = frexpf(a_bf, &a_be);
+      a_bf = (__builtin_scalbnf(af, (ae + de)) - __builtin_scalbnf(bf, (be + de)));
+      a_bf = __builtin_frexpf(a_bf, &a_be);
       a_be -= de;
       de = -1;
     }
     if (de)
       ef_mulf(&de, &df, a_be, a_bf, abe, abf);
-    af = frexpf(A12, &ae);
+    af = __builtin_frexpf(A12, &ae);
     ef_mulf(&ne, &nf, ae, af, be, bf);
     ++ne;
     ef_divf(&t2e, &t2f, ne, nf, de, df);
-    if (isfinite(t2f))
-      t2 = scalbnf(t2f, t2e);
+    if (__builtin_isfinite(t2f))
+      t2 = __builtin_scalbnf(t2f, t2e);
     else
       t2 = t2f;
   }
@@ -870,21 +870,21 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   else if (A11 > A12) {
     const float x = (A12 / A11);
     const float y = (A22 / A11);
-    t2 = (((2.0f * x) * y) / fmaxf(fmaf((x - y), (x + y), 1.0f), 0.0f));
+    t2 = (((2.0f * x) * y) / __builtin_fmaxf(__builtin_fmaf((x - y), (x + y), 1.0f), 0.0f));
   }
   else if (A12 > A11) {
     const float x = (A11 / A12);
     const float y = (A22 / A12);
-    t2 = ((2.0f * y) / fmaxf(fmaf((x - y), (x + y), 1.0f), 0.0f));
+    t2 = ((2.0f * y) / __builtin_fmaxf(__builtin_fmaf((x - y), (x + y), 1.0f), 0.0f));
   }
   else {
     const float y = (A22 / A12);
-    t2 = ((2.0f * y) / fmaxf(fmaf((1.0f - y), (1.0f + y), 1.0f), 0.0f));
+    t2 = ((2.0f * y) / __builtin_fmaxf(__builtin_fmaf((1.0f - y), (1.0f + y), 1.0f), 0.0f));
   }
 #endif /* ?PVN_SV2_SAFE */
 
   /* tan(φ) */
-  if (isfinite(t2))
+  if (__builtin_isfinite(t2))
     *tf = (t2 / (1.0f + hypotf(t2, 1.0f)));
   else
     *tf = 1.0f;
@@ -893,22 +893,22 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
 #endif /* PVN_PRINTOUT */
   *cf = hypotf(*tf, 1.0f); /* sec(φ) */
   *sf = (*tf / *cf); /* sin(φ) */
-  nf = frexpf(*cf, &ne);
+  nf = __builtin_frexpf(*cf, &ne);
   *cf = (1.0f / *cf); /* cos(φ) */
 
-  *sp = fmaf(*tf, A22, A12);
+  *sp = __builtin_fmaf(*tf, A22, A12);
   *tp = (*sp / A11); /* tan(ψ) */
 #ifdef PVN_PRINTOUT
   if (s) (void)dprintf(PVN_PRINTOUT, "tan(ψ)=%s\n", pvn_stoa(s, *tp));
 #endif /* PVN_PRINTOUT */
 
-  af = frexpf(A11, &ae);
-  bf = frexpf(A22, &be);
+  af = __builtin_frexpf(A11, &ae);
+  bf = __builtin_frexpf(A22, &be);
 
-  if (isfinite(*tp)) {
+  if (__builtin_isfinite(*tp)) {
     *cp = hypotf(*tp, 1.0f); /* sec(ψ) */
     *sp = (*tp / *cp); /* sin(ψ) */
-    df = frexpf(*cp, &de);
+    df = __builtin_frexpf(*cp, &de);
     *cp = (1.0f / *cp); /* cos(ψ) */
     ef_divf(&t2e, &t2f, ne, nf, de, df);
     /* s2 = A22 * (sec(φ) / sec(ψ)) */
@@ -918,11 +918,11 @@ static void slpsv2(const float A11, const float A12, const float A22, float *con
   }
   else {
     /* s1 ≈ A12 + tan(φ) * A22 */
-    a_bf = frexpf(*sp, &a_be);
+    a_bf = __builtin_frexpf(*sp, &a_be);
     /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
     ef_divf(&t2e, &t2f, ae, af, a_be, a_bf);
     *sp = 1.0f; /* sin(ψ) */
-    *cp = scalbnf(t2f, t2e); /* cos(ψ) */
+    *cp = __builtin_scalbnf(t2f, t2e); /* cos(ψ) */
     /* s2 ≈ A22 * cos(ψ) */
     ef_mulf(&abe, &abf, be, bf, t2e, t2f);
   }
@@ -963,37 +963,37 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
   PVN_ASSERT(s1);
   PVN_ASSERT(s2);
   PVN_ASSERT(es);
-  if (!isfinite(*a11))
+  if (!__builtin_isfinite(*a11))
     return -1;
-  if (!isfinite(*a21))
+  if (!__builtin_isfinite(*a21))
     return -2;
-  if (!isfinite(*a12))
+  if (!__builtin_isfinite(*a12))
     return -3;
-  if (!isfinite(*a22))
+  if (!__builtin_isfinite(*a22))
     return -4;
   /* should not fail beyond this point when *es == 0 */
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0f) {
     knd |= 1;
-    (void)frexpf(*a11, &e);
+    (void)__builtin_frexpf(*a11, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21 != 0.0f) {
     knd |= 2;
-    (void)frexpf(*a21, &e);
+    (void)__builtin_frexpf(*a21, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12 != 0.0f) {
     knd |= 4;
-    (void)frexpf(*a12, &e);
+    (void)__builtin_frexpf(*a12, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22 != 0.0f) {
     knd |= 8;
-    (void)frexpf(*a22, &e);
+    (void)__builtin_frexpf(*a22, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -1033,18 +1033,18 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   float A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
   if (*es) {
-    A11 = scalbnf(A11, *es);
-    A21 = scalbnf(A21, *es);
-    A12 = scalbnf(A12, *es);
-    A22 = scalbnf(A22, *es);
+    A11 = __builtin_scalbnf(A11, *es);
+    A21 = __builtin_scalbnf(A21, *es);
+    A12 = __builtin_scalbnf(A12, *es);
+    A22 = __builtin_scalbnf(A22, *es);
     if (mxe) {
-      if (!isfinite(A11))
+      if (!__builtin_isfinite(A11))
         return -5;
-      if (!isfinite(A21))
+      if (!__builtin_isfinite(A21))
         return -6;
-      if (!isfinite(A12))
+      if (!__builtin_isfinite(A12))
         return -7;
-      if (!isfinite(A22))
+      if (!__builtin_isfinite(A22))
         return -8;
     }
     if (*es < 0) {
@@ -1076,8 +1076,8 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
   case  0:
     /* [ 0 0 ] */
     /* [ 0 0 ] */
-    *u11 = copysignf(1.0f, A11);
-    *u22 = copysignf(1.0f, A22);
+    *u11 = __builtin_copysignf(1.0f, A11);
+    *u22 = __builtin_copysignf(1.0f, A22);
     A22 = A12 = A21 = A11 = 0.0f;
     break;
   case  1:
@@ -1087,7 +1087,7 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
       *u11 = -1.0f;
       A11 = -A11;
     }
-    *u22 = copysignf(1.0f, A22);
+    *u22 = __builtin_copysignf(1.0f, A22);
     A22 = A12 = A21 = 0.0f;
     *s1 = A11;
     break;
@@ -1104,26 +1104,26 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     }
     else
       *u12 = 1.0f;
-    *u21 = copysignf(1.0f, A12);
+    *u21 = __builtin_copysignf(1.0f, A12);
     A22 = A12 = A21 = 0.0f;
     *s1 = A11;
     break;
   case  3:
     /* [ * 0 ] */
     /* [ * 0 ] */
-    A12 = fabsf(A11);
-    A22 = fabsf(A21);
+    A12 = __builtin_fabsf(A11);
+    A22 = __builtin_fabsf(A21);
     if (A12 < A22) {
       *u11 = 0.0f;
-      *u21 = copysignf(1.0f, A11);
-      *u12 = copysignf(1.0f, A21);
+      *u21 = __builtin_copysignf(1.0f, A11);
+      *u12 = __builtin_copysignf(1.0f, A21);
       *u22 = 0.0f;
       A11 = A22;
       A21 = A12;
     }
     else {
-      *u11 = copysignf(1.0f, A11);
-      *u22 = copysignf(1.0f, A21);
+      *u11 = __builtin_copysignf(1.0f, A11);
+      *u22 = __builtin_copysignf(1.0f, A21);
       A11 = A12;
       A21 = A22;
     }
@@ -1134,9 +1134,9 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
   case  4:
     /* [ 0 * ] */
     /* [ 0 0 ] */
-    *u11 = copysignf(1.0f, A12);
-    *u22 = copysignf(1.0f, A21);
-    A11 = fabsf(A12);
+    *u11 = __builtin_copysignf(1.0f, A12);
+    *u22 = __builtin_copysignf(1.0f, A21);
+    A11 = __builtin_fabsf(A12);
     A22 = A12 = A21 = 0.0f;
     *v11 = 0.0f;
     *v21 = 1.0f;
@@ -1147,19 +1147,19 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
   case  5:
     /* [ * * ] */
     /* [ 0 0 ] */
-    A21 = fabsf(A11);
-    A22 = fabsf(A12);
+    A21 = __builtin_fabsf(A11);
+    A22 = __builtin_fabsf(A12);
     if (A21 < A22) {
       *v11 = 0.0f;
-      *v21 = copysignf(1.0f, A12);
-      *v12 = copysignf(1.0f, A11);
+      *v21 = __builtin_copysignf(1.0f, A12);
+      *v12 = __builtin_copysignf(1.0f, A11);
       *v22 = 0.0f;
       A11 = A22;
       A12 = A21;
     }
     else {
-      *v11 = copysignf(1.0f, A11);
-      *v22 = copysignf(1.0f, A12);
+      *v11 = __builtin_copysignf(1.0f, A11);
+      *v22 = __builtin_copysignf(1.0f, A12);
       A11 = A21;
       A12 = A22;
     }
@@ -1170,10 +1170,10 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
   case  6:
     /* [ 0 * ] */
     /* [ * 0 ] */
-    *u11 = copysignf(1.0f, A12);
-    *u22 = copysignf(1.0f, A21);
-    A11 = fabsf(A12);
-    A22 = fabsf(A21);
+    *u11 = __builtin_copysignf(1.0f, A12);
+    *u22 = __builtin_copysignf(1.0f, A21);
+    A11 = __builtin_fabsf(A12);
+    A22 = __builtin_fabsf(A21);
     A12 = A21 = 0.0f;
     *v11 = 0.0f;
     *v21 = 1.0f;
@@ -1215,10 +1215,10 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     /* [ 0 0 ] */
     /* [ 0 * ] */
     *u11 = 0.0f;
-    *u21 = copysignf(1.0f, A11);
-    *u12 = copysignf(1.0f, A22);
+    *u21 = __builtin_copysignf(1.0f, A11);
+    *u12 = __builtin_copysignf(1.0f, A22);
     *u22 = 0.0f;
-    A11 = fabsf(A22);
+    A11 = __builtin_fabsf(A22);
     A22 = A12 = A21 = 0.0f;
     *v11 = 0.0f;
     *v21 = 1.0f;
@@ -1250,19 +1250,19 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     *u22 = 0.0f;
     A11 = A21;
     A12 = A22;
-    A21 = fabsf(A11);
-    A22 = fabsf(A12);
+    A21 = __builtin_fabsf(A11);
+    A22 = __builtin_fabsf(A12);
     if (A21 < A22) {
       *v11 = 0.0f;
-      *v21 = copysignf(1.0f, A12);
-      *v12 = copysignf(1.0f, A11);
+      *v21 = __builtin_copysignf(1.0f, A12);
+      *v12 = __builtin_copysignf(1.0f, A11);
       *v22 = 0.0f;
       A11 = A22;
       A12 = A21;
     }
     else {
-      *v11 = copysignf(1.0f, A11);
-      *v22 = copysignf(1.0f, A12);
+      *v11 = __builtin_copysignf(1.0f, A11);
+      *v22 = __builtin_copysignf(1.0f, A12);
       A11 = A21;
       A12 = A22;
     }
@@ -1313,19 +1313,19 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     *v21 = 1.0f;
     *v12 = 1.0f;
     *v22 = 0.0f;
-    A12 = fabsf(A11);
-    A22 = fabsf(A21);
+    A12 = __builtin_fabsf(A11);
+    A22 = __builtin_fabsf(A21);
     if (A12 < A22) {
       *u11 = 0.0f;
-      *u21 = copysignf(1.0f, A11);
-      *u12 = copysignf(1.0f, A21);
+      *u21 = __builtin_copysignf(1.0f, A11);
+      *u12 = __builtin_copysignf(1.0f, A21);
       *u22 = 0.0f;
       A11 = A22;
       A21 = A12;
     }
     else {
-      *u11 = copysignf(1.0f, A11);
-      *u22 = copysignf(1.0f, A21);
+      *u11 = __builtin_copysignf(1.0f, A11);
+      *u22 = __builtin_copysignf(1.0f, A21);
       A11 = A12;
       A21 = A22;
     }
@@ -1415,13 +1415,13 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
       pvn_fswp(v21, v22);
       pvn_fswp(s1, s2);
     }
-    if (copysignf(1.0f, A11) != 1.0f) {
+    if (__builtin_copysignf(1.0f, A11) != 1.0f) {
       *u11 = -*u11;
       *u12 = -*u12;
       A11 = -A11;
       A12 = -A12;
     }
-    if (copysignf(1.0f, A21) != 1.0f) {
+    if (__builtin_copysignf(1.0f, A21) != 1.0f) {
       *u21 = -*u21;
       *u22 = -*u22;
       A21 = -A21;
@@ -1445,22 +1445,22 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     if (ct == 1.0f) {
       if ((A12 == 0.0f) || (A22 == 0.0f)) {
         A21 = *u11;
-        *u11 = fmaf(tt, *u21, *u11);
-        *u21 = fmaf(st,  A21, *u21);
+        *u11 = __builtin_fmaf(tt, *u21, *u11);
+        *u21 = __builtin_fmaf(st,  A21, *u21);
         A21 = *u12;
-        *u12 = fmaf(tt, *u22, *u12);
-        *u22 = fmaf(st,  A21, *u22);
+        *u12 = __builtin_fmaf(tt, *u22, *u12);
+        *u22 = __builtin_fmaf(st,  A21, *u22);
       }
       st = tt;
     }
     else {
       if ((A12 == 0.0f) || (A22 == 0.0f)) {
         A21 = *u11;
-        *u11 = (fmaf(tt, *u21, *u11) / ct);
-        *u21 = (fmaf(st,  A21, *u21) / ct);
+        *u11 = (__builtin_fmaf(tt, *u21, *u11) / ct);
+        *u21 = (__builtin_fmaf(st,  A21, *u21) / ct);
         A21 = *u12;
-        *u12 = (fmaf(tt, *u22, *u12) / ct);
-        *u22 = (fmaf(st,  A21, *u22) / ct);
+        *u12 = (__builtin_fmaf(tt, *u22, *u12) / ct);
+        *u22 = (__builtin_fmaf(st,  A21, *u22) / ct);
       }
       st = (tt / ct);
       ct = (1.0f / ct);
@@ -1468,7 +1468,7 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     A21 = 0.0f;
     if (A12 == 0.0f) {
       A12 = 0.0f;
-      if (copysignf(1.0f, A22) != 1.0f) {
+      if (__builtin_copysignf(1.0f, A22) != 1.0f) {
         *u21 = -*u21;
         *u22 = -*u22;
         A22 = -A22;
@@ -1476,13 +1476,13 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
       e = 0;
     }
     else if (A22 == 0.0f) {
-      if (copysignf(1.0f, A12) != 1.0f) {
+      if (__builtin_copysignf(1.0f, A12) != 1.0f) {
         A12 = -A12;
         A22 = -A22;
         *v12 = -*v12;
         *v22 = -*v22;
       }
-      if (copysignf(1.0f, A22) != 1.0f) {
+      if (__builtin_copysignf(1.0f, A22) != 1.0f) {
         *u21 = -*u21;
         *u22 = -*u22;
         A22 = 0.0f;
@@ -1528,19 +1528,19 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     st = -tt;
     A21 = *u11;
     if (ct == 1.0f) {
-      *u11 = fmaf(tt, *u21, *u11);
-      *u21 = fmaf(st,  A21, *u21);
+      *u11 = __builtin_fmaf(tt, *u21, *u11);
+      *u21 = __builtin_fmaf(st,  A21, *u21);
       A21 = *u12;
-      *u12 = fmaf(tt, *u22, *u12);
-      *u22 = fmaf(st,  A21, *u22);
+      *u12 = __builtin_fmaf(tt, *u22, *u12);
+      *u22 = __builtin_fmaf(st,  A21, *u22);
       st = tt;
     }
     else {
-      *u11 = (fmaf(tt, *u21, *u11) / ct);
-      *u21 = (fmaf(st,  A21, *u21) / ct);
+      *u11 = (__builtin_fmaf(tt, *u21, *u11) / ct);
+      *u21 = (__builtin_fmaf(st,  A21, *u21) / ct);
       A21 = *u12;
-      *u12 = (fmaf(tt, *u22, *u12) / ct);
-      *u22 = (fmaf(st,  A21, *u22) / ct);
+      *u12 = (__builtin_fmaf(tt, *u22, *u12) / ct);
+      *u22 = (__builtin_fmaf(st,  A21, *u22) / ct);
       st = (tt / ct);
       ct = (1.0f / ct);
     }
@@ -1568,19 +1568,19 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
     st = -tt;
     A12 = *v11;
     if (ct == 1.0f) {
-      *v11 = fmaf(tt, *v12, *v11);
-      *v12 = fmaf(st,  A12, *v12);
+      *v11 = __builtin_fmaf(tt, *v12, *v11);
+      *v12 = __builtin_fmaf(st,  A12, *v12);
       A12 = *v21;
-      *v21 = fmaf(tt, *v22, *v21);
-      *v22 = fmaf(st,  A12, *v22);
+      *v21 = __builtin_fmaf(tt, *v22, *v21);
+      *v22 = __builtin_fmaf(st,  A12, *v22);
       st = tt;
     }
     else {
-      *v11 = (fmaf(tt, *v12, *v11) / ct);
-      *v12 = (fmaf(st,  A12, *v12) / ct);
+      *v11 = (__builtin_fmaf(tt, *v12, *v11) / ct);
+      *v12 = (__builtin_fmaf(st,  A12, *v12) / ct);
       A12 = *v21;
-      *v21 = (fmaf(tt, *v22, *v21) / ct);
-      *v22 = (fmaf(st,  A12, *v22) / ct);
+      *v21 = (__builtin_fmaf(tt, *v22, *v21) / ct);
+      *v22 = (__builtin_fmaf(st,  A12, *v22) / ct);
       st = (tt / ct);
       ct = (1.0f / ct);
     }
@@ -1596,10 +1596,10 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
 
 #ifdef PVN_PRINTOUT
   (void)dprintf(PVN_PRINTOUT, "\tA =\n");
-  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_stoa(s, scalbnf(A11, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_stoa(s, scalbnf(A12, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_stoa(s, scalbnf(A21, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_stoa(s, scalbnf(A22, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_stoa(s, __builtin_scalbnf(A11, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_stoa(s, __builtin_scalbnf(A12, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_stoa(s, __builtin_scalbnf(A21, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_stoa(s, __builtin_scalbnf(A22, -*es)));
 #endif /* PVN_PRINTOUT */
 
   if (abs(e) == 13) {
@@ -1629,7 +1629,7 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
              );
 
     /* update U */
-    if (copysignf(1.0f, st) != 1.0f) {
+    if (__builtin_copysignf(1.0f, st) != 1.0f) {
       /* U^T(φ) * diag(1, -1) * U^T(ϑ):
           cos(φ - ϑ) -sin(φ - ϑ)
          -sin(φ - ϑ) -cos(φ - ϑ)
@@ -1637,15 +1637,15 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
       st = -st;
       float tf_t = (tf - tt), cf_t = 1.0f, sf_t = 0.0f;
       if (tf_t != 0.0f) {
-        tf_t /= fmaf(tf, tt, 1.0f);
-        if (isfinite(tf_t)) {
+        tf_t /= __builtin_fmaf(tf, tt, 1.0f);
+        if (__builtin_isfinite(tf_t)) {
           /* 1 / cos */
           cf_t = hypotf(tf_t, 1.0f);
           sf_t = (tf_t / cf_t);
           cf_t = (1.0f / cf_t);
         }
         else {
-          sf_t = copysignf(1.0f, tf_t);
+          sf_t = __builtin_copysignf(1.0f, tf_t);
           cf_t = 0.0f;
         }
       }
@@ -1667,15 +1667,15 @@ int PVN_FABI(pvn_sljsv2,PVN_SLJSV2)
       */
       float tft = (tf + tt), cft = 1.0f, sft = 0.0f;
       if (tft != 0.0f) {
-        tft /= fmaf(-tf, tt, 1.0f);
-        if (isfinite(tft)) {
+        tft /= __builtin_fmaf(-tf, tt, 1.0f);
+        if (__builtin_isfinite(tft)) {
           /* 1 / cos */
           cft = hypotf(tft, 1.0f);
           sft = (tft / cft);
           cft = (1.0f / cft);
         }
         else {
-          sft = copysignf(1.0f, tft);
+          sft = __builtin_copysignf(1.0f, tft);
           cft = 0.0f;
         }
       }
@@ -1752,8 +1752,8 @@ static float cpolarf(const float r, const float i, float *const c, float *const 
   PVN_ASSERT(c);
   PVN_ASSERT(s);
   const float a = hypotf(r, i);
-  *c = copysignf(fminf((fabsf(r) / a), 1.0f), r);
-  *s = (i / fmaxf(a, FLT_TRUE_MIN));
+  *c = __builtin_copysignf(__builtin_fminf((__builtin_fabsf(r) / a), 1.0f), r);
+  *s = (i / __builtin_fmaxf(a, FLT_TRUE_MIN));
   return a;
 }
 
@@ -1778,45 +1778,45 @@ int PVN_FABI(pvn_cljsv2,PVN_CLJSV2)
   PVN_ASSERT(s1);
   PVN_ASSERT(s2);
   PVN_ASSERT(es);
-  if (!isfinite(*a11r))
+  if (!__builtin_isfinite(*a11r))
     return -1;
-  if (!isfinite(*a11i))
+  if (!__builtin_isfinite(*a11i))
     return -2;
-  if (!isfinite(*a21r))
+  if (!__builtin_isfinite(*a21r))
     return -3;
-  if (!isfinite(*a21i))
+  if (!__builtin_isfinite(*a21i))
     return -4;
-  if (!isfinite(*a12r))
+  if (!__builtin_isfinite(*a12r))
     return -5;
-  if (!isfinite(*a12i))
+  if (!__builtin_isfinite(*a12i))
     return -6;
-  if (!isfinite(*a22r))
+  if (!__builtin_isfinite(*a22r))
     return -7;
-  if (!isfinite(*a22i))
+  if (!__builtin_isfinite(*a22i))
     return -8;
   /* should not fail beyond this point when *es == 0 */
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0f) {
     kndi |= 1;
-    (void)frexpf(*a11i, &e);
+    (void)__builtin_frexpf(*a11i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21i != 0.0f) {
     kndi |= 2;
-    (void)frexpf(*a21i, &e);
+    (void)__builtin_frexpf(*a21i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12i != 0.0f) {
     kndi |= 4;
-    (void)frexpf(*a12i, &e);
+    (void)__builtin_frexpf(*a12i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22i != 0.0f) {
     kndi |= 8;
-    (void)frexpf(*a22i, &e);
+    (void)__builtin_frexpf(*a22i, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -1833,25 +1833,25 @@ int PVN_FABI(pvn_cljsv2,PVN_CLJSV2)
   int kndr = 0;
   if (*a11r != 0.0f) {
     kndr |= 1;
-    (void)frexpf(*a11r, &e);
+    (void)__builtin_frexpf(*a11r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21r != 0.0f) {
     kndr |= 2;
-    (void)frexpf(*a21r, &e);
+    (void)__builtin_frexpf(*a21r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12r != 0.0f) {
     kndr |= 4;
-    (void)frexpf(*a12r, &e);
+    (void)__builtin_frexpf(*a12r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22r != 0.0f) {
     kndr |= 8;
-    (void)frexpf(*a22r, &e);
+    (void)__builtin_frexpf(*a22r, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -1897,30 +1897,30 @@ int PVN_FABI(pvn_cljsv2,PVN_CLJSV2)
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   float A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
   if (*es) {
-    A11r = scalbnf(A11r, *es);
-    A11i = scalbnf(A11i, *es);
-    A21r = scalbnf(A21r, *es);
-    A21i = scalbnf(A21i, *es);
-    A12r = scalbnf(A12r, *es);
-    A12i = scalbnf(A12i, *es);
-    A22r = scalbnf(A22r, *es);
-    A22i = scalbnf(A22i, *es);
+    A11r = __builtin_scalbnf(A11r, *es);
+    A11i = __builtin_scalbnf(A11i, *es);
+    A21r = __builtin_scalbnf(A21r, *es);
+    A21i = __builtin_scalbnf(A21i, *es);
+    A12r = __builtin_scalbnf(A12r, *es);
+    A12i = __builtin_scalbnf(A12i, *es);
+    A22r = __builtin_scalbnf(A22r, *es);
+    A22i = __builtin_scalbnf(A22i, *es);
     if (mxe) {
-      if (!isfinite(A11r))
+      if (!__builtin_isfinite(A11r))
         return -9;
-      if (!isfinite(A11i))
+      if (!__builtin_isfinite(A11i))
         return -10;
-      if (!isfinite(A21r))
+      if (!__builtin_isfinite(A21r))
         return -11;
-      if (!isfinite(A21i))
+      if (!__builtin_isfinite(A21i))
         return -12;
-      if (!isfinite(A12r))
+      if (!__builtin_isfinite(A12r))
         return -13;
-      if (!isfinite(A12i))
+      if (!__builtin_isfinite(A12i))
         return -14;
-      if (!isfinite(A22r))
+      if (!__builtin_isfinite(A22r))
         return -15;
-      if (!isfinite(A22i))
+      if (!__builtin_isfinite(A22i))
         return -16;
     }
     if (*es < 0) {
@@ -2202,41 +2202,41 @@ int PVN_FABI(pvn_cljsv2,PVN_CLJSV2)
     A21r = A12r;
     A21i = A12i;
     if (ct == 1.0f) {
-      A12r = fmaf(tt, A22r, A12r);
-      A12i = fmaf(tt, A22i, A12i);
-      A22r = fmaf(st, A21r, A22r);
-      A22i = fmaf(st, A21i, A22i);
+      A12r = __builtin_fmaf(tt, A22r, A12r);
+      A12i = __builtin_fmaf(tt, A22i, A12i);
+      A22r = __builtin_fmaf(st, A21r, A22r);
+      A22i = __builtin_fmaf(st, A21i, A22i);
       A21r = *u11r;
       A21i = *u11i;
-      *u11r = fmaf(tt, *u21r, *u11r);
-      *u11i = fmaf(tt, *u21i, *u11i);
-      *u21r = fmaf(st,  A21r, *u21r);
-      *u21i = fmaf(st,  A21i, *u21i);
+      *u11r = __builtin_fmaf(tt, *u21r, *u11r);
+      *u11i = __builtin_fmaf(tt, *u21i, *u11i);
+      *u21r = __builtin_fmaf(st,  A21r, *u21r);
+      *u21i = __builtin_fmaf(st,  A21i, *u21i);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = fmaf(tt, *u22r, *u12r);
-      *u12i = fmaf(tt, *u22i, *u12i);
-      *u22r = fmaf(st,  A21r, *u22r);
-      *u22i = fmaf(st,  A21i, *u22i);
+      *u12r = __builtin_fmaf(tt, *u22r, *u12r);
+      *u12i = __builtin_fmaf(tt, *u22i, *u12i);
+      *u22r = __builtin_fmaf(st,  A21r, *u22r);
+      *u22i = __builtin_fmaf(st,  A21i, *u22i);
       st = tt;
     }
     else {
-      A12r = (fmaf(tt, A22r, A12r) / ct);
-      A12i = (fmaf(tt, A22i, A12i) / ct);
-      A22r = (fmaf(st, A21r, A22r) / ct);
-      A22i = (fmaf(st, A21i, A22i) / ct);
+      A12r = (__builtin_fmaf(tt, A22r, A12r) / ct);
+      A12i = (__builtin_fmaf(tt, A22i, A12i) / ct);
+      A22r = (__builtin_fmaf(st, A21r, A22r) / ct);
+      A22i = (__builtin_fmaf(st, A21i, A22i) / ct);
       A21r = *u11r;
       A21i = *u11i;
-      *u11r = (fmaf(tt, *u21r, *u11r) / ct);
-      *u11i = (fmaf(tt, *u21i, *u11i) / ct);
-      *u21r = (fmaf(st,  A21r, *u21r) / ct);
-      *u21i = (fmaf(st,  A21i, *u21i) / ct);
+      *u11r = (__builtin_fmaf(tt, *u21r, *u11r) / ct);
+      *u11i = (__builtin_fmaf(tt, *u21i, *u11i) / ct);
+      *u21r = (__builtin_fmaf(st,  A21r, *u21r) / ct);
+      *u21i = (__builtin_fmaf(st,  A21i, *u21i) / ct);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = (fmaf(tt, *u22r, *u12r) / ct);
-      *u12i = (fmaf(tt, *u22i, *u12i) / ct);
-      *u22r = (fmaf(st,  A21r, *u22r) / ct);
-      *u22i = (fmaf(st,  A21i, *u22i) / ct);
+      *u12r = (__builtin_fmaf(tt, *u22r, *u12r) / ct);
+      *u12i = (__builtin_fmaf(tt, *u22i, *u12i) / ct);
+      *u22r = (__builtin_fmaf(st,  A21r, *u22r) / ct);
+      *u22i = (__builtin_fmaf(st,  A21i, *u22i) / ct);
       st = (tt / ct);
       ct = (1.0f / ct);
     }
@@ -2283,29 +2283,29 @@ int PVN_FABI(pvn_cljsv2,PVN_CLJSV2)
     A21r = *u11r;
     A21i = *u11i;
     if (ct == 1.0f) {
-      *u11r = fmaf(tt, *u21r, *u11r);
-      *u11i = fmaf(tt, *u21i, *u11i);
-      *u21r = fmaf(st,  A21r, *u21r);
-      *u21i = fmaf(st,  A21i, *u21i);
+      *u11r = __builtin_fmaf(tt, *u21r, *u11r);
+      *u11i = __builtin_fmaf(tt, *u21i, *u11i);
+      *u21r = __builtin_fmaf(st,  A21r, *u21r);
+      *u21i = __builtin_fmaf(st,  A21i, *u21i);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = fmaf(tt, *u22r, *u12r);
-      *u12i = fmaf(tt, *u22i, *u12i);
-      *u22r = fmaf(st,  A21r, *u22r);
-      *u22i = fmaf(st,  A21i, *u22i);
+      *u12r = __builtin_fmaf(tt, *u22r, *u12r);
+      *u12i = __builtin_fmaf(tt, *u22i, *u12i);
+      *u22r = __builtin_fmaf(st,  A21r, *u22r);
+      *u22i = __builtin_fmaf(st,  A21i, *u22i);
       st = tt;
     }
     else {
-      *u11r = (fmaf(tt, *u21r, *u11r) / ct);
-      *u11i = (fmaf(tt, *u21i, *u11i) / ct);
-      *u21r = (fmaf(st,  A21r, *u21r) / ct);
-      *u21i = (fmaf(st,  A21i, *u21i) / ct);
+      *u11r = (__builtin_fmaf(tt, *u21r, *u11r) / ct);
+      *u11i = (__builtin_fmaf(tt, *u21i, *u11i) / ct);
+      *u21r = (__builtin_fmaf(st,  A21r, *u21r) / ct);
+      *u21i = (__builtin_fmaf(st,  A21i, *u21i) / ct);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = (fmaf(tt, *u22r, *u12r) / ct);
-      *u12i = (fmaf(tt, *u22i, *u12i) / ct);
-      *u22r = (fmaf(st,  A21r, *u22r) / ct);
-      *u22i = (fmaf(st,  A21i, *u22i) / ct);
+      *u12r = (__builtin_fmaf(tt, *u22r, *u12r) / ct);
+      *u12i = (__builtin_fmaf(tt, *u22i, *u12i) / ct);
+      *u22r = (__builtin_fmaf(st,  A21r, *u22r) / ct);
+      *u22i = (__builtin_fmaf(st,  A21i, *u22i) / ct);
       st = (tt / ct);
       ct = (1.0f / ct);
     }
@@ -2328,29 +2328,29 @@ int PVN_FABI(pvn_cljsv2,PVN_CLJSV2)
     A12r = *v11r;
     A12i = *v11i;
     if (ct == 1.0f) {
-      *v11r = fmaf(tt, *v12r, *v11r);
-      *v11i = fmaf(tt, *v12i, *v11i);
-      *v12r = fmaf(st,  A12r, *v12r);
-      *v12i = fmaf(st,  A12i, *v12i);
+      *v11r = __builtin_fmaf(tt, *v12r, *v11r);
+      *v11i = __builtin_fmaf(tt, *v12i, *v11i);
+      *v12r = __builtin_fmaf(st,  A12r, *v12r);
+      *v12i = __builtin_fmaf(st,  A12i, *v12i);
       A12r = *v21r;
       A12i = *v21i;
-      *v21r = fmaf(tt, *v22r, *v21r);
-      *v21i = fmaf(tt, *v22i, *v21i);
-      *v22r = fmaf(st,  A12r, *v22r);
-      *v22i = fmaf(st,  A12i, *v22i);
+      *v21r = __builtin_fmaf(tt, *v22r, *v21r);
+      *v21i = __builtin_fmaf(tt, *v22i, *v21i);
+      *v22r = __builtin_fmaf(st,  A12r, *v22r);
+      *v22i = __builtin_fmaf(st,  A12i, *v22i);
       st = tt;
     }
     else {
-      *v11r = (fmaf(tt, *v12r, *v11r) / ct);
-      *v11i = (fmaf(tt, *v12i, *v11i) / ct);
-      *v12r = (fmaf(st,  A12r, *v12r) / ct);
-      *v12i = (fmaf(st,  A12i, *v12i) / ct);
+      *v11r = (__builtin_fmaf(tt, *v12r, *v11r) / ct);
+      *v11i = (__builtin_fmaf(tt, *v12i, *v11i) / ct);
+      *v12r = (__builtin_fmaf(st,  A12r, *v12r) / ct);
+      *v12i = (__builtin_fmaf(st,  A12i, *v12i) / ct);
       A12r = *v21r;
       A12i = *v21i;
-      *v21r = (fmaf(tt, *v22r, *v21r) / ct);
-      *v21i = (fmaf(tt, *v22i, *v21i) / ct);
-      *v22r = (fmaf(st,  A12r, *v22r) / ct);
-      *v22i = (fmaf(st,  A12i, *v22i) / ct);
+      *v21r = (__builtin_fmaf(tt, *v22r, *v21r) / ct);
+      *v21i = (__builtin_fmaf(tt, *v22i, *v21i) / ct);
+      *v22r = (__builtin_fmaf(st,  A12r, *v22r) / ct);
+      *v22i = (__builtin_fmaf(st,  A12i, *v22i) / ct);
       st = (tt / ct);
       ct = (1.0f / ct);
     }
@@ -2366,14 +2366,14 @@ int PVN_FABI(pvn_cljsv2,PVN_CLJSV2)
 
 #ifdef PVN_PRINTOUT
   (void)dprintf(PVN_PRINTOUT, "\tA =\n");
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, scalbnf(A11r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_stoa(s, scalbnf(A11i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, scalbnf(A12r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_stoa(s, scalbnf(A12i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, scalbnf(A21r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_stoa(s, scalbnf(A21i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, scalbnf(A22r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_stoa(s, scalbnf(A22i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, __builtin_scalbnf(A11r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_stoa(s, __builtin_scalbnf(A11i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, __builtin_scalbnf(A12r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_stoa(s, __builtin_scalbnf(A12i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, __builtin_scalbnf(A21r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_stoa(s, __builtin_scalbnf(A21i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_stoa(s, __builtin_scalbnf(A22r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_stoa(s, __builtin_scalbnf(A22i, -*es)));
 #endif /* PVN_PRINTOUT */
 
   if (abs(e) == 13) {
@@ -2474,7 +2474,7 @@ static inline void ef_mul(int *const e, double *const f, const int e1, const dou
   PVN_ASSERT(e);
   PVN_ASSERT(f);
   *f = (f1 * f2);
-  *f = frexp(*f, e);
+  *f = __builtin_frexp(*f, e);
   *e += (e1 + e2);
 }
 
@@ -2483,7 +2483,7 @@ static inline void ef_div(int *const e, double *const f, const int e1, const dou
   PVN_ASSERT(e);
   PVN_ASSERT(f);
   *f = (f1 / f2);
-  *f = frexp(*f, e);
+  *f = __builtin_frexp(*f, e);
   *e += (e1 - e2);
 }
 
@@ -2532,8 +2532,8 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
     const T d = (T)*A11;
     *A11 = *w1;
     *w1 = hypot(t, 1.0);
-    if (copysign(1.0, *A12) == copysign(1.0, *A22)) {
-      const double a12 = fma(*A22, t, *A12);
+    if (__builtin_copysign(1.0, *A12) == __builtin_copysign(1.0, *A22)) {
+      const double a12 = __builtin_fma(*A22, t, *A12);
       const T
         a = ((T)*A22 * d),
         b = ((T)*A12 * (T)*A21),
@@ -2548,7 +2548,7 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
       *A21 = 1.0;
     }
     else {
-      const double a22 = fma(-*A12, t, *A22);
+      const double a22 = __builtin_fma(-*A12, t, *A22);
       const T
         a = ((T)*A12 * d),
         b = ((T)*A22 * (T)*A21),
@@ -2572,8 +2572,8 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
 #endif /* ?PVN_SV2_SAFE */
   *A11 = *w1;
   *w1 = hypot(t, 1.0);
-  const double a12 = fma( *A22, t, *A12);
-  const double a22 = fma(-*A12, t, *A22);
+  const double a12 = __builtin_fma( *A22, t, *A12);
+  const double a22 = __builtin_fma(-*A12, t, *A22);
   if (*w1 == 1.0) {
     *A12 = a12;
     *A22 = a22;
@@ -2608,14 +2608,14 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
     t2 = ((2.0 * A22) / A12);
   else if (A12 == A22) {
     /* (2 * A12 * A22) / (A11 * A11) */
-    af = frexp(A11, &ae);
-    abf = frexp(A12, &abe);
-    bf = frexp(A22, &be);
+    af = __builtin_frexp(A11, &ae);
+    abf = __builtin_frexp(A12, &abe);
+    bf = __builtin_frexp(A22, &be);
     ef_mul(&ne, &nf, abe, abf, be, bf);
     ++ne;
     ef_mul(&de, &df, ae, af, ae, af);
     ef_div(&t2e, &t2f, ne, nf, de, df);
-    t2 = scalbn(t2f, t2e);
+    t2 = __builtin_scalbn(t2f, t2e);
   }
   else if ((A11 / A12) < (DBL_EPSILON * 0.5))
     t2 = ((2.0 * A22) / A12);
@@ -2623,38 +2623,38 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   else {
     /* should never overflow */
     const double a = hypot(A11, A12);
-    af = frexp(a, &ae);
+    af = __builtin_frexp(a, &ae);
     const double b = A22;
-    bf = frexp(b, &be);
+    bf = __builtin_frexp(b, &be);
     abf = (a + b);
-    if (!isfinite(abf)) {
+    if (!__builtin_isfinite(abf)) {
       abf = ((0.5 * a) + (0.5 * b));
       de = 1;
     }
-    abf = frexp(abf, &abe);
+    abf = __builtin_frexp(abf, &abe);
     abe += de;
     a_bf = (a - b);
     if (a == b)
       de = 0;
     else if (a_bf >= DBL_MIN) {
-      a_bf = frexp(a_bf, &a_be);
+      a_bf = __builtin_frexp(a_bf, &a_be);
       de = 1;
     }
     else {
       de = ((DBL_MIN_EXP + DBL_MANT_DIG) - pvn_imin(ae, be));
-      a_bf = (scalbn(af, (ae + de)) - scalbn(bf, (be + de)));
-      a_bf = frexp(a_bf, &a_be);
+      a_bf = (__builtin_scalbn(af, (ae + de)) - __builtin_scalbn(bf, (be + de)));
+      a_bf = __builtin_frexp(a_bf, &a_be);
       a_be -= de;
       de = -1;
     }
     if (de)
       ef_mul(&de, &df, a_be, a_bf, abe, abf);
-    af = frexp(A12, &ae);
+    af = __builtin_frexp(A12, &ae);
     ef_mul(&ne, &nf, ae, af, be, bf);
     ++ne;
     ef_div(&t2e, &t2f, ne, nf, de, df);
-    if (isfinite(t2f))
-      t2 = scalbn(t2f, t2e);
+    if (__builtin_isfinite(t2f))
+      t2 = __builtin_scalbn(t2f, t2e);
     else
       t2 = t2f;
   }
@@ -2662,21 +2662,21 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   else if (A11 > A12) {
     const double x = (A12 / A11);
     const double y = (A22 / A11);
-    t2 = (((2.0 * x) * y) / fmax(fma((x - y), (x + y), 1.0), 0.0));
+    t2 = (((2.0 * x) * y) / __builtin_fmax(__builtin_fma((x - y), (x + y), 1.0), 0.0));
   }
   else if (A12 > A11) {
     const double x = (A11 / A12);
     const double y = (A22 / A12);
-    t2 = ((2.0 * y) / fmax(fma((x - y), (x + y), 1.0), 0.0));
+    t2 = ((2.0 * y) / __builtin_fmax(__builtin_fma((x - y), (x + y), 1.0), 0.0));
   }
   else {
     const double y = (A22 / A12);
-    t2 = ((2.0 * y) / fmax(fma((1.0 - y), (1.0 + y), 1.0), 0.0));
+    t2 = ((2.0 * y) / __builtin_fmax(__builtin_fma((1.0 - y), (1.0 + y), 1.0), 0.0));
   }
 #endif /* ?PVN_SV2_SAFE */
 
   /* tan(φ) */
-  if (isfinite(t2))
+  if (__builtin_isfinite(t2))
     *tf = (t2 / (1.0 + hypot(t2, 1.0)));
   else
     *tf = 1.0;
@@ -2685,22 +2685,22 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
 #endif /* PVN_PRINTOUT */
   *cf = hypot(*tf, 1.0); /* sec(φ) */
   *sf = (*tf / *cf); /* sin(φ) */
-  nf = frexp(*cf, &ne);
+  nf = __builtin_frexp(*cf, &ne);
   *cf = (1.0 / *cf); /* cos(φ) */
 
-  *sp = fma(*tf, A22, A12);
+  *sp = __builtin_fma(*tf, A22, A12);
   *tp = (*sp / A11); /* tan(ψ) */
 #ifdef PVN_PRINTOUT
   if (s) (void)dprintf(PVN_PRINTOUT, "tan(ψ)=%s\n", pvn_dtoa(s, *tp));
 #endif /* PVN_PRINTOUT */
 
-  af = frexp(A11, &ae);
-  bf = frexp(A22, &be);
+  af = __builtin_frexp(A11, &ae);
+  bf = __builtin_frexp(A22, &be);
 
-  if (isfinite(*tp)) {
+  if (__builtin_isfinite(*tp)) {
     *cp = hypot(*tp, 1.0); /* sec(ψ) */
     *sp = (*tp / *cp); /* sin(ψ) */
-    df = frexp(*cp, &de);
+    df = __builtin_frexp(*cp, &de);
     *cp = (1.0 / *cp); /* cos(ψ) */
     ef_div(&t2e, &t2f, ne, nf, de, df);
     /* s2 = A22 * (sec(φ) / sec(ψ)) */
@@ -2710,11 +2710,11 @@ static void dlpsv2(const double A11, const double A12, const double A22, double 
   }
   else {
     /* s1 ≈ A12 + tan(φ) * A22 */
-    a_bf = frexp(*sp, &a_be);
+    a_bf = __builtin_frexp(*sp, &a_be);
     /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
     ef_div(&t2e, &t2f, ae, af, a_be, a_bf);
     *sp = 1.0; /* sin(ψ) */
-    *cp = scalbn(t2f, t2e); /* cos(ψ) */
+    *cp = __builtin_scalbn(t2f, t2e); /* cos(ψ) */
     /* s2 ≈ A22 * cos(ψ) */
     ef_mul(&abe, &abf, be, bf, t2e, t2f);
   }
@@ -2755,37 +2755,37 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
   PVN_ASSERT(s1);
   PVN_ASSERT(s2);
   PVN_ASSERT(es);
-  if (!isfinite(*a11))
+  if (!__builtin_isfinite(*a11))
     return -1;
-  if (!isfinite(*a21))
+  if (!__builtin_isfinite(*a21))
     return -2;
-  if (!isfinite(*a12))
+  if (!__builtin_isfinite(*a12))
     return -3;
-  if (!isfinite(*a22))
+  if (!__builtin_isfinite(*a22))
     return -4;
   /* should not fail beyond this point when *es == 0 */
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0) {
     knd |= 1;
-    (void)frexp(*a11, &e);
+    (void)__builtin_frexp(*a11, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21 != 0.0) {
     knd |= 2;
-    (void)frexp(*a21, &e);
+    (void)__builtin_frexp(*a21, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12 != 0.0) {
     knd |= 4;
-    (void)frexp(*a12, &e);
+    (void)__builtin_frexp(*a12, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22 != 0.0) {
     knd |= 8;
-    (void)frexp(*a22, &e);
+    (void)__builtin_frexp(*a22, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -2825,18 +2825,18 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
   if (*es) {
-    A11 = scalbn(A11, *es);
-    A21 = scalbn(A21, *es);
-    A12 = scalbn(A12, *es);
-    A22 = scalbn(A22, *es);
+    A11 = __builtin_scalbn(A11, *es);
+    A21 = __builtin_scalbn(A21, *es);
+    A12 = __builtin_scalbn(A12, *es);
+    A22 = __builtin_scalbn(A22, *es);
     if (mxe) {
-      if (!isfinite(A11))
+      if (!__builtin_isfinite(A11))
         return -5;
-      if (!isfinite(A21))
+      if (!__builtin_isfinite(A21))
         return -6;
-      if (!isfinite(A12))
+      if (!__builtin_isfinite(A12))
         return -7;
-      if (!isfinite(A22))
+      if (!__builtin_isfinite(A22))
         return -8;
     }
     if (*es < 0) {
@@ -2868,8 +2868,8 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
   case  0:
     /* [ 0 0 ] */
     /* [ 0 0 ] */
-    *u11 = copysign(1.0, A11);
-    *u22 = copysign(1.0, A22);
+    *u11 = __builtin_copysign(1.0, A11);
+    *u22 = __builtin_copysign(1.0, A22);
     A22 = A12 = A21 = A11 = 0.0;
     break;
   case  1:
@@ -2879,7 +2879,7 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
       *u11 = -1.0;
       A11 = -A11;
     }
-    *u22 = copysign(1.0, A22);
+    *u22 = __builtin_copysign(1.0, A22);
     A22 = A12 = A21 = 0.0;
     *s1 = A11;
     break;
@@ -2896,26 +2896,26 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     }
     else
       *u12 = 1.0;
-    *u21 = copysign(1.0, A12);
+    *u21 = __builtin_copysign(1.0, A12);
     A22 = A12 = A21 = 0.0;
     *s1 = A11;
     break;
   case  3:
     /* [ * 0 ] */
     /* [ * 0 ] */
-    A12 = fabs(A11);
-    A22 = fabs(A21);
+    A12 = __builtin_fabs(A11);
+    A22 = __builtin_fabs(A21);
     if (A12 < A22) {
       *u11 = 0.0;
-      *u21 = copysign(1.0, A11);
-      *u12 = copysign(1.0, A21);
+      *u21 = __builtin_copysign(1.0, A11);
+      *u12 = __builtin_copysign(1.0, A21);
       *u22 = 0.0;
       A11 = A22;
       A21 = A12;
     }
     else {
-      *u11 = copysign(1.0, A11);
-      *u22 = copysign(1.0, A21);
+      *u11 = __builtin_copysign(1.0, A11);
+      *u22 = __builtin_copysign(1.0, A21);
       A11 = A12;
       A21 = A22;
     }
@@ -2926,9 +2926,9 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
   case  4:
     /* [ 0 * ] */
     /* [ 0 0 ] */
-    *u11 = copysign(1.0, A12);
-    *u22 = copysign(1.0, A21);
-    A11 = fabs(A12);
+    *u11 = __builtin_copysign(1.0, A12);
+    *u22 = __builtin_copysign(1.0, A21);
+    A11 = __builtin_fabs(A12);
     A22 = A12 = A21 = 0.0;
     *v11 = 0.0;
     *v21 = 1.0;
@@ -2939,19 +2939,19 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
   case  5:
     /* [ * * ] */
     /* [ 0 0 ] */
-    A21 = fabs(A11);
-    A22 = fabs(A12);
+    A21 = __builtin_fabs(A11);
+    A22 = __builtin_fabs(A12);
     if (A21 < A22) {
       *v11 = 0.0;
-      *v21 = copysign(1.0, A12);
-      *v12 = copysign(1.0, A11);
+      *v21 = __builtin_copysign(1.0, A12);
+      *v12 = __builtin_copysign(1.0, A11);
       *v22 = 0.0;
       A11 = A22;
       A12 = A21;
     }
     else {
-      *v11 = copysign(1.0, A11);
-      *v22 = copysign(1.0, A12);
+      *v11 = __builtin_copysign(1.0, A11);
+      *v22 = __builtin_copysign(1.0, A12);
       A11 = A21;
       A12 = A22;
     }
@@ -2962,10 +2962,10 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
   case  6:
     /* [ 0 * ] */
     /* [ * 0 ] */
-    *u11 = copysign(1.0, A12);
-    *u22 = copysign(1.0, A21);
-    A11 = fabs(A12);
-    A22 = fabs(A21);
+    *u11 = __builtin_copysign(1.0, A12);
+    *u22 = __builtin_copysign(1.0, A21);
+    A11 = __builtin_fabs(A12);
+    A22 = __builtin_fabs(A21);
     A12 = A21 = 0.0;
     *v11 = 0.0;
     *v21 = 1.0;
@@ -3007,10 +3007,10 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     /* [ 0 0 ] */
     /* [ 0 * ] */
     *u11 = 0.0;
-    *u21 = copysign(1.0, A11);
-    *u12 = copysign(1.0, A22);
+    *u21 = __builtin_copysign(1.0, A11);
+    *u12 = __builtin_copysign(1.0, A22);
     *u22 = 0.0;
-    A11 = fabs(A22);
+    A11 = __builtin_fabs(A22);
     A22 = A12 = A21 = 0.0;
     *v11 = 0.0;
     *v21 = 1.0;
@@ -3042,19 +3042,19 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     *u22 = 0.0;
     A11 = A21;
     A12 = A22;
-    A21 = fabs(A11);
-    A22 = fabs(A12);
+    A21 = __builtin_fabs(A11);
+    A22 = __builtin_fabs(A12);
     if (A21 < A22) {
       *v11 = 0.0;
-      *v21 = copysign(1.0, A12);
-      *v12 = copysign(1.0, A11);
+      *v21 = __builtin_copysign(1.0, A12);
+      *v12 = __builtin_copysign(1.0, A11);
       *v22 = 0.0;
       A11 = A22;
       A12 = A21;
     }
     else {
-      *v11 = copysign(1.0, A11);
-      *v22 = copysign(1.0, A12);
+      *v11 = __builtin_copysign(1.0, A11);
+      *v22 = __builtin_copysign(1.0, A12);
       A11 = A21;
       A12 = A22;
     }
@@ -3105,19 +3105,19 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     *v21 = 1.0;
     *v12 = 1.0;
     *v22 = 0.0;
-    A12 = fabs(A11);
-    A22 = fabs(A21);
+    A12 = __builtin_fabs(A11);
+    A22 = __builtin_fabs(A21);
     if (A12 < A22) {
       *u11 = 0.0;
-      *u21 = copysign(1.0, A11);
-      *u12 = copysign(1.0, A21);
+      *u21 = __builtin_copysign(1.0, A11);
+      *u12 = __builtin_copysign(1.0, A21);
       *u22 = 0.0;
       A11 = A22;
       A21 = A12;
     }
     else {
-      *u11 = copysign(1.0, A11);
-      *u22 = copysign(1.0, A21);
+      *u11 = __builtin_copysign(1.0, A11);
+      *u22 = __builtin_copysign(1.0, A21);
       A11 = A12;
       A21 = A22;
     }
@@ -3207,13 +3207,13 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
       pvn_dswp(v21, v22);
       pvn_dswp(s1, s2);
     }
-    if (copysign(1.0, A11) != 1.0) {
+    if (__builtin_copysign(1.0, A11) != 1.0) {
       *u11 = -*u11;
       *u12 = -*u12;
       A11 = -A11;
       A12 = -A12;
     }
-    if (copysign(1.0, A21) != 1.0) {
+    if (__builtin_copysign(1.0, A21) != 1.0) {
       *u21 = -*u21;
       *u22 = -*u22;
       A21 = -A21;
@@ -3237,22 +3237,22 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     if (ct == 1.0) {
       if ((A12 == 0.0) || (A22 == 0.0)) {
         A21 = *u11;
-        *u11 = fma(tt, *u21, *u11);
-        *u21 = fma(st,  A21, *u21);
+        *u11 = __builtin_fma(tt, *u21, *u11);
+        *u21 = __builtin_fma(st,  A21, *u21);
         A21 = *u12;
-        *u12 = fma(tt, *u22, *u12);
-        *u22 = fma(st,  A21, *u22);
+        *u12 = __builtin_fma(tt, *u22, *u12);
+        *u22 = __builtin_fma(st,  A21, *u22);
       }
       st = tt;
     }
     else {
       if ((A12 == 0.0) || (A22 == 0.0)) {
         A21 = *u11;
-        *u11 = (fma(tt, *u21, *u11) / ct);
-        *u21 = (fma(st,  A21, *u21) / ct);
+        *u11 = (__builtin_fma(tt, *u21, *u11) / ct);
+        *u21 = (__builtin_fma(st,  A21, *u21) / ct);
         A21 = *u12;
-        *u12 = (fma(tt, *u22, *u12) / ct);
-        *u22 = (fma(st,  A21, *u22) / ct);
+        *u12 = (__builtin_fma(tt, *u22, *u12) / ct);
+        *u22 = (__builtin_fma(st,  A21, *u22) / ct);
       }
       st = (tt / ct);
       ct = (1.0 / ct);
@@ -3260,7 +3260,7 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     A21 = 0.0;
     if (A12 == 0.0) {
       A12 = 0.0;
-      if (copysign(1.0, A22) != 1.0) {
+      if (__builtin_copysign(1.0, A22) != 1.0) {
         *u21 = -*u21;
         *u22 = -*u22;
         A22 = -A22;
@@ -3268,13 +3268,13 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
       e = 0;
     }
     else if (A22 == 0.0) {
-      if (copysign(1.0, A12) != 1.0) {
+      if (__builtin_copysign(1.0, A12) != 1.0) {
         A12 = -A12;
         A22 = -A22;
         *v12 = -*v12;
         *v22 = -*v22;
       }
-      if (copysign(1.0, A22) != 1.0) {
+      if (__builtin_copysign(1.0, A22) != 1.0) {
         *u21 = -*u21;
         *u22 = -*u22;
         A22 = 0.0;
@@ -3320,19 +3320,19 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     st = -tt;
     A21 = *u11;
     if (ct == 1.0) {
-      *u11 = fma(tt, *u21, *u11);
-      *u21 = fma(st,  A21, *u21);
+      *u11 = __builtin_fma(tt, *u21, *u11);
+      *u21 = __builtin_fma(st,  A21, *u21);
       A21 = *u12;
-      *u12 = fma(tt, *u22, *u12);
-      *u22 = fma(st,  A21, *u22);
+      *u12 = __builtin_fma(tt, *u22, *u12);
+      *u22 = __builtin_fma(st,  A21, *u22);
       st = tt;
     }
     else {
-      *u11 = (fma(tt, *u21, *u11) / ct);
-      *u21 = (fma(st,  A21, *u21) / ct);
+      *u11 = (__builtin_fma(tt, *u21, *u11) / ct);
+      *u21 = (__builtin_fma(st,  A21, *u21) / ct);
       A21 = *u12;
-      *u12 = (fma(tt, *u22, *u12) / ct);
-      *u22 = (fma(st,  A21, *u22) / ct);
+      *u12 = (__builtin_fma(tt, *u22, *u12) / ct);
+      *u22 = (__builtin_fma(st,  A21, *u22) / ct);
       st = (tt / ct);
       ct = (1.0 / ct);
     }
@@ -3360,19 +3360,19 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
     st = -tt;
     A12 = *v11;
     if (ct == 1.0) {
-      *v11 = fma(tt, *v12, *v11);
-      *v12 = fma(st,  A12, *v12);
+      *v11 = __builtin_fma(tt, *v12, *v11);
+      *v12 = __builtin_fma(st,  A12, *v12);
       A12 = *v21;
-      *v21 = fma(tt, *v22, *v21);
-      *v22 = fma(st,  A12, *v22);
+      *v21 = __builtin_fma(tt, *v22, *v21);
+      *v22 = __builtin_fma(st,  A12, *v22);
       st = tt;
     }
     else {
-      *v11 = (fma(tt, *v12, *v11) / ct);
-      *v12 = (fma(st,  A12, *v12) / ct);
+      *v11 = (__builtin_fma(tt, *v12, *v11) / ct);
+      *v12 = (__builtin_fma(st,  A12, *v12) / ct);
       A12 = *v21;
-      *v21 = (fma(tt, *v22, *v21) / ct);
-      *v22 = (fma(st,  A12, *v22) / ct);
+      *v21 = (__builtin_fma(tt, *v22, *v21) / ct);
+      *v22 = (__builtin_fma(st,  A12, *v22) / ct);
       st = (tt / ct);
       ct = (1.0 / ct);
     }
@@ -3388,10 +3388,10 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
 
 #ifdef PVN_PRINTOUT
   (void)dprintf(PVN_PRINTOUT, "\tA =\n");
-  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_dtoa(s, scalbn(A11, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_dtoa(s, scalbn(A12, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_dtoa(s, scalbn(A21, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_dtoa(s, scalbn(A22, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_dtoa(s, __builtin_scalbn(A11, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_dtoa(s, __builtin_scalbn(A12, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_dtoa(s, __builtin_scalbn(A21, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_dtoa(s, __builtin_scalbn(A22, -*es)));
 #endif /* PVN_PRINTOUT */
 
   if (abs(e) == 13) {
@@ -3421,7 +3421,7 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
              );
 
     /* update U */
-    if (copysign(1.0, st) != 1.0) {
+    if (__builtin_copysign(1.0, st) != 1.0) {
       /* U^T(φ) * diag(1, -1) * U^T(ϑ):
           cos(φ - ϑ) -sin(φ - ϑ)
          -sin(φ - ϑ) -cos(φ - ϑ)
@@ -3429,15 +3429,15 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
       st = -st;
       double tf_t = (tf - tt), cf_t = 1.0, sf_t = 0.0;
       if (tf_t != 0.0) {
-        tf_t /= fma(tf, tt, 1.0);
-        if (isfinite(tf_t)) {
+        tf_t /= __builtin_fma(tf, tt, 1.0);
+        if (__builtin_isfinite(tf_t)) {
           /* 1 / cos */
           cf_t = hypot(tf_t, 1.0);
           sf_t = (tf_t / cf_t);
           cf_t = (1.0 / cf_t);
         }
         else {
-          sf_t = copysign(1.0, tf_t);
+          sf_t = __builtin_copysign(1.0, tf_t);
           cf_t = 0.0;
         }
       }
@@ -3459,15 +3459,15 @@ int PVN_FABI(pvn_dljsv2,PVN_DLJSV2)
       */
       double tft = (tf + tt), cft = 1.0, sft = 0.0;
       if (tft != 0.0) {
-        tft /= fma(-tf, tt, 1.0);
-        if (isfinite(tft)) {
+        tft /= __builtin_fma(-tf, tt, 1.0);
+        if (__builtin_isfinite(tft)) {
           /* 1 / cos */
           cft = hypot(tft, 1.0);
           sft = (tft / cft);
           cft = (1.0 / cft);
         }
         else {
-          sft = copysign(1.0, tft);
+          sft = __builtin_copysign(1.0, tft);
           cft = 0.0;
         }
       }
@@ -3544,8 +3544,8 @@ static double cpolar(const double r, const double i, double *const c, double *co
   PVN_ASSERT(c);
   PVN_ASSERT(s);
   const double a = hypot(r, i);
-  *c = copysign(fmin((fabs(r) / a), 1.0), r);
-  *s = (i / fmax(a, DBL_TRUE_MIN));
+  *c = __builtin_copysign(__builtin_fmin((__builtin_fabs(r) / a), 1.0), r);
+  *s = (i / __builtin_fmax(a, DBL_TRUE_MIN));
   return a;
 }
 
@@ -3570,45 +3570,45 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
   PVN_ASSERT(s1);
   PVN_ASSERT(s2);
   PVN_ASSERT(es);
-  if (!isfinite(*a11r))
+  if (!__builtin_isfinite(*a11r))
     return -1;
-  if (!isfinite(*a11i))
+  if (!__builtin_isfinite(*a11i))
     return -2;
-  if (!isfinite(*a21r))
+  if (!__builtin_isfinite(*a21r))
     return -3;
-  if (!isfinite(*a21i))
+  if (!__builtin_isfinite(*a21i))
     return -4;
-  if (!isfinite(*a12r))
+  if (!__builtin_isfinite(*a12r))
     return -5;
-  if (!isfinite(*a12i))
+  if (!__builtin_isfinite(*a12i))
     return -6;
-  if (!isfinite(*a22r))
+  if (!__builtin_isfinite(*a22r))
     return -7;
-  if (!isfinite(*a22i))
+  if (!__builtin_isfinite(*a22i))
     return -8;
   /* should not fail beyond this point when *es == 0 */
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0) {
     kndi |= 1;
-    (void)frexp(*a11i, &e);
+    (void)__builtin_frexp(*a11i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21i != 0.0) {
     kndi |= 2;
-    (void)frexp(*a21i, &e);
+    (void)__builtin_frexp(*a21i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12i != 0.0) {
     kndi |= 4;
-    (void)frexp(*a12i, &e);
+    (void)__builtin_frexp(*a12i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22i != 0.0) {
     kndi |= 8;
-    (void)frexp(*a22i, &e);
+    (void)__builtin_frexp(*a22i, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -3625,25 +3625,25 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
   int kndr = 0;
   if (*a11r != 0.0) {
     kndr |= 1;
-    (void)frexp(*a11r, &e);
+    (void)__builtin_frexp(*a11r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21r != 0.0) {
     kndr |= 2;
-    (void)frexp(*a21r, &e);
+    (void)__builtin_frexp(*a21r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12r != 0.0) {
     kndr |= 4;
-    (void)frexp(*a12r, &e);
+    (void)__builtin_frexp(*a12r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22r != 0.0) {
     kndr |= 8;
-    (void)frexp(*a22r, &e);
+    (void)__builtin_frexp(*a22r, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -3688,30 +3688,30 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
   if (*es) {
-    A11r = scalbn(A11r, *es);
-    A11i = scalbn(A11i, *es);
-    A21r = scalbn(A21r, *es);
-    A21i = scalbn(A21i, *es);
-    A12r = scalbn(A12r, *es);
-    A12i = scalbn(A12i, *es);
-    A22r = scalbn(A22r, *es);
-    A22i = scalbn(A22i, *es);
+    A11r = __builtin_scalbn(A11r, *es);
+    A11i = __builtin_scalbn(A11i, *es);
+    A21r = __builtin_scalbn(A21r, *es);
+    A21i = __builtin_scalbn(A21i, *es);
+    A12r = __builtin_scalbn(A12r, *es);
+    A12i = __builtin_scalbn(A12i, *es);
+    A22r = __builtin_scalbn(A22r, *es);
+    A22i = __builtin_scalbn(A22i, *es);
     if (mxe) {
-      if (!isfinite(A11r))
+      if (!__builtin_isfinite(A11r))
         return -9;
-      if (!isfinite(A11i))
+      if (!__builtin_isfinite(A11i))
         return -10;
-      if (!isfinite(A21r))
+      if (!__builtin_isfinite(A21r))
         return -11;
-      if (!isfinite(A21i))
+      if (!__builtin_isfinite(A21i))
         return -12;
-      if (!isfinite(A12r))
+      if (!__builtin_isfinite(A12r))
         return -13;
-      if (!isfinite(A12i))
+      if (!__builtin_isfinite(A12i))
         return -14;
-      if (!isfinite(A22r))
+      if (!__builtin_isfinite(A22r))
         return -15;
-      if (!isfinite(A22i))
+      if (!__builtin_isfinite(A22i))
         return -16;
     }
     if (*es < 0) {
@@ -3993,41 +3993,41 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
     A21r = A12r;
     A21i = A12i;
     if (ct == 1.0) {
-      A12r = fma(tt, A22r, A12r);
-      A12i = fma(tt, A22i, A12i);
-      A22r = fma(st, A21r, A22r);
-      A22i = fma(st, A21i, A22i);
+      A12r = __builtin_fma(tt, A22r, A12r);
+      A12i = __builtin_fma(tt, A22i, A12i);
+      A22r = __builtin_fma(st, A21r, A22r);
+      A22i = __builtin_fma(st, A21i, A22i);
       A21r = *u11r;
       A21i = *u11i;
-      *u11r = fma(tt, *u21r, *u11r);
-      *u11i = fma(tt, *u21i, *u11i);
-      *u21r = fma(st,  A21r, *u21r);
-      *u21i = fma(st,  A21i, *u21i);
+      *u11r = __builtin_fma(tt, *u21r, *u11r);
+      *u11i = __builtin_fma(tt, *u21i, *u11i);
+      *u21r = __builtin_fma(st,  A21r, *u21r);
+      *u21i = __builtin_fma(st,  A21i, *u21i);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = fma(tt, *u22r, *u12r);
-      *u12i = fma(tt, *u22i, *u12i);
-      *u22r = fma(st,  A21r, *u22r);
-      *u22i = fma(st,  A21i, *u22i);
+      *u12r = __builtin_fma(tt, *u22r, *u12r);
+      *u12i = __builtin_fma(tt, *u22i, *u12i);
+      *u22r = __builtin_fma(st,  A21r, *u22r);
+      *u22i = __builtin_fma(st,  A21i, *u22i);
       st = tt;
     }
     else {
-      A12r = (fma(tt, A22r, A12r) / ct);
-      A12i = (fma(tt, A22i, A12i) / ct);
-      A22r = (fma(st, A21r, A22r) / ct);
-      A22i = (fma(st, A21i, A22i) / ct);
+      A12r = (__builtin_fma(tt, A22r, A12r) / ct);
+      A12i = (__builtin_fma(tt, A22i, A12i) / ct);
+      A22r = (__builtin_fma(st, A21r, A22r) / ct);
+      A22i = (__builtin_fma(st, A21i, A22i) / ct);
       A21r = *u11r;
       A21i = *u11i;
-      *u11r = (fma(tt, *u21r, *u11r) / ct);
-      *u11i = (fma(tt, *u21i, *u11i) / ct);
-      *u21r = (fma(st,  A21r, *u21r) / ct);
-      *u21i = (fma(st,  A21i, *u21i) / ct);
+      *u11r = (__builtin_fma(tt, *u21r, *u11r) / ct);
+      *u11i = (__builtin_fma(tt, *u21i, *u11i) / ct);
+      *u21r = (__builtin_fma(st,  A21r, *u21r) / ct);
+      *u21i = (__builtin_fma(st,  A21i, *u21i) / ct);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = (fma(tt, *u22r, *u12r) / ct);
-      *u12i = (fma(tt, *u22i, *u12i) / ct);
-      *u22r = (fma(st,  A21r, *u22r) / ct);
-      *u22i = (fma(st,  A21i, *u22i) / ct);
+      *u12r = (__builtin_fma(tt, *u22r, *u12r) / ct);
+      *u12i = (__builtin_fma(tt, *u22i, *u12i) / ct);
+      *u22r = (__builtin_fma(st,  A21r, *u22r) / ct);
+      *u22i = (__builtin_fma(st,  A21i, *u22i) / ct);
       st = (tt / ct);
       ct = (1.0 / ct);
     }
@@ -4074,29 +4074,29 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
     A21r = *u11r;
     A21i = *u11i;
     if (ct == 1.0) {
-      *u11r = fma(tt, *u21r, *u11r);
-      *u11i = fma(tt, *u21i, *u11i);
-      *u21r = fma(st,  A21r, *u21r);
-      *u21i = fma(st,  A21i, *u21i);
+      *u11r = __builtin_fma(tt, *u21r, *u11r);
+      *u11i = __builtin_fma(tt, *u21i, *u11i);
+      *u21r = __builtin_fma(st,  A21r, *u21r);
+      *u21i = __builtin_fma(st,  A21i, *u21i);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = fma(tt, *u22r, *u12r);
-      *u12i = fma(tt, *u22i, *u12i);
-      *u22r = fma(st,  A21r, *u22r);
-      *u22i = fma(st,  A21i, *u22i);
+      *u12r = __builtin_fma(tt, *u22r, *u12r);
+      *u12i = __builtin_fma(tt, *u22i, *u12i);
+      *u22r = __builtin_fma(st,  A21r, *u22r);
+      *u22i = __builtin_fma(st,  A21i, *u22i);
       st = tt;
     }
     else {
-      *u11r = (fma(tt, *u21r, *u11r) / ct);
-      *u11i = (fma(tt, *u21i, *u11i) / ct);
-      *u21r = (fma(st,  A21r, *u21r) / ct);
-      *u21i = (fma(st,  A21i, *u21i) / ct);
+      *u11r = (__builtin_fma(tt, *u21r, *u11r) / ct);
+      *u11i = (__builtin_fma(tt, *u21i, *u11i) / ct);
+      *u21r = (__builtin_fma(st,  A21r, *u21r) / ct);
+      *u21i = (__builtin_fma(st,  A21i, *u21i) / ct);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = (fma(tt, *u22r, *u12r) / ct);
-      *u12i = (fma(tt, *u22i, *u12i) / ct);
-      *u22r = (fma(st,  A21r, *u22r) / ct);
-      *u22i = (fma(st,  A21i, *u22i) / ct);
+      *u12r = (__builtin_fma(tt, *u22r, *u12r) / ct);
+      *u12i = (__builtin_fma(tt, *u22i, *u12i) / ct);
+      *u22r = (__builtin_fma(st,  A21r, *u22r) / ct);
+      *u22i = (__builtin_fma(st,  A21i, *u22i) / ct);
       st = (tt / ct);
       ct = (1.0 / ct);
     }
@@ -4119,29 +4119,29 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
     A12r = *v11r;
     A12i = *v11i;
     if (ct == 1.0) {
-      *v11r = fma(tt, *v12r, *v11r);
-      *v11i = fma(tt, *v12i, *v11i);
-      *v12r = fma(st,  A12r, *v12r);
-      *v12i = fma(st,  A12i, *v12i);
+      *v11r = __builtin_fma(tt, *v12r, *v11r);
+      *v11i = __builtin_fma(tt, *v12i, *v11i);
+      *v12r = __builtin_fma(st,  A12r, *v12r);
+      *v12i = __builtin_fma(st,  A12i, *v12i);
       A12r = *v21r;
       A12i = *v21i;
-      *v21r = fma(tt, *v22r, *v21r);
-      *v21i = fma(tt, *v22i, *v21i);
-      *v22r = fma(st,  A12r, *v22r);
-      *v22i = fma(st,  A12i, *v22i);
+      *v21r = __builtin_fma(tt, *v22r, *v21r);
+      *v21i = __builtin_fma(tt, *v22i, *v21i);
+      *v22r = __builtin_fma(st,  A12r, *v22r);
+      *v22i = __builtin_fma(st,  A12i, *v22i);
       st = tt;
     }
     else {
-      *v11r = (fma(tt, *v12r, *v11r) / ct);
-      *v11i = (fma(tt, *v12i, *v11i) / ct);
-      *v12r = (fma(st,  A12r, *v12r) / ct);
-      *v12i = (fma(st,  A12i, *v12i) / ct);
+      *v11r = (__builtin_fma(tt, *v12r, *v11r) / ct);
+      *v11i = (__builtin_fma(tt, *v12i, *v11i) / ct);
+      *v12r = (__builtin_fma(st,  A12r, *v12r) / ct);
+      *v12i = (__builtin_fma(st,  A12i, *v12i) / ct);
       A12r = *v21r;
       A12i = *v21i;
-      *v21r = (fma(tt, *v22r, *v21r) / ct);
-      *v21i = (fma(tt, *v22i, *v21i) / ct);
-      *v22r = (fma(st,  A12r, *v22r) / ct);
-      *v22i = (fma(st,  A12i, *v22i) / ct);
+      *v21r = (__builtin_fma(tt, *v22r, *v21r) / ct);
+      *v21i = (__builtin_fma(tt, *v22i, *v21i) / ct);
+      *v22r = (__builtin_fma(st,  A12r, *v22r) / ct);
+      *v22i = (__builtin_fma(st,  A12i, *v22i) / ct);
       st = (tt / ct);
       ct = (1.0 / ct);
     }
@@ -4157,14 +4157,14 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
 
 #ifdef PVN_PRINTOUT
   (void)dprintf(PVN_PRINTOUT, "\tA =\n");
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, scalbn(A11r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_dtoa(s, scalbn(A11i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, scalbn(A12r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_dtoa(s, scalbn(A12i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, scalbn(A21r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_dtoa(s, scalbn(A21i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, scalbn(A22r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_dtoa(s, scalbn(A22i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, __builtin_scalbn(A11r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_dtoa(s, __builtin_scalbn(A11i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, __builtin_scalbn(A12r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_dtoa(s, __builtin_scalbn(A12i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, __builtin_scalbn(A21r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_dtoa(s, __builtin_scalbn(A21i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_dtoa(s, __builtin_scalbn(A22r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_dtoa(s, __builtin_scalbn(A22i, -*es)));
 #endif /* PVN_PRINTOUT */
 
   if (abs(e) == 13) {
@@ -4261,52 +4261,52 @@ int PVN_FABI(pvn_zljsv2,PVN_ZLJSV2)
 }
 
 #ifndef XLJR2
-#define XLJR2                                                   \
-  PVN_ASSERT(a11);                                              \
-  PVN_ASSERT(a21);                                              \
-  PVN_ASSERT(a12);                                              \
-  PVN_ASSERT(a22);                                              \
-  PVN_ASSERT(u11);                                              \
-  PVN_ASSERT(u21);                                              \
-  PVN_ASSERT(u12);                                              \
-  PVN_ASSERT(u22);                                              \
-  PVN_ASSERT(v11);                                              \
-  PVN_ASSERT(v21);                                              \
-  PVN_ASSERT(v12);                                              \
-  PVN_ASSERT(v22);                                              \
-  PVN_ASSERT(s1);                                               \
-  PVN_ASSERT(s2);                                               \
-  PVN_ASSERT(es);                                               \
-  PVN_ASSERT(E);                                                \
-  long double                                                   \
-    u11l = *u11, u21l = *u21, u12l = *u12, u22l = *u22,         \
-    v11l = *v11, v21l = *v21, v12l = *v12, v22l = *v22,         \
-    s1l = scalbnl(*s1, es[1] - es[0]),                          \
-    s2l = scalbnl(*s2, es[2] - es[0]);                          \
-  /* cond_2(G) */                                               \
-  E[0] = fminl((s1l / s2l), __builtin_infl());                  \
-  /* U^T U - I */                                               \
-  long double T11 = fmal(u11l, u11l, fmal(u21l, u21l, -1.0L));  \
-  long double T21 = fmal(u12l, u11l, u22l * u21l);              \
-  long double T12 = T21;                                        \
-  long double T22 = fmal(u12l, u12l, fmal(u22l, u22l, -1.0L));  \
-  E[1] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
-  /* V^T V - I */                                               \
-  T11 = fmal(v11l, v11l, fmal(v21l, v21l, -1.0L));              \
-  T21 = fmal(v12l, v11l, v22l * v21l);                          \
-  T12 = T21;                                                    \
-  T22 = fmal(v12l, v12l, fmal(v22l, v22l, -1.0L));              \
-  E[2] = hypotl(hypotl(T11, T21), hypotl(T12, T22));            \
-  /* U Σ V^T - G */                                             \
-  u11l *= s1l;                                                  \
-  u21l *= s1l;                                                  \
-  u12l *= s2l;                                                  \
-  u22l *= s2l;                                                  \
-  E[3] = hypotl(hypotl(*a11, *a21), hypotl(*a12, *a22));        \
-  T11 = fmal(u11l, v11l, fmal(u12l, v12l, -*a11));              \
-  T21 = fmal(u21l, v11l, fmal(u22l, v12l, -*a21));              \
-  T12 = fmal(u11l, v21l, fmal(u12l, v22l, -*a12));              \
-  T22 = fmal(u21l, v21l, fmal(u22l, v22l, -*a22));              \
+#define XLJR2                                                                      \
+  PVN_ASSERT(a11);                                                                 \
+  PVN_ASSERT(a21);                                                                 \
+  PVN_ASSERT(a12);                                                                 \
+  PVN_ASSERT(a22);                                                                 \
+  PVN_ASSERT(u11);                                                                 \
+  PVN_ASSERT(u21);                                                                 \
+  PVN_ASSERT(u12);                                                                 \
+  PVN_ASSERT(u22);                                                                 \
+  PVN_ASSERT(v11);                                                                 \
+  PVN_ASSERT(v21);                                                                 \
+  PVN_ASSERT(v12);                                                                 \
+  PVN_ASSERT(v22);                                                                 \
+  PVN_ASSERT(s1);                                                                  \
+  PVN_ASSERT(s2);                                                                  \
+  PVN_ASSERT(es);                                                                  \
+  PVN_ASSERT(E);                                                                   \
+  long double                                                                      \
+    u11l = *u11, u21l = *u21, u12l = *u12, u22l = *u22,                            \
+    v11l = *v11, v21l = *v21, v12l = *v12, v22l = *v22,                            \
+    s1l = __builtin_scalbnl(*s1, es[1] - es[0]),                                   \
+    s2l = __builtin_scalbnl(*s2, es[2] - es[0]);                                   \
+  /* cond_2(G) */                                                                  \
+  E[0] = __builtin_fminl((s1l / s2l), __builtin_infl());                           \
+  /* U^T U - I */                                                                  \
+  long double T11 = __builtin_fmal(u11l, u11l, __builtin_fmal(u21l, u21l, -1.0L)); \
+  long double T21 = __builtin_fmal(u12l, u11l, u22l * u21l);                       \
+  long double T12 = T21;                                                           \
+  long double T22 = __builtin_fmal(u12l, u12l, __builtin_fmal(u22l, u22l, -1.0L)); \
+  E[1] = hypotl(hypotl(T11, T21), hypotl(T12, T22));                               \
+  /* V^T V - I */                                                                  \
+  T11 = __builtin_fmal(v11l, v11l, __builtin_fmal(v21l, v21l, -1.0L));             \
+  T21 = __builtin_fmal(v12l, v11l, v22l * v21l);                                   \
+  T12 = T21;                                                                       \
+  T22 = __builtin_fmal(v12l, v12l, __builtin_fmal(v22l, v22l, -1.0L));             \
+  E[2] = hypotl(hypotl(T11, T21), hypotl(T12, T22));                               \
+  /* U Σ V^T - G */                                                                \
+  u11l *= s1l;                                                                     \
+  u21l *= s1l;                                                                     \
+  u12l *= s2l;                                                                     \
+  u22l *= s2l;                                                                     \
+  E[3] = hypotl(hypotl(*a11, *a21), hypotl(*a12, *a22));                           \
+  T11 = __builtin_fmal(u11l, v11l, __builtin_fmal(u12l, v12l, -*a11));             \
+  T21 = __builtin_fmal(u21l, v11l, __builtin_fmal(u22l, v12l, -*a21));             \
+  T12 = __builtin_fmal(u11l, v21l, __builtin_fmal(u12l, v22l, -*a12));             \
+  T22 = __builtin_fmal(u21l, v21l, __builtin_fmal(u22l, v22l, -*a22));             \
   E[3] = (hypotl(hypotl(T11, T21), hypotl(T12, T22)) / E[3])
 #else /* XLJR2 */
 #error XLJR2 already defined
@@ -4353,10 +4353,10 @@ void PVN_FABI(pvn_dxljr2,PVN_DXLJR2)
     U12r = *u12r, U12i = *u12i, U22r = *u22r, U22i = *u22i,          \
     V11r = *v11r, V11i = *v11i, V21r = *v21r, V21i = *v21i,          \
     V12r = *v12r, V12i = *v12i, V22r = *v22r, V22i = *v22i,          \
-    S1 = scalbnl(*s1, es[1] - es[0]),                                \
-    S2 = scalbnl(*s2, es[2] - es[0]);                                \
+    S1 = __builtin_scalbnl(*s1, es[1] - es[0]),                      \
+    S2 = __builtin_scalbnl(*s2, es[2] - es[0]);                      \
   /* cond_2(G) */                                                    \
-  E[0] = fminl((S1 / S2), __builtin_infl());                         \
+  E[0] = __builtin_fminl((S1 / S2), __builtin_infl());               \
   /* U^H U - I */                                                    \
   long double T11r = -1.0L, T11i = 0.0L;                             \
   pvn_wfma(&T11r, &T11i, U21r, -U21i, U21r, U21i, T11r, T11i);       \
@@ -4434,7 +4434,7 @@ static inline void ef_mull(int *const e, long double *const f, const int e1, con
   PVN_ASSERT(e);
   PVN_ASSERT(f);
   *f = (f1 * f2);
-  *f = frexpl(*f, e);
+  *f = __builtin_frexpl(*f, e);
   *e += (e1 + e2);
 }
 
@@ -4443,7 +4443,7 @@ static inline void ef_divl(int *const e, long double *const f, const int e1, con
   PVN_ASSERT(e);
   PVN_ASSERT(f);
   *f = (f1 / f2);
-  *f = frexpl(*f, e);
+  *f = __builtin_frexpl(*f, e);
   *e += (e1 - e2);
 }
 
@@ -4488,14 +4488,14 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
     t2 = ((2.0L * A22) / A12);
   else if (A12 == A22) {
     /* (2 * A12 * A22) / (A11 * A11) */
-    af = frexpl(A11, &ae);
-    abf = frexpl(A12, &abe);
-    bf = frexpl(A22, &be);
+    af = __builtin_frexpl(A11, &ae);
+    abf = __builtin_frexpl(A12, &abe);
+    bf = __builtin_frexpl(A22, &be);
     ef_mull(&ne, &nf, abe, abf, be, bf);
     ++ne;
     ef_mull(&de, &df, ae, af, ae, af);
     ef_divl(&t2e, &t2f, ne, nf, de, df);
-    t2 = scalbnl(t2f, t2e);
+    t2 = __builtin_scalbnl(t2f, t2e);
   }
   else if ((A11 / A12) < (LDBL_EPSILON * 0.5L))
     t2 = ((2.0 * A22) / A12);
@@ -4503,38 +4503,38 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   else {
     /* should never overflow */
     const long double a = hypotl(A11, A12);
-    af = frexpl(a, &ae);
+    af = __builtin_frexpl(a, &ae);
     const long double b = A22;
-    bf = frexpl(b, &be);
+    bf = __builtin_frexpl(b, &be);
     abf = (a + b);
-    if (!isfinite(abf)) {
+    if (!__builtin_isfinite(abf)) {
       abf = ((0.5L * a) + (0.5L * b));
       de = 1;
     }
-    abf = frexpl(abf, &abe);
+    abf = __builtin_frexpl(abf, &abe);
     abe += de;
     a_bf = (a - b);
     if (a == b)
       de = 0;
     else if (a_bf >= LDBL_MIN) {
-      a_bf = frexpl(a_bf, &a_be);
+      a_bf = __builtin_frexpl(a_bf, &a_be);
       de = 1;
     }
     else {
       de = ((LDBL_MIN_EXP + LDBL_MANT_DIG) - pvn_imin(ae, be));
-      a_bf = (scalbnl(af, (ae + de)) - scalbnl(bf, (be + de)));
-      a_bf = frexpl(a_bf, &a_be);
+      a_bf = (__builtin_scalbnl(af, (ae + de)) - __builtin_scalbnl(bf, (be + de)));
+      a_bf = __builtin_frexpl(a_bf, &a_be);
       a_be -= de;
       de = -1;
     }
     if (de)
       ef_mull(&de, &df, a_be, a_bf, abe, abf);
-    af = frexpl(A12, &ae);
+    af = __builtin_frexpl(A12, &ae);
     ef_mull(&ne, &nf, ae, af, be, bf);
     ++ne;
     ef_divl(&t2e, &t2f, ne, nf, de, df);
-    if (isfinite(t2f))
-      t2 = scalbnl(t2f, t2e);
+    if (__builtin_isfinite(t2f))
+      t2 = __builtin_scalbnl(t2f, t2e);
     else
       t2 = t2f;
   }
@@ -4542,21 +4542,21 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   else if (A11 > A12) {
     const long double x = (A12 / A11);
     const long double y = (A22 / A11);
-    t2 = (((2.0L * x) * y) / fmaxl(fmal((x - y), (x + y), 1.0L), 0.0L));
+    t2 = (((2.0L * x) * y) / __builtin_fmaxl(__builtin_fmal((x - y), (x + y), 1.0L), 0.0L));
   }
   else if (A12 > A11) {
     const long double x = (A11 / A12);
     const long double y = (A22 / A12);
-    t2 = ((2.0L * y) / fmaxl(fmal((x - y), (x + y), 1.0L), 0.0L));
+    t2 = ((2.0L * y) / __builtin_fmaxl(__builtin_fmal((x - y), (x + y), 1.0L), 0.0L));
   }
   else {
     const long double y = (A22 / A12);
-    t2 = ((2.0L * y) / fmaxl(fmal((1.0L - y), (1.0L + y), 1.0L), 0.0L));
+    t2 = ((2.0L * y) / __builtin_fmaxl(__builtin_fmal((1.0L - y), (1.0L + y), 1.0L), 0.0L));
   }
 #endif /* ?PVN_SV2_SAFE */
 
   /* tan(φ) */
-  if (isfinite(t2))
+  if (__builtin_isfinite(t2))
     *tf = (t2 / (1.0L + hypotl(t2, 1.0L)));
   else
     *tf = 1.0L;
@@ -4565,22 +4565,22 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
 #endif /* PVN_PRINTOUT */
   *cf = hypotl(*tf, 1.0L); /* sec(φ) */
   *sf = (*tf / *cf); /* sin(φ) */
-  nf = frexpl(*cf, &ne);
+  nf = __builtin_frexpl(*cf, &ne);
   *cf = (1.0L / *cf); /* cos(φ) */
 
-  *sp = fmal(*tf, A22, A12);
+  *sp = __builtin_fmal(*tf, A22, A12);
   *tp = (*sp / A11); /* tan(ψ) */
 #ifdef PVN_PRINTOUT
   if (s) (void)dprintf(PVN_PRINTOUT, "tan(ψ)=%s\n", pvn_dtoa(s, *tp));
 #endif /* PVN_PRINTOUT */
 
-  af = frexpl(A11, &ae);
-  bf = frexpl(A22, &be);
+  af = __builtin_frexpl(A11, &ae);
+  bf = __builtin_frexpl(A22, &be);
 
-  if (isfinite(*tp)) {
+  if (__builtin_isfinite(*tp)) {
     *cp = hypotl(*tp, 1.0L); /* sec(ψ) */
     *sp = (*tp / *cp); /* sin(ψ) */
-    df = frexpl(*cp, &de);
+    df = __builtin_frexpl(*cp, &de);
     *cp = (1.0L / *cp); /* cos(ψ) */
     ef_divl(&t2e, &t2f, ne, nf, de, df);
     /* s2 = A22 * (sec(φ) / sec(ψ)) */
@@ -4590,11 +4590,11 @@ static void xlpsv2(const long double A11, const long double A12, const long doub
   }
   else {
     /* s1 ≈ A12 + tan(φ) * A22 */
-    a_bf = frexpl(*sp, &a_be);
+    a_bf = __builtin_frexpl(*sp, &a_be);
     /* tan(ψ) so large that sec(ψ) ≈ tan(ψ) */
     ef_divl(&t2e, &t2f, ae, af, a_be, a_bf);
     *sp = 1.0L; /* sin(ψ) */
-    *cp = scalbnl(t2f, t2e); /* cos(ψ) */
+    *cp = __builtin_scalbnl(t2f, t2e); /* cos(ψ) */
     /* s2 ≈ A22 * cos(ψ) */
     ef_mull(&abe, &abf, be, bf, t2e, t2f);
   }
@@ -4635,36 +4635,36 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
   PVN_ASSERT(s1);
   PVN_ASSERT(s2);
   PVN_ASSERT(es);
-  if (!isfinite(*a11))
+  if (!__builtin_isfinite(*a11))
     return -1;
-  if (!isfinite(*a21))
+  if (!__builtin_isfinite(*a21))
     return -2;
-  if (!isfinite(*a12))
+  if (!__builtin_isfinite(*a12))
     return -3;
-  if (!isfinite(*a22))
+  if (!__builtin_isfinite(*a22))
     return -4;
   int knd = 0, mxe = INT_MIN, e = INT_MIN;
   if (*a11 != 0.0L) {
     knd |= 1;
-    (void)frexpl(*a11, &e);
+    (void)__builtin_frexpl(*a11, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21 != 0.0L) {
     knd |= 2;
-    (void)frexpl(*a21, &e);
+    (void)__builtin_frexpl(*a21, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12 != 0.0L) {
     knd |= 4;
-    (void)frexpl(*a12, &e);
+    (void)__builtin_frexpl(*a12, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22 != 0.0L) {
     knd |= 8;
-    (void)frexpl(*a22, &e);
+    (void)__builtin_frexpl(*a22, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -4704,18 +4704,18 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   long double A11 = *a11, A21 = *a21, A12 = *a12, A22 = *a22;
   if (*es) {
-    A11 = scalbnl(A11, *es);
-    A21 = scalbnl(A21, *es);
-    A12 = scalbnl(A12, *es);
-    A22 = scalbnl(A22, *es);
+    A11 = __builtin_scalbnl(A11, *es);
+    A21 = __builtin_scalbnl(A21, *es);
+    A12 = __builtin_scalbnl(A12, *es);
+    A22 = __builtin_scalbnl(A22, *es);
     if (mxe) {
-      if (!isfinite(A11))
+      if (!__builtin_isfinite(A11))
         return -5;
-      if (!isfinite(A21))
+      if (!__builtin_isfinite(A21))
         return -6;
-      if (!isfinite(A12))
+      if (!__builtin_isfinite(A12))
         return -7;
-      if (!isfinite(A22))
+      if (!__builtin_isfinite(A22))
         return -8;
     }
     if (*es < 0) {
@@ -4747,8 +4747,8 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
   case  0:
     /* [ 0 0 ] */
     /* [ 0 0 ] */
-    *u11 = copysignl(1.0L, A11);
-    *u22 = copysignl(1.0L, A22);
+    *u11 = __builtin_copysignl(1.0L, A11);
+    *u22 = __builtin_copysignl(1.0L, A22);
     A22 = A12 = A21 = A11 = 0.0L;
     break;
   case  1:
@@ -4758,7 +4758,7 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
       *u11 = -1.0L;
       A11 = -A11;
     }
-    *u22 = copysignl(1.0L, A22);
+    *u22 = __builtin_copysignl(1.0L, A22);
     A22 = A12 = A21 = 0.0L;
     *s1 = A11;
     break;
@@ -4775,26 +4775,26 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     }
     else
       *u12 = 1.0L;
-    *u21 = copysignl(1.0L, A12);
+    *u21 = __builtin_copysignl(1.0L, A12);
     A22 = A12 = A21 = 0.0L;
     *s1 = A11;
     break;
   case  3:
     /* [ * 0 ] */
     /* [ * 0 ] */
-    A12 = fabsl(A11);
-    A22 = fabsl(A21);
+    A12 = __builtin_fabsl(A11);
+    A22 = __builtin_fabsl(A21);
     if (A12 < A22) {
       *u11 = 0.0L;
-      *u21 = copysignl(1.0L, A11);
-      *u12 = copysignl(1.0L, A21);
+      *u21 = __builtin_copysignl(1.0L, A11);
+      *u12 = __builtin_copysignl(1.0L, A21);
       *u22 = 0.0L;
       A11 = A22;
       A21 = A12;
     }
     else {
-      *u11 = copysignl(1.0L, A11);
-      *u22 = copysignl(1.0L, A21);
+      *u11 = __builtin_copysignl(1.0L, A11);
+      *u22 = __builtin_copysignl(1.0L, A21);
       A11 = A12;
       A21 = A22;
     }
@@ -4805,9 +4805,9 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
   case  4:
     /* [ 0 * ] */
     /* [ 0 0 ] */
-    *u11 = copysignl(1.0L, A12);
-    *u22 = copysignl(1.0L, A21);
-    A11 = fabsl(A12);
+    *u11 = __builtin_copysignl(1.0L, A12);
+    *u22 = __builtin_copysignl(1.0L, A21);
+    A11 = __builtin_fabsl(A12);
     A22 = A12 = A21 = 0.0L;
     *v11 = 0.0L;
     *v21 = 1.0L;
@@ -4818,19 +4818,19 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
   case  5:
     /* [ * * ] */
     /* [ 0 0 ] */
-    A21 = fabsl(A11);
-    A22 = fabsl(A12);
+    A21 = __builtin_fabsl(A11);
+    A22 = __builtin_fabsl(A12);
     if (A21 < A22) {
       *v11 = 0.0L;
-      *v21 = copysignl(1.0L, A12);
-      *v12 = copysignl(1.0L, A11);
+      *v21 = __builtin_copysignl(1.0L, A12);
+      *v12 = __builtin_copysignl(1.0L, A11);
       *v22 = 0.0L;
       A11 = A22;
       A12 = A21;
     }
     else {
-      *v11 = copysignl(1.0L, A11);
-      *v22 = copysignl(1.0L, A12);
+      *v11 = __builtin_copysignl(1.0L, A11);
+      *v22 = __builtin_copysignl(1.0L, A12);
       A11 = A21;
       A12 = A22;
     }
@@ -4841,10 +4841,10 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
   case  6:
     /* [ 0 * ] */
     /* [ * 0 ] */
-    *u11 = copysignl(1.0L, A12);
-    *u22 = copysignl(1.0L, A21);
-    A11 = fabsl(A12);
-    A22 = fabsl(A21);
+    *u11 = __builtin_copysignl(1.0L, A12);
+    *u22 = __builtin_copysignl(1.0L, A21);
+    A11 = __builtin_fabsl(A12);
+    A22 = __builtin_fabsl(A21);
     A12 = A21 = 0.0L;
     *v11 = 0.0L;
     *v21 = 1.0L;
@@ -4886,10 +4886,10 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     /* [ 0 0 ] */
     /* [ 0 * ] */
     *u11 = 0.0L;
-    *u21 = copysignl(1.0L, A11);
-    *u12 = copysignl(1.0L, A22);
+    *u21 = __builtin_copysignl(1.0L, A11);
+    *u12 = __builtin_copysignl(1.0L, A22);
     *u22 = 0.0L;
-    A11 = fabsl(A22);
+    A11 = __builtin_fabsl(A22);
     A22 = A12 = A21 = 0.0L;
     *v11 = 0.0L;
     *v21 = 1.0L;
@@ -4921,19 +4921,19 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     *u22 = 0.0L;
     A11 = A21;
     A12 = A22;
-    A21 = fabsl(A11);
-    A22 = fabsl(A12);
+    A21 = __builtin_fabsl(A11);
+    A22 = __builtin_fabsl(A12);
     if (A21 < A22) {
       *v11 = 0.0L;
-      *v21 = copysignl(1.0L, A12);
-      *v12 = copysignl(1.0L, A11);
+      *v21 = __builtin_copysignl(1.0L, A12);
+      *v12 = __builtin_copysignl(1.0L, A11);
       *v22 = 0.0L;
       A11 = A22;
       A12 = A21;
     }
     else {
-      *v11 = copysignl(1.0L, A11);
-      *v22 = copysignl(1.0L, A12);
+      *v11 = __builtin_copysignl(1.0L, A11);
+      *v22 = __builtin_copysignl(1.0L, A12);
       A11 = A21;
       A12 = A22;
     }
@@ -4984,19 +4984,19 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     *v21 = 1.0L;
     *v12 = 1.0L;
     *v22 = 0.0L;
-    A12 = fabsl(A11);
-    A22 = fabsl(A21);
+    A12 = __builtin_fabsl(A11);
+    A22 = __builtin_fabsl(A21);
     if (A12 < A22) {
       *u11 = 0.0L;
-      *u21 = copysignl(1.0L, A11);
-      *u12 = copysignl(1.0L, A21);
+      *u21 = __builtin_copysignl(1.0L, A11);
+      *u12 = __builtin_copysignl(1.0L, A21);
       *u22 = 0.0L;
       A11 = A22;
       A21 = A12;
     }
     else {
-      *u11 = copysignl(1.0L, A11);
-      *u22 = copysignl(1.0L, A21);
+      *u11 = __builtin_copysignl(1.0L, A11);
+      *u22 = __builtin_copysignl(1.0L, A21);
       A11 = A12;
       A21 = A22;
     }
@@ -5090,13 +5090,13 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
       pvn_Lswp(v21, v22);
       pvn_Lswp(s1, s2);
     }
-    if (copysignl(1.0L, A11) != 1.0L) {
+    if (__builtin_copysignl(1.0L, A11) != 1.0L) {
       *u11 = -*u11;
       *u12 = -*u12;
       A11 = -A11;
       A12 = -A12;
     }
-    if (copysignl(1.0L, A21) != 1.0L) {
+    if (__builtin_copysignl(1.0L, A21) != 1.0L) {
       *u21 = -*u21;
       *u22 = -*u22;
       A21 = -A21;
@@ -5119,28 +5119,28 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     st = -tt;
     A21 = A12;
     if (ct == 1.0L) {
-      A12 = fmal(tt, A22, A12);
-      A22 = fmal(st, A21, A22);
+      A12 = __builtin_fmal(tt, A22, A12);
+      A22 = __builtin_fmal(st, A21, A22);
       if ((A12 == 0.0L) || (A22 == 0.0L)) {
         A21 = *u11;
-        *u11 = fmal(tt, *u21, *u11);
-        *u21 = fmal(st,  A21, *u21);
+        *u11 = __builtin_fmal(tt, *u21, *u11);
+        *u21 = __builtin_fmal(st,  A21, *u21);
         A21 = *u12;
-        *u12 = fmal(tt, *u22, *u12);
-        *u22 = fmal(st,  A21, *u22);
+        *u12 = __builtin_fmal(tt, *u22, *u12);
+        *u22 = __builtin_fmal(st,  A21, *u22);
       }
       st = tt;
     }
     else {
-      A12 = (fmal(tt, A22, A12) / ct);
-      A22 = (fmal(st, A21, A22) / ct);
+      A12 = (__builtin_fmal(tt, A22, A12) / ct);
+      A22 = (__builtin_fmal(st, A21, A22) / ct);
       if ((A12 == 0.0L) || (A22 == 0.0L)) {
         A21 = *u11;
-        *u11 = (fmal(tt, *u21, *u11) / ct);
-        *u21 = (fmal(st,  A21, *u21) / ct);
+        *u11 = (__builtin_fmal(tt, *u21, *u11) / ct);
+        *u21 = (__builtin_fmal(st,  A21, *u21) / ct);
         A21 = *u12;
-        *u12 = (fmal(tt, *u22, *u12) / ct);
-        *u22 = (fmal(st,  A21, *u22) / ct);
+        *u12 = (__builtin_fmal(tt, *u22, *u12) / ct);
+        *u22 = (__builtin_fmal(st,  A21, *u22) / ct);
       }
       st = (tt / ct);
       ct = (1.0L / ct);
@@ -5149,7 +5149,7 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     A21 = 0.0L;
     if (A12 == 0.0L) {
       A12 = 0.0L;
-      if (copysignl(1.0L, A22) != 1.0L) {
+      if (__builtin_copysignl(1.0L, A22) != 1.0L) {
         *u21 = -*u21;
         *u22 = -*u22;
         A22 = -A22;
@@ -5157,13 +5157,13 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
       e = 0;
     }
     else if (A22 == 0.0L) {
-      if (copysignl(1.0L, A12) != 1.0L) {
+      if (__builtin_copysignl(1.0L, A12) != 1.0L) {
         A12 = -A12;
         A22 = -A22;
         *v12 = -*v12;
         *v22 = -*v22;
       }
-      if (copysignl(1.0L, A22) != 1.0L) {
+      if (__builtin_copysignl(1.0L, A22) != 1.0L) {
         *u21 = -*u21;
         *u22 = -*u22;
         A22 = 0.0L;
@@ -5209,19 +5209,19 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     st = -tt;
     A21 = *u11;
     if (ct == 1.0L) {
-      *u11 = fmal(tt, *u21, *u11);
-      *u21 = fmal(st,  A21, *u21);
+      *u11 = __builtin_fmal(tt, *u21, *u11);
+      *u21 = __builtin_fmal(st,  A21, *u21);
       A21 = *u12;
-      *u12 = fmal(tt, *u22, *u12);
-      *u22 = fmal(st,  A21, *u22);
+      *u12 = __builtin_fmal(tt, *u22, *u12);
+      *u22 = __builtin_fmal(st,  A21, *u22);
       st = tt;
     }
     else {
-      *u11 = (fmal(tt, *u21, *u11) / ct);
-      *u21 = (fmal(st,  A21, *u21) / ct);
+      *u11 = (__builtin_fmal(tt, *u21, *u11) / ct);
+      *u21 = (__builtin_fmal(st,  A21, *u21) / ct);
       A21 = *u12;
-      *u12 = (fmal(tt, *u22, *u12) / ct);
-      *u22 = (fmal(st,  A21, *u22) / ct);
+      *u12 = (__builtin_fmal(tt, *u22, *u12) / ct);
+      *u22 = (__builtin_fmal(st,  A21, *u22) / ct);
       st = (tt / ct);
       ct = (1.0L / ct);
     }
@@ -5249,19 +5249,19 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
     st = -tt;
     A12 = *v11;
     if (ct == 1.0L) {
-      *v11 = fmal(tt, *v12, *v11);
-      *v12 = fmal(st,  A12, *v12);
+      *v11 = __builtin_fmal(tt, *v12, *v11);
+      *v12 = __builtin_fmal(st,  A12, *v12);
       A12 = *v21;
-      *v21 = fmal(tt, *v22, *v21);
-      *v22 = fmal(st,  A12, *v22);
+      *v21 = __builtin_fmal(tt, *v22, *v21);
+      *v22 = __builtin_fmal(st,  A12, *v22);
       st = tt;
     }
     else {
-      *v11 = (fmal(tt, *v12, *v11) / ct);
-      *v12 = (fmal(st,  A12, *v12) / ct);
+      *v11 = (__builtin_fmal(tt, *v12, *v11) / ct);
+      *v12 = (__builtin_fmal(st,  A12, *v12) / ct);
       A12 = *v21;
-      *v21 = (fmal(tt, *v22, *v21) / ct);
-      *v22 = (fmal(st,  A12, *v22) / ct);
+      *v21 = (__builtin_fmal(tt, *v22, *v21) / ct);
+      *v22 = (__builtin_fmal(st,  A12, *v22) / ct);
       st = (tt / ct);
       ct = (1.0L / ct);
     }
@@ -5277,10 +5277,10 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
 
 #ifdef PVN_PRINTOUT
   (void)dprintf(PVN_PRINTOUT, "\tA =\n");
-  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_xtoa(s, scalbnl(A11, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_xtoa(s, scalbnl(A12, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_xtoa(s, scalbnl(A21, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_xtoa(s, scalbnl(A22, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_xtoa(s, __builtin_scalbnl(A11, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_xtoa(s, __builtin_scalbnl(A12, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s ", pvn_xtoa(s, __builtin_scalbnl(A21, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s\n", pvn_xtoa(s, __builtin_scalbnl(A22, -*es)));
 #endif /* PVN_PRINTOUT */
 
   if (abs(e) == 13) {
@@ -5310,7 +5310,7 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
              );
 
     /* update U */
-    if (copysignl(1.0L, st) != 1.0L) {
+    if (__builtin_copysignl(1.0L, st) != 1.0L) {
       /* U^T(φ) * diag(1, -1) * U^T(ϑ):
           cos(φ - ϑ) -sin(φ - ϑ)
          -sin(φ - ϑ) -cos(φ - ϑ)
@@ -5318,15 +5318,15 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
       st = -st;
       long double tf_t = (tf - tt), cf_t = 1.0L, sf_t = 0.0L;
       if (tf_t != 0.0L) {
-        tf_t /= fmal(tf, tt, 1.0L);
-        if (isfinite(tf_t)) {
+        tf_t /= __builtin_fmal(tf, tt, 1.0L);
+        if (__builtin_isfinite(tf_t)) {
           /* 1 / cos */
           cf_t = hypotl(tf_t, 1.0L);
           sf_t = (tf_t / cf_t);
           cf_t = (1.0L / cf_t);
         }
         else {
-          sf_t = copysignl(1.0L, tf_t);
+          sf_t = __builtin_copysignl(1.0L, tf_t);
           cf_t = 0.0L;
         }
       }
@@ -5348,15 +5348,15 @@ int PVN_FABI(pvn_xljsv2,PVN_XLJSV2)
       */
       long double tft = (tf + tt), cft = 1.0L, sft = 0.0L;
       if (tft != 0.0L) {
-        tft /= fmal(-tf, tt, 1.0L);
-        if (isfinite(tft)) {
+        tft /= __builtin_fmal(-tf, tt, 1.0L);
+        if (__builtin_isfinite(tft)) {
           /* 1 / cos */
           cft = hypotl(tft, 1.0L);
           sft = (tft / cft);
           cft = (1.0L / cft);
         }
         else {
-          sft = copysignl(1.0L, tft);
+          sft = __builtin_copysignl(1.0L, tft);
           cft = 0.0L;
         }
       }
@@ -5433,8 +5433,8 @@ static long double cpolarl(const long double r, const long double i, long double
   PVN_ASSERT(c);
   PVN_ASSERT(s);
   const long double a = hypotl(r, i);
-  *c = copysignl(fminl((fabsl(r) / a), 1.0L), r);
-  *s = (i / fmaxl(a, LDBL_TRUE_MIN));
+  *c = __builtin_copysignl(__builtin_fminl((__builtin_fabsl(r) / a), 1.0L), r);
+  *s = (i / __builtin_fmaxl(a, LDBL_TRUE_MIN));
   return a;
 }
 
@@ -5459,44 +5459,44 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
   PVN_ASSERT(s1);
   PVN_ASSERT(s2);
   PVN_ASSERT(es);
-  if (!isfinite(*a11r))
+  if (!__builtin_isfinite(*a11r))
     return -1;
-  if (!isfinite(*a11i))
+  if (!__builtin_isfinite(*a11i))
     return -2;
-  if (!isfinite(*a21r))
+  if (!__builtin_isfinite(*a21r))
     return -3;
-  if (!isfinite(*a21i))
+  if (!__builtin_isfinite(*a21i))
     return -4;
-  if (!isfinite(*a12r))
+  if (!__builtin_isfinite(*a12r))
     return -5;
-  if (!isfinite(*a12i))
+  if (!__builtin_isfinite(*a12i))
     return -6;
-  if (!isfinite(*a22r))
+  if (!__builtin_isfinite(*a22r))
     return -7;
-  if (!isfinite(*a22i))
+  if (!__builtin_isfinite(*a22i))
     return -8;
   int kndi = 0, mxe = INT_MIN, e = 0;
   if (*a11i != 0.0L) {
     kndi |= 1;
-    (void)frexpl(*a11i, &e);
+    (void)__builtin_frexpl(*a11i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21i != 0.0L) {
     kndi |= 2;
-    (void)frexpl(*a21i, &e);
+    (void)__builtin_frexpl(*a21i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12i != 0.0L) {
     kndi |= 4;
-    (void)frexpl(*a12i, &e);
+    (void)__builtin_frexpl(*a12i, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22i != 0.0L) {
     kndi |= 8;
-    (void)frexpl(*a22i, &e);
+    (void)__builtin_frexpl(*a22i, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -5513,25 +5513,25 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
   int kndr = 0;
   if (*a11r != 0.0L) {
     kndr |= 1;
-    (void)frexpl(*a11r, &e);
+    (void)__builtin_frexpl(*a11r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a21r != 0.0L) {
     kndr |= 2;
-    (void)frexpl(*a21r, &e);
+    (void)__builtin_frexpl(*a21r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a12r != 0.0L) {
     kndr |= 4;
-    (void)frexpl(*a12r, &e);
+    (void)__builtin_frexpl(*a12r, &e);
     if (mxe < e)
       mxe = e;
   }
   if (*a22r != 0.0L) {
     kndr |= 8;
-    (void)frexpl(*a22r, &e);
+    (void)__builtin_frexpl(*a22r, &e);
     if (mxe < e)
       mxe = e;
   }
@@ -5576,30 +5576,30 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
   /* scaling by 2^(*es), can only fail when mxe != 0 */
   long double A11r = *a11r, A11i = *a11i, A21r = *a21r, A21i = *a21i, A12r = *a12r, A12i = *a12i, A22r = *a22r, A22i = *a22i;
   if (*es) {
-    A11r = scalbnl(A11r, *es);
-    A11i = scalbnl(A11i, *es);
-    A21r = scalbnl(A21r, *es);
-    A21i = scalbnl(A21i, *es);
-    A12r = scalbnl(A12r, *es);
-    A12i = scalbnl(A12i, *es);
-    A22r = scalbnl(A22r, *es);
-    A22i = scalbnl(A22i, *es);
+    A11r = __builtin_scalbnl(A11r, *es);
+    A11i = __builtin_scalbnl(A11i, *es);
+    A21r = __builtin_scalbnl(A21r, *es);
+    A21i = __builtin_scalbnl(A21i, *es);
+    A12r = __builtin_scalbnl(A12r, *es);
+    A12i = __builtin_scalbnl(A12i, *es);
+    A22r = __builtin_scalbnl(A22r, *es);
+    A22i = __builtin_scalbnl(A22i, *es);
     if (mxe) {
-      if (!isfinite(A11r))
+      if (!__builtin_isfinite(A11r))
         return -9;
-      if (!isfinite(A11i))
+      if (!__builtin_isfinite(A11i))
         return -10;
-      if (!isfinite(A21r))
+      if (!__builtin_isfinite(A21r))
         return -11;
-      if (!isfinite(A21i))
+      if (!__builtin_isfinite(A21i))
         return -12;
-      if (!isfinite(A12r))
+      if (!__builtin_isfinite(A12r))
         return -13;
-      if (!isfinite(A12i))
+      if (!__builtin_isfinite(A12i))
         return -14;
-      if (!isfinite(A22r))
+      if (!__builtin_isfinite(A22r))
         return -15;
-      if (!isfinite(A22i))
+      if (!__builtin_isfinite(A22i))
         return -16;
     }
     if (*es < 0) {
@@ -5885,41 +5885,41 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
     A21r = A12r;
     A21i = A12i;
     if (ct == 1.0L) {
-      A12r = fmal(tt, A22r, A12r);
-      A12i = fmal(tt, A22i, A12i);
-      A22r = fmal(st, A21r, A22r);
-      A22i = fmal(st, A21i, A22i);
+      A12r = __builtin_fmal(tt, A22r, A12r);
+      A12i = __builtin_fmal(tt, A22i, A12i);
+      A22r = __builtin_fmal(st, A21r, A22r);
+      A22i = __builtin_fmal(st, A21i, A22i);
       A21r = *u11r;
       A21i = *u11i;
-      *u11r = fmal(tt, *u21r, *u11r);
-      *u11i = fmal(tt, *u21i, *u11i);
-      *u21r = fmal(st,  A21r, *u21r);
-      *u21i = fmal(st,  A21i, *u21i);
+      *u11r = __builtin_fmal(tt, *u21r, *u11r);
+      *u11i = __builtin_fmal(tt, *u21i, *u11i);
+      *u21r = __builtin_fmal(st,  A21r, *u21r);
+      *u21i = __builtin_fmal(st,  A21i, *u21i);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = fmal(tt, *u22r, *u12r);
-      *u12i = fmal(tt, *u22i, *u12i);
-      *u22r = fmal(st,  A21r, *u22r);
-      *u22i = fmal(st,  A21i, *u22i);
+      *u12r = __builtin_fmal(tt, *u22r, *u12r);
+      *u12i = __builtin_fmal(tt, *u22i, *u12i);
+      *u22r = __builtin_fmal(st,  A21r, *u22r);
+      *u22i = __builtin_fmal(st,  A21i, *u22i);
       st = tt;
     }
     else {
-      A12r = (fmal(tt, A22r, A12r) / ct);
-      A12i = (fmal(tt, A22i, A12i) / ct);
-      A22r = (fmal(st, A21r, A22r) / ct);
-      A22i = (fmal(st, A21i, A22i) / ct);
+      A12r = (__builtin_fmal(tt, A22r, A12r) / ct);
+      A12i = (__builtin_fmal(tt, A22i, A12i) / ct);
+      A22r = (__builtin_fmal(st, A21r, A22r) / ct);
+      A22i = (__builtin_fmal(st, A21i, A22i) / ct);
       A21r = *u11r;
       A21i = *u11i;
-      *u11r = (fmal(tt, *u21r, *u11r) / ct);
-      *u11i = (fmal(tt, *u21i, *u11i) / ct);
-      *u21r = (fmal(st,  A21r, *u21r) / ct);
-      *u21i = (fmal(st,  A21i, *u21i) / ct);
+      *u11r = (__builtin_fmal(tt, *u21r, *u11r) / ct);
+      *u11i = (__builtin_fmal(tt, *u21i, *u11i) / ct);
+      *u21r = (__builtin_fmal(st,  A21r, *u21r) / ct);
+      *u21i = (__builtin_fmal(st,  A21i, *u21i) / ct);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = (fmal(tt, *u22r, *u12r) / ct);
-      *u12i = (fmal(tt, *u22i, *u12i) / ct);
-      *u22r = (fmal(st,  A21r, *u22r) / ct);
-      *u22i = (fmal(st,  A21i, *u22i) / ct);
+      *u12r = (__builtin_fmal(tt, *u22r, *u12r) / ct);
+      *u12i = (__builtin_fmal(tt, *u22i, *u12i) / ct);
+      *u22r = (__builtin_fmal(st,  A21r, *u22r) / ct);
+      *u22i = (__builtin_fmal(st,  A21i, *u22i) / ct);
       st = (tt / ct);
       ct = (1.0L / ct);
     }
@@ -5966,29 +5966,29 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
     A21r = *u11r;
     A21i = *u11i;
     if (ct == 1.0L) {
-      *u11r = fmal(tt, *u21r, *u11r);
-      *u11i = fmal(tt, *u21i, *u11i);
-      *u21r = fmal(st,  A21r, *u21r);
-      *u21i = fmal(st,  A21i, *u21i);
+      *u11r = __builtin_fmal(tt, *u21r, *u11r);
+      *u11i = __builtin_fmal(tt, *u21i, *u11i);
+      *u21r = __builtin_fmal(st,  A21r, *u21r);
+      *u21i = __builtin_fmal(st,  A21i, *u21i);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = fmal(tt, *u22r, *u12r);
-      *u12i = fmal(tt, *u22i, *u12i);
-      *u22r = fmal(st,  A21r, *u22r);
-      *u22i = fmal(st,  A21i, *u22i);
+      *u12r = __builtin_fmal(tt, *u22r, *u12r);
+      *u12i = __builtin_fmal(tt, *u22i, *u12i);
+      *u22r = __builtin_fmal(st,  A21r, *u22r);
+      *u22i = __builtin_fmal(st,  A21i, *u22i);
       st = tt;
     }
     else {
-      *u11r = (fmal(tt, *u21r, *u11r) / ct);
-      *u11i = (fmal(tt, *u21i, *u11i) / ct);
-      *u21r = (fmal(st,  A21r, *u21r) / ct);
-      *u21i = (fmal(st,  A21i, *u21i) / ct);
+      *u11r = (__builtin_fmal(tt, *u21r, *u11r) / ct);
+      *u11i = (__builtin_fmal(tt, *u21i, *u11i) / ct);
+      *u21r = (__builtin_fmal(st,  A21r, *u21r) / ct);
+      *u21i = (__builtin_fmal(st,  A21i, *u21i) / ct);
       A21r = *u12r;
       A21i = *u12i;
-      *u12r = (fmal(tt, *u22r, *u12r) / ct);
-      *u12i = (fmal(tt, *u22i, *u12i) / ct);
-      *u22r = (fmal(st,  A21r, *u22r) / ct);
-      *u22i = (fmal(st,  A21i, *u22i) / ct);
+      *u12r = (__builtin_fmal(tt, *u22r, *u12r) / ct);
+      *u12i = (__builtin_fmal(tt, *u22i, *u12i) / ct);
+      *u22r = (__builtin_fmal(st,  A21r, *u22r) / ct);
+      *u22i = (__builtin_fmal(st,  A21i, *u22i) / ct);
       st = (tt / ct);
       ct = (1.0L / ct);
     }
@@ -6011,29 +6011,29 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
     A12r = *v11r;
     A12i = *v11i;
     if (ct == 1.0L) {
-      *v11r = fmal(tt, *v12r, *v11r);
-      *v11i = fmal(tt, *v12i, *v11i);
-      *v12r = fmal(st,  A12r, *v12r);
-      *v12i = fmal(st,  A12i, *v12i);
+      *v11r = __builtin_fmal(tt, *v12r, *v11r);
+      *v11i = __builtin_fmal(tt, *v12i, *v11i);
+      *v12r = __builtin_fmal(st,  A12r, *v12r);
+      *v12i = __builtin_fmal(st,  A12i, *v12i);
       A12r = *v21r;
       A12i = *v21i;
-      *v21r = fmal(tt, *v22r, *v21r);
-      *v21i = fmal(tt, *v22i, *v21i);
-      *v22r = fmal(st,  A12r, *v22r);
-      *v22i = fmal(st,  A12i, *v22i);
+      *v21r = __builtin_fmal(tt, *v22r, *v21r);
+      *v21i = __builtin_fmal(tt, *v22i, *v21i);
+      *v22r = __builtin_fmal(st,  A12r, *v22r);
+      *v22i = __builtin_fmal(st,  A12i, *v22i);
       st = tt;
     }
     else {
-      *v11r = (fmal(tt, *v12r, *v11r) / ct);
-      *v11i = (fmal(tt, *v12i, *v11i) / ct);
-      *v12r = (fmal(st,  A12r, *v12r) / ct);
-      *v12i = (fmal(st,  A12i, *v12i) / ct);
+      *v11r = (__builtin_fmal(tt, *v12r, *v11r) / ct);
+      *v11i = (__builtin_fmal(tt, *v12i, *v11i) / ct);
+      *v12r = (__builtin_fmal(st,  A12r, *v12r) / ct);
+      *v12i = (__builtin_fmal(st,  A12i, *v12i) / ct);
       A12r = *v21r;
       A12i = *v21i;
-      *v21r = (fmal(tt, *v22r, *v21r) / ct);
-      *v21i = (fmal(tt, *v22i, *v21i) / ct);
-      *v22r = (fmal(st,  A12r, *v22r) / ct);
-      *v22i = (fmal(st,  A12i, *v22i) / ct);
+      *v21r = (__builtin_fmal(tt, *v22r, *v21r) / ct);
+      *v21i = (__builtin_fmal(tt, *v22i, *v21i) / ct);
+      *v22r = (__builtin_fmal(st,  A12r, *v22r) / ct);
+      *v22i = (__builtin_fmal(st,  A12i, *v22i) / ct);
       st = (tt / ct);
       ct = (1.0L / ct);
     }
@@ -6049,14 +6049,14 @@ int PVN_FABI(pvn_wljsv2,PVN_WLJSV2)
 
 #ifdef PVN_PRINTOUT
   (void)dprintf(PVN_PRINTOUT, "\tA =\n");
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, scalbnl(A11r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_xtoa(s, scalbnl(A11i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, scalbnl(A12r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_xtoa(s, scalbnl(A12i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, scalbnl(A21r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_xtoa(s, scalbnl(A21i, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, scalbnl(A22r, -*es)));
-  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_xtoa(s, scalbnl(A22i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, __builtin_scalbnl(A11r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_xtoa(s, __builtin_scalbnl(A11i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, __builtin_scalbnl(A12r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_xtoa(s, __builtin_scalbnl(A12i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, __builtin_scalbnl(A21r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s) ", pvn_xtoa(s, __builtin_scalbnl(A21i, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "(%s,", pvn_xtoa(s, __builtin_scalbnl(A22r, -*es)));
+  (void)dprintf(PVN_PRINTOUT, "%s)\n", pvn_xtoa(s, __builtin_scalbnl(A22i, -*es)));
 #endif /* PVN_PRINTOUT */
 
   if (abs(e) == 13) {
