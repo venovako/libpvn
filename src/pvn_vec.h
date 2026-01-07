@@ -25,9 +25,25 @@
 #error PVN_SAFELEN already defined
 #endif /* ?PVN_SAFELEN */
 
+static inline float pvn_v1s_add_pos(const float X, const float Y)
+{
+  return (X + Y);
+}
+
 static inline float pvn_v1s_add_abs(const float x, const float y)
 {
   return (__builtin_fabsf(x) + __builtin_fabsf(y));
+}
+
+static inline float pvn_v1s_hypot_pos(const float X, const float Y)
+{
+  const float m = __builtin_fminf(X, Y);
+  const float M = __builtin_fmaxf(X, Y);
+  const float q = (m / M);
+  const float Q = __builtin_fmaxf(q, 0.0f);
+  const float S = __builtin_fmaf(Q, Q, 1.0f);
+  const float s = __builtin_sqrtf(S);
+  return (M * s);
 }
 
 static inline float pvn_v1s_hypot(const float x, const float y)
@@ -41,6 +57,20 @@ static inline float pvn_v1s_hypot(const float x, const float y)
   const float S = __builtin_fmaf(Q, Q, 1.0f);
   const float s = __builtin_sqrtf(S);
   return (M * s);
+}
+
+static inline float pvn_v1s_lp_pos(const float p, const float X, const float Y)
+{
+  const float s = (p * 0.5f);
+  const float c = (1.0f / p);
+  const float M = __builtin_fmaxf(X, Y);
+  const float m = __builtin_fminf(X, Y);
+  const float q = (m / M);
+  const float Q = __builtin_fmaxf(q, 0.0f);
+  const float S = powf(Q, s);
+  const float Z = __builtin_fmaf(S, S, 1.0f);
+  const float C = powf(Z, c);
+  return (M * C);
 }
 
 static inline float pvn_v1s_lp(const float p, const float x, const float y)
@@ -60,6 +90,11 @@ static inline float pvn_v1s_lp(const float p, const float x, const float y)
   return (M * C);
 }
 
+static inline float pvn_v1s_max_pos(const float X, const float Y)
+{
+  return __builtin_fmaxf(X, Y);
+}
+
 static inline float pvn_v1s_max_abs(const float x, const float y)
 {
   return __builtin_fmaxf(__builtin_fabsf(x), __builtin_fabsf(y));
@@ -74,9 +109,25 @@ static inline float pvn_v1s_rsqrt(const float x)
 #endif /* ?Intel */
 }
 
+static inline double pvn_v1d_add_pos(const double X, const double Y)
+{
+  return (X + Y);
+}
+
 static inline double pvn_v1d_add_abs(const double x, const double y)
 {
   return (__builtin_fabs(x) + __builtin_fabs(y));
+}
+
+static inline double pvn_v1d_hypot_pos(const double X, const double Y)
+{
+  const double m = __builtin_fmin(X, Y);
+  const double M = __builtin_fmax(X, Y);
+  const double q = (m / M);
+  const double Q = __builtin_fmax(q, 0.0);
+  const double S = __builtin_fma(Q, Q, 1.0);
+  const double s = __builtin_sqrt(S);
+  return (M * s);
 }
 
 static inline double pvn_v1d_hypot(const double x, const double y)
@@ -90,6 +141,20 @@ static inline double pvn_v1d_hypot(const double x, const double y)
   const double S = __builtin_fma(Q, Q, 1.0);
   const double s = __builtin_sqrt(S);
   return (M * s);
+}
+
+static inline double pvn_v1d_lp_pos(const double p, const double X, const double Y)
+{
+  const double s = (p * 0.5);
+  const double c = (1.0 / p);
+  const double M = __builtin_fmax(X, Y);
+  const double m = __builtin_fmin(X, Y);
+  const double q = (m / M);
+  const double Q = __builtin_fmax(q, 0.0);
+  const double S = pow(Q, s);
+  const double Z = __builtin_fma(S, S, 1.0);
+  const double C = pow(Z, c);
+  return (M * C);
 }
 
 static inline double pvn_v1d_lp(const double p, const double x, const double y)
@@ -109,6 +174,11 @@ static inline double pvn_v1d_lp(const double p, const double x, const double y)
   return (M * C);
 }
 
+static inline double pvn_v1d_max_pos(const double X, const double Y)
+{
+  return __builtin_fmax(X, Y);
+}
+
 static inline double pvn_v1d_max_abs(const double x, const double y)
 {
   return __builtin_fmax(__builtin_fabs(x), __builtin_fabs(y));
@@ -123,9 +193,25 @@ static inline double pvn_v1d_rsqrt(const double x)
 #endif /* ?Intel */
 }
 
+static inline long double pvn_v1x_add_pos(const long double X, const long double Y)
+{
+  return (X + Y);
+}
+
 static inline long double pvn_v1x_add_abs(const long double x, const long double y)
 {
   return (__builtin_fabsl(x) + __builtin_fabsl(y));
+}
+
+static inline long double pvn_v1x_hypot_pos(const long double X, const long double Y)
+{
+  const long double m = __builtin_fminl(X, Y);
+  const long double M = __builtin_fmaxl(X, Y);
+  const long double q = (m / M);
+  const long double Q = __builtin_fmaxl(q, 0.0L);
+  const long double S = __builtin_fmal(Q, Q, 1.0L);
+  const long double s = __builtin_sqrtl(S);
+  return (M * s);
 }
 
 static inline long double pvn_v1x_hypot(const long double x, const long double y)
@@ -139,6 +225,20 @@ static inline long double pvn_v1x_hypot(const long double x, const long double y
   const long double S = __builtin_fmal(Q, Q, 1.0L);
   const long double s = __builtin_sqrtl(S);
   return (M * s);
+}
+
+static inline long double pvn_v1x_lp_pos(const long double p, const long double X, const long double Y)
+{
+  const long double s = (p * 0.5L);
+  const long double c = (1.0L / p);
+  const long double M = __builtin_fmaxl(X, Y);
+  const long double m = __builtin_fminl(X, Y);
+  const long double q = (m / M);
+  const long double Q = __builtin_fmaxl(q, 0.0L);
+  const long double S = powl(Q, s);
+  const long double Z = __builtin_fmal(S, S, 1.0L);
+  const long double C = powl(Z, c);
+  return (M * C);
 }
 
 static inline long double pvn_v1x_lp(const long double p, const long double x, const long double y)
@@ -158,6 +258,11 @@ static inline long double pvn_v1x_lp(const long double p, const long double x, c
   return (M * C);
 }
 
+static inline long double pvn_v1x_max_pos(const long double X, const long double Y)
+{
+  return __builtin_fmaxl(X, Y);
+}
+
 static inline long double pvn_v1x_max_abs(const long double x, const long double y)
 {
   return __builtin_fmaxl(__builtin_fabsl(x), __builtin_fabsl(y));
@@ -173,9 +278,25 @@ static inline long double pvn_v1x_rsqrt(const long double x)
 }
 
 #ifdef PVN_QUADMATH
+static inline __float128 pvn_v1q_add_pos(const __float128 X, const __float128 Y)
+{
+  return (X + Y);
+}
+
 static inline __float128 pvn_v1q_add_abs(const __float128 x, const __float128 y)
 {
   return (fabsq(x) + fabsq(y));
+}
+
+static inline __float128 pvn_v1q_hypot_pos(const __float128 X, const __float128 Y)
+{
+  const __float128 m = fminq(X, Y);
+  const __float128 M = fmaxq(X, Y);
+  const __float128 q = (m / M);
+  const __float128 Q = fmaxq(q, 0.0q);
+  const __float128 S = fmaq(Q, Q, 1.0q);
+  const __float128 s = sqrtq(S);
+  return (M * s);
 }
 
 static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
@@ -189,6 +310,20 @@ static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
   const __float128 S = fmaq(Q, Q, 1.0q);
   const __float128 s = sqrtq(S);
   return (M * s);
+}
+
+static inline __float128 pvn_v1q_lp_pos(const __float128 p, const __float128 X, const __float128 Y)
+{
+  const __float128 s = (p * 0.5q);
+  const __float128 c = (1.0q / p);
+  const __float128 M = fmaxq(X, Y);
+  const __float128 m = fminq(X, Y);
+  const __float128 q = (m / M);
+  const __float128 Q = fmaxq(q, 0.0q);
+  const __float128 S = powq(Q, s);
+  const __float128 Z = fmaq(S, S, 1.0q);
+  const __float128 C = powq(Z, c);
+  return (M * C);
 }
 
 static inline __float128 pvn_v1q_lp(const __float128 p, const __float128 x, const __float128 y)
@@ -206,6 +341,11 @@ static inline __float128 pvn_v1q_lp(const __float128 p, const __float128 x, cons
   const __float128 Z = fmaq(S, S, 1.0q);
   const __float128 C = powq(Z, c);
   return (M * C);
+}
+
+static inline __float128 pvn_v1q_max_pos(const __float128 X, const __float128 Y)
+{
+  return fmaxq(X, Y);
 }
 
 static inline __float128 pvn_v1q_max_abs(const __float128 x, const __float128 y)
@@ -244,6 +384,11 @@ static inline __float128 pvn_v1q_rsqrt(const __float128 x)
 #endif /* !Intel */
 #endif /* Sleef */
 
+static inline __m128 pvn_v4s_add_pos(register const __m128 X, register const __m128 Y)
+{
+  return _mm_add_ps(X, Y);
+}
+
 static inline __m128 pvn_v4s_add_abs(register const __m128 x, register const __m128 y)
 {
   register const __m128 z = _mm_set1_ps(-0.0f);
@@ -260,11 +405,26 @@ static inline float pvn_v4s_add_red(register const __m128 x)
 }
 
 #if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v4s_hypot_pos pvn_v4s_hypot
 #define pvn_v4s_hypot _mm_hypot_ps
 #else /* !Intel */
 #if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v4s_hypot_pos pvn_v4s_hypot
 #define pvn_v4s_hypot Sleef_hypotf4_u05avx2128
 #else /* !Sleef */
+static inline __m128 pvn_v4s_hypot_pos(register const __m128 X, register const __m128 Y)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+  register const __m128 o = _mm_set1_ps(1.0f);
+  register const __m128 m = _mm_min_ps(X, Y);
+  register const __m128 M = _mm_max_ps(X, Y);
+  register const __m128 q = _mm_div_ps(m, M);
+  register const __m128 Q = _mm_max_ps(q, z);
+  register const __m128 S = _mm_fmadd_ps(Q, Q, o);
+  register const __m128 s = _mm_sqrt_ps(S);
+  return _mm_mul_ps(M, s);
+}
+
 static inline __m128 pvn_v4s_hypot(register const __m128 x, register const __m128 y)
 {
   register const __m128 z = _mm_set1_ps(-0.0f);
@@ -290,6 +450,24 @@ static inline float pvn_v4s_hypot_red(register const __m128 x)
 }
 
 #if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+static inline __m128 pvn_v4s_lp_pos(const float _p, register const __m128 X, register const __m128 Y)
+{
+  register const __m128 z = _mm_set1_ps(-0.0f);
+  register const __m128 h = _mm_set1_ps(0.5f);
+  register const __m128 o = _mm_set1_ps(1.0f);
+  register const __m128 p = _mm_set1_ps(_p);
+  register const __m128 s = _mm_mul_ps(p, h);
+  register const __m128 c = _mm_div_ps(o, p);
+  register const __m128 m = _mm_min_ps(X, Y);
+  register const __m128 M = _mm_max_ps(X, Y);
+  register const __m128 q = _mm_div_ps(m, M);
+  register const __m128 Q = _mm_max_ps(q, z);
+  register const __m128 S = _mm_pow_ps(Q, s);
+  register const __m128 Z = _mm_fmadd_ps(S, S, o);
+  register const __m128 C = _mm_pow_ps(Z, c);
+  return _mm_mul_ps(M, C);
+}
+
 static inline __m128 pvn_v4s_lp(const float _p, register const __m128 x, register const __m128 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -319,6 +497,11 @@ static inline float pvn_v4s_lp_red(const float p, register const __m128 x)
   return pvn_v1s_lp(p, pvn_v1s_lp(p, v[0], v[2]), pvn_v1s_lp(p, v[1], v[3]));
 }
 
+static inline __m128 pvn_v4s_max_pos(register const __m128 X, register const __m128 Y)
+{
+  return _mm_max_ps(X, Y);
+}
+
 static inline __m128 pvn_v4s_max_abs(register const __m128 x, register const __m128 y)
 {
   register const __m128 z = _mm_set1_ps(-0.0f);
@@ -343,6 +526,11 @@ static inline __m128 pvn_v4s_rsqrt(register const __m128 x)
 #endif /* ?Intel */
 }
 
+static inline __m128d pvn_v2d_add_pos(register const __m128d X, register const __m128d Y)
+{
+  return _mm_add_pd(X, Y);
+}
+
 static inline __m128d pvn_v2d_add_abs(register const __m128d x, register const __m128d y)
 {
   register const __m128d z = _mm_set1_pd(-0.0);
@@ -359,11 +547,26 @@ static inline double pvn_v2d_add_red(register const __m128d x)
 }
 
 #if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v2d_hypot_pos pvn_v2d_hypot
 #define pvn_v2d_hypot _mm_hypot_pd
 #else /* !Intel */
 #if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v2d_hypot_pos pvn_v2d_hypot
 #define pvn_v2d_hypot Sleef_hypotd2_u05avx2128
 #else /* !Sleef */
+static inline __m128d pvn_v2d_hypot_pos(register const __m128d X, register const __m128d Y)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+  register const __m128d o = _mm_set1_pd(1.0);
+  register const __m128d m = _mm_min_pd(X, Y);
+  register const __m128d M = _mm_max_pd(X, Y);
+  register const __m128d q = _mm_div_pd(m, M);
+  register const __m128d Q = _mm_max_pd(q, z);
+  register const __m128d S = _mm_fmadd_pd(Q, Q, o);
+  register const __m128d s = _mm_sqrt_pd(S);
+  return _mm_mul_pd(M, s);
+}
+
 static inline __m128d pvn_v2d_hypot(register const __m128d x, register const __m128d y)
 {
   register const __m128d z = _mm_set1_pd(-0.0);
@@ -389,6 +592,24 @@ static inline double pvn_v2d_hypot_red(register const __m128d x)
 }
 
 #if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+static inline __m128d pvn_v2d_lp_pos(const double _p, register const __m128d X, register const __m128d Y)
+{
+  register const __m128d z = _mm_set1_pd(-0.0);
+  register const __m128d h = _mm_set1_pd(0.5);
+  register const __m128d o = _mm_set1_pd(1.0);
+  register const __m128d p = _mm_set1_pd(_p);
+  register const __m128d s = _mm_mul_pd(p, h);
+  register const __m128d c = _mm_div_pd(o, p);
+  register const __m128d m = _mm_min_pd(X, Y);
+  register const __m128d M = _mm_max_pd(X, Y);
+  register const __m128d q = _mm_div_pd(m, M);
+  register const __m128d Q = _mm_max_pd(q, z);
+  register const __m128d S = _mm_pow_pd(Q, s);
+  register const __m128d Z = _mm_fmadd_pd(S, S, o);
+  register const __m128d C = _mm_pow_pd(Z, c);
+  return _mm_mul_pd(M, C);
+}
+
 static inline __m128d pvn_v2d_lp(const double _p, register const __m128d x, register const __m128d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -418,6 +639,11 @@ static inline double pvn_v2d_lp_red(const double p, register const __m128d x)
   return pvn_v1d_lp(p, v[0], v[1]);
 }
 
+static inline __m128d pvn_v2d_max_pos(register const __m128d X, register const __m128d Y)
+{
+  return _mm_max_pd(X, Y);
+}
+
 static inline __m128d pvn_v2d_max_abs(register const __m128d x, register const __m128d y)
 {
   register const __m128d z = _mm_set1_pd(-0.0);
@@ -442,6 +668,11 @@ static inline __m128d pvn_v2d_rsqrt(register const __m128d x)
 #endif /* ?Intel */
 }
 
+static inline __m256 pvn_v8s_add_pos(register const __m256 X, register const __m256 Y)
+{
+  return _mm256_add_ps(X, Y);
+}
+
 static inline __m256 pvn_v8s_add_abs(register const __m256 x, register const __m256 y)
 {
   register const __m256 z = _mm256_set1_ps(-0.0f);
@@ -456,11 +687,26 @@ static inline float pvn_v8s_add_red(register const __m256 x)
 }
 
 #if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v8s_hypot_pos pvn_v8s_hypot
 #define pvn_v8s_hypot _mm256_hypot_ps
 #else /* !Intel */
 #if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v8s_hypot_pos pvn_v8s_hypot
 #define pvn_v8s_hypot Sleef_hypotf8_u05avx2
 #else /* !Sleef */
+static inline __m256 pvn_v8s_hypot_pos(register const __m256 X, register const __m256 Y)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+  register const __m256 o = _mm256_set1_ps(1.0f);
+  register const __m256 m = _mm256_min_ps(X, Y);
+  register const __m256 M = _mm256_max_ps(X, Y);
+  register const __m256 q = _mm256_div_ps(m, M);
+  register const __m256 Q = _mm256_max_ps(q, z);
+  register const __m256 S = _mm256_fmadd_ps(Q, Q, o);
+  register const __m256 s = _mm256_sqrt_ps(S);
+  return _mm256_mul_ps(M, s);
+}
+
 static inline __m256 pvn_v8s_hypot(register const __m256 x, register const __m256 y)
 {
   register const __m256 z = _mm256_set1_ps(-0.0f);
@@ -484,6 +730,24 @@ static inline float pvn_v8s_hypot_red(register const __m256 x)
 }
 
 #if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+static inline __m256 pvn_v8s_lp_pos(const float _p, register const __m256 X, register const __m256 Y)
+{
+  register const __m256 z = _mm256_set1_ps(-0.0f);
+  register const __m256 h = _mm256_set1_ps(0.5f);
+  register const __m256 o = _mm256_set1_ps(1.0f);
+  register const __m256 p = _mm256_set1_ps(_p);
+  register const __m256 s = _mm256_mul_ps(p, h);
+  register const __m256 c = _mm256_div_ps(o, p);
+  register const __m256 m = _mm256_min_ps(X, Y);
+  register const __m256 M = _mm256_max_ps(X, Y);
+  register const __m256 q = _mm256_div_ps(m, M);
+  register const __m256 Q = _mm256_max_ps(q, z);
+  register const __m256 S = _mm256_pow_ps(Q, s);
+  register const __m256 Z = _mm256_fmadd_ps(S, S, o);
+  register const __m256 C = _mm256_pow_ps(Z, c);
+  return _mm256_mul_ps(M, C);
+}
+
 static inline __m256 pvn_v8s_lp(const float _p, register const __m256 x, register const __m256 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -511,6 +775,11 @@ static inline float pvn_v8s_lp_red(const float p, register const __m256 x)
 }
 #endif /* Sleef || Intel */
 
+static inline __m256 pvn_v8s_max_pos(register const __m256 X, register const __m256 Y)
+{
+  return _mm256_max_ps(X, Y);
+}
+
 static inline __m256 pvn_v8s_max_abs(register const __m256 x, register const __m256 y)
 {
   register const __m256 z = _mm256_set1_ps(-0.0f);
@@ -533,6 +802,11 @@ static inline __m256 pvn_v8s_rsqrt(register const __m256 x)
 #endif /* ?Intel */
 }
 
+static inline __m256d pvn_v4d_add_pos(register const __m256d X, register const __m256d Y)
+{
+  return _mm256_add_pd(X, Y);
+}
+
 static inline __m256d pvn_v4d_add_abs(register const __m256d x, register const __m256d y)
 {
   register const __m256d z = _mm256_set1_pd(-0.0);
@@ -547,11 +821,26 @@ static inline double pvn_v4d_add_red(register const __m256d x)
 }
 
 #if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v4d_hypot_pos pvn_v4d_hypot
 #define pvn_v4d_hypot _mm256_hypot_pd
 #else /* !Intel */
 #if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v4d_hypot_pos pvn_v4d_hypot
 #define pvn_v4d_hypot Sleef_hypotd4_u05avx2
 #else /* !Sleef */
+static inline __m256d pvn_v4d_hypot_pos(register const __m256d X, register const __m256d Y)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+  register const __m256d o = _mm256_set1_pd(1.0);
+  register const __m256d m = _mm256_min_pd(X, Y);
+  register const __m256d M = _mm256_max_pd(X, Y);
+  register const __m256d q = _mm256_div_pd(m, M);
+  register const __m256d Q = _mm256_max_pd(q, z);
+  register const __m256d S = _mm256_fmadd_pd(Q, Q, o);
+  register const __m256d s = _mm256_sqrt_pd(S);
+  return _mm256_mul_pd(M, s);
+}
+
 static inline __m256d pvn_v4d_hypot(register const __m256d x, register const __m256d y)
 {
   register const __m256d z = _mm256_set1_pd(-0.0);
@@ -575,6 +864,24 @@ static inline double pvn_v4d_hypot_red(register const __m256d x)
 }
 
 #if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+static inline __m256d pvn_v4d_lp_pos(const double _p, register const __m256d X, register const __m256d Y)
+{
+  register const __m256d z = _mm256_set1_pd(-0.0);
+  register const __m256d h = _mm256_set1_pd(0.5);
+  register const __m256d o = _mm256_set1_pd(1.0);
+  register const __m256d p = _mm256_set1_pd(_p);
+  register const __m256d s = _mm256_mul_pd(p, h);
+  register const __m256d c = _mm256_div_pd(o, p);
+  register const __m256d m = _mm256_min_pd(X, Y);
+  register const __m256d M = _mm256_max_pd(X, Y);
+  register const __m256d q = _mm256_div_pd(m, M);
+  register const __m256d Q = _mm256_max_pd(q, z);
+  register const __m256d S = _mm256_pow_pd(Q, s);
+  register const __m256d Z = _mm256_fmadd_pd(S, S, o);
+  register const __m256d C = _mm256_pow_pd(Z, c);
+  return _mm256_mul_pd(M, C);
+}
+
 static inline __m256d pvn_v4d_lp(const double _p, register const __m256d x, register const __m256d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -601,6 +908,11 @@ static inline double pvn_v4d_lp_red(const double p, register const __m256d x)
   return pvn_v2d_lp_red(p, pvn_v2d_lp(p, _mm256_extractf128_pd(x, 0), _mm256_extractf128_pd(x, 1)));
 }
 #endif /* Sleef || Intel */
+
+static inline __m256d pvn_v4d_max_pos(register const __m256d X, register const __m256d Y)
+{
+  return _mm256_max_pd(X, Y);
+}
 
 static inline __m256d pvn_v4d_max_abs(register const __m256d x, register const __m256d y)
 {
@@ -630,6 +942,11 @@ static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
 #define _mm512_andnot_pd(b,a) _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(b), _mm512_castpd_si512(a)))
 #endif /* !__AVX512DQ__ */
 
+static inline __m512 pvn_v16s_add_pos(register const __m512 X, register const __m512 Y)
+{
+  return _mm512_add_ps(X, Y);
+}
+
 static inline __m512 pvn_v16s_add_abs(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
@@ -644,11 +961,26 @@ static inline float pvn_v16s_add_red(register const __m512 x)
 }
 
 #if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v16s_hypot_pos pvn_v16s_hypot
 #define pvn_v16s_hypot _mm512_hypot_ps
 #else /* !Intel */
 #if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v16s_hypot_pos pvn_v16s_hypot
 #define pvn_v16s_hypot Sleef_hypotf16_u05avx512f
 #else /* !Sleef */
+static inline __m512 pvn_v16s_hypot_pos(register const __m512 X, register const __m512 Y)
+{
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+  register const __m512 o = _mm512_set1_ps(1.0f);
+  register const __m512 m = _mm512_min_ps(X, Y);
+  register const __m512 M = _mm512_max_ps(X, Y);
+  register const __m512 q = _mm512_div_ps(m, M);
+  register const __m512 Q = _mm512_max_ps(q, z);
+  register const __m512 S = _mm512_fmadd_ps(Q, Q, o);
+  register const __m512 s = _mm512_sqrt_ps(S);
+  return _mm512_mul_ps(M, s);
+}
+
 static inline __m512 pvn_v16s_hypot(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
@@ -672,6 +1004,24 @@ static inline float pvn_v16s_hypot_red(register const __m512 x)
 }
 
 #if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+static inline __m512 pvn_v16s_lp_pos(const float _p, register const __m512 X, register const __m512 Y)
+{
+  register const __m512 z = _mm512_set1_ps(-0.0f);
+  register const __m512 h = _mm512_set1_ps(0.5f);
+  register const __m512 o = _mm512_set1_ps(1.0f);
+  register const __m512 p = _mm512_set1_ps(_p);
+  register const __m512 s = _mm512_mul_ps(p, h);
+  register const __m512 c = _mm512_div_ps(o, p);
+  register const __m512 m = _mm512_min_ps(X, Y);
+  register const __m512 M = _mm512_max_ps(X, Y);
+  register const __m512 q = _mm512_div_ps(m, M);
+  register const __m512 Q = _mm512_max_ps(q, z);
+  register const __m512 S = _mm512_pow_ps(Q, s);
+  register const __m512 Z = _mm512_fmadd_ps(S, S, o);
+  register const __m512 C = _mm512_pow_ps(Z, c);
+  return _mm512_mul_ps(M, C);
+}
+
 static inline __m512 pvn_v16s_lp(const float _p, register const __m512 x, register const __m512 y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -699,6 +1049,11 @@ static inline float pvn_v16s_lp_red(const float p, register const __m512 x)
 }
 #endif /* Sleef || Intel */
 
+static inline __m512 pvn_v16s_max_pos(register const __m512 X, register const __m512 Y)
+{
+  return _mm512_max_ps(X, Y);
+}
+
 static inline __m512 pvn_v16s_max_abs(register const __m512 x, register const __m512 y)
 {
   register const __m512 z = _mm512_set1_ps(-0.0f);
@@ -721,6 +1076,11 @@ static inline __m512 pvn_v16s_rsqrt(register const __m512 x)
 #endif /* ?Intel */
 }
 
+static inline __m512d pvn_v8d_add_pos(register const __m512d X, register const __m512d Y)
+{
+  return _mm512_add_pd(X, Y);
+}
+
 static inline __m512d pvn_v8d_add_abs(register const __m512d x, register const __m512d y)
 {
   register const __m512d z = _mm512_set1_pd(-0.0);
@@ -735,11 +1095,26 @@ static inline double pvn_v8d_add_red(register const __m512d x)
 }
 
 #if (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
+#define pvn_v8d_hypot_pos pvn_v8d_hypot
 #define pvn_v8d_hypot _mm512_hypot_pd
 #else /* !Intel */
 #if (defined(PVN_SLEEF) && (PVN_SLEEF > 1))
+#define pvn_v8d_hypot_pos pvn_v8d_hypot
 #define pvn_v8d_hypot Sleef_hypotd8_u05avx512f
 #else /* !Sleef */
+static inline __m512d pvn_v8d_hypot_pos(register const __m512d X, register const __m512d Y)
+{
+  register const __m512d z = _mm512_set1_pd(-0.0);
+  register const __m512d o = _mm512_set1_pd(1.0);
+  register const __m512d m = _mm512_min_pd(X, Y);
+  register const __m512d M = _mm512_max_pd(X, Y);
+  register const __m512d q = _mm512_div_pd(m, M);
+  register const __m512d Q = _mm512_max_pd(q, z);
+  register const __m512d S = _mm512_fmadd_pd(Q, Q, o);
+  register const __m512d s = _mm512_sqrt_pd(S);
+  return _mm512_mul_pd(M, s);
+}
+
 static inline __m512d pvn_v8d_hypot(register const __m512d x, register const __m512d y)
 {
   register const __m512d z = _mm512_set1_pd(-0.0);
@@ -763,6 +1138,24 @@ static inline double pvn_v8d_hypot_red(register const __m512d x)
 }
 
 #if ((defined(PVN_SLEEF) && (PVN_SLEEF > 0)) || (defined(PVN_INTEL) && (PVN_INTEL > 1) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))))
+static inline __m512d pvn_v8d_lp_pos(const double _p, register const __m512d X, register const __m512d Y)
+{
+  register const __m512d z = _mm512_set1_pd(-0.0);
+  register const __m512d h = _mm512_set1_pd(0.5);
+  register const __m512d o = _mm512_set1_pd(1.0);
+  register const __m512d p = _mm512_set1_pd(_p);
+  register const __m512d s = _mm512_mul_pd(p, h);
+  register const __m512d c = _mm512_div_pd(o, p);
+  register const __m512d m = _mm512_min_pd(X, Y);
+  register const __m512d M = _mm512_max_pd(X, Y);
+  register const __m512d q = _mm512_div_pd(m, M);
+  register const __m512d Q = _mm512_max_pd(q, z);
+  register const __m512d S = _mm512_pow_pd(Q, s);
+  register const __m512d Z = _mm512_fmadd_pd(S, S, o);
+  register const __m512d C = _mm512_pow_pd(Z, c);
+  return _mm512_mul_pd(M, C);
+}
+
 static inline __m512d pvn_v8d_lp(const double _p, register const __m512d x, register const __m512d y)
 {
   /* s and c should be computed only once for a fixed p */
@@ -789,6 +1182,11 @@ static inline double pvn_v8d_lp_red(const double p, register const __m512d x)
   return pvn_v4d_lp_red(p, pvn_v4d_lp(p, _mm512_extractf64x4_pd(x, 0), _mm512_extractf64x4_pd(x, 1)));
 }
 #endif /* Sleef || Intel */
+
+static inline __m512d pvn_v8d_max_pos(register const __m512d X, register const __m512d Y)
+{
+  return _mm512_max_pd(X, Y);
+}
 
 static inline __m512d pvn_v8d_max_abs(register const __m512d x, register const __m512d y)
 {

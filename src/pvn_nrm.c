@@ -850,7 +850,7 @@ float PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(const float *const p, const size_t *co
     fl = cilk_spawn PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &nl, x);
     fr = PVN_FABI(pvn_res_nrmp,PVN_RES_NRMP)(p, &nr, (x + nl));
   }
-  return pvn_v1s_lp(*p, fl, fr);
+  return pvn_v1s_lp_pos(*p, fl, fr);
 }
 
 double PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(const double *const p, const size_t *const n, const double *const x)
@@ -876,7 +876,7 @@ double PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(const double *const p, const size_t *
     fl = cilk_spawn PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &nl, x);
     fr = PVN_FABI(pvn_red_nrmp,PVN_RED_NRMP)(p, &nr, (x + nl));
   }
-  return pvn_v1d_lp(*p, fl, fr);
+  return pvn_v1d_lp_pos(*p, fl, fr);
 }
 
 long double PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(const long double *const p, const size_t *const n, const long double *const x)
@@ -902,7 +902,7 @@ long double PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(const long double *const p, cons
     fl = cilk_spawn PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &nl, x);
     fr = PVN_FABI(pvn_rex_nrmp,PVN_REX_NRMP)(p, &nr, (x + nl));
   }
-  return pvn_v1x_lp(*p, fl, fr);
+  return pvn_v1x_lp_pos(*p, fl, fr);
 }
 
 float PVN_FABI(pvn_rfs_nrmf,PVN_RFS_NRMF)(const size_t *const n, const float *const x)
@@ -998,7 +998,7 @@ float PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(const size_t *const n, const float *co
     fl = cilk_spawn PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nl, x);
     fr = PVN_FABI(pvn_rhs_nrmf,PVN_RHS_NRMF)(&nr, (x + nl));
   }
-  return pvn_v1s_hypot(fl, fr);
+  return pvn_v1s_hypot_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(const size_t *const n, const double *const x)
@@ -1022,7 +1022,7 @@ double PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(const size_t *const n, const double *
     fl = cilk_spawn PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nl, x);
     fr = PVN_FABI(pvn_rhd_nrmf,PVN_RHD_NRMF)(&nr, (x + nl));
   }
-  return pvn_v1d_hypot(fl, fr);
+  return pvn_v1d_hypot_pos(fl, fr);
 }
 
 long double PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(const size_t *const n, const long double *const x)
@@ -1046,7 +1046,7 @@ long double PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(const size_t *const n, const lon
     fl = cilk_spawn PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nl, x);
     fr = PVN_FABI(pvn_rhx_nrmf,PVN_RHX_NRMF)(&nr, (x + nl));
   }
-  return pvn_v1x_hypot(fl, fr);
+  return pvn_v1x_hypot_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_snrm2,PVN_SNRM2)(const size_t *const n, const float *const x)
@@ -1922,7 +1922,7 @@ __float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __fl
     fl = cilk_spawn PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nl, x);
     fr = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nr, (x + nl));
   }
-  return pvn_v1q_hypot(fl, fr);
+  return pvn_v1q_hypot_pos(fl, fr);
 }
 
 __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128 *const x)
@@ -2138,7 +2138,7 @@ static __m128 rxs_nrmf(const size_t n, const float *const x)
     fl = cilk_spawn rxs_nrmf(nl, x);
     fr = rxs_nrmf(nr, (x + nl));
   }
-  return pvn_v4s_hypot(fl, fr);
+  return pvn_v4s_hypot_pos(fl, fr);
 }
 
 static __m128 rxsunrmf(const size_t n, const float *const x)
@@ -2178,7 +2178,7 @@ static __m128 rxsunrmf(const size_t n, const float *const x)
     fl = cilk_spawn rxsunrmf(nl, x);
     fr = rxsunrmf(nr, (x + nl));
   }
-  return pvn_v4s_hypot(fl, fr);
+  return pvn_v4s_hypot_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rxs_nrmf,PVN_RXS_NRMF)(const size_t *const n, const float *const x)
@@ -2228,7 +2228,7 @@ static __m128d rxd_nrmf(const size_t n, const double *const x)
     fl = cilk_spawn rxd_nrmf(nl, x);
     fr = rxd_nrmf(nr, (x + nl));
   }
-  return pvn_v2d_hypot(fl, fr);
+  return pvn_v2d_hypot_pos(fl, fr);
 }
 
 static __m128d rxdunrmf(const size_t n, const double *const x)
@@ -2259,7 +2259,7 @@ static __m128d rxdunrmf(const size_t n, const double *const x)
     fl = cilk_spawn rxdunrmf(nl, x);
     fr = rxdunrmf(nr, (x + nl));
   }
-  return pvn_v2d_hypot(fl, fr);
+  return pvn_v2d_hypot_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_rxd_nrmf,PVN_RXD_NRMF)(const size_t *const n, const double *const x)
@@ -2316,7 +2316,7 @@ static __m128 rxs_nrm1(const size_t n, const float *const x)
     fl = cilk_spawn rxs_nrm1(nl, x);
     fr = rxs_nrm1(nr, (x + nl));
   }
-  return pvn_v4s_add_abs(fl, fr);
+  return pvn_v4s_add_pos(fl, fr);
 }
 
 static __m128 rxsunrm1(const size_t n, const float *const x)
@@ -2356,7 +2356,7 @@ static __m128 rxsunrm1(const size_t n, const float *const x)
     fl = cilk_spawn rxsunrm1(nl, x);
     fr = rxsunrm1(nr, (x + nl));
   }
-  return pvn_v4s_add_abs(fl, fr);
+  return pvn_v4s_add_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rxs_nrm1,PVN_RXS_NRM1)(const size_t *const n, const float *const x)
@@ -2406,7 +2406,7 @@ static __m128d rxd_nrm1(const size_t n, const double *const x)
     fl = cilk_spawn rxd_nrm1(nl, x);
     fr = rxd_nrm1(nr, (x + nl));
   }
-  return pvn_v2d_add_abs(fl, fr);
+  return pvn_v2d_add_pos(fl, fr);
 }
 
 static __m128d rxdunrm1(const size_t n, const double *const x)
@@ -2437,7 +2437,7 @@ static __m128d rxdunrm1(const size_t n, const double *const x)
     fl = cilk_spawn rxdunrm1(nl, x);
     fr = rxdunrm1(nr, (x + nl));
   }
-  return pvn_v2d_add_abs(fl, fr);
+  return pvn_v2d_add_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_rxd_nrm1,PVN_RXD_NRM1)(const size_t *const n, const double *const x)
@@ -2494,7 +2494,7 @@ static __m128 rxs_nrmi(const size_t n, const float *const x)
     fl = cilk_spawn rxs_nrmi(nl, x);
     fr = rxs_nrmi(nr, (x + nl));
   }
-  return pvn_v4s_max_abs(fl, fr);
+  return pvn_v4s_max_pos(fl, fr);
 }
 
 static __m128 rxsunrmi(const size_t n, const float *const x)
@@ -2534,7 +2534,7 @@ static __m128 rxsunrmi(const size_t n, const float *const x)
     fl = cilk_spawn rxsunrmi(nl, x);
     fr = rxsunrmi(nr, (x + nl));
   }
-  return pvn_v4s_max_abs(fl, fr);
+  return pvn_v4s_max_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rxs_nrmi,PVN_RXS_NRMI)(const size_t *const n, const float *const x)
@@ -2584,7 +2584,7 @@ static __m128d rxd_nrmi(const size_t n, const double *const x)
     fl = cilk_spawn rxd_nrmi(nl, x);
     fr = rxd_nrmi(nr, (x + nl));
   }
-  return pvn_v2d_max_abs(fl, fr);
+  return pvn_v2d_max_pos(fl, fr);
 }
 
 static __m128d rxdunrmi(const size_t n, const double *const x)
@@ -2615,7 +2615,7 @@ static __m128d rxdunrmi(const size_t n, const double *const x)
     fl = cilk_spawn rxdunrmi(nl, x);
     fr = rxdunrmi(nr, (x + nl));
   }
-  return pvn_v2d_max_abs(fl, fr);
+  return pvn_v2d_max_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_rxd_nrmi,PVN_RXD_NRMI)(const size_t *const n, const double *const x)
@@ -2680,7 +2680,7 @@ static __m256 rys_nrmf(const size_t n, const float *const x)
     fl = cilk_spawn rys_nrmf(nl, x);
     fr = rys_nrmf(nr, (x + nl));
   }
-  return pvn_v8s_hypot(fl, fr);
+  return pvn_v8s_hypot_pos(fl, fr);
 }
 
 static __m256 rysunrmf(const size_t n, const float *const x)
@@ -2727,7 +2727,7 @@ static __m256 rysunrmf(const size_t n, const float *const x)
     fl = cilk_spawn rysunrmf(nl, x);
     fr = rysunrmf(nr, (x + nl));
   }
-  return pvn_v8s_hypot(fl, fr);
+  return pvn_v8s_hypot_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rys_nrmf,PVN_RYS_NRMF)(const size_t *const n, const float *const x)
@@ -2785,7 +2785,7 @@ static __m256d ryd_nrmf(const size_t n, const double *const x)
     fl = cilk_spawn ryd_nrmf(nl, x);
     fr = ryd_nrmf(nr, (x + nl));
   }
-  return pvn_v4d_hypot(fl, fr);
+  return pvn_v4d_hypot_pos(fl, fr);
 }
 
 static __m256d rydunrmf(const size_t n, const double *const x)
@@ -2824,7 +2824,7 @@ static __m256d rydunrmf(const size_t n, const double *const x)
     fl = cilk_spawn rydunrmf(nl, x);
     fr = rydunrmf(nr, (x + nl));
   }
-  return pvn_v4d_hypot(fl, fr);
+  return pvn_v4d_hypot_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_ryd_nrmf,PVN_RYD_NRMF)(const size_t *const n, const double *const x)
@@ -2890,7 +2890,7 @@ static __m256 rys_nrm1(const size_t n, const float *const x)
     fl = cilk_spawn rys_nrm1(nl, x);
     fr = rys_nrm1(nr, (x + nl));
   }
-  return pvn_v8s_add_abs(fl, fr);
+  return pvn_v8s_add_pos(fl, fr);
 }
 
 static __m256 rysunrm1(const size_t n, const float *const x)
@@ -2937,7 +2937,7 @@ static __m256 rysunrm1(const size_t n, const float *const x)
     fl = cilk_spawn rysunrm1(nl, x);
     fr = rysunrm1(nr, (x + nl));
   }
-  return pvn_v8s_add_abs(fl, fr);
+  return pvn_v8s_add_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rys_nrm1,PVN_RYS_NRM1)(const size_t *const n, const float *const x)
@@ -2995,7 +2995,7 @@ static __m256d ryd_nrm1(const size_t n, const double *const x)
     fl = cilk_spawn ryd_nrm1(nl, x);
     fr = ryd_nrm1(nr, (x + nl));
   }
-  return pvn_v4d_add_abs(fl, fr);
+  return pvn_v4d_add_pos(fl, fr);
 }
 
 static __m256d rydunrm1(const size_t n, const double *const x)
@@ -3034,7 +3034,7 @@ static __m256d rydunrm1(const size_t n, const double *const x)
     fl = cilk_spawn rydunrm1(nl, x);
     fr = rydunrm1(nr, (x + nl));
   }
-  return pvn_v4d_add_abs(fl, fr);
+  return pvn_v4d_add_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_ryd_nrm1,PVN_RYD_NRM1)(const size_t *const n, const double *const x)
@@ -3100,7 +3100,7 @@ static __m256 rys_nrmi(const size_t n, const float *const x)
     fl = cilk_spawn rys_nrmi(nl, x);
     fr = rys_nrmi(nr, (x + nl));
   }
-  return pvn_v8s_max_abs(fl, fr);
+  return pvn_v8s_max_pos(fl, fr);
 }
 
 static __m256 rysunrmi(const size_t n, const float *const x)
@@ -3147,7 +3147,7 @@ static __m256 rysunrmi(const size_t n, const float *const x)
     fl = cilk_spawn rysunrmi(nl, x);
     fr = rysunrmi(nr, (x + nl));
   }
-  return pvn_v8s_max_abs(fl, fr);
+  return pvn_v8s_max_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rys_nrmi,PVN_RYS_NRMI)(const size_t *const n, const float *const x)
@@ -3205,7 +3205,7 @@ static __m256d ryd_nrmi(const size_t n, const double *const x)
     fl = cilk_spawn ryd_nrmi(nl, x);
     fr = ryd_nrmi(nr, (x + nl));
   }
-  return pvn_v4d_max_abs(fl, fr);
+  return pvn_v4d_max_pos(fl, fr);
 }
 
 static __m256d rydunrmi(const size_t n, const double *const x)
@@ -3244,7 +3244,7 @@ static __m256d rydunrmi(const size_t n, const double *const x)
     fl = cilk_spawn rydunrmi(nl, x);
     fr = rydunrmi(nr, (x + nl));
   }
-  return pvn_v4d_max_abs(fl, fr);
+  return pvn_v4d_max_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_ryd_nrmi,PVN_RYD_NRMI)(const size_t *const n, const double *const x)
@@ -3326,7 +3326,7 @@ static __m512 rzs_nrmf(const size_t n, const float *const x)
     fl = cilk_spawn rzs_nrmf(nl, x);
     fr = rzs_nrmf(nr, (x + nl));
   }
-  return pvn_v16s_hypot(fl, fr);
+  return pvn_v16s_hypot_pos(fl, fr);
 }
 
 static __m512 rzsunrmf(const size_t n, const float *const x)
@@ -3389,7 +3389,7 @@ static __m512 rzsunrmf(const size_t n, const float *const x)
     fl = cilk_spawn rzsunrmf(nl, x);
     fr = rzsunrmf(nr, (x + nl));
   }
-  return pvn_v16s_hypot(fl, fr);
+  return pvn_v16s_hypot_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rzs_nrmf,PVN_RZS_NRMF)(const size_t *const n, const float *const x)
@@ -3455,7 +3455,7 @@ static __m512d rzd_nrmf(const size_t n, const double *const x)
     fl = cilk_spawn rzd_nrmf(nl, x);
     fr = rzd_nrmf(nr, (x + nl));
   }
-  return pvn_v8d_hypot(fl, fr);
+  return pvn_v8d_hypot_pos(fl, fr);
 }
 
 static __m512d rzdunrmf(const size_t n, const double *const x)
@@ -3502,7 +3502,7 @@ static __m512d rzdunrmf(const size_t n, const double *const x)
     fl = cilk_spawn rzdunrmf(nl, x);
     fr = rzdunrmf(nr, (x + nl));
   }
-  return pvn_v8d_hypot(fl, fr);
+  return pvn_v8d_hypot_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_rzd_nrmf,PVN_RZD_NRMF)(const size_t *const n, const double *const x)
@@ -3591,7 +3591,7 @@ static __m512 rzs_nrm1(const size_t n, const float *const x)
     fl = cilk_spawn rzs_nrm1(nl, x);
     fr = rzs_nrm1(nr, (x + nl));
   }
-  return pvn_v16s_add_abs(fl, fr);
+  return pvn_v16s_add_pos(fl, fr);
 }
 
 static __m512 rzsunrm1(const size_t n, const float *const x)
@@ -3654,7 +3654,7 @@ static __m512 rzsunrm1(const size_t n, const float *const x)
     fl = cilk_spawn rzsunrm1(nl, x);
     fr = rzsunrm1(nr, (x + nl));
   }
-  return pvn_v16s_add_abs(fl, fr);
+  return pvn_v16s_add_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rzs_nrm1,PVN_RZS_NRM1)(const size_t *const n, const float *const x)
@@ -3720,7 +3720,7 @@ static __m512d rzd_nrm1(const size_t n, const double *const x)
     fl = cilk_spawn rzd_nrm1(nl, x);
     fr = rzd_nrm1(nr, (x + nl));
   }
-  return pvn_v8d_add_abs(fl, fr);
+  return pvn_v8d_add_pos(fl, fr);
 }
 
 static __m512d rzdunrm1(const size_t n, const double *const x)
@@ -3767,7 +3767,7 @@ static __m512d rzdunrm1(const size_t n, const double *const x)
     fl = cilk_spawn rzdunrm1(nl, x);
     fr = rzdunrm1(nr, (x + nl));
   }
-  return pvn_v8d_add_abs(fl, fr);
+  return pvn_v8d_add_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_rzd_nrm1,PVN_RZD_NRM1)(const size_t *const n, const double *const x)
@@ -3856,7 +3856,7 @@ static __m512 rzs_nrmi(const size_t n, const float *const x)
     fl = cilk_spawn rzs_nrmi(nl, x);
     fr = rzs_nrmi(nr, (x + nl));
   }
-  return pvn_v16s_max_abs(fl, fr);
+  return pvn_v16s_max_pos(fl, fr);
 }
 
 static __m512 rzsunrmi(const size_t n, const float *const x)
@@ -3919,7 +3919,7 @@ static __m512 rzsunrmi(const size_t n, const float *const x)
     fl = cilk_spawn rzsunrmi(nl, x);
     fr = rzsunrmi(nr, (x + nl));
   }
-  return pvn_v16s_max_abs(fl, fr);
+  return pvn_v16s_max_pos(fl, fr);
 }
 
 float PVN_FABI(pvn_rzs_nrmi,PVN_RZS_NRMI)(const size_t *const n, const float *const x)
@@ -3985,7 +3985,7 @@ static __m512d rzd_nrmi(const size_t n, const double *const x)
     fl = cilk_spawn rzd_nrmi(nl, x);
     fr = rzd_nrmi(nr, (x + nl));
   }
-  return pvn_v8d_max_abs(fl, fr);
+  return pvn_v8d_max_pos(fl, fr);
 }
 
 static __m512d rzdunrmi(const size_t n, const double *const x)
@@ -4032,7 +4032,7 @@ static __m512d rzdunrmi(const size_t n, const double *const x)
     fl = cilk_spawn rzdunrmi(nl, x);
     fr = rzdunrmi(nr, (x + nl));
   }
-  return pvn_v8d_max_abs(fl, fr);
+  return pvn_v8d_max_pos(fl, fr);
 }
 
 double PVN_FABI(pvn_rzd_nrmi,PVN_RZD_NRMI)(const size_t *const n, const double *const x)
@@ -4092,7 +4092,7 @@ static __m128 rxs_nrmp(const float p, const size_t n, const float *const x)
     fl = cilk_spawn rxs_nrmp(p, nl, x);
     fr = rxs_nrmp(p, nr, (x + nl));
   }
-  return pvn_v4s_lp(p, fl, fr);
+  return pvn_v4s_lp_pos(p, fl, fr);
 }
 
 static __m128 rxsunrmp(const float p, const size_t n, const float *const x)
@@ -4132,7 +4132,7 @@ static __m128 rxsunrmp(const float p, const size_t n, const float *const x)
     fl = cilk_spawn rxsunrmp(p, nl, x);
     fr = rxsunrmp(p, nr, (x + nl));
   }
-  return pvn_v4s_lp(p, fl, fr);
+  return pvn_v4s_lp_pos(p, fl, fr);
 }
 
 float PVN_FABI(pvn_rxs_nrmp,PVN_RXS_NRMP)(const float *const p, const size_t *const n, const float *const x)
@@ -4190,7 +4190,7 @@ static __m128d rxd_nrmp(const double p, const size_t n, const double *const x)
     fl = cilk_spawn rxd_nrmp(p, nl, x);
     fr = rxd_nrmp(p, nr, (x + nl));
   }
-  return pvn_v2d_lp(p, fl, fr);
+  return pvn_v2d_lp_pos(p, fl, fr);
 }
 
 static __m128d rxdunrmp(const double p, const size_t n, const double *const x)
@@ -4221,7 +4221,7 @@ static __m128d rxdunrmp(const double p, const size_t n, const double *const x)
     fl = cilk_spawn rxdunrmp(p, nl, x);
     fr = rxdunrmp(p, nr, (x + nl));
   }
-  return pvn_v2d_lp(p, fl, fr);
+  return pvn_v2d_lp_pos(p, fl, fr);
 }
 
 double PVN_FABI(pvn_rxd_nrmp,PVN_RXD_NRMP)(const double *const p, const size_t *const n, const double *const x)
@@ -4294,7 +4294,7 @@ static __m256 rys_nrmp(const float p, const size_t n, const float *const x)
     fl = cilk_spawn rys_nrmp(p, nl, x);
     fr = rys_nrmp(p, nr, (x + nl));
   }
-  return pvn_v8s_lp(p, fl, fr);
+  return pvn_v8s_lp_pos(p, fl, fr);
 }
 
 static __m256 rysunrmp(const float p, const size_t n, const float *const x)
@@ -4341,7 +4341,7 @@ static __m256 rysunrmp(const float p, const size_t n, const float *const x)
     fl = cilk_spawn rysunrmp(p, nl, x);
     fr = rysunrmp(p, nr, (x + nl));
   }
-  return pvn_v8s_lp(p, fl, fr);
+  return pvn_v8s_lp_pos(p, fl, fr);
 }
 
 float PVN_FABI(pvn_rys_nrmp,PVN_RYS_NRMP)(const float *const p, const size_t *const n, const float *const x)
@@ -4407,7 +4407,7 @@ static __m256d ryd_nrmp(const double p, const size_t n, const double *const x)
     fl = cilk_spawn ryd_nrmp(p, nl, x);
     fr = ryd_nrmp(p, nr, (x + nl));
   }
-  return pvn_v4d_lp(p, fl, fr);
+  return pvn_v4d_lp_pos(p, fl, fr);
 }
 
 static __m256d rydunrmp(const double p, const size_t n, const double *const x)
@@ -4446,7 +4446,7 @@ static __m256d rydunrmp(const double p, const size_t n, const double *const x)
     fl = cilk_spawn rydunrmp(p, nl, x);
     fr = rydunrmp(p, nr, (x + nl));
   }
-  return pvn_v4d_lp(p, fl, fr);
+  return pvn_v4d_lp_pos(p, fl, fr);
 }
 
 double PVN_FABI(pvn_ryd_nrmp,PVN_RYD_NRMP)(const double *const p, const size_t *const n, const double *const x)
@@ -4536,7 +4536,7 @@ static __m512 rzs_nrmp(const float p, const size_t n, const float *const x)
     fl = cilk_spawn rzs_nrmp(p, nl, x);
     fr = rzs_nrmp(p, nr, (x + nl));
   }
-  return pvn_v16s_lp(p, fl, fr);
+  return pvn_v16s_lp_pos(p, fl, fr);
 }
 
 static __m512 rzsunrmp(const float p, const size_t n, const float *const x)
@@ -4599,7 +4599,7 @@ static __m512 rzsunrmp(const float p, const size_t n, const float *const x)
     fl = cilk_spawn rzsunrmp(p, nl, x);
     fr = rzsunrmp(p, nr, (x + nl));
   }
-  return pvn_v16s_lp(p, fl, fr);
+  return pvn_v16s_lp_pos(p, fl, fr);
 }
 
 float PVN_FABI(pvn_rzs_nrmp,PVN_RZS_NRMP)(const float *const p, const size_t *const n, const float *const x)
@@ -4673,7 +4673,7 @@ static __m512d rzd_nrmp(const double p, const size_t n, const double *const x)
     fl = cilk_spawn rzd_nrmp(p, nl, x);
     fr = rzd_nrmp(p, nr, (x + nl));
   }
-  return pvn_v8d_lp(p, fl, fr);
+  return pvn_v8d_lp_pos(p, fl, fr);
 }
 
 static __m512d rzdunrmp(const double p, const size_t n, const double *const x)
@@ -4720,7 +4720,7 @@ static __m512d rzdunrmp(const double p, const size_t n, const double *const x)
     fl = cilk_spawn rzdunrmp(p, nl, x);
     fr = rzdunrmp(p, nr, (x + nl));
   }
-  return pvn_v8d_lp(p, fl, fr);
+  return pvn_v8d_lp_pos(p, fl, fr);
 }
 
 double PVN_FABI(pvn_rzd_nrmp,PVN_RZD_NRMP)(const double *const p, const size_t *const n, const double *const x)
