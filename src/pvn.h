@@ -77,6 +77,18 @@
 
 #include "pvn_ext.h"
 
+#ifndef PVN_FABI
+#ifdef _WIN32
+#ifdef PVN_MINGW64
+#define PVN_FABI(P,W) P##_
+#else /* !PVN_MINGW64 */
+#define PVN_FABI(P,W) W
+#endif /* ?PVN_MINGW64 */
+#else /* !_WIN32 */
+#define PVN_FABI(P,W) P##_
+#endif /* ?_WIN32 */
+#endif /* !PVN_FABI */
+
 #ifdef PVN_CILK
 PVN_EXTERN_C unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)();
 #else /* !PVN_CILK */
@@ -244,18 +256,6 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #endif /* ?__GNUC__ */
 #endif /* ?__MATHIMF_H_INCLUDED */
 #endif /* PVN_QUADMATH */
-
-#ifndef PVN_FABI
-#ifdef _WIN32
-#ifdef PVN_MINGW64
-#define PVN_FABI(P,W) P##_
-#else /* !PVN_MINGW64 */
-#define PVN_FABI(P,W) W
-#endif /* ?PVN_MINGW64 */
-#else /* !_WIN32 */
-#define PVN_FABI(P,W) P##_
-#endif /* ?_WIN32 */
-#endif /* !PVN_FABI */
 
 #ifdef _WIN32
 #ifndef ssize_t
