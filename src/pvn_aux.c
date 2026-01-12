@@ -11,6 +11,23 @@ int main(int argc, char *argv[])
   const size_t b = pvn_atoz(argv[2]);
   (void)printf("gcd(%zu, %zu) = %zu\n", a, b, pvn_gcd(a, b));
   (void)printf("lcm(%zu, %zu) = %zu\n", a, b, pvn_lcm(a, b));
+  size_t n = (size_t)0u, *p = (size_t*)NULL, *m = (size_t*)NULL;
+  (void)printf("%zu =", a);
+  if (n = pvn_factorize(a, &p, &m))
+    for (size_t i = (size_t)0u; i < n; ++i)
+      (void)printf(" %zu^%zu", p[i], m[i]);
+  else
+    (void)printf(" %zu^1", a);
+  (void)printf("\n");
+  (void)printf("%zu =", b);
+  if (n = pvn_factorize(b, &p, &m))
+    for (size_t i = (size_t)0u; i < n; ++i)
+      (void)printf(" %zu^%zu", p[i], m[i]);
+  else
+    (void)printf(" %zu^1", b);
+  (void)printf("\n");
+  free(m);
+  free(p);
 #if (!defined(_WIN32) || defined(_DLL))
   char s[33] = { '\0' };
   long double x = 0.0L;
@@ -60,9 +77,7 @@ size_t pvn_gcd(const size_t a, const size_t b)
 
 size_t PVN_FABI(pvn_gcd,PVN_GCD)(const size_t *const a, const size_t *const b)
 {
-  PVN_ASSERT(a);
-  PVN_ASSERT(b);
-  return pvn_gcd(*a, *b);
+  return ((a && b) ? pvn_gcd(*a, *b) : (size_t)0u);
 }
 
 size_t pvn_lcm(const size_t a, const size_t b)
@@ -73,9 +88,50 @@ size_t pvn_lcm(const size_t a, const size_t b)
 
 size_t PVN_FABI(pvn_lcm,PVN_LCM)(const size_t *const a, const size_t *const b)
 {
-  PVN_ASSERT(a);
-  PVN_ASSERT(b);
-  return pvn_lcm(*a, *b);
+  return ((a && b) ? pvn_lcm(*a, *b) : (size_t)0u);
+}
+
+static size_t rec_factorize(size_t x, size_t f, size_t l, size_t **const p, size_t **const m)
+{
+  const size_t y = (size_t)__builtin_sqrtl((long double)x);
+  while ((f <= y) && (x % f))
+    ++f;
+  if (f > y)
+    f = x;
+  size_t n = (size_t)0u;
+  do {
+    x /= f;
+    ++n;
+  } while (!(x % f));
+  size_t r = (size_t)0u;
+  if (x < f) {
+    r = l * sizeof(size_t);
+    if (p && !(*p = (size_t*)realloc(*p, r)))
+      return (size_t)0u;
+    if (m && !(*m = (size_t*)realloc(*m, r)))
+      return (size_t)0u;
+    r = l;
+  }
+  else
+    r = rec_factorize(x, (f + 1u), (l + 1u), p, m);
+  if (r) {
+    --l;
+    if (p)
+      (*p)[l] = f;
+    if (m)
+      (*m)[l] = n;
+  }
+  return r;
+}
+
+size_t pvn_factorize(const size_t x, size_t **const p, size_t **const m)
+{
+  return ((x <= (size_t)1u) ? (size_t)0u : rec_factorize(x, 2u, 1u, p, m));
+}
+
+size_t PVN_FABI(pvn_factorize,PVN_FACTORIZE)(const size_t *const x, size_t **const p, size_t **const m)
+{
+  return (x ? pvn_factorize(*x, p, m) : (size_t)0u);
 }
 
 char *pvn_hexify(char *const s, const void *const x, const size_t z)
