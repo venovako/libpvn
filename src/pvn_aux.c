@@ -13,14 +13,14 @@ int main(int argc, char *argv[])
   (void)printf("lcm(%zu, %zu) = %zu\n", a, b, pvn_lcm(a, b));
   size_t n = (size_t)0u, *p = (size_t*)NULL, *m = (size_t*)NULL;
   (void)printf("%zu =", a);
-  if (n = pvn_factorize(a, &p, &m))
+  if ((n = pvn_factorize(a, &p, &m)))
     for (size_t i = (size_t)0u; i < n; ++i)
       (void)printf(" %zu^%zu", p[i], m[i]);
   else
     (void)printf(" %zu^1", a);
   (void)printf("\n");
   (void)printf("%zu =", b);
-  if (n = pvn_factorize(b, &p, &m))
+  if ((n = pvn_factorize(b, &p, &m)))
     for (size_t i = (size_t)0u; i < n; ++i)
       (void)printf(" %zu^%zu", p[i], m[i]);
   else
