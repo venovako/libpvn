@@ -113,6 +113,13 @@ int main(int argc, char *argv[])
   return EXIT_FAILURE;
 }
 #else /* !PVN_TEST */
+#ifdef PVN_CILK
+unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)()
+{
+  return (unsigned)pvn_atoz(getenv("CILK_NWORKERS"));
+}
+#endif /* PVN_CILK */
+
 int PVN_FABI(pvn_le,PVN_LE)()
 {
   return pvn_le();

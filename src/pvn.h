@@ -71,16 +71,19 @@
 #if (defined(PVN_OPENMP) && (PVN_OPENMP > 0))
 #include <omp.h>
 #endif /* PVN_OPENMP */
-#ifndef PVN_CILK
-#define cilk_for for
-#define cilk_scope
-#define cilk_spawn
-#endif /* !PVN_CILK */
 #ifdef PVN_MPI
 #include "mpi.h"
 #endif /* PVN_MPI */
 
 #include "pvn_ext.h"
+
+#ifdef PVN_CILK
+PVN_EXTERN_C unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)();
+#else /* !PVN_CILK */
+#define cilk_for for
+#define cilk_scope
+#define cilk_spawn
+#endif /* ?PVN_CILK */
 
 #ifndef PVN_NO_PROF
 #ifdef PVN_PROFILE
