@@ -169,7 +169,7 @@ all: $(LIBS) $(EXES)
 	@echo BUILT: $(LIBS) $(EXES)
 
 help:
-	@echo nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD|Md|mD|md] [all|clean|help]
+	@echo "nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD|Md|mD|md] [all|clean|help]"
 
 pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
