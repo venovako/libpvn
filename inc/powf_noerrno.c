@@ -89,7 +89,7 @@ roundeven_finite (double x)
 // fegetexceptflag accesses the FPSR register, which seems to be much slower
 // than accessing FPCR, so it should be avoided if possible.
 // Adapted from sse2neon: https://github.com/DLTcollab/sse2neon
-#if defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+#if defined(__arm64__) || defined(_M_ARM64)
 #if defined(_MSC_VER)
 #include <arm64intr.h>
 #endif
@@ -422,7 +422,7 @@ float cr_powf(float x0, float y0){
       if(((tx.u<<1) < ((uint64_t)0x3ff<<53)) ^ (ty.u>>63)){
 	return 0;
       } else {
-	return 1.0f/0.0f;
+	return __builtin_inff();
       }
     }
     return x0 + y0;
