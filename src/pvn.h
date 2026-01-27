@@ -57,6 +57,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef _WIN32
+typedef void (*sig_t)(int);
 #include <io.h>
 #else /* !_WIN32 */
 #include <dlfcn.h>
