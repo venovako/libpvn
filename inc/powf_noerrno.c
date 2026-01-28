@@ -53,7 +53,7 @@ typedef union {double f; uint64_t u;} b64u64_u;
 /* __builtin_roundeven was introduced in gcc 10:
    https://gcc.gnu.org/gcc-10/changes.html,
    and in clang 17 */
-#if !defined(__NVCOMPILER) && ((defined(__GNUC__) && __GNUC__ >= 10) || (defined(__clang__) && __clang_major__ >= 17)) && (defined(__aarch64__) || defined(__x86_64__) || defined(__i386__))
+#if !defined(__NVCOMPILER) && ((defined(__GNUC__) && __GNUC__ >= 10) || (defined(__clang__) && __clang_major__ >= 17)) && !defined(_MSC_VER) && (defined(__aarch64__) || defined(__x86_64__) || defined(__i386__))
 # define roundeven_finite(x) __builtin_roundeven (x)
 #else
 /* round x to nearest integer, breaking ties to even */
@@ -89,7 +89,7 @@ roundeven_finite (double x)
 // fegetexceptflag accesses the FPSR register, which seems to be much slower
 // than accessing FPCR, so it should be avoided if possible.
 // Adapted from sse2neon: https://github.com/DLTcollab/sse2neon
-#if defined(__arm64__) || defined(_M_ARM64)
+#if (defined(__arm64__) || defined(_M_ARM64)) && !defined(__aarch64__)
 #if defined(_MSC_VER)
 #include <arm64intr.h>
 #endif
