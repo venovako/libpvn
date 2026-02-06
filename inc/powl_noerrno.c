@@ -54,49 +54,11 @@ PVN_EXTERN_C long double cr_powl(long double x, long double y);
 #include <x86intrin.h>
 #endif 
 
-#if defined(__x86_64__) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+#if defined(__x86_64__)
 #define FLAG_T uint32_t
 #else
 #define FLAG_T fexcept_t
 #endif
-
-// This code emulates the _mm_getcsr SSE intrinsic by reading the FPCR register.
-// fegetexceptflag accesses the FPSR register, which seems to be much slower
-// than accessing FPCR, so it should be avoided if possible.
-// Adapted from sse2neon: https://github.com/DLTcollab/sse2neon
-#if (defined(__arm64__) || defined(_M_ARM64)) && !defined(__aarch64__)
-#if defined(_MSC_VER)
-#include <arm64intr.h>
-#endif
-
-typedef struct
-{
-  uint16_t res0;
-  uint8_t  res1  : 6;
-  uint8_t  bit22 : 1;
-  uint8_t  bit23 : 1;
-  uint8_t  bit24 : 1;
-  uint8_t  res2  : 7;
-  uint32_t res3;
-} fpcr_bitfield;
-
-inline static unsigned int _mm_getcsr()
-{
-  union
-  {
-    fpcr_bitfield field;
-    uint64_t value;
-  } r;
-
-#if defined(_MSC_VER) && !defined(__clang__)
-  r.value = _ReadStatusReg(ARM64_FPCR);
-#else
-  __asm__ __volatile__("mrs %0, FPCR" : "=r"(r.value));
-#endif
-  static const unsigned int lut[2][2] = {{0x0000, 0x2000}, {0x4000, 0x6000}};
-  return lut[r.field.bit22][r.field.bit23];
-}
-#endif  // (defined(__arm64__) || defined(_M_ARM64)) && !defined(__aarch64__)
 
 /* Note that on x86, the x87 FPU has its own set of flags, which would need
 to be backed up and restored separately if we touched them. However, the
@@ -106,7 +68,7 @@ in such that a way that only saving the SSE status register is enough.
 static FLAG_T
 get_flag (void)
 {
-#if(defined(__x86_64__) || defined(__arm64__) || defined(_M_ARM64)) && !defined(__aarch64__)
+#if defined(__x86_64__)
   return _mm_getcsr ();
 #else
   fexcept_t flag;
@@ -118,7 +80,7 @@ get_flag (void)
 static void
 set_flag (FLAG_T flag)
 {
-#if(defined(__x86_64__) || defined(__arm64__) || defined(_M_ARM64)) && !defined(__aarch64__)
+#if defined(__x86_64__)
   _mm_setcsr (flag);
 #else
   fesetexceptflag (&flag, FE_ALL_EXCEPT);
@@ -142,11 +104,22 @@ typedef union {
 #include "qint_powl.h"
 static inline int get_rounding_mode (void)
 {
-  /* Warning: on __aarch64__ (for example cfarm103), FE_UPWARD=0x400000
-     instead of 0x800. */
-#if defined(__x86_64__) || defined(__arm64__) || defined(_M_ARM64)
+#if defined(__x86_64__)
   #if defined(__WIN32__) || defined(__WIN64__)
-    return _MM_GET_ROUNDING_MODE()>>5;
+    // Windows 10 14393 swapped FE_UPWARD and FE_DOWNWARD.
+    // Before: FE_UPWARD = 0x0100, FE_DOWNWARD = 0x0200
+    // After:  FE_UPWARD = 0x0200, FE_DOWNWARD = 0x0100
+    // The amount we need to shift changes depending on the value.
+    #if FE_UPWARD == 0x0200
+      return _MM_GET_ROUNDING_MODE()>>5;
+    #elif FE_UPWARD == 0x0100
+      // Lookup table used to eliminate branches.
+      static const unsigned lut[4] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
+      return lut[_MM_GET_ROUNDING_MODE()>>13];
+    #else
+      #warning The floating point rounding constants have an unknown value. A slower path will be taken.
+      return fegetround();
+    #endif
   #else
     return _MM_GET_ROUNDING_MODE()>>3;
   #endif
