@@ -6,7 +6,7 @@ A small portable C library with several utility functions.
 This software is a supplementary material for the papers:
 - doi:[10.1016/j.cam.2024.116003](https://doi.org/10.1016/j.cam.2024.116003 "Accurate complex Jacobi rotations"),
 - doi:[10.1007/s11075-025-02035-7](https://doi.org/10.1007/s11075-025-02035-7 "Arithmetical enhancements of the Kogbetliantz method for the SVD of order two"),
-- doi:[10.48550/arXiv.2509.06220](https://doi.org/10.48550/arXiv.2509.06220 "Recursive vectorized computation of the Frobenius norm"),
+- doi:[10.1142/S0129626426500027](https://doi.org/10.1142/S0129626426500027 "Recursive vectorized computation of the vector p-norm"),
 - doi:[10.1553/etna_vol65s26](https://doi.org/10.1553/etna_vol65s26 "On convergence and accuracy of the J-Jacobi method under the de Rijk pivot strategy").
 
 Some functions have been adapted from those in the repositories [JACSD](https://github.com/venovako/JACSD) and [VecJac](https://github.com/venovako/VecJac).
