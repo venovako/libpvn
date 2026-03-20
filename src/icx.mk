@@ -24,9 +24,9 @@ MARCH=Host
 # common-avx512 for KNLs
 endif # !MARCH
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
-CFLAGS += -std=gnu2x -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -pthread -vec-threshold0 -x$(MARCH) #-fimf-precision=high
-CXXFLAGS += -std=gnu++2b -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -pthread -vec-threshold0 -x$(MARCH) #-fimf-precision=high
-FCFLAGS += -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -recursive -standard-semantics -threads -vec-threshold0 -x$(MARCH) #-fimf-precision=high
+CFLAGS += -std=gnu2x -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -pthread -vec-threshold0 -x$(MARCH) #-fp-model=precise -fimf-precision=high
+CXXFLAGS += -std=gnu++2b -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -pthread -vec-threshold0 -x$(MARCH) #-fp-model=precise -fimf-precision=high
+FCFLAGS += -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -recursive -standard-semantics -threads -vec-threshold0 -x$(MARCH) #-fp-model=precise -fimf-precision=high
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback

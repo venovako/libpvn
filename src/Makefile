@@ -35,9 +35,9 @@ PFLAGS=$(IFLAGS)
 OFLAGS=/Qopenmp-simd
 RFLAGS=/MT
 !ENDIF # ?MD
-CFLAGS=/nologo /Qstd:gnu2y /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-CXXFLAGS=/nologo /Qstd:gnu++2c /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback $(RFLAGS)
+CFLAGS=/nologo /Qstd:gnu2y /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:strict /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+CXXFLAGS=/nologo /Qstd:gnu++2c /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:strict /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
+FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:strict /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback $(RFLAGS)
 SRCDIR=$(subst \,\\,$(MAKEDIR))
 AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_CXX="\"$(CXX)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) $(RFLAGS)\"" /DPVN_CXXFLAGS="\"$(CXXFLAGS) $(RFLAGS)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
 !IF "$(CRT)"!="MT"
