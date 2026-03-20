@@ -17,9 +17,20 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 15 ]; then echo 2y; else echo 2x; fi) -fPIC -frounding-math -fsignaling-nans -ffp-contract=fast -fvect-cost-model=unlimited -pthread
-CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 2c; else echo 2b; fi) -fPIC -frounding-math -fsignaling-nans -ffp-contract=fast -fvect-cost-model=unlimited -pthread
-FCFLAGS += -fPIC -frounding-math -fsignaling-nans -ffp-contract=fast -fprotect-parens -frecursive -fstack-arrays -fvect-cost-model=unlimited -pthread
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 15 ]; then echo 2y; else echo 2x; fi) -fPIC -pthread -fvect-cost-model=unlimited
+CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 2c; else echo 2b; fi) -fPIC -pthread -fvect-cost-model=unlimited
+FCFLAGS += -fPIC -pthread -fvect-cost-model=unlimited -frecursive -fstack-arrays
+ifdef STRICT
+PFLAGS += -DPVN_STRICT=$(STRICT)
+ifneq ($(STRICT),0)
+CFLAGS += -frounding-math -fsignaling-nans
+CXXFLAGS += -frounding-math -fsignaling-nans
+FCFLAGS += -frounding-math -fsignaling-nans
+endif # ?STRICT
+endif # STRICT
+CFLAGS += -ffp-contract=fast
+CXXFLAGS += -ffp-contract=fast
+FCFLAGS += -ffp-contract=fast -fprotect-parens
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer

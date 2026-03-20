@@ -24,9 +24,22 @@ MARCH=Host
 # common-avx512 for KNLs
 endif # !MARCH
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
-CFLAGS += -std=gnu2x -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -pthread -vec-threshold0 -x$(MARCH) #-fp-model=precise -fimf-precision=high
-CXXFLAGS += -std=gnu++2b -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -pthread -vec-threshold0 -x$(MARCH) #-fp-model=precise -fimf-precision=high
-FCFLAGS += -fPIC -fp-model=strict -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens -mprefer-vector-width=512 -recursive -standard-semantics -threads -vec-threshold0 -x$(MARCH) #-fp-model=precise -fimf-precision=high
+CFLAGS += -std=gnu2x -fPIC -pthread -mprefer-vector-width=512 -vec-threshold0 -x$(MARCH)
+CXXFLAGS += -std=gnu++2b -fPIC -pthread -mprefer-vector-width=512 -vec-threshold0 -x$(MARCH)
+FCFLAGS += -fPIC -threads -recursive -standard-semantics -mprefer-vector-width=512 -vec-threshold0 -x$(MARCH)
+ifdef STRICT
+PFLAGS += -DPVN_STRICT=$(STRICT)
+CFLAGS += -fp-model=strict
+CXXFLAGS += -fp-model=strict
+FCFLAGS += -fp-model=strict
+else # !STRICT
+CFLAGS += -fp-model=precise
+CXXFLAGS += -fp-model=precise
+FCFLAGS += -fp-model=precise
+endif # ?STRICT
+CFLAGS += -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens
+CXXFLAGS += -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens
+FCFLAGS += -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback

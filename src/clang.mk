@@ -16,9 +16,20 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -ffp-model=strict -ffp-contract=fast -fprotect-parens -pthread -Wno-overriding-option
-CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -ffp-model=strict -ffp-contract=fast -fprotect-parens -pthread -Wno-overriding-option
-FCFLAGS += -fPIC -fhonor-infinities -fhonor-nans -ffp-contract=fast -fimplicit-none -fstack-arrays -fvectorize -fslp-vectorize -pthread
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -pthread -fvectorize -fslp-vectorize
+CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -pthread -fvectorize -fslp-vectorize
+FCFLAGS += -fPIC -pthread -fvectorize -fslp-vectorize -fimplicit-none -fstack-arrays
+ifdef STRICT
+PFLAGS += -DPVN_STRICT=$(STRICT)
+CFLAGS += -ffp-model=strict -Wno-overriding-option
+CXXFLAGS += -ffp-model=strict -Wno-overriding-option
+else # !STRICT
+CFLAGS += -ffp-model=precise
+CXXFLAGS += -ffp-model=precise
+endif # ?STRICT
+CFLAGS += -ffp-contract=fast -fprotect-parens
+CXXFLAGS += -ffp-contract=fast -fprotect-parens
+FCFLAGS += -ffp-contract=fast -fhonor-infinities -fhonor-nans
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
