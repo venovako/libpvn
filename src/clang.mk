@@ -16,9 +16,9 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -ffp-contract=fast -pthread
-CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -ffp-contract=fast -pthread
-FCFLAGS += -fPIC -ffp-contract=fast -fimplicit-none -fhonor-infinities -fhonor-nans -fstack-arrays -fvectorize -fslp-vectorize -pthread
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -ffp-model=strict -ffp-contract=fast -fprotect-parens -pthread
+CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -ffp-model=strict -ffp-contract=fast -fprotect-parens -pthread
+FCFLAGS += -fPIC -fhonor-infinities -fhonor-nans -ffp-contract=fast -fimplicit-none -fstack-arrays -fvectorize -fslp-vectorize -pthread
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
