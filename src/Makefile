@@ -1,4 +1,4 @@
-RM=del /F
+RM=DEL /F
 AR=lib.exe
 ARFLAGS=/NOLOGO /VERBOSE
 CC=icx.exe
@@ -35,9 +35,9 @@ PFLAGS=$(IFLAGS)
 OFLAGS=/Qopenmp-simd
 RFLAGS=/MT
 !ENDIF # ?MD
-CFLAGS=/nologo /Qstd:gnu2y /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:strict /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-CXXFLAGS=/nologo /Qstd:gnu++2c /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:strict /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option
-FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:strict /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback $(RFLAGS)
+CFLAGS=/nologo /Qstd:gnu2y /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option #/fp:strict
+CXXFLAGS=/nologo /Qstd:gnu++2c /Qlong-double /Qoption,cpp,--extended_float_types /EHsc /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback /Wno-deprecated-declarations /Wno-overriding-option #/fp:strict
+FCFLAGS=/nologo /fpp /Qexceptions /O$(NDEBUG) /Qx$(MARCH) /Ob2 /fp:precise /Qfma /Qftz- /Qprec-div /Qprotect-parens /recursive /standard-semantics $(OFLAGS) /Qopt-report:3 /Qvec-threshold:0 /traceback $(RFLAGS) #/fp:strict
 SRCDIR=$(subst \,\\,$(MAKEDIR))
 AFLAGS=/DPVN_CC="\"$(CC)\"" /DPVN_CXX="\"$(CXX)\"" /DPVN_FC="\"$(FC)\"" /DPVN_CPPFLAGS="\"$(PFLAGS) /I$(SRCDIR)\"" /DPVN_CFLAGS="\"$(CFLAGS) $(RFLAGS)\"" /DPVN_CXXFLAGS="\"$(CXXFLAGS) $(RFLAGS)\"" /DPVN_FCFLAGS="\"$(FCFLAGS)\"" /DPVN_LDFLAGS="\"/link /RELEASE\"" /DPVN_LIBS="\"/LIBPATH:$(SRCDIR) pvn.lib\""
 !IF "$(CRT)"!="MT"
@@ -166,21 +166,22 @@ pvn_timer.exe
 
 all: $(LIBS) $(EXES)
 	pvn.exe > pvn.mk
-	@echo BUILT: $(LIBS) $(EXES)
+	@ECHO BUILT: $(LIBS) $(EXES)
 
 help:
-	@echo "nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD|Md|mD|md] [all|clean|help]"
+	@ECHO "nmake.exe [MARCH=Host|...] [NDEBUG=d|1|2|3|...] [CRT=MT|MD|Md|mD|md] [all|clean|help]"
+	@ECHO === ROUNDING TO NEAREST-EVEN IS ASSUMED! ===
 
 pvn.lib: $(OBJS) Makefile
 	$(AR) $(ARFLAGS) /OUT:$@ $(OBJS)
 
 pvn.dll: $(OBJS) Makefile
-	@echo === EXPERIMENTALLY LINKING WITH THE GCC's LIBQUADMATH ===
-	@echo === DO NOT ATTEMPT THIS FOR ANYTHING REDISTRIBUTABLE! ===
+	@ECHO === EXPERIMENTALLY LINKING WITH THE GCC's LIBQUADMATH ===
+	@ECHO === DO NOT ATTEMPT THIS FOR ANYTHING REDISTRIBUTABLE! ===
 	$(CC) $(CDFLAGS) /Fe$@ $(OBJS) /link /RELEASE /LIBPATH:$(MSYS64)\ucrt64\lib libquadmath.dll.a libgcc_s.a
-	copy /Y /V $(MSYS64)\ucrt64\bin\libgcc_s_seh-1.dll .
-	copy /Y /V $(MSYS64)\ucrt64\bin\libquadmath-0.dll .
-	copy /Y /V $(MSYS64)\ucrt64\bin\libwinpthread-1.dll .
+	COPY /Y /V $(MSYS64)\ucrt64\bin\libgcc_s_seh-1.dll .
+	COPY /Y /V $(MSYS64)\ucrt64\bin\libquadmath-0.dll .
+	COPY /Y /V $(MSYS64)\ucrt64\bin\libwinpthread-1.dll .
 
 .c.obj:
 	$(CC) $(CCFLAGS) /c $< /Fo$@
