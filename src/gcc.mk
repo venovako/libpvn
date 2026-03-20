@@ -17,9 +17,9 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 15 ]; then echo 2y; else echo 2x; fi) -fPIC -ffp-contract=fast -fvect-cost-model=unlimited -pthread
-CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 2c; else echo 2b; fi) -fPIC -ffp-contract=fast -fvect-cost-model=unlimited -pthread
-FCFLAGS += -fPIC -ffp-contract=fast -fprotect-parens -frecursive -fstack-arrays -fvect-cost-model=unlimited -pthread
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 15 ]; then echo 2y; else echo 2x; fi) -fPIC -frounding-math -fsignaling-nans -ffp-contract=fast -fvect-cost-model=unlimited -pthread
+CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 2c; else echo 2b; fi) -fPIC -frounding-math -fsignaling-nans -ffp-contract=fast -fvect-cost-model=unlimited -pthread
+FCFLAGS += -fPIC -frounding-math -fsignaling-nans -ffp-contract=fast -fprotect-parens -frecursive -fstack-arrays -fvect-cost-model=unlimited -pthread
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
