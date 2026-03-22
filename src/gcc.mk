@@ -22,15 +22,24 @@ CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; 
 FCFLAGS += -fPIC -pthread -fvect-cost-model=unlimited -frecursive -fstack-arrays
 ifdef STRICT
 PFLAGS += -DPVN_STRICT=$(STRICT)
-ifneq ($(STRICT),0)
 CFLAGS += -frounding-math -fsignaling-nans
 CXXFLAGS += -frounding-math -fsignaling-nans
 FCFLAGS += -frounding-math -fsignaling-nans
-endif # ?STRICT
-endif # STRICT
+ifeq ($(STRICT),0)
 CFLAGS += -ffp-contract=fast
 CXXFLAGS += -ffp-contract=fast
-FCFLAGS += -ffp-contract=fast -fprotect-parens
+FCFLAGS += -ffp-contract=fast
+else # STRICT != 0
+CFLAGS += -ffp-contract=on
+CXXFLAGS += -ffp-contract=on
+FCFLAGS += -ffp-contract=on
+endif # ?STRICT
+else # !STRICT
+CFLAGS += -ffp-contract=fast
+CXXFLAGS += -ffp-contract=fast
+FCFLAGS += -ffp-contract=fast
+endif # ?STRICT
+FCFLAGS += -fprotect-parens
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer

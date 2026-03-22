@@ -32,14 +32,23 @@ PFLAGS += -DPVN_STRICT=$(STRICT)
 CFLAGS += -fp-model=strict
 CXXFLAGS += -fp-model=strict
 FCFLAGS += -fp-model=strict
-else # !STRICT
-CFLAGS += -fp-model=precise
-CXXFLAGS += -fp-model=precise
-FCFLAGS += -fp-model=precise
+ifeq ($(STRICT),0)
+CFLAGS += -ffp-contract=fast
+CXXFLAGS += -ffp-contract=fast
+FCFLAGS += -ffp-contract=fast
+else # STRICT != 0
+CFLAGS += -ffp-contract=on
+CXXFLAGS += -ffp-contract=on
+FCFLAGS += -ffp-contract=on
 endif # ?STRICT
-CFLAGS += -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens
-CXXFLAGS += -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens
-FCFLAGS += -fp-speculation=safe -ffp-contract=fast -fma -no-ftz -fprotect-parens
+else # !STRICT
+CFLAGS += -fp-model=precise -ffp-contract=fast
+CXXFLAGS += -fp-model=precise -ffp-contract=fast
+FCFLAGS += -fp-model=precise -ffp-contract=fast
+endif # ?STRICT
+CFLAGS += -fp-speculation=safe -fma -no-ftz -fprotect-parens
+CXXFLAGS += -fp-speculation=safe -fma -no-ftz -fprotect-parens
+FCFLAGS += -fp-speculation=safe -fma -no-ftz -fprotect-parens
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer -traceback

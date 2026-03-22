@@ -13,10 +13,13 @@ CFLAGS=-O0 -g -Mbounds -Mchkstk
 CXXFLAGS=-O0 -g -Mbounds -Mchkstk
 FCFLAGS=-Mpreprocess -O0 -g -Mbounds -Mchkptr -Mchkstk
 endif # ?NDEBUG
+PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
+ifdef STRICT
+PFLAGS += -DPVN_STRICT=$(STRICT)
+endif # STRICT
 ifndef MARCH
 MARCH=native
 endif # !MARCH
-PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 CFLAGS += -c23 -fpic -Kieee -Mcache_align -Mfma -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH)
 CXXFLAGS += -std=c++20 -fpic -Kieee -Mcache_align -Mfma -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH)
 FCFLAGS += -fpic -Kieee -Mcache_align -Mdclchk -Mfma -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -Mlarge_arrays -Mrecursive -Mstack_arrays -nvmalloc -pthread -tp=$(MARCH)

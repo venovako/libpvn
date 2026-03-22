@@ -23,13 +23,23 @@ ifdef STRICT
 PFLAGS += -DPVN_STRICT=$(STRICT)
 CFLAGS += -ffp-model=strict -Wno-overriding-option
 CXXFLAGS += -ffp-model=strict -Wno-overriding-option
-else # !STRICT
-CFLAGS += -ffp-model=precise
-CXXFLAGS += -ffp-model=precise
+ifeq ($(STRICT),0)
+CFLAGS += -ffp-contract=fast
+CXXFLAGS += -ffp-contract=fast
+FCFLAGS += -ffp-contract=fast
+else # STRICT != 0
+CFLAGS += -ffp-contract=on
+CXXFLAGS += -ffp-contract=on
+FCFLAGS += -ffp-contract=on
 endif # ?STRICT
-CFLAGS += -ffp-contract=fast -fprotect-parens
-CXXFLAGS += -ffp-contract=fast -fprotect-parens
-FCFLAGS += -ffp-contract=fast -fhonor-infinities -fhonor-nans
+else # !STRICT
+CFLAGS += -ffp-model=precise -ffp-contract=fast
+CXXFLAGS += -ffp-model=precise -ffp-contract=fast
+FCFLAGS += -ffp-contract=fast
+endif # ?STRICT
+CFLAGS += -fprotect-parens
+CXXFLAGS += -fprotect-parens
+FCFLAGS += -fhonor-infinities -fhonor-nans
 ifndef VECLEN
 CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
