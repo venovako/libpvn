@@ -39,8 +39,8 @@ Recent versions of the compilers have been provided by or used on:
 4. FreeBSD (GCC 14.2.0),
 5. openSUSE Tumbleweed (GCC 15.2.1),
 6. Oracle Linux (GCC 14.2.1-7),
-7. Intel oneAPI (2025.3.1),
-8. NVIDIA HPC SDK (26.1).
+7. Intel oneAPI (2025.3.3),
+8. NVIDIA HPC SDK (26.3).
 
 Examples of building the library:
 ```bash
@@ -94,6 +94,8 @@ The `SAFE` variable lists, as one or more comma-separated short names, the compo
 
 So, `SAFE=sv2,nrm`, e.g., requests the `sv2` and `nrm` safe implementations.
 If in all-caps, `NRM` turns on the vector sorting before the final reductions where applicable.
+
+When the rounding mode is expected to vary, `SAFE=0` or `SAFE=1` should be set, where the latter is forcing the floating-point contractions to be standard-conformant.
 
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
 For example, some numerical testers require that `GMP`, `MPFR`, and `SLEEF` are set to the installation prefixes of the respective libraries.
