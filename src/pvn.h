@@ -279,7 +279,6 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #include "pvn_crm.h"
 #include "pvn_det.h"
 #include "pvn_djs.h"
-#include "pvn_dot.h"
 #include "pvn_err.h"
 #include "pvn_ev2.h"
 #include "pvn_fmt.h"

@@ -66,7 +66,6 @@ pvn_cma.c \
 pvn_crm.c \
 pvn_det.c \
 pvn_djs.c \
-pvn_dot.c \
 pvn_err.c \
 pvn_ev2.c \
 pvn_fmt.c \
@@ -107,7 +106,6 @@ pvn_cma.obj \
 pvn_crm.obj \
 pvn_det.obj \
 pvn_djs.obj \
-pvn_dot.obj \
 pvn_err.obj \
 pvn_ev2.obj \
 pvn_fmt.obj \
@@ -148,7 +146,6 @@ pvn_cma.exe \
 pvn_crm.exe \
 pvn_det.exe \
 pvn_djs.exe \
-pvn_dot.exe \
 pvn_err.exe \
 pvn_ev2.exe \
 pvn_fmt.exe \

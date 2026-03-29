@@ -79,7 +79,6 @@ pvn_cma.c \
 pvn_crm.c \
 pvn_det.c \
 pvn_djs.c \
-pvn_dot.c \
 pvn_err.c \
 pvn_ev2.c \
 pvn_fmt.c \
