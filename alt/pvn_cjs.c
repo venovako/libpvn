@@ -151,6 +151,7 @@ static int *me_dup(const int n1, const int *const tbl)
   const int s1 = (n1 - 1);
   const int p1 = (n1 >> 1);
   const int n2 = (n1 << 1);
+  /* const int s2 = (n2 - 1); */
   const int p2 = (n2 >> 1);
 
   int (*const tbl2)[2] = (int (*)[2])malloc((n2 - 1) * (n2 * sizeof(int)));
@@ -158,39 +159,36 @@ static int *me_dup(const int n1, const int *const tbl)
     return (int*)NULL;
   const int (*const tbl1)[2] = (const int (*)[2])tbl;
 
-  /* (SW,NE); (SE,NW) */
+  /* (NE,SW); (NW,SE) */
   for (int p = 0; p < s1; ++p) {
     const int q = (p << 1);
-    const int q1 = (q + 1);
     for (int a = 0; a < p1; ++a) {
       const int b = (a << 1);
       const int k = (p * p1 + a);
       const int l = (q * p2 + b);
-      const int m = (q1 * p2 + b);
+      const int m = ((q + 1) * p2 + b);
       const int i = tbl1[k][0];
       const int j = tbl1[k][1];
       const int i2 = (i << 1);
       const int j2 = (j << 1);
-      /* SW */
-      tbl2[l][0] = (i2 + 1);
-      tbl2[l][1] = j2;
       /* NE */
-      tbl2[l + 1][0] = i2;
-      tbl2[l + 1][1] = (j2 + 1);
-      /* SE */
-      tbl2[m][0] = (i2 + 1);
-      tbl2[m][1] = (j2 + 1);
+      tbl2[l][0] = i2;
+      tbl2[l][1] = (j2 + 1);
+      /* SW */
+      tbl2[l + 1][0] = (i2 + 1);
+      tbl2[l + 1][1] = j2;
       /* NW */
-      tbl2[m + 1][0] = i2;
-      tbl2[m + 1][1] = j2;
+      tbl2[m][0] = i2;
+      tbl2[m][1] = j2;
+      /* SE */
+      tbl2[m + 1][0] = (i2 + 1);
+      tbl2[m + 1][1] = (j2 + 1);
     }
   }
   /* super-diag */
   const int d = ((n2 - 2) * p2);
-  for (int i = 0; i < p2; ++i) {
-    const int j = ((p2 - 1) - i);
-    tbl2[d + j][1] = ((tbl2[d + j][0] = (i << 1)) + 1);
-  }
+  for (int i = 0; i < p2; ++i)
+    tbl2[d + i][1] = ((tbl2[d + i][0] = (i << 1)) + 1);
 
   return &(tbl2[0][0]);
 }
