@@ -333,7 +333,7 @@ pvn_rvis_ctx_l* PVN_FABI(pvn_rvis_start_l,PVN_RVIS_START_L)(const unsigned *cons
 }
 #endif /* !_WIN32 || _DLL */
 
-int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, const size_t ldA)
+int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const A, const size_t ldA)
 {
   if (!ctx)
     return -1;
@@ -353,7 +353,7 @@ int pvn_rvis_frame_f(pvn_rvis_ctx_f *const ctx, const float *const restrict A, c
   return ret;
 }
 
-int PVN_FABI(pvn_rvis_frame_f,PVN_RVIS_FRAME_F)(pvn_rvis_ctx_f *const *const ctx, const float *const restrict A, const size_t *const ldA)
+int PVN_FABI(pvn_rvis_frame_f,PVN_RVIS_FRAME_F)(pvn_rvis_ctx_f *const *const ctx, const float *const A, const size_t *const ldA)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(A);
@@ -361,7 +361,7 @@ int PVN_FABI(pvn_rvis_frame_f,PVN_RVIS_FRAME_F)(pvn_rvis_ctx_f *const *const ctx
   return pvn_rvis_frame_f(*ctx, A, *ldA);
 }
 
-int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, const size_t ldA)
+int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const A, const size_t ldA)
 {
   if (!ctx)
     return -1;
@@ -381,7 +381,7 @@ int pvn_rvis_frame(pvn_rvis_ctx *const ctx, const double *const restrict A, cons
   return ret;
 }
 
-int PVN_FABI(pvn_rvis_frame,PVN_RVIS_FRAME)(pvn_rvis_ctx *const *const ctx, const double *const restrict A, const size_t *const ldA)
+int PVN_FABI(pvn_rvis_frame,PVN_RVIS_FRAME)(pvn_rvis_ctx *const *const ctx, const double *const A, const size_t *const ldA)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(A);
@@ -390,7 +390,7 @@ int PVN_FABI(pvn_rvis_frame,PVN_RVIS_FRAME)(pvn_rvis_ctx *const *const ctx, cons
 }
 
 #if (!defined(_WIN32) || defined(_DLL))
-int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restrict A, const size_t ldA)
+int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const A, const size_t ldA)
 {
   if (!ctx)
     return -1;
@@ -410,7 +410,7 @@ int pvn_rvis_frame_l(pvn_rvis_ctx_l *const ctx, const long double *const restric
   return ret;
 }
 
-int PVN_FABI(pvn_rvis_frame_l,PVN_RVIS_FRAME_L)(pvn_rvis_ctx_l *const *const ctx, const long double *const restrict A, const size_t *const ldA)
+int PVN_FABI(pvn_rvis_frame_l,PVN_RVIS_FRAME_L)(pvn_rvis_ctx_l *const *const ctx, const long double *const A, const size_t *const ldA)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(A);
@@ -1248,7 +1248,7 @@ pvn_cvis_ctx_l* PVN_FABI(pvn_cvis_start_l,PVN_CVIS_START_L)(const unsigned *cons
 }
 #endif /* !_WIN32 || _DLL */
 
-int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restrict A, const size_t ldA)
+int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const A, const size_t ldA)
 {
   if (!ctx)
     return -1;
@@ -1271,7 +1271,7 @@ int pvn_cvis_frame_f(pvn_cvis_ctx_f *const ctx, const float complex *const restr
   return ret;
 }
 
-int PVN_FABI(pvn_cvis_frame_f,PVN_CVIS_FRAME_F)(pvn_cvis_ctx_f *const *const ctx, const float complex *const restrict A, const size_t *const ldA)
+int PVN_FABI(pvn_cvis_frame_f,PVN_CVIS_FRAME_F)(pvn_cvis_ctx_f *const *const ctx, const float complex *const A, const size_t *const ldA)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(A);
@@ -1279,7 +1279,7 @@ int PVN_FABI(pvn_cvis_frame_f,PVN_CVIS_FRAME_F)(pvn_cvis_ctx_f *const *const ctx
   return pvn_cvis_frame_f(*ctx, A, *ldA);
 }
 
-int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict A, const size_t ldA)
+int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const A, const size_t ldA)
 {
   if (!ctx)
     return -1;
@@ -1302,7 +1302,7 @@ int pvn_cvis_frame(pvn_cvis_ctx *const ctx, const double complex *const restrict
   return ret;
 }
 
-int PVN_FABI(pvn_cvis_frame,PVN_CVIS_FRAME)(pvn_cvis_ctx *const *const ctx, const double complex *const restrict A, const size_t *const ldA)
+int PVN_FABI(pvn_cvis_frame,PVN_CVIS_FRAME)(pvn_cvis_ctx *const *const ctx, const double complex *const A, const size_t *const ldA)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(A);
@@ -1311,7 +1311,7 @@ int PVN_FABI(pvn_cvis_frame,PVN_CVIS_FRAME)(pvn_cvis_ctx *const *const ctx, cons
 }
 
 #if (!defined(_WIN32) || defined(_DLL))
-int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const restrict A, const size_t ldA)
+int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const A, const size_t ldA)
 {
   if (!ctx)
     return -1;
@@ -1334,7 +1334,7 @@ int pvn_cvis_frame_l(pvn_cvis_ctx_l *const ctx, const long double complex *const
   return ret;
 }
 
-int PVN_FABI(pvn_cvis_frame_l,PVN_CVIS_FRAME_L)(pvn_cvis_ctx_l *const *const ctx, const long double complex *const restrict A, const size_t *const ldA)
+int PVN_FABI(pvn_cvis_frame_l,PVN_CVIS_FRAME_L)(pvn_cvis_ctx_l *const *const ctx, const long double complex *const A, const size_t *const ldA)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(A);
@@ -1516,7 +1516,7 @@ int PVN_FABI(pvn_cvis_stop_l,PVN_CVIS_STOP_L)(pvn_cvis_ctx_l *const *const ctx, 
 }
 #endif /* !_WIN32 || _DLL */
 
-int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
+int pvn_rop_idf(const unsigned m, const unsigned n, const float *const A, const size_t ldA, float *const B, const size_t ldB, float *const minB, float *const maxB)
 {
   if (!m)
     return -1;
@@ -1559,7 +1559,7 @@ int pvn_rop_idf(const unsigned m, const unsigned n, const float *const restrict 
   return 0;
 }
 
-int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
+int pvn_rop_id(const unsigned m, const unsigned n, const double *const A, const size_t ldA, double *const B, const size_t ldB, double *const minB, double *const maxB)
 {
   if (!m)
     return -1;
@@ -1602,7 +1602,7 @@ int pvn_rop_id(const unsigned m, const unsigned n, const double *const restrict 
   return 0;
 }
 
-int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
+int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const minB, long double *const maxB)
 {
   if (!m)
     return -1;
@@ -1645,7 +1645,7 @@ int pvn_rop_idl(const unsigned m, const unsigned n, const long double *const res
   return 0;
 }
 
-int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
+int pvn_rop_absf(const unsigned m, const unsigned n, const float *const A, const size_t ldA, float *const B, const size_t ldB, float *const minB, float *const maxB)
 {
   if (!m)
     return -1;
@@ -1688,7 +1688,7 @@ int pvn_rop_absf(const unsigned m, const unsigned n, const float *const restrict
   return 0;
 }
 
-int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
+int pvn_rop_abs(const unsigned m, const unsigned n, const double *const A, const size_t ldA, double *const B, const size_t ldB, double *const minB, double *const maxB)
 {
   if (!m)
     return -1;
@@ -1731,7 +1731,7 @@ int pvn_rop_abs(const unsigned m, const unsigned n, const double *const restrict
   return 0;
 }
 
-int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
+int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const minB, long double *const maxB)
 {
   if (!m)
     return -1;
@@ -1774,7 +1774,7 @@ int pvn_rop_absl(const unsigned m, const unsigned n, const long double *const re
   return 0;
 }
 
-int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
+int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const A, const size_t ldA, float *const B, const size_t ldB, float *const minB, float *const maxB)
 {
   if (!m)
     return -1;
@@ -1817,7 +1817,7 @@ int pvn_rop_lgabsf(const unsigned m, const unsigned n, const float *const restri
   return 0;
 }
 
-int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
+int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const A, const size_t ldA, double *const B, const size_t ldB, double *const minB, double *const maxB)
 {
   if (!m)
     return -1;
@@ -1860,7 +1860,7 @@ int pvn_rop_lgabs(const unsigned m, const unsigned n, const double *const restri
   return 0;
 }
 
-int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
+int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const minB, long double *const maxB)
 {
   if (!m)
     return -1;
@@ -1903,7 +1903,7 @@ int pvn_rop_lgabsl(const unsigned m, const unsigned n, const long double *const 
   return 0;
 }
 
-int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict minB, float *const restrict maxB)
+int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const A, const size_t ldA, float *const B, const size_t ldB, float *const minB, float *const maxB)
 {
   if (!m)
     return -1;
@@ -1946,7 +1946,7 @@ int pvn_rop_logabsf(const unsigned m, const unsigned n, const float *const restr
   return 0;
 }
 
-int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict minB, double *const restrict maxB)
+int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const A, const size_t ldA, double *const B, const size_t ldB, double *const minB, double *const maxB)
 {
   if (!m)
     return -1;
@@ -1989,7 +1989,7 @@ int pvn_rop_logabs(const unsigned m, const unsigned n, const double *const restr
   return 0;
 }
 
-int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict minB, long double *const restrict maxB)
+int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const minB, long double *const maxB)
 {
   if (!m)
     return -1;
@@ -2032,7 +2032,7 @@ int pvn_rop_logabsl(const unsigned m, const unsigned n, const long double *const
   return 0;
 }
 
-int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
+int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const A, const size_t ldA, float *const B, const size_t ldB, float *const C, const size_t ldC, float *const minB, float *const maxB, float *const minC, float *const maxC)
 {
   if (!m)
     return -1;
@@ -2095,7 +2095,7 @@ int pvn_cop_idf(const unsigned m, const unsigned n, const float complex *const r
   return 0;
 }
 
-int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
+int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const A, const size_t ldA, double *const B, const size_t ldB, double *const C, const size_t ldC, double *const minB, double *const maxB, double *const minC, double *const maxC)
 {
   if (!m)
     return -1;
@@ -2158,7 +2158,7 @@ int pvn_cop_id(const unsigned m, const unsigned n, const double complex *const r
   return 0;
 }
 
-int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
+int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const C, const size_t ldC, long double *const minB, long double *const maxB, long double *const minC, long double *const maxC)
 {
   if (!m)
     return -1;
@@ -2221,7 +2221,7 @@ int pvn_cop_idl(const unsigned m, const unsigned n, const long double complex *c
   return 0;
 }
 
-int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
+int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const A, const size_t ldA, float *const B, const size_t ldB, float *const C, const size_t ldC, float *const minB, float *const maxB, float *const minC, float *const maxC)
 {
   if (!m)
     return -1;
@@ -2285,7 +2285,7 @@ int pvn_cop_absf(const unsigned m, const unsigned n, const float complex *const 
   return (MB == __builtin_inff());
 }
 
-int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
+int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const A, const size_t ldA, double *const B, const size_t ldB, double *const C, const size_t ldC, double *const minB, double *const maxB, double *const minC, double *const maxC)
 {
   if (!m)
     return -1;
@@ -2349,7 +2349,7 @@ int pvn_cop_abs(const unsigned m, const unsigned n, const double complex *const 
   return (MB == __builtin_inf());
 }
 
-int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
+int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const C, const size_t ldC, long double *const minB, long double *const maxB, long double *const minC, long double *const maxC)
 {
   if (!m)
     return -1;
@@ -2413,7 +2413,7 @@ int pvn_cop_absl(const unsigned m, const unsigned n, const long double complex *
   return (MB == __builtin_infl());
 }
 
-int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
+int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *const A, const size_t ldA, float *const B, const size_t ldB, float *const C, const size_t ldC, float *const minB, float *const maxB, float *const minC, float *const maxC)
 {
   if (!m)
     return -1;
@@ -2477,7 +2477,7 @@ int pvn_cop_lgabsf(const unsigned m, const unsigned n, const float complex *cons
   return (MB == __builtin_inff());
 }
 
-int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
+int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *const A, const size_t ldA, double *const B, const size_t ldB, double *const C, const size_t ldC, double *const minB, double *const maxB, double *const minC, double *const maxC)
 {
   if (!m)
     return -1;
@@ -2541,7 +2541,7 @@ int pvn_cop_lgabs(const unsigned m, const unsigned n, const double complex *cons
   return (MB == __builtin_inf());
 }
 
-int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
+int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const C, const size_t ldC, long double *const minB, long double *const maxB, long double *const minC, long double *const maxC)
 {
   if (!m)
     return -1;
@@ -2605,7 +2605,7 @@ int pvn_cop_lgabsl(const unsigned m, const unsigned n, const long double complex
   return (MB == __builtin_infl());
 }
 
-int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *const restrict A, const size_t ldA, float *const restrict B, const size_t ldB, float *const restrict C, const size_t ldC, float *const restrict minB, float *const restrict maxB, float *const restrict minC, float *const restrict maxC)
+int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *const A, const size_t ldA, float *const B, const size_t ldB, float *const C, const size_t ldC, float *const minB, float *const maxB, float *const minC, float *const maxC)
 {
   if (!m)
     return -1;
@@ -2669,7 +2669,7 @@ int pvn_cop_logabsf(const unsigned m, const unsigned n, const float complex *con
   return (MB == __builtin_inff());
 }
 
-int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *const restrict A, const size_t ldA, double *const restrict B, const size_t ldB, double *const restrict C, const size_t ldC, double *const restrict minB, double *const restrict maxB, double *const restrict minC, double *const restrict maxC)
+int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *const A, const size_t ldA, double *const B, const size_t ldB, double *const C, const size_t ldC, double *const minB, double *const maxB, double *const minC, double *const maxC)
 {
   if (!m)
     return -1;
@@ -2733,7 +2733,7 @@ int pvn_cop_logabs(const unsigned m, const unsigned n, const double complex *con
   return (MB == __builtin_inf());
 }
 
-int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double complex *const restrict A, const size_t ldA, long double *const restrict B, const size_t ldB, long double *const restrict C, const size_t ldC, long double *const restrict minB, long double *const restrict maxB, long double *const restrict minC, long double *const restrict maxC)
+int pvn_cop_logabsl(const unsigned m, const unsigned n, const long double complex *const A, const size_t ldA, long double *const B, const size_t ldB, long double *const C, const size_t ldC, long double *const minB, long double *const maxB, long double *const minC, long double *const maxC)
 {
   if (!m)
     return -1;

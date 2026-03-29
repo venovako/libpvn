@@ -265,7 +265,7 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #ifndef off_t
 #define off_t ssize_t
 #endif /* !off_t */
-/* work-around some internal compiler errors */
+/* TODO: work-around some internal compiler errors, remove when not needed */
 #define __builtin_frexpl frexpl
 #include "../inc/getdelim.h"
 #include "../inc/getopt.h"
