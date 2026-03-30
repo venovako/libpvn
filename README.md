@@ -23,22 +23,24 @@ Some norm-related testers, results, and documentation has been *moved* to the [V
 The library has been successfully built using:
 | compiler | `uname` | platform |
 | -------- | ------- | -------- |
-| clang(1) | FreeBSD | arm64    |
-| gcc(2)   | Darwin  | x86_64   |
-| gcc(3)   | FreeBSD | arm64    |
-| gcc(4)   | Linux   | ppc64le  |
-| gcc(5)   | Linux   | x86_64   |
-| icx(6)   | Linux   | x86_64   |
-| nvc(7)   | Linux   | x86_64   |
+| clang(1) | Darwin  | x86_64   |
+| clang(2) | FreeBSD | arm64    |
+| gcc(3)   | Darwin  | x86_64   |
+| gcc(4)   | FreeBSD | arm64    |
+| gcc(5)   | Linux   | ppc64le  |
+| gcc(6)   | Linux   | x86_64   |
+| icx(7)   | Linux   | x86_64   |
+| nvc(8)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
-1. FreeBSD (clang 19.1.7),
-2. gcc.gnu.org (GCC 15.2.1),
-3. FreeBSD (GCC 14.2.0),
-4. openSUSE Tumbleweed (GCC 16.0.1),
-5. Oracle Linux (GCC 14.2.1-7),
-6. Intel oneAPI (2025.3.3),
-7. NVIDIA HPC SDK (26.3).
+1. Homebrew (clang 22.1.2),
+2. FreeBSD (clang 19.1.7),
+3. gcc.gnu.org (GCC 15.2.1),
+4. FreeBSD (GCC 14.2.0),
+5. openSUSE Tumbleweed (GCC 16.0.1),
+6. Oracle Linux (GCC 14.2.1-7),
+7. Intel oneAPI (2025.3.3),
+8. NVIDIA HPC SDK (26.3).
 
 Examples of building the library:
 ```bash

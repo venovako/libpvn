@@ -236,7 +236,7 @@ static void PVN_NO_PROF bt_destroy()
   }
 }
 
-/* It is assumed that atexit() handlers are called when exactly one thread of the process has remained running. */
+/* TODO: it is assumed that atexit() handlers are called when exactly one thread of the process has remained running. */
 static void PVN_NO_PROF on_prog_exit()
 {
 #if (PVN_PROFILE > 0u)

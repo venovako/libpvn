@@ -223,37 +223,38 @@ static int *me_p2(const int n)
     return (int*)NULL;
 
   const int *bp = (const int*)NULL;
-  if (b == 2)
-    bp = &(ME02[0][0][0]);
-  else if (b == 6)
-    bp = &(ME06[0][0][0]);
-  else if (b == 10)
-    bp = &(ME10[0][0][0]);
-  else if (b == 14)
-    bp = &(ME14[0][0][0]);
-  else if (b == 18)
-    bp = &(ME18[0][0][0]);
-  else if (b == 22)
-    bp = &(ME22[0][0][0]);
-  else if (b == 26)
-    bp = &(ME26[0][0][0]);
-  else if (b == 30)
-    bp = &(ME30[0][0][0]);
-  else if (b == 34)
-    bp = &(ME34[0][0][0]);
-  else if (b == 38)
-    bp = &(ME38[0][0][0]);
-  else if (b == 42)
-    bp = &(ME42[0][0][0]);
-  else /* no such base table */
+  switch (b) {
+  case 2:
+    bp = &(ME02[0][0][0]); break;
+  case 6:
+    bp = &(ME06[0][0][0]); break;
+  case 10:
+    bp = &(ME10[0][0][0]); break;
+  case 14:
+    bp = &(ME14[0][0][0]); break;
+  case 18:
+    bp = &(ME18[0][0][0]); break;
+  case 22:
+    bp = &(ME22[0][0][0]); break;
+  case 26:
+    bp = &(ME26[0][0][0]); break;
+  case 30:
+    bp = &(ME30[0][0][0]); break;
+  case 34:
+    bp = &(ME34[0][0][0]); break;
+  case 38:
+    bp = &(ME38[0][0][0]); break;
+  case 42:
+    bp = &(ME42[0][0][0]); break;
+  default: /* no such base table */
     return (int*)NULL;
+  }
 
   const size_t bsz = (bp ? ((b - 1) * (b * sizeof(int))) : (size_t)0u);
   int *cur = (int*)(bsz ? malloc(bsz) : NULL);
   if (!cur)
-    return cur;
-  (void)memcpy(cur, bp, bsz);
-  int *prev = (int*)NULL;
+    return (int*)NULL;
+  int *prev = (int*)memcpy(cur, bp, bsz);
 
   for (int i = 0; i < p2; ++i) {
     prev = cur;
@@ -297,7 +298,7 @@ int pvn_cjs_init(void *const js, const int id, const int n)
       return -3;
     info = n;
   }
-  else
+  else /* unknown strategy */
     return -2;
 
   ((int*)js)[0] = id;
