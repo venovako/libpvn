@@ -38,7 +38,11 @@ endif # !COMPILER
 ifneq ($(COMPILER),gcc)
 ifndef GCC
 ifeq ($(OS),Darwin)
+ifdef GNU
+GCC=gcc$(GNU)
+else # !GNU
 GCC=gcc-15
+endif # ?GNU
 else # !Darwin
 GCC=gcc
 endif # ?Darwin
