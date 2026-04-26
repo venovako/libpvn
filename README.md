@@ -39,7 +39,7 @@ Recent versions of the compilers have been provided by or used on:
 4. FreeBSD (GCC 14.2.0),
 5. openSUSE Tumbleweed (GCC 16.0.1),
 6. Oracle Linux (GCC 14.2.1-7),
-7. Intel oneAPI (2025.3.3),
+7. Intel oneAPI (2026.0.0),
 8. NVIDIA HPC SDK (26.3).
 
 Examples of building the library:
