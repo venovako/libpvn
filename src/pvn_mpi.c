@@ -56,11 +56,9 @@ int main(int argc, char *argv[])
   (void)dprintf(STDERR_FILENO, "MPI_Comm_size=%d\n", MPI_Comm_size(MPI_COMM_WORLD, &j));
   (void)dprintf(STDOUT_FILENO, "%d/%d\n", i, j);
   int *a = (int*)NULL;
-  /* TODO: unsupported with Intel MPI Library 2021.17.2 for Linux
   (void)dprintf(STDERR_FILENO, "MPI_Abi_get_fortran_booleans=%d\n", MPI_Abi_get_fortran_booleans(4, &i, &j, (int*)&a));
   if (a)
     (void)dprintf(STDOUT_FILENO, "T:%d F:%d\n", i, j);
-  */
   (void)dprintf(STDERR_FILENO, "MPI_Get_processor_name=%d\n", MPI_Get_processor_name(s, &j));
   (void)dprintf(STDOUT_FILENO, "%s\n", s);
   (void)dprintf(STDERR_FILENO, "MPI_Get_hw_resource_info=%d\n", MPI_Get_hw_resource_info(&info));
