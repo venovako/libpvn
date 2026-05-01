@@ -41,7 +41,7 @@ ifeq ($(OS),Darwin)
 ifdef GNU
 GCC=gcc$(GNU)
 else # !GNU
-GCC=gcc-15
+GCC=gcc-16
 endif # ?GNU
 else # !Darwin
 GCC=gcc
