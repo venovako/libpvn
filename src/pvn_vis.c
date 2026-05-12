@@ -161,12 +161,13 @@ int pvn_rvis_start_f(pvn_rvis_ctx_f *const ctx, const unsigned m, const unsigned
   return 1;
 }
 
-pvn_rvis_ctx_f* PVN_FABI(pvn_rvis_start_f,PVN_RVIS_START_F)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+pvn_rvis_ctx_f* PVN_FABI(pvn_rvis_start_f,PVN_RVIS_START_F)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const PVN_STRLENF lfnB)
 {
   PVN_ASSERT(m);
   PVN_ASSERT(n);
   PVN_ASSERT(fop);
   PVN_ASSERT(fnB);
+  PVN_ASSERT(lfnB);
   pvn_rvis_ctx_f *ret = (pvn_rvis_ctx_f*)NULL;
   pvn_rop_f op = (pvn_rop_f)NULL;
   switch (*fop) {
@@ -230,12 +231,13 @@ int pvn_rvis_start(pvn_rvis_ctx *const ctx, const unsigned m, const unsigned n, 
   return 1;
 }
 
-pvn_rvis_ctx* PVN_FABI(pvn_rvis_start,PVN_RVIS_START)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+pvn_rvis_ctx* PVN_FABI(pvn_rvis_start,PVN_RVIS_START)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const PVN_STRLENF lfnB)
 {
   PVN_ASSERT(m);
   PVN_ASSERT(n);
   PVN_ASSERT(fop);
   PVN_ASSERT(fnB);
+  PVN_ASSERT(lfnB);
   pvn_rvis_ctx *ret = (pvn_rvis_ctx*)NULL;
   pvn_rop op = (pvn_rop)NULL;
   switch (*fop) {
@@ -300,12 +302,13 @@ int pvn_rvis_start_l(pvn_rvis_ctx_l *const ctx, const unsigned m, const unsigned
   return 1;
 }
 
-pvn_rvis_ctx_l* PVN_FABI(pvn_rvis_start_l,PVN_RVIS_START_L)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, ...)
+pvn_rvis_ctx_l* PVN_FABI(pvn_rvis_start_l,PVN_RVIS_START_L)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const PVN_STRLENF lfnB)
 {
   PVN_ASSERT(m);
   PVN_ASSERT(n);
   PVN_ASSERT(fop);
   PVN_ASSERT(fnB);
+  PVN_ASSERT(lfnB);
   pvn_rvis_ctx_l *ret = (pvn_rvis_ctx_l*)NULL;
   pvn_rop_l op = (pvn_rop_l)NULL;
   switch (*fop) {
@@ -582,13 +585,14 @@ int pvn_rvis_stop_f(pvn_rvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return ret;
 }
 
-int PVN_FABI(pvn_rvis_stop_f,PVN_RVIS_STOP_F)(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int PVN_FABI(pvn_rvis_stop_f,PVN_RVIS_STOP_F)(pvn_rvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const PVN_STRLENF lbnB)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(sx);
   PVN_ASSERT(sy);
   PVN_ASSERT(bppB);
   PVN_ASSERT(bnB);
+  PVN_ASSERT(lbnB);
   const int r = pvn_rvis_stop_f(*ctx, *sx, *sy, *bppB, bnB);
   if (*ctx)
     free(*ctx);
@@ -758,13 +762,14 @@ int pvn_rvis_stop(pvn_rvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return ret;
 }
 
-int PVN_FABI(pvn_rvis_stop,PVN_RVIS_STOP)(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int PVN_FABI(pvn_rvis_stop,PVN_RVIS_STOP)(pvn_rvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const PVN_STRLENF lbnB)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(sx);
   PVN_ASSERT(sy);
   PVN_ASSERT(bppB);
   PVN_ASSERT(bnB);
+  PVN_ASSERT(lbnB);
   const int r = pvn_rvis_stop(*ctx, *sx, *sy, *bppB, bnB);
   if (*ctx)
     free(*ctx);
@@ -941,13 +946,14 @@ int pvn_rvis_stop_l(pvn_rvis_ctx_l *const ctx, const unsigned sx, const unsigned
   return ret;
 }
 
-int PVN_FABI(pvn_rvis_stop_l,PVN_RVIS_STOP_L)(pvn_rvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, ...)
+int PVN_FABI(pvn_rvis_stop_l,PVN_RVIS_STOP_L)(pvn_rvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const PVN_STRLENF lbnB)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(sx);
   PVN_ASSERT(sy);
   PVN_ASSERT(bppB);
   PVN_ASSERT(bnB);
+  PVN_ASSERT(lbnB);
   const int r = pvn_rvis_stop_l(*ctx, *sx, *sy, *bppB, bnB);
   if (*ctx)
     free(*ctx);
@@ -1014,7 +1020,7 @@ int pvn_cvis_start_f(pvn_cvis_ctx_f *const ctx, const unsigned m, const unsigned
   return 0;
 }
 
-pvn_cvis_ctx_f* PVN_FABI(pvn_cvis_start_f,PVN_CVIS_START_F)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+pvn_cvis_ctx_f* PVN_FABI(pvn_cvis_start_f,PVN_CVIS_START_F)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, const PVN_STRLENF lfnB, const PVN_STRLENF lfnC)
 {
   pvn_cvis_ctx_f *ret = (pvn_cvis_ctx_f*)NULL;
   if (!m)
@@ -1026,6 +1032,10 @@ pvn_cvis_ctx_f* PVN_FABI(pvn_cvis_start_f,PVN_CVIS_START_F)(const unsigned *cons
   if (!fnB)
     return ret;
   if (!fnC)
+    return ret;
+  if (!lfnB)
+    return ret;
+  if (!lfnC)
     return ret;
   pvn_cop_f op = (pvn_cop_f)NULL;
   switch (*fop) {
@@ -1111,7 +1121,7 @@ int pvn_cvis_start(pvn_cvis_ctx *const ctx, const unsigned m, const unsigned n, 
   return 0;
 }
 
-pvn_cvis_ctx* PVN_FABI(pvn_cvis_start,PVN_CVIS_START)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+pvn_cvis_ctx* PVN_FABI(pvn_cvis_start,PVN_CVIS_START)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, const PVN_STRLENF lfnB, const PVN_STRLENF lfnC)
 {
   pvn_cvis_ctx *ret = (pvn_cvis_ctx*)NULL;
   if (!m)
@@ -1123,6 +1133,10 @@ pvn_cvis_ctx* PVN_FABI(pvn_cvis_start,PVN_CVIS_START)(const unsigned *const m, c
   if (!fnB)
     return ret;
   if (!fnC)
+    return ret;
+  if (!lfnB)
+    return ret;
+  if (!lfnC)
     return ret;
   pvn_cop op = (pvn_cop)NULL;
   switch (*fop) {
@@ -1209,7 +1223,7 @@ int pvn_cvis_start_l(pvn_cvis_ctx_l *const ctx, const unsigned m, const unsigned
   return 0;
 }
 
-pvn_cvis_ctx_l* PVN_FABI(pvn_cvis_start_l,PVN_CVIS_START_L)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, ...)
+pvn_cvis_ctx_l* PVN_FABI(pvn_cvis_start_l,PVN_CVIS_START_L)(const unsigned *const m, const unsigned *const n, const unsigned *const fop, const char *const fnB, const char *const fnC, const PVN_STRLENF lfnB, const PVN_STRLENF lfnC)
 {
   pvn_cvis_ctx_l *ret = (pvn_cvis_ctx_l*)NULL;
   if (!m)
@@ -1221,6 +1235,10 @@ pvn_cvis_ctx_l* PVN_FABI(pvn_cvis_start_l,PVN_CVIS_START_L)(const unsigned *cons
   if (!fnB)
     return ret;
   if (!fnC)
+    return ret;
+  if (!lfnB)
+    return ret;
+  if (!lfnC)
     return ret;
   pvn_cop_l op = (pvn_cop_l)NULL;
   switch (*fop) {
@@ -1385,7 +1403,7 @@ int pvn_cvis_stop_f(pvn_cvis_ctx_f *const ctx, const unsigned sx, const unsigned
   return (ret | ctx->err);
 }
 
-int PVN_FABI(pvn_cvis_stop_f,PVN_CVIS_STOP_F)(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int PVN_FABI(pvn_cvis_stop_f,PVN_CVIS_STOP_F)(pvn_cvis_ctx_f *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, const PVN_STRLENF lbnB, const PVN_STRLENF lbnC)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(sx);
@@ -1394,6 +1412,8 @@ int PVN_FABI(pvn_cvis_stop_f,PVN_CVIS_STOP_F)(pvn_cvis_ctx_f *const *const ctx, 
   PVN_ASSERT(bnB);
   PVN_ASSERT(bppC);
   PVN_ASSERT(bnC);
+  PVN_ASSERT(lbnB);
+  PVN_ASSERT(lbnC);
   const int r = pvn_cvis_stop_f(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
   if (*ctx)
     free(*ctx);
@@ -1442,7 +1462,7 @@ int pvn_cvis_stop(pvn_cvis_ctx *const ctx, const unsigned sx, const unsigned sy,
   return (ret | ctx->err);
 }
 
-int PVN_FABI(pvn_cvis_stop,PVN_CVIS_STOP)(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int PVN_FABI(pvn_cvis_stop,PVN_CVIS_STOP)(pvn_cvis_ctx *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, const PVN_STRLENF lbnB, const PVN_STRLENF lbnC)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(sx);
@@ -1451,6 +1471,8 @@ int PVN_FABI(pvn_cvis_stop,PVN_CVIS_STOP)(pvn_cvis_ctx *const *const ctx, const 
   PVN_ASSERT(bnB);
   PVN_ASSERT(bppC);
   PVN_ASSERT(bnC);
+  PVN_ASSERT(lbnB);
+  PVN_ASSERT(lbnC);
   const int r = pvn_cvis_stop(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
   if (*ctx)
     free(*ctx);
@@ -1500,7 +1522,7 @@ int pvn_cvis_stop_l(pvn_cvis_ctx_l *const ctx, const unsigned sx, const unsigned
   return (ret | ctx->err);
 }
 
-int PVN_FABI(pvn_cvis_stop_l,PVN_CVIS_STOP_L)(pvn_cvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, ...)
+int PVN_FABI(pvn_cvis_stop_l,PVN_CVIS_STOP_L)(pvn_cvis_ctx_l *const *const ctx, const unsigned *const sx, const unsigned *const sy, const unsigned *const bppB, const char *const bnB, const unsigned *const bppC, const char *const bnC, const PVN_STRLENF lbnB, const PVN_STRLENF lbnC)
 {
   PVN_ASSERT(ctx);
   PVN_ASSERT(sx);
@@ -1509,6 +1531,8 @@ int PVN_FABI(pvn_cvis_stop_l,PVN_CVIS_STOP_L)(pvn_cvis_ctx_l *const *const ctx, 
   PVN_ASSERT(bnB);
   PVN_ASSERT(bppC);
   PVN_ASSERT(bnC);
+  PVN_ASSERT(lbnB);
+  PVN_ASSERT(lbnC);
   const int r = pvn_cvis_stop_l(*ctx, *sx, *sy, *bppB, bnB, *bppC, bnC);
   if (*ctx)
     free(*ctx);

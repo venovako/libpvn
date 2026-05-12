@@ -90,6 +90,14 @@ typedef void (*sig_t)(int);
 #endif /* ?_WIN32 */
 #endif /* !PVN_FABI */
 
+/* See, e.g.,
+   https://gcc.gnu.org/onlinedocs/gfortran/Argument-passing-conventions.html
+   https://flang.llvm.org/docs/Calls.html
+*/
+#ifndef PVN_STRLENF
+#define PVN_STRLENF size_t
+#endif /* !PVN_STRLENF */
+
 #ifdef PVN_CILK
 PVN_EXTERN_C unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)();
 #else /* !PVN_CILK */

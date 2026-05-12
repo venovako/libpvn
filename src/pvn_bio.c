@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   off_t sz = (off_t)atol(argv[2]);
-  int fd = PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(&sz, argv[1]);
+  int fd = PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(&sz, argv[1], (PVN_STRLENF)strlen(argv[1]));
   (void)printf("pvn_bopen_wo=%d, sz=%ld\n", fd, (long)sz);
   if (fd >= 0)
     (void)printf("pvn_bclose=%d\n", (fd = PVN_FABI(pvn_bclose,PVN_BCLOSE)(&fd)));
@@ -23,12 +23,12 @@ static const int perms = (_S_IREAD | _S_IWRITE);
 static const mode_t perms = (S_IRUSR | S_IWUSR);
 #endif /* ?_WIN32 */
 
-int PVN_FABI(pvn_bopen_ro,PVN_BOPEN_RO)(off_t *const sz, const char *const fn, ...)
+int PVN_FABI(pvn_bopen_ro,PVN_BOPEN_RO)(off_t *const sz, const char *const fn, const PVN_STRLENF lfn)
 {
 #ifdef _WIN32
-  const int fd = (fn ? open(fn, _O_RDONLY) : -2);
+  const int fd = ((fn && lfn) ? open(fn, _O_RDONLY) : -2);
 #else /* !_WIN32 */
-  const int fd = (fn ? open(fn, (O_RDONLY | PVN_LF64)) : -2);
+  const int fd = ((fn && lfn) ? open(fn, (O_RDONLY | PVN_LF64)) : -2);
 #endif /* ?_WIN32 */
   if (fd >= 0) {
     if (sz) {
@@ -43,12 +43,12 @@ int PVN_FABI(pvn_bopen_ro,PVN_BOPEN_RO)(off_t *const sz, const char *const fn, .
   return fd;
 }
 
-int PVN_FABI(pvn_bopen_rw,PVN_BOPEN_RW)(off_t *const sz, const char *const fn, ...)
+int PVN_FABI(pvn_bopen_rw,PVN_BOPEN_RW)(off_t *const sz, const char *const fn, const PVN_STRLENF lfn)
 {
 #ifdef _WIN32
-  const int fd = (fn ? open(fn, (_O_RDWR | _O_CREAT), perms) : -2);
+  const int fd = ((fn && lfn) ? open(fn, (_O_RDWR | _O_CREAT), perms) : -2);
 #else /* !_WIN32 */
-  const int fd = (fn ? open(fn, (O_RDWR | O_CREAT | PVN_LF64), perms) : -2);
+  const int fd = ((fn && lfn) ? open(fn, (O_RDWR | O_CREAT | PVN_LF64), perms) : -2);
 #endif /* ?_WIN32 */
   if (fd >= 0) {
     if (sz) {
@@ -77,12 +77,12 @@ int PVN_FABI(pvn_bopen_rw,PVN_BOPEN_RW)(off_t *const sz, const char *const fn, .
   return fd;
 }
 
-int PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(off_t *const sz, const char *const fn, ...)
+int PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(off_t *const sz, const char *const fn, const PVN_STRLENF lfn)
 {
 #ifdef _WIN32
-  const int fd = (fn ? open(fn, (_O_WRONLY | _O_CREAT), perms) : -2);
+  const int fd = ((fn && lfn) ? open(fn, (_O_WRONLY | _O_CREAT), perms) : -2);
 #else /* !_WIN32 */
-  const int fd = (fn ? open(fn, (O_WRONLY | O_CREAT | PVN_LF64), perms) : -2);
+  const int fd = ((fn && lfn) ? open(fn, (O_WRONLY | O_CREAT | PVN_LF64), perms) : -2);
 #endif /* ?_WIN32 */
   if (fd >= 0) {
     if (sz) {

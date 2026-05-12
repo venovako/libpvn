@@ -149,7 +149,7 @@ PVN_EXTERN_C size_t pvn_factorize(const size_t x, size_t **const p, size_t **con
 PVN_EXTERN_C size_t PVN_FABI(pvn_factorize,PVN_FACTORIZE)(const size_t *const x, size_t **const p, size_t **const m);
 
 PVN_EXTERN_C char *pvn_hexify(char *const s, const void *const x, const size_t z);
-PVN_EXTERN_C size_t PVN_FABI(pvn_hexify,PVN_HEXIFY)(char *const s, const void *const x, const size_t *const z, ...);
+PVN_EXTERN_C size_t PVN_FABI(pvn_hexify,PVN_HEXIFY)(char *const s, const void *const x, const size_t *const z, const PVN_STRLENF ls);
 
 PVN_EXTERN_C int PVN_FABI(pvn_signbitf,PVN_SIGNBITF)(const float *const x);
 PVN_EXTERN_C int PVN_FABI(pvn_signbit,PVN_SIGNBIT)(const double *const x);

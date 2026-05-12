@@ -155,12 +155,12 @@ char *pvn_hexify(char *const s, const void *const x, const size_t z)
   return s;
 }
 
-size_t PVN_FABI(pvn_hexify,PVN_HEXIFY)(char *const s, const void *const x, const size_t *const z, ...)
+size_t PVN_FABI(pvn_hexify,PVN_HEXIFY)(char *const s, const void *const x, const size_t *const z, const PVN_STRLENF ls)
 {
   PVN_ASSERT(s);
   PVN_ASSERT(x);
   PVN_ASSERT(z);
-  return strlen(pvn_hexify(s, x, *z));
+  return (ls ? strlen(pvn_hexify(s, x, *z)) : (size_t)0u);
 }
 
 int PVN_FABI(pvn_signbitf,PVN_SIGNBITF)(const float *const x)
