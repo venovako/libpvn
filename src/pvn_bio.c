@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   off_t sz = (off_t)atol(argv[2]);
-  int fd = PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(&sz, argv[1], (PVN_STRLENF)strlen(argv[1]));
+  int fd = PVN_FABI(pvn_bopen_wo,PVN_BOPEN_WO)(&sz, argv[1], (PVN_STRLENF)(strlen(argv[1]) + 1u));
   (void)printf("pvn_bopen_wo=%d, sz=%ld\n", fd, (long)sz);
   if (fd >= 0)
     (void)printf("pvn_bclose=%d\n", (fd = PVN_FABI(pvn_bclose,PVN_BCLOSE)(&fd)));
