@@ -1,0 +1,6 @@
+PROGRAM CHK_STR_FABI
+  USE, INTRINSIC :: ISO_C_BINDING
+  IMPLICIT NONE
+  INTEGER, EXTERNAL :: CHK_STR
+  PRINT *, CHK_STR(c_char_''//c_null_char, c_char_' '//c_null_char)
+END PROGRAM CHK_STR_FABI
