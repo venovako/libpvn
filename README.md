@@ -69,8 +69,8 @@ The functions that do not interface other non-system libraries can safely be cal
 You might wish to tune the compiler flags to match yours, especially if you are building a static executable and/or want to use [OpenMP](https://openmp.org).
 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
-
-All functions declared with `PVN_FABI` and not taking their arguments by value should be callable from Fortran without an explicit interface, just by declaring it `EXTERNAL` (without the underscore).
+All functions declared with `PVN_FABI` should be callable from Fortran without an explicit interface, just by declaring them `EXTERNAL`.
+If a Fortran-callable function takes a string as an argument, the string should be nul-terminated (e.g., by appending `c_null_char` to it).
 
 Setting the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path overrides the included choice of the CORE-MATH functions.
 If the object files have not been prepared beforehand, the source files will be compiled in either case.

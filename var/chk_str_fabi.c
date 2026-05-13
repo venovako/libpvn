@@ -20,7 +20,7 @@ chk_str_
     ret |= 1;
   l = strlen(b);
   (void)printf("b: %zu %zu\n", l, lb);
-  if ((strlen(b) + 1u) != lb)
+  if ((l + 1u) != lb)
     ret |= 2;
   return ret;
 }
