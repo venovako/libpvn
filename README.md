@@ -28,19 +28,18 @@ The library has been successfully built using:
 | gcc(3)   | Darwin  | x86_64   |
 | gcc(4)   | FreeBSD | arm64    |
 | gcc(5)   | Linux   | ppc64le  |
-| gcc(6)   | Linux   | x86_64   |
-| icx(7)   | Linux   | x86_64   |
-| nvc(8)   | Linux   | x86_64   |
+| gcc(5)   | Linux   | x86_64   |
+| icx(6)   | Linux   | x86_64   |
+| nvc(7)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
-1. Homebrew (clang 22.1.2),
+1. Homebrew (clang 22.1.5),
 2. FreeBSD (clang 19.1.7),
 3. gcc.gnu.org (GCC 16.1.0),
 4. FreeBSD (GCC 14.2.0),
-5. openSUSE Tumbleweed (GCC 16.0.1),
-6. Oracle Linux (GCC 14.2.1-7),
-7. Intel oneAPI (2026.0.0),
-8. NVIDIA HPC SDK (26.3).
+5. openSUSE Tumbleweed (GCC 16.1.1),
+6. Intel oneAPI (2026.0.0),
+7. NVIDIA HPC SDK (26.3).
 
 Examples of building the library:
 ```bash
