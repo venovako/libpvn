@@ -1,4 +1,5 @@
 OS=$(shell uname)
+
 ifdef STATIC
 ifeq ($(OS),Darwin)
 $(error static linking is not supported on Darwin)
@@ -8,6 +9,7 @@ ifeq ($(findstring MINGW64,$(OS)),MINGW64)
 STATIC=-s
 endif # MINGW64
 endif # ?STATIC
+
 MACHINE=$(shell uname -m)
 ifeq ($(MACHINE),amd64)
 ARCH=x86_64
@@ -18,6 +20,7 @@ else # !aarch64
 ARCH=$(MACHINE)
 endif # ?aarch64
 endif # ?amd64
+
 ifeq ($(OS),Darwin)
 DYNAMIC=dylib
 else # !Darwin
@@ -35,6 +38,7 @@ else # !Linux
 COMPILER=clang
 endif # ?Linux
 endif # !COMPILER
+
 ifneq ($(COMPILER),gcc)
 ifndef GCC
 ifeq ($(OS),Darwin)
@@ -48,10 +52,14 @@ GCC=gcc
 endif # ?Darwin
 endif # !GCC
 endif # !gcc
+
+ifneq ($(COMPILER),clang)
+ifndef CLANG
+CLANG=clang
+endif # !CLANG
+endif # !clang
+
 include $(COMPILER).mk
-ifndef GCC
-GCC=$(CC)
-endif # !GCC
 MKFS=GNUmakefile $(COMPILER).mk
 
 ifeq ($(findstring 86,$(ARCH)),86)
