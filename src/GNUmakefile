@@ -289,8 +289,8 @@ endif # !MINGW64
 
 ifeq ($(OS),Darwin)
 PFLAGS += -DPVN_DYNAMIC=2
-DLDFLAGS=-Wl,-install_name,$(CURDIR)/libpvn.$(DYNAMIC) -Wl,-warn_unused_dylibs -Wl,-warn_commons
-LDFLAGS=-rdynamic -Wl,-warn_unused_dylibs -Wl,-warn_commons
+DLDFLAGS=-dynamiclib -Wl,-install_name,$(CURDIR)/libpvn.$(DYNAMIC) -Wl,-warn_unused_dylibs -Wl,-warn_commons -Wl,-bind_at_load -Wl,-root_safe -Wl,-setuid_safe
+LDFLAGS=-rdynamic -Wl,-warn_unused_dylibs -Wl,-warn_commons -Wl,-bind_at_load
 else # !Darwin
 ifndef STATIC
 PFLAGS += -DPVN_DYNAMIC=1
@@ -301,6 +301,7 @@ ifneq ($(NDEBUG),g)
 DLDFLAGS += -O$(NDEBUG)
 endif # !g
 endif # NDEBUG
+DLDFLAGS += -z global -z now
 ifeq ($(COMPILER),nvc)
 LDFLAGS=-Wl,-E
 else # !nvc
@@ -315,6 +316,10 @@ LDFLAGS += -static $(STATIC)
 else # !STATIC
 LDFLAGS += -Wl,--warn-common
 endif # ?STATIC
+LDFLAGS += -Wl,-z,now
+ifeq ($(OS),Linux)
+LDFLAGS += -Wl,-z,noexecstack
+endif # Linux
 endif # ?Darwin
 LNK=
 ifdef SLEEF
@@ -439,7 +444,7 @@ libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 libpvn.dylib: libpvn.a $(MKFS)
-	clang -dynamiclib $(DLDFLAGS) -o $@ $(OBJS) $(LNK) 
+	$(CLANG) $(DLDFLAGS) -o $@ $(OBJS) $(LNK)
 
 libpvn.so: libpvn.a $(MKFS)
 	ld -shared $(DLDFLAGS) -o $@ $(OBJS)
