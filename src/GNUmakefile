@@ -303,7 +303,7 @@ else # !Darwin
 ifndef STATIC
 PFLAGS += -DPVN_DYNAMIC=1
 endif # !STATIC
-DLDFLAGS=--warn-common
+DLDFLAGS=--sort-common --warn-common
 ifdef NDEBUG
 ifneq ($(NDEBUG),g)
 DLDFLAGS += -O$(NDEBUG)
@@ -322,12 +322,9 @@ endif # ?nvc
 ifdef STATIC
 LDFLAGS += -static $(STATIC)
 else # !STATIC
-LDFLAGS += -Wl,--warn-common
-endif # ?STATIC
 LDFLAGS += -Wl,-z,now
-ifeq ($(OS),Linux)
-LDFLAGS += -Wl,-z,noexecstack
-endif # Linux
+endif # ?STATIC
+LDFLAGS += -Wl,--sort-common -Wl,--warn-common
 endif # ?Darwin
 LNK=
 ifdef SLEEF
