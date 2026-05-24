@@ -320,7 +320,7 @@ LDFLAGS=-rdynamic
 endif # ?MINGW64
 endif # ?nvc
 ifdef STATIC
-LDFLAGS += -static $(STATIC)
+LDFLAGS += -static -Wl,$(STATIC)
 else # !STATIC
 LDFLAGS += -Wl,-z,now
 endif # ?STATIC
