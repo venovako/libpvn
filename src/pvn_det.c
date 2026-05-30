@@ -131,18 +131,16 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     v = (ea + ed);
   int
     s = (u - v);
-  if (s > FLT_MAX_EXP) {
-    *t = (s - FLT_MAX_EXP);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = __builtin_scalbnf(fa, t_2);
-    fd = __builtin_scalbnf(fd, t_2);
-    s -= *t;
-    *t += v;
-  }
-  else
-    *t = v;
+  /* if the exponents are obtained as floating-point values (e.g., with AVX512),
+     this can be computed branch-free, as _mm512_max_ps(vec(s) - ..., zero) */
+  *t = ((s > FLT_MAX_EXP) ? (s - FLT_MAX_EXP) : 0);
+  *t += (*t & 1);
+  const int
+    t_2 = -(*t >> 1);
+  fa = __builtin_scalbnf(fa, t_2);
+  fd = __builtin_scalbnf(fd, t_2);
+  s -= *t;
+  *t += v;
   const float
     w = (fb * fc),
     e = __builtin_fmaf(-fb, fc, w),
@@ -177,18 +175,14 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     v = (ea + ed);
   int
     s = (u - v);
-  if (s > DBL_MAX_EXP) {
-    *t = (s - DBL_MAX_EXP);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = __builtin_scalbn(fa, t_2);
-    fd = __builtin_scalbn(fd, t_2);
-    s -= *t;
-    *t += v;
-  }
-  else
-    *t = v;
+  *t = ((s > DBL_MAX_EXP) ? (s - DBL_MAX_EXP) : 0);
+  *t += (*t & 1);
+  const int
+    t_2 = -(*t >> 1);
+  fa = __builtin_scalbn(fa, t_2);
+  fd = __builtin_scalbn(fd, t_2);
+  s -= *t;
+  *t += v;
   const double
     w = (fb * fc),
     e = __builtin_fma(-fb, fc, w),
@@ -223,18 +217,14 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     v = (ea + ed);
   int
     s = (u - v);
-  if (s > LDBL_MAX_EXP) {
-    *t = (s - LDBL_MAX_EXP);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = __builtin_scalbnl(fa, t_2);
-    fd = __builtin_scalbnl(fd, t_2);
-    s -= *t;
-    *t += v;
-  }
-  else
-    *t = v;
+  *t = ((s > LDBL_MAX_EXP) ? (s - LDBL_MAX_EXP) : 0);
+  *t += (*t & 1);
+  const int
+    t_2 = -(*t >> 1);
+  fa = __builtin_scalbnl(fa, t_2);
+  fd = __builtin_scalbnl(fd, t_2);
+  s -= *t;
+  *t += v;
   const long double
     w = (fb * fc),
     e = __builtin_fmal(-fb, fc, w),
@@ -269,18 +259,14 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
     v = (ea + ed);
   int
     s = (u - v);
-  if (s > FLT128_MAX_EXP) {
-    *t = (s - FLT128_MAX_EXP);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = scalbnq(fa, t_2);
-    fd = scalbnq(fd, t_2);
-    s -= *t;
-    *t += v;
-  }
-  else
-    *t = v;
+  *t = ((s > FLT128_MAX_EXP) ? (s - FLT128_MAX_EXP) : 0);
+  *t += (*t & 1);
+  const int
+    t_2 = -(*t >> 1);
+  fa = scalbnq(fa, t_2);
+  fd = scalbnq(fd, t_2);
+  s -= *t;
+  *t += v;
   const __float128
     w = (fb * fc),
     e = fmaq(-fb, fc, w),
