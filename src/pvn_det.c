@@ -131,8 +131,6 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     v = (ea + ed);
   int
     s = (u - v);
-  /* if the exponents are obtained as floating-point values (e.g., with AVX512),
-     this can be computed branch-free, as _mm512_max_ps(vec(s) - ..., zero) */
   *t = ((s > FLT_MAX_EXP) ? (s - FLT_MAX_EXP) : 0);
   *t += (*t & 1);
   const int
@@ -282,4 +280,120 @@ long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long d
   return PVN_FABI(pvn_xdet,PVN_XDET)(a, b, c, d, x, t);
 }
 #endif /* ?PVN_QUADMATH */
+
+#ifdef __AVX512F__
+#define ZFREXPF(X,E,M)                           \
+  E = _mm512_getexp_ps(X);                       \
+  m = _knot_mask16(_mm512_cmple_ps_mask(E, mI)); \
+  E = _mm512_mask_add_ps(Z, m, E, O);            \
+  M = _mm512_mask_getmant_ps(Z, m, X, _MM_MANT_NORM_p5_1, _MM_MANT_SIGN_src)
+
+void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, const float *const c, const float *const d, float *const x, int *const t, float *const y)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  PVN_ASSERT(x);
+  PVN_ASSERT(t);
+  PVN_ASSERT(y);
+  register __m512 fA = _mm512_load_ps(a);
+  register __m512 fB = _mm512_load_ps(b);
+  register __m512 fC = _mm512_load_ps(c);
+  register __m512 fD = _mm512_load_ps(d);
+  register const __m512 Z = _mm512_setzero_ps();
+  register const __m512 O = _mm512_set1_ps(1.0f);
+  register const __m512 mI = _mm512_set1_ps(-__builtin_inff());
+  register __m512 eA, eB, eC, eD;
+  register __mmask16 m;
+  ZFREXPF(fA, eA, fA);
+  ZFREXPF(fB, eB, fB);
+  ZFREXPF(fC, eC, fC);
+  ZFREXPF(fD, eD, fD);
+  register const __m512 U = _mm512_add_ps(eB, eC);
+  register const __m512 V = _mm512_add_ps(eA, eD);
+  register __m512 S = _mm512_sub_ps(U, V);
+  register __m512 T = _mm512_set1_ps(FLT_MAX_EXP);
+  T = _mm512_sub_ps(S, T);
+  T = _mm512_max_ps(T, Z);
+  register __m512 Y = _mm512_cvtepi32_ps(_mm512_and_epi32(_mm512_cvtps_epi32(T), _mm512_set1_epi32(1)));
+  T = _mm512_add_ps(T, Y);
+  Y = _mm512_mul_ps(T, _mm512_set1_ps(-0.5f));
+  fA = _mm512_scalef_ps(fA, Y);
+  fD = _mm512_scalef_ps(fD, Y);
+  S = _mm512_sub_ps(S, T);
+  T = _mm512_add_ps(T, V);
+  register __m512 W = _mm512_mul_ps(fB, fC);
+  register __m512 E = _mm512_fnmadd_ps(fB, fC, W);
+  W = _mm512_scalef_ps(W, S);
+  register const __m512 F = _mm512_fmsub_ps(fA, fD, W);
+  Y = _mm512_sub_ps(S, O);
+  Y = _mm512_scalef_ps(O, Y);
+  E = _mm512_mul_ps(E, _mm512_set1_ps(2.0f));
+  Y = _mm512_fmadd_ps(Y, E, F);
+  ZFREXPF(Y, S, W);
+  _mm512_store_ps(x, W);
+  T = _mm512_add_ps(T, S);
+  _mm512_store_epi32(t, _mm512_cvtps_epi32(T));
+  Y = _mm512_scalef_ps(W, T);
+  _mm512_store_ps(y, Y);
+}
+
+#define ZFREXP(X,E,M)                                                 \
+  E = _mm512_getexp_pd(X);                                            \
+  m = (__mmask8)_knot_mask16((__mmask16)_mm512_cmple_pd_mask(E, mI)); \
+  E = _mm512_mask_add_pd(Z, m, E, O);                                 \
+  M = _mm512_mask_getmant_pd(Z, m, X, _MM_MANT_NORM_p5_1, _MM_MANT_SIGN_src)
+
+void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, const double *const c, const double *const d, double *const x, int *const t, double *const y)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  PVN_ASSERT(x);
+  PVN_ASSERT(t);
+  PVN_ASSERT(y);
+  register __m512d fA = _mm512_load_pd(a);
+  register __m512d fB = _mm512_load_pd(b);
+  register __m512d fC = _mm512_load_pd(c);
+  register __m512d fD = _mm512_load_pd(d);
+  register const __m512d Z = _mm512_setzero_pd();
+  register const __m512d O = _mm512_set1_pd(1.0);
+  register const __m512d mI = _mm512_set1_pd(-__builtin_inf());
+  register __m512d eA, eB, eC, eD;
+  register __mmask8 m;
+  ZFREXP(fA, eA, fA);
+  ZFREXP(fB, eB, fB);
+  ZFREXP(fC, eC, fC);
+  ZFREXP(fD, eD, fD);
+  register const __m512d U = _mm512_add_pd(eB, eC);
+  register const __m512d V = _mm512_add_pd(eA, eD);
+  register __m512d S = _mm512_sub_pd(U, V);
+  register __m512d T = _mm512_set1_pd(DBL_MAX_EXP);
+  T = _mm512_sub_pd(S, T);
+  T = _mm512_max_pd(T, Z);
+  register __m512d Y = _mm512_cvtepi32_pd(_mm256_and_si256(_mm512_cvtpd_epi32(T), _mm256_set1_epi32(1)));
+  T = _mm512_add_pd(T, Y);
+  Y = _mm512_mul_pd(T, _mm512_set1_pd(-0.5));
+  fA = _mm512_scalef_pd(fA, Y);
+  fD = _mm512_scalef_pd(fD, Y);
+  S = _mm512_sub_pd(S, T);
+  T = _mm512_add_pd(T, V);
+  register __m512d W = _mm512_mul_pd(fB, fC);
+  register __m512d E = _mm512_fnmadd_pd(fB, fC, W);
+  W = _mm512_scalef_pd(W, S);
+  register const __m512d F = _mm512_fmsub_pd(fA, fD, W);
+  Y = _mm512_sub_pd(S, O);
+  Y = _mm512_scalef_pd(O, Y);
+  E = _mm512_mul_pd(E, _mm512_set1_pd(2.0));
+  Y = _mm512_fmadd_pd(Y, E, F);
+  ZFREXPF(Y, S, W);
+  _mm512_store_pd(x, W);
+  T = _mm512_add_pd(T, S);
+  _mm256_store_si256((__m256i*)t, _mm512_cvtpd_epi32(T));
+  Y = _mm512_scalef_pd(W, T);
+  _mm512_store_pd(y, Y);
+}
+#endif /* __AVX512F__ */
 #endif /* ?PVN_TEST */

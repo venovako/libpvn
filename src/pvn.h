@@ -279,6 +279,10 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #include "../inc/getopt.h"
 #endif /* _WIN32 */
 
+#ifdef __AVX__
+#include <immintrin.h>
+#endif /* __AVX__ */
+
 #include "pvn_aux.h"
 #include "pvn_bio.h"
 #include "pvn_bmp.h"

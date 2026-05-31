@@ -1,9 +1,5 @@
 #include "pvn.h"
 
-#if (defined(__RDRND__) && !defined(__NVCOMPILER))
-#include <immintrin.h>
-#endif /* __RDRND__ */
-
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {

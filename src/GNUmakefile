@@ -48,14 +48,14 @@ else # !GNU
 GCC=gcc-16
 endif # ?GNU
 else # !Darwin
-GCC=gcc
+GCC=gcc$(GNU)
 endif # ?Darwin
 endif # !GCC
 endif # !gcc
 
 ifneq ($(COMPILER),clang)
 ifndef CLANG
-CLANG=clang
+CLANG=clang$(LLVM)
 endif # !CLANG
 endif # !clang
 
