@@ -282,10 +282,10 @@ long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long d
 #endif /* ?PVN_QUADMATH */
 
 #ifdef __AVX512F__
-#define ZFREXPF(X,E,M)                           \
-  E = _mm512_getexp_ps(X);                       \
-  m = _knot_mask16(_mm512_cmple_ps_mask(E, mI)); \
-  E = _mm512_mask_add_ps(Z, m, E, O);            \
+#define ZFREXPF(X,E,M)                \
+  E = _mm512_getexp_ps(X);            \
+  m = _mm512_cmplt_ps_mask(mI, E);    \
+  E = _mm512_mask_add_ps(Z, m, E, O); \
   M = _mm512_mask_getmant_ps(Z, m, X, _MM_MANT_NORM_p5_1, _MM_MANT_SIGN_src)
 
 void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, const float *const c, const float *const d, float *const x, int *const t, float *const y)
@@ -339,10 +339,10 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   _mm512_store_ps(y, Y);
 }
 
-#define ZFREXP(X,E,M)                                                 \
-  E = _mm512_getexp_pd(X);                                            \
-  m = (__mmask8)_knot_mask16((__mmask16)_mm512_cmple_pd_mask(E, mI)); \
-  E = _mm512_mask_add_pd(Z, m, E, O);                                 \
+#define ZFREXP(X,E,M)                 \
+  E = _mm512_getexp_pd(X);            \
+  m = _mm512_cmplt_pd_mask(mI, E);    \
+  E = _mm512_mask_add_pd(Z, m, E, O); \
   M = _mm512_mask_getmant_pd(Z, m, X, _MM_MANT_NORM_p5_1, _MM_MANT_SIGN_src)
 
 void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, const double *const c, const double *const d, double *const x, int *const t, double *const y)
