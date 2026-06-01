@@ -388,7 +388,7 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   Y = _mm512_scalef_pd(O, Y);
   E = _mm512_mul_pd(E, _mm512_set1_pd(2.0));
   Y = _mm512_fmadd_pd(Y, E, F);
-  ZFREXPF(Y, S, W);
+  ZFREXP(Y, S, W);
   _mm512_store_pd(x, W);
   T = _mm512_add_pd(T, S);
   _mm256_store_si256((__m256i*)t, _mm512_cvtpd_epi32(T));
