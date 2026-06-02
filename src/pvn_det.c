@@ -236,7 +236,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     v = (ea + ed);
   int
     s = (u - v);
-  *t = (int)__builtin_fmaxf(((float)s - (float)FLT_MAX_EXP), 0.0f);
+  *t = (int)__builtin_fmaxf((float)(s - FLT_MAX_EXP), 0.0f);
   *t += (*t & 1);
   const int
     t_2 = -(*t >> 1);
@@ -278,7 +278,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     v = (ea + ed);
   int
     s = (u - v);
-  *t = (int)__builtin_fmax(((double)s - (double)DBL_MAX_EXP), 0.0);
+  *t = (int)__builtin_fmax((double)(s - DBL_MAX_EXP), 0.0);
   *t += (*t & 1);
   const int
     t_2 = -(*t >> 1);
@@ -320,7 +320,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     v = (ea + ed);
   int
     s = (u - v);
-  *t = ((s > LDBL_MAX_EXP) ? (s - LDBL_MAX_EXP) : 0);
+  *t = (int)__builtin_fmaxl((long double)(s - LDBL_MAX_EXP), 0.0L);
   *t += (*t & 1);
   const int
     t_2 = -(*t >> 1);
