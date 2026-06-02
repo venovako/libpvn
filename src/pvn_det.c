@@ -28,26 +28,30 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   double *a = (double*)NULL;
-  double *b = (double*)NULL;
-  double *c = (double*)NULL;
-  double *d = (double*)NULL;
-  double *r = (double*)NULL;
-  double *x = (double*)NULL;
-  double *y = (double*)NULL;
-  double *z = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&a, PVN_VECLEN, m));
+  double *b = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&b, PVN_VECLEN, m));
+  double *c = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&c, PVN_VECLEN, m));
+  double *d = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&d, PVN_VECLEN, m));
+  double *r = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&r, PVN_VECLEN, m));
+  double *x = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&x, PVN_VECLEN, m));
+  double *y = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&y, PVN_VECLEN, m));
+#ifdef __AVX512F__
+  double *z = (double*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&z, PVN_VECLEN, m));
+#endif /* __AVX512F__ */
   m = n * sizeof(int);
   int *t = (int*)NULL;
-  int *v = (int*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&t, PVN_VECLEN, m));
+#ifdef __AVX512F__
+  int *v = (int*)NULL;
   PVN_SYSI_CALL(posix_memalign((void**)&v, PVN_VECLEN, m));
+#endif /* __AVX512F__ */
   double e = __builtin_inf(), E = 0.0;
   mpfr_t ma, mb, mc, md, mr, mx;
   u = mpfr_init_set_d(ma, E, MPFR_RNDN);
@@ -135,6 +139,7 @@ int main(int argc, char *argv[])
   u = PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
   (void)printf("min rel err=%s\n", pvn_dtoa(s, e));
   (void)printf("max rel err=%s\n", pvn_dtoa(s, E));
+#ifdef __AVX512F__
   (void)printf("Running ZDET ... ");
   (void)fflush(stdout);
   f = pvn_time_mono_ns();
@@ -171,9 +176,13 @@ int main(int argc, char *argv[])
   }
   (void)printf("%d\n", u);
   (void)fflush(stdout);
+#ifdef __AVX512F__
   free(v);
+#endif /* __AVX512F__ */
   free(t);
+#ifdef __AVX512F__
   free(z);
+#endif /* __AVX512F__ */
   free(y);
   free(x);
   free(r);
@@ -228,7 +237,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     v = (ea + ed);
   int
     s = (u - v);
-  *t = ((s > FLT_MAX_EXP) ? (s - FLT_MAX_EXP) : 0);
+  *t = (int)__builtin_fmaxf(((float)s - (float)FLT_MAX_EXP), 0.0f);
   *t += (*t & 1);
   const int
     t_2 = -(*t >> 1);
@@ -270,7 +279,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     v = (ea + ed);
   int
     s = (u - v);
-  *t = ((s > DBL_MAX_EXP) ? (s - DBL_MAX_EXP) : 0);
+  *t = (int)__builtin_fmax(((double)s - (double)DBL_MAX_EXP), 0.0);
   *t += (*t & 1);
   const int
     t_2 = -(*t >> 1);
