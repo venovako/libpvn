@@ -176,7 +176,6 @@ int main(int argc, char *argv[])
   }
   (void)printf("%d\n", u);
   (void)fflush(stdout);
-#ifdef __AVX512F__
   free(v);
 #endif /* __AVX512F__ */
   free(t);
