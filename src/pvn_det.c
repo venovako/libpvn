@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
   u = mpfr_init_set_d(mx, E, MPFR_RNDN);
   u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
   char s[26] = { '\0' };
-  (void)printf("Generating %zu a,b,c,d ... ", n);
+  (void)printf("%10zu, ", n);
   (void)fflush(stdout);
   long long f = pvn_time_mono_ns();
   for (size_t i = 0u; i < n; ++i) {
@@ -70,43 +70,40 @@ int main(int argc, char *argv[])
       a[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
     } while (!__builtin_isfinite(a[i]));
 #ifndef NDEBUG
-    (void)printf("%s,", pvn_dtoa(s, a[i]));
+    (void)fprintf(stderr, "%s,", pvn_dtoa(s, a[i]));
 #endif /* !NDEBUG */
     do {
       b[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
     } while (!__builtin_isfinite(b[i]));
 #ifndef NDEBUG
-    (void)printf("%s,", pvn_dtoa(s, b[i]));
+    (void)fprintf(stderr, "%s,", pvn_dtoa(s, b[i]));
 #endif /* !NDEBUG */
     do {
       c[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
     } while (!__builtin_isfinite(c[i]));
 #ifndef NDEBUG
-    (void)printf("%s,", pvn_dtoa(s, c[i]));
+    (void)fprintf(stderr, "%s,", pvn_dtoa(s, c[i]));
 #endif /* !NDEBUG */
     do {
       d[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
     } while (!__builtin_isfinite(d[i]));
 #ifndef NDEBUG
-    (void)printf("%s;", pvn_dtoa(s, d[i]));
+    (void)fprintf(stderr, "%s;", pvn_dtoa(s, d[i]));
 #endif /* !NDEBUG */
   }
   f = pvn_time_mono_ns() - f;
-  (void)printf("%lld ns\n", f);
+  (void)printf("%lld, ", f);
   (void)fflush(stdout);
   u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
-  (void)printf("Running DDET ... ");
-  (void)fflush(stdout);
   f = pvn_time_mono_ns();
   for (size_t i = 0u; i < n; ++i) {
     r[i] = PVN_FABI(pvn_ddet,PVN_DDET)((a + i), (b + i), (c + i), (d + i), (x + i), (t + i));
 #ifndef NDEBUG
-    (void)printf("%s,%5d;", pvn_dtoa(s, x[i]), t[i]);
+    (void)fprintf(stderr, "%s,%5d;", pvn_dtoa(s, x[i]), t[i]);
 #endif /* !NDEBUG */
   }
   f = pvn_time_mono_ns() - f;
-  (void)printf("%lld ns\n", f);
-  (void)printf("Computing the relative errors ... ");
+  (void)printf("%lld, ", f);
   (void)fflush(stdout);
   f = pvn_time_mono_ns();
   u = 0;
@@ -123,7 +120,7 @@ int main(int argc, char *argv[])
     (void)mpfr_abs(mx, mx, MPFR_RNDN);
     y[i] = mpfr_get_d(mx, MPFR_RNDN);
 #ifndef NDEBUG
-    (void)printf("%s\n", pvn_dtoa(s, y[i]));
+    (void)fprintf(stderr, "%s\n", pvn_dtoa(s, y[i]));
 #endif /* !NDEBUG */
     e = __builtin_fmin(e, y[i]);
     E = __builtin_fmax(E, y[i]);
@@ -131,9 +128,7 @@ int main(int argc, char *argv[])
       ++u;
   }
   f = pvn_time_mono_ns() - f;
-  (void)printf("%lld ns\n", f);
-  (void)printf("overflows= %u\n", *(const unsigned*)&u);
-  (void)fflush(stdout);
+  (void)printf("%lld, %u,", f, *(const unsigned*)&u);
   mpfr_clear(mx);
   mpfr_clear(mr);
   mpfr_clear(md);
@@ -141,22 +136,20 @@ int main(int argc, char *argv[])
   mpfr_clear(mb);
   mpfr_clear(ma);
   u = PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
-  (void)printf("min rel err=%s\n", pvn_dtoa(s, e));
-  (void)printf("max rel err=%s\n", pvn_dtoa(s, E));
-#ifdef __AVX512F__
-  (void)printf("Running ZDET ... ");
+  (void)printf("%s,", pvn_dtoa(s, e));
+  (void)printf("%s, ", pvn_dtoa(s, E));
   (void)fflush(stdout);
+#ifdef __AVX512F__
   f = pvn_time_mono_ns();
   for (size_t i = 0u; i < n; i += 8u) {
     PVN_FABI(pvn_zdet,PVN_ZDET)((a + i), (b + i), (c + i), (d + i), (z + i), (v + i), (y + i));
 #ifndef NDEBUG
     for (size_t j = 0u; j < 8u; ++j)
-      (void)printf("%s,%5d;", pvn_dtoa(s, z[i + j]), v[i + j]);
+      (void)fprintf(stderr, "%s,%5d;", pvn_dtoa(s, z[i + j]), v[i + j]);
 #endif /* !NDEBUG */
   }
   f = pvn_time_mono_ns() - f;
-  (void)printf("%lld ns\n", f);
-  (void)printf("Checking for errors ... ");
+  (void)printf("%lld, ", f);
   (void)fflush(stdout);
   u = 0;
   for (size_t i = 0u; i < n; ++i) {
