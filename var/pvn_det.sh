@@ -1,4 +1,5 @@
 #!/bin/bash
+# Usage: ./pvn_det.sh RUNS
 echo '"RUN", "GENns", "DDETns", "RELERRns", "INFS", "MINRELERR", "MAXRELERR", "ZDETns", "ERR"' > pvn_det.csv
 for ((R=1;R<=$1;++R))
 do
