@@ -28,29 +28,29 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   double *a = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&a, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&a, PVN_VECLEN, m));
   double *b = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&b, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&b, PVN_VECLEN, m));
   double *c = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&c, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&c, PVN_VECLEN, m));
   double *d = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&d, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&d, PVN_VECLEN, m));
   double *r = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&r, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&r, PVN_VECLEN, m));
   double *x = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&x, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&x, PVN_VECLEN, m));
   double *y = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&y, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&y, PVN_VECLEN, m));
 #ifdef __AVX512F__
   double *z = (double*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&z, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&z, PVN_VECLEN, m));
 #endif /* __AVX512F__ */
   m = n * sizeof(int);
   int *t = (int*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&t, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&t, PVN_VECLEN, m));
 #ifdef __AVX512F__
   int *v = (int*)NULL;
-  PVN_SYSI_CALL(posix_memalign((void**)&v, PVN_VECLEN, m));
+  PVN_SYSI_CALL(u = posix_memalign((void**)&v, PVN_VECLEN, m));
 #endif /* __AVX512F__ */
   double e = __builtin_inf(), E = 0.0;
   mpfr_t ma, mb, mc, md, mr, mx;
@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
   (void)printf("Computing the relative errors ... ");
   (void)fflush(stdout);
   f = pvn_time_mono_ns();
+  u = 0;
   for (size_t i = 0u; i < n; ++i) {
     (void)mpfr_set_d(ma, a[i], MPFR_RNDN);
     (void)mpfr_set_d(mb, b[i], MPFR_RNDN);
@@ -126,9 +127,12 @@ int main(int argc, char *argv[])
 #endif /* !NDEBUG */
     e = __builtin_fmin(e, y[i]);
     E = __builtin_fmax(E, y[i]);
+    if (!__builtin_isfinite(r[i]))
+      ++u;
   }
   f = pvn_time_mono_ns() - f;
   (void)printf("%lld ns\n", f);
+  (void)printf("overflows= %u\n", *(const unsigned*)&u);
   (void)fflush(stdout);
   mpfr_clear(mx);
   mpfr_clear(mr);
@@ -159,22 +163,22 @@ int main(int argc, char *argv[])
     if (x[i] != z[i]) {
       (void)fprintf(stderr, "x %s ", pvn_dtoa(s, x[i]));
       (void)fprintf(stderr, "z %s\n", pvn_dtoa(s, z[i]));
-      u = (int)(i + 1u);
+      *(unsigned*)&u = (unsigned)(i + 1u);
       break;
     }
     if (t[i] != v[i]) {
       (void)fprintf(stderr, "t %d v %d\n", t[i], v[i]);
-      u = (int)(i + 1u);
+      *(unsigned*)&u = (unsigned)(i + 1u);
       break;
     }
     if (r[i] != y[i]) {
       (void)fprintf(stderr, "r %s ", pvn_dtoa(s, r[i]));
       (void)fprintf(stderr, "y %s\n", pvn_dtoa(s, y[i]));
-      u = (int)(i + 1u);
+      *(unsigned*)&u = (unsigned)(i + 1u);
       break;
     }
   }
-  (void)printf("%d\n", u);
+  (void)printf("%u\n", *(const unsigned*)&u);
   (void)fflush(stdout);
   free(v);
 #endif /* __AVX512F__ */
@@ -220,11 +224,11 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  int
-    ea = 0,
-    eb = 0,
-    ec = 0,
-    ed = 0;
+#ifdef NDEBUG
+  int ea, eb, ec, ed;
+#else /* !NDEBUG */
+  int ea = 0, eb = 0, ec = 0, ed = 0;
+#endif /* ?NDEBUG */
   const float
     fb = __builtin_frexpf(*b, &eb),
     fc = __builtin_frexpf(*c, &ec);
@@ -262,11 +266,11 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  int
-    ea = 0,
-    eb = 0,
-    ec = 0,
-    ed = 0;
+#ifdef NDEBUG
+  int ea, eb, ec, ed;
+#else /* !NDEBUG */
+  int ea = 0, eb = 0, ec = 0, ed = 0;
+#endif /* ?NDEBUG */
   const double
     fb = __builtin_frexp(*b, &eb),
     fc = __builtin_frexp(*c, &ec);
@@ -304,11 +308,11 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  int
-    ea = 0,
-    eb = 0,
-    ec = 0,
-    ed = 0;
+#ifdef NDEBUG
+  int ea, eb, ec, ed;
+#else /* !NDEBUG */
+  int ea = 0, eb = 0, ec = 0, ed = 0;
+#endif /* ?NDEBUG */
   const long double
     fb = __builtin_frexpl(*b, &eb),
     fc = __builtin_frexpl(*c, &ec);
@@ -346,11 +350,11 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  int
-    ea = 0,
-    eb = 0,
-    ec = 0,
-    ed = 0;
+#ifdef NDEBUG
+  int ea, eb, ec, ed;
+#else /* !NDEBUG */
+  int ea = 0, eb = 0, ec = 0, ed = 0;
+#endif /* ?NDEBUG */
   const __float128
     fb = frexpq(*b, &eb),
     fc = frexpq(*c, &ec);
