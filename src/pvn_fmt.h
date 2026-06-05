@@ -6,7 +6,7 @@
 #endif /* !PVN_H */
 
 PVN_EXTERN_C size_t pvn_atoz(const char *const s);
-PVN_EXTERN_C char *pvn_ztoa(const char *const s, const size_t z);
+PVN_EXTERN_C char *pvn_ztoa(char *const s, const size_t z);
 PVN_EXTERN_C float pvn_atos(const char *const s);
 PVN_EXTERN_C char *pvn_stoa(char *const s, const float x);
 PVN_EXTERN_C double pvn_atod(const char *const s);
