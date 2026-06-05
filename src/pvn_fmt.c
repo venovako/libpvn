@@ -46,6 +46,18 @@ size_t pvn_atoz(const char *const s)
   return ((e && *e) ? (size_t)0u : z);
 }
 
+char *pvn_ztoa(char *const s, const size_t z)
+{
+  return (s ? ((sprintf((char*)memset(s, 0, (size_t)21u), "%20llu", z) > 0) ? s : (char*)NULL) : s);
+}
+
+float pvn_atos(const char *const s)
+{
+  char *e = (char*)NULL;
+  const float x = ((s && *s) ? strtof(s, &e) : 0.0f);
+  return ((e && *e) ? 0.0f : x);
+}
+
 char *pvn_stoa(char *const s, const float x)
 {
   if (s) {
@@ -73,6 +85,13 @@ char *pvn_stoa(char *const s, const float x)
         *d = ' ';
   }
   return s;
+}
+
+double pvn_atod(const char *const s)
+{
+  char *e = (char*)NULL;
+  const double x = ((s && *s) ? strtod(s, &e) : 0.0);
+  return ((e && *e) ? 0.0 : x);
 }
 
 char *pvn_dtoa(char *const s, const double x)

@@ -13,10 +13,10 @@ int main(int argc, char *argv[])
   }
   const char T = (char)toupper(*(argv[1]));
   if (T == 'S') {
-    const float a = strtof(argv[2], (char**)NULL);
-    const float b = strtof(argv[3], (char**)NULL);
-    const float c = strtof(argv[4], (char**)NULL);
-    const float d = strtof(argv[5], (char**)NULL);
+    const float a = pvn_atos(argv[2]);
+    const float b = pvn_atos(argv[3]);
+    const float c = pvn_atos(argv[4]);
+    const float d = pvn_atos(argv[5]);
     char s[17] = { '\0' };
     float x = __builtin_nanf("x"),
       y = pvn_sdet(a, b, c, d);
@@ -27,10 +27,10 @@ int main(int argc, char *argv[])
     (void)printf("%s,%d)\n", pvn_stoa(s, x), t);
   }
   else if (T == 'D') {
-    const double a = strtod(argv[2], (char**)NULL);
-    const double b = strtod(argv[3], (char**)NULL);
-    const double c = strtod(argv[4], (char**)NULL);
-    const double d = strtod(argv[5], (char**)NULL);
+    const double a = pvn_atod(argv[2]);
+    const double b = pvn_atod(argv[3]);
+    const double c = pvn_atod(argv[4]);
+    const double d = pvn_atod(argv[5]);
     char s[26] = { '\0' };
     double x = __builtin_nan("x"),
       y = pvn_ddet(a, b, c, d);
@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
   }
 #if (!defined(_WIN32) || defined(_DLL))
   else if (T == 'X') {
-    const long double a = strtold(argv[2], (char**)NULL);
-    const long double b = strtold(argv[3], (char**)NULL);
-    const long double c = strtold(argv[4], (char**)NULL);
-    const long double d = strtold(argv[5], (char**)NULL);
+    const long double a = pvn_atox(argv[2]);
+    const long double b = pvn_atox(argv[3]);
+    const long double c = pvn_atox(argv[4]);
+    const long double d = pvn_atox(argv[5]);
     char s[46] = { '\0' };
     long double x = __builtin_nanl("x"),
       y = pvn_xdet(a, b, c, d);
