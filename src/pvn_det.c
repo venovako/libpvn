@@ -4,7 +4,11 @@
 int main(int argc, char *argv[])
 {
   if (argc != 6) {
+#if (!defined(_WIN32) || defined(_DLL))
     (void)fprintf(stderr, "%s (S|D|X) a b c d\n", *argv);
+#else /* _WIN32 && !_DLL */
+    (void)fprintf(stderr, "%s (S|D) a b c d\n", *argv);
+#endif /* ?(!_WIN32 || _DLL) */
     return EXIT_FAILURE;
   }
   const char T = (char)toupper(*(argv[1]));
@@ -36,6 +40,7 @@ int main(int argc, char *argv[])
     (void)printf("PVN_DDET=%s (", pvn_dtoa(s, y));
     (void)printf("%s,%d)\n", pvn_dtoa(s, x), t);
   }
+#if (!defined(_WIN32) || defined(_DLL))
   else if (T == 'X') {
     const long double a = strtold(argv[2], (char**)NULL);
     const long double b = strtold(argv[3], (char**)NULL);
@@ -50,6 +55,7 @@ int main(int argc, char *argv[])
     (void)printf("PVN_XDET=%s (", pvn_xtoa(s, y));
     (void)printf("%s,%d)\n", pvn_xtoa(s, x), t);
   }
+#endif /* !_WIN32 || _DLL */
   else
     return EXIT_FAILURE;
   return EXIT_SUCCESS;
