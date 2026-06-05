@@ -3,221 +3,55 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-#ifdef PVN_MPFR
-  if ((argc != 2) && (argc != 3)) {
-    (void)fprintf(stderr, "%s n [prec]\n", *argv);
+  if (argc != 6) {
+    (void)fprintf(stderr, "%s (S|D|X) a b c d\n", *argv);
     return EXIT_FAILURE;
   }
-  size_t n = pvn_atoz(argv[1]);
-  if (!n)
-    return EXIT_SUCCESS;
-  size_t m =
-#ifdef __AVX512F__
-    (n & 7u);
-  if (m)
-    n += (8u - m);
-  m =
-#endif /* __AVX512F__ */
-  n * sizeof(double);
-  mpfr_rnd_t rnd = MPFR_RNDN;
-  mpfr_exp_t emin = __MPFR_EXP_INVALID, emax = __MPFR_EXP_INVALID;
-  mpfr_prec_t prec = ((argc == 3) ? atol(argv[2]) : 113l);
-  int u = PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(&rnd, &prec, &emin, &emax);
-  if (u) {
-    (void)fprintf(stderr, "PVN_MPFR_START=%d\n", u);
+  const char T = (char)toupper(*(argv[1]));
+  if (T == 'S') {
+    const float a = strtof(argv[2], (char**)NULL);
+    const float b = strtof(argv[3], (char**)NULL);
+    const float c = strtof(argv[4], (char**)NULL);
+    const float d = strtof(argv[5], (char**)NULL);
+    char s[17] = { '\0' };
+    float x = __builtin_nanf("x"),
+      y = pvn_sdet(a, b, c, d);
+    (void)printf("pvn_sdet=%s\n", pvn_stoa(s, y));
+    int t = 0;
+    y = PVN_FABI(pvn_sdet,PVN_SDET)(&a, &b, &c, &d, &x, &t);
+    (void)printf("PVN_SDET=%s (", pvn_stoa(s, y));
+    (void)printf("%s,%d)\n", pvn_stoa(s, x), t);
+  }
+  else if (T == 'D') {
+    const double a = strtod(argv[2], (char**)NULL);
+    const double b = strtod(argv[3], (char**)NULL);
+    const double c = strtod(argv[4], (char**)NULL);
+    const double d = strtod(argv[5], (char**)NULL);
+    char s[26] = { '\0' };
+    double x = __builtin_nan("x"),
+      y = pvn_ddet(a, b, c, d);
+    (void)printf("pvn_ddet=%s\n", pvn_dtoa(s, y));
+    int t = 0;
+    y = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
+    (void)printf("PVN_DDET=%s (", pvn_dtoa(s, y));
+    (void)printf("%s,%d)\n", pvn_dtoa(s, x), t);
+  }
+  else if (T == 'X') {
+    const long double a = strtold(argv[2], (char**)NULL);
+    const long double b = strtold(argv[3], (char**)NULL);
+    const long double c = strtold(argv[4], (char**)NULL);
+    const long double d = strtold(argv[5], (char**)NULL);
+    char s[46] = { '\0' };
+    long double x = __builtin_nanl("x"),
+      y = pvn_xdet(a, b, c, d);
+    (void)printf("pvn_xdet=%s\n", pvn_xtoa(s, y));
+    int t = 0;
+    y = PVN_FABI(pvn_xdet,PVN_XDET)(&a, &b, &c, &d, &x, &t);
+    (void)printf("PVN_XDET=%s (", pvn_xtoa(s, y));
+    (void)printf("%s,%d)\n", pvn_xtoa(s, x), t);
+  }
+  else
     return EXIT_FAILURE;
-  }
-  double *a = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&a, PVN_VECLEN, m));
-  (void)memset(a, 0, m);
-  double *b = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&b, PVN_VECLEN, m));
-  (void)memset(b, 0, m);
-  double *c = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&c, PVN_VECLEN, m));
-  (void)memset(c, 0, m);
-  double *d = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&d, PVN_VECLEN, m));
-  (void)memset(d, 0, m);
-  double *r = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&r, PVN_VECLEN, m));
-  (void)memset(r, 0, m);
-  double *x = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&x, PVN_VECLEN, m));
-  (void)memset(x, 0, m);
-  double *y = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&y, PVN_VECLEN, m));
-  (void)memset(y, 0, m);
-#ifdef __AVX512F__
-  double *z = (double*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&z, PVN_VECLEN, m));
-  (void)memset(z, 0, m);
-#endif /* __AVX512F__ */
-  m = n * sizeof(int);
-  int *t = (int*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&t, PVN_VECLEN, m));
-  (void)memset(t, 0, m);
-#ifdef __AVX512F__
-  int *v = (int*)NULL;
-  PVN_SYSI_CALL(u = posix_memalign((void**)&v, PVN_VECLEN, m));
-  (void)memset(v, 0, m);
-#endif /* __AVX512F__ */
-  double e = __builtin_inf(), E = 0.0;
-  mpfr_t ma, mb, mc, md, mr, mx;
-  u = mpfr_init_set_d(ma, E, MPFR_RNDN);
-  u = mpfr_init_set_d(mb, E, MPFR_RNDN);
-  u = mpfr_init_set_d(mc, E, MPFR_RNDN);
-  u = mpfr_init_set_d(md, E, MPFR_RNDN);
-  u = mpfr_init_set_d(mr, E, MPFR_RNDN);
-  u = mpfr_init_set_d(mx, E, MPFR_RNDN);
-  u = PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)();
-  char s[26] = { '\0' };
-  (void)printf("%10zu, ", n);
-  (void)fflush(stdout);
-  long long f = pvn_time_mono_ns();
-  for (size_t i = 0u; i < n; ++i) {
-    do {
-      a[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!__builtin_isfinite(a[i]));
-#ifndef NDEBUG
-    (void)fprintf(stderr, "%s,", pvn_dtoa(s, a[i]));
-#endif /* !NDEBUG */
-    do {
-      b[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!__builtin_isfinite(b[i]));
-#ifndef NDEBUG
-    (void)fprintf(stderr, "%s,", pvn_dtoa(s, b[i]));
-#endif /* !NDEBUG */
-    do {
-      c[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!__builtin_isfinite(c[i]));
-#ifndef NDEBUG
-    (void)fprintf(stderr, "%s,", pvn_dtoa(s, c[i]));
-#endif /* !NDEBUG */
-    do {
-      d[i] = PVN_FABI(pvn_ran,PVN_RAN)(&u);
-    } while (!__builtin_isfinite(d[i]));
-#ifndef NDEBUG
-    (void)fprintf(stderr, "%s;", pvn_dtoa(s, d[i]));
-#endif /* !NDEBUG */
-  }
-  f = pvn_time_mono_ns() - f;
-  (void)printf("%lld, ", f);
-  (void)fflush(stdout);
-  u = PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(&u);
-  f = pvn_time_mono_ns();
-  for (size_t i = 0u; i < n; ++i) {
-    r[i] = PVN_FABI(pvn_ddet,PVN_DDET)((a + i), (b + i), (c + i), (d + i), (x + i), (t + i));
-#ifndef NDEBUG
-    (void)fprintf(stderr, "%s,%5d;", pvn_dtoa(s, x[i]), t[i]);
-#endif /* !NDEBUG */
-  }
-  f = pvn_time_mono_ns() - f;
-  (void)printf("%lld, ", f);
-  (void)fflush(stdout);
-  const double g = (DBL_EPSILON * 0.5);
-  f = pvn_time_mono_ns();
-  u = 0;
-  for (size_t i = 0u; i < n; ++i) {
-    (void)mpfr_set_d(ma, a[i], MPFR_RNDN);
-    (void)mpfr_set_d(mb, b[i], MPFR_RNDN);
-    (void)mpfr_set_d(mc, c[i], MPFR_RNDN);
-    (void)mpfr_set_d(md, d[i], MPFR_RNDN);
-    (void)mpfr_set_d(mx, x[i], MPFR_RNDN);
-    (void)mpfr_mul_2si(mx, mx, t[i], MPFR_RNDN);
-    (void)mpfr_fmms(mr, ma, md, mb, mc, MPFR_RNDN);
-    (void)mpfr_sub(mx, mr, mx, MPFR_RNDN);
-    (void)mpfr_div(mx, mx, mr, MPFR_RNDN);
-    (void)mpfr_abs(mx, mx, MPFR_RNDN);
-    (void)mpfr_div_d(mx, mx, g, MPFR_RNDN);
-    y[i] = mpfr_get_d(mx, MPFR_RNDN);
-#ifndef NDEBUG
-    (void)fprintf(stderr, "%s\n", pvn_dtoa(s, y[i]));
-#endif /* !NDEBUG */
-    e = __builtin_fmin(e, y[i]);
-    E = __builtin_fmax(E, y[i]);
-    if (!__builtin_isfinite(r[i]))
-      ++u;
-  }
-  f = pvn_time_mono_ns() - f;
-  (void)printf("%lld, %u,", f, *(const unsigned*)&u);
-  mpfr_clear(mx);
-  mpfr_clear(mr);
-  mpfr_clear(md);
-  mpfr_clear(mc);
-  mpfr_clear(mb);
-  mpfr_clear(ma);
-  u = PVN_FABI(pvn_mpfr_stop,PVN_MPFR_STOP)();
-  (void)printf("%s,", pvn_dtoa(s, e));
-  (void)printf("%s, ", pvn_dtoa(s, E));
-  (void)fflush(stdout);
-#ifdef __AVX512F__
-  f = pvn_time_mono_ns();
-  for (size_t i = 0u; i < n; i += 8u) {
-    PVN_FABI(pvn_zdet,PVN_ZDET)((a + i), (b + i), (c + i), (d + i), (z + i), (v + i), (y + i));
-#ifndef NDEBUG
-    for (size_t j = 0u; j < 8u; ++j)
-      (void)fprintf(stderr, "%s,%5d;", pvn_dtoa(s, z[i + j]), v[i + j]);
-#endif /* !NDEBUG */
-  }
-  f = pvn_time_mono_ns() - f;
-  (void)printf("%lld, ", f);
-  (void)fflush(stdout);
-  u = 0;
-  for (size_t i = 0u; i < n; ++i) {
-    if (x[i] != z[i]) {
-      (void)fprintf(stderr, "x %s ", pvn_dtoa(s, x[i]));
-      (void)fprintf(stderr, "z %s\n", pvn_dtoa(s, z[i]));
-      *(unsigned*)&u = (unsigned)(i + 1u);
-      break;
-    }
-    if (t[i] != v[i]) {
-      (void)fprintf(stderr, "t %d v %d\n", t[i], v[i]);
-      *(unsigned*)&u = (unsigned)(i + 1u);
-      break;
-    }
-    if (r[i] != y[i]) {
-      (void)fprintf(stderr, "r %s ", pvn_dtoa(s, r[i]));
-      (void)fprintf(stderr, "y %s\n", pvn_dtoa(s, y[i]));
-      *(unsigned*)&u = (unsigned)(i + 1u);
-      break;
-    }
-  }
-  (void)printf("%u\n", *(const unsigned*)&u);
-  (void)fflush(stdout);
-  free(v);
-#endif /* __AVX512F__ */
-  free(t);
-#ifdef __AVX512F__
-  free(z);
-#endif /* __AVX512F__ */
-  free(y);
-  free(x);
-  free(r);
-  free(d);
-  free(c);
-  free(b);
-  free(a);
-  if (u)
-    return EXIT_FAILURE;
-#else /* !PVN_MPFR */
-  if (argc != 5) {
-    (void)fprintf(stderr, "%s a b c d\n", *argv);
-    return EXIT_FAILURE;
-  }
-  const double a = atof(argv[1]);
-  const double b = atof(argv[2]);
-  const double c = atof(argv[3]);
-  const double d = atof(argv[4]);
-  char s[26] = { '\0' };
-  double x = __builtin_nan("x"),
-    y = pvn_ddet(a, b, c, d);
-  (void)printf("pvn_ddet=%s\n", pvn_dtoa(s, y));
-  int t = 0;
-  y = PVN_FABI(pvn_ddet,PVN_DDET)(&a, &b, &c, &d, &x, &t);
-  (void)printf("PVN_DDET=%s (", pvn_dtoa(s, y));
-  (void)printf("%s,%d)\n", pvn_dtoa(s, x), t);
-#endif /* ?PVN_MPFR */
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
