@@ -1,10 +1,3 @@
-#ifdef PVN_SV2_SAFE
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#endif /* __GNUC__ && !__clang__ */
-#pragma STDC FENV_ACCESS ON
-#endif /* PVN_SV2_SAFE */
-
 #include "pvn.h"
 
 #ifdef PVN_TEST
@@ -731,13 +724,9 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
   PVN_ASSERT(A12);
   PVN_ASSERT(A22);
   PVN_ASSERT(w1);
-#ifdef PVN_SV2_SAFE
-  if (feclearexcept(FE_INEXACT))
-    return __builtin_nanf("");
-#endif /* PVN_SV2_SAFE */
   const float t = (*A21 / *A11);
 #ifdef PVN_SV2_SAFE
-  if (fetestexcept(FE_INEXACT) & FE_INEXACT) {
+  if (__builtin_fmaf(t, *A11, -*A21) != 0.0f) {
     const double d = (double)*A11;
     *A11 = *w1;
     *w1 = hypotf(t, 1.0f);
@@ -2513,13 +2502,9 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
   PVN_ASSERT(A12);
   PVN_ASSERT(A22);
   PVN_ASSERT(w1);
-#ifdef PVN_SV2_SAFE
-  if (feclearexcept(FE_INEXACT))
-    return __builtin_nan("");
-#endif /* PVN_SV2_SAFE */
   const double t = (*A21 / *A11);
 #ifdef PVN_SV2_SAFE
-  if (fetestexcept(FE_INEXACT) & FE_INEXACT) {
+  if (__builtin_fma(t, *A11, -*A21) != 0.0) {
 #ifndef T
 #ifdef PVN_QUADMATH
 #define T __float128
