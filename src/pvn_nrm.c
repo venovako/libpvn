@@ -3,14 +3,14 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (1 < argc) {
+  if (1 != argc) {
     (void)fprintf(stderr, "%s takes no arguments\n", *argv);
     return EXIT_FAILURE;
   }
   const double x[4][2] = {{-1.0, 1.0}, { 1.0,-1.0}, { 2.0, 2.0}, {-2.0,-2.0}};
   const size_t n = (size_t)4u;
-  /* expected output: 4.472136 */
-  (void)printf("%#F\n", PVN_FABI(pvn_znrm2,PVN_ZNRM2)(&n, &(x[0][0])));
+  (void)printf("expected = 4.472136\n");
+  (void)printf("computed = %#F\n", PVN_FABI(pvn_znrm2,PVN_ZNRM2)(&n, &(x[0][0])));
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */

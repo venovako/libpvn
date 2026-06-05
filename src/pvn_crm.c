@@ -3,7 +3,7 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (1 < argc) {
+  if (1 != argc) {
     (void)fprintf(stderr, "%s takes no arguments\n", *argv);
     return EXIT_FAILURE;
   }

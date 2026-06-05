@@ -289,7 +289,7 @@ endif # QUADMATH
 
 HDRS=$(SRCS:.c=.h)
 OBJS=$(SRCS:.c=.o) $(CR_OBJS)
-EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe
+EXES=$(SRCS:.c=.exe) ../etc/gen_cbar.exe ../etc/test_vis.exe
 LIBS=libpvn.a
 ifneq ($(findstring MINGW64,$(OS)),MINGW64)
 LIBS += libpvn.$(DYNAMIC)
@@ -466,6 +466,9 @@ else # !STATIC
 endif # ?STATIC
 
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS) $(MKFS)
+	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
+
+../etc/test_vis.exe: ../etc/test_vis.c $(LIBS) $(MKFS)
 	$(CC) $(CLFLAGS) $< -o $@ $(LDFLAGS) $(LNKX)
 
 clean:

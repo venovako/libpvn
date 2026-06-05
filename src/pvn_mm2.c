@@ -3,7 +3,7 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (1 < argc) {
+  if (1 != argc) {
     (void)fprintf(stderr, "%s takes no arguments\n", *argv);
     return EXIT_FAILURE;
   }
@@ -17,13 +17,14 @@ int main(int argc, char *argv[])
     c11r = 0.0, c11i = 0.0, c21r = 0.0, c21i = 0.0, c12r = 0.0, c12i = 0.0, c22r = 0.0, c22i = 0.0;
   /* C = 0 + A * A */
   pvn_zmma2(&c11r, &c11i, &c21r, &c21i, &c12r, &c12i, &c22r, &c22i, a11r, a11i, a21r, a21i, a12r, a12i, a22r, a22i, a11r, a11i, a21r, a21i, a12r, a12i, a22r, a22i);
-  /* expected output:
-  ( 4.0,-2.0) (-4.0,-8.0)
-  (-4.0, 2.0) ( 4.0, 8.0)
-  */
+  (void)printf("expected:\n");
+  (void)printf("( 4.0,-2.0) (-4.0,-8.0)\n");
+  (void)printf("(-4.0, 2.0) ( 4.0, 8.0)\n");
+  (void)printf("computed (zmma2):\n");
   (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c11r, c11i, c12r, c12i);
   (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c21r, c21i, c22r, c22i);
   pvn_zmm2(&c11r, &c11i, &c21r, &c21i, &c12r, &c12i, &c22r, &c22i, a11r, a11i, a21r, a21i, a12r, a12i, a22r, a22i, a11r, a11i, a21r, a21i, a12r, a12i, a22r, a22i);
+  (void)printf("computed (zmm2):\n");
   (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c11r, c11i, c12r, c12i);
   (void)printf("(%# 4.1F,%# 4.1F) (%# 4.1F,%# 4.1F)\n", c21r, c21i, c22r, c22i);
   return EXIT_SUCCESS;

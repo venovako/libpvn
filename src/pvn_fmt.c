@@ -3,7 +3,7 @@
 #ifdef PVN_TEST
 int main(int argc, char *argv[])
 {
-  if (1 < argc) {
+  if (1 != argc) {
     (void)fprintf(stderr, "%s takes no arguments\n", *argv);
     return EXIT_FAILURE;
   }
@@ -48,7 +48,7 @@ size_t pvn_atoz(const char *const s)
 
 char *pvn_ztoa(char *const s, const size_t z)
 {
-  return (s ? ((sprintf((char*)memset(s, 0, (size_t)21u), "%20llu", (unsigned long long)z) > 0) ? s : (char*)NULL) : s);
+  return (s ? ((sprintf((char*)memset(s, 0, (size_t)21u), "%20zu", z) > 0) ? s : (char*)NULL) : s);
 }
 
 float pvn_atos(const char *const s)
