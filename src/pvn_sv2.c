@@ -716,7 +716,6 @@ static inline int ef_cmpf(const int e1, const float f1, const int e2, const floa
   return 0;
 }
 
-/* TODO: the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
 static float sQR(float *const A11, float *const A21, float *const A12, float *const A22, float *const w1)
 {
   PVN_ASSERT(A11);
@@ -727,37 +726,46 @@ static float sQR(float *const A11, float *const A21, float *const A12, float *co
   const float t = (*A21 / *A11);
 #ifdef PVN_SV2_SAFE
   if (__builtin_fmaf(t, *A11, -*A21) != 0.0f) {
-    const double d = (double)*A11;
+    int de = 0;
+    const float d = *A11, df = __builtin_frexpf(d, &de);
     *A11 = *w1;
     *w1 = hypotf(t, 1.0f);
     if (__builtin_copysignf(1.0f, *A12) == __builtin_copysignf(1.0f, *A22)) {
       const float a12 = __builtin_fmaf(*A22, t, *A12);
-      const double
-        a = ((double)*A22 * d),
-        b = ((double)*A12 * (double)*A21),
-        c = (a - b);
-      *A22 = (float)(c / d);
-      if (*w1 == 1.0f)
+      float bf = 0.0f, cf = 0.0f;
+      int be = 0, ce = 0;
+      float af = PVN_FABI(pvn_sdet,PVN_SDET)(A22, A12, A21, &d, &cf, &ce);
+      if (*w1 == 1.0f) {
         *A12 = a12;
+        ef_divf(&be, &bf, ce, cf, de, df);
+      }
       else {
         *A12 = (a12 / *w1);
-        *A22 = (*A22 / *w1);
+        int ae = 0, we = 0;
+        const float wf = __builtin_frexpf(*w1, &we);
+        ef_mulf(&ae, &af, de, df, we, wf);
+        ef_divf(&be, &bf, ce, cf, ae, af);
       }
+      *A22 = __builtin_scalbnf(bf, be);
       *A21 = 1.0f;
     }
     else {
       const float a22 = __builtin_fmaf(-*A12, t, *A22);
-      const double
-        a = ((double)*A12 * d),
-        b = ((double)*A22 * (double)*A21),
-        c = (a + b);
-      *A12 = (float)(c / d);
-      if (*w1 == 1.0f)
+      float bf = -*A22, cf = 0.0f;
+      int be = 0, ce = 0;
+      float af = PVN_FABI(pvn_sdet,PVN_SDET)(A12, &bf, A21, &d, &cf, &ce);
+      if (*w1 == 1.0f) {
         *A22 = a22;
-      else {
-        *A12 = (*A12 / *w1);
-        *A22 = (a22 / *w1);
+        ef_divf(&be, &bf, ce, cf, de, df);
       }
+      else {
+        *A22 = (a22 / *w1);
+        int ae = 0, we = 0;
+        const float wf = __builtin_frexpf(*w1, &we);
+        ef_mulf(&ae, &af, de, df, we, wf);
+        ef_divf(&be, &bf, ce, cf, ae, af);
+      }
+      *A12 = __builtin_scalbnf(bf, be);
       *A21 = -1.0f;
     }
     return t;
@@ -2494,7 +2502,6 @@ static inline int ef_cmp(const int e1, const double f1, const int e2, const doub
   return 0;
 }
 
-/* TODO: the Kahan's algorithm for determinants of order two, with a power-of-two prescaling, might have been used instead */
 static double dQR(double *const A11, double *const A21, double *const A12, double *const A22, double *const w1)
 {
   PVN_ASSERT(A11);
@@ -2505,49 +2512,48 @@ static double dQR(double *const A11, double *const A21, double *const A12, doubl
   const double t = (*A21 / *A11);
 #ifdef PVN_SV2_SAFE
   if (__builtin_fma(t, *A11, -*A21) != 0.0) {
-#ifndef T
-#ifdef PVN_QUADMATH
-#define T __float128
-#else /* !PVN_QUADMATH */
-#define T long double
-#endif /* ?PVN_QUADMATH */
-#else /* T */
-#error T already defined
-#endif /* ?T */
-    const T d = (T)*A11;
+    int de = 0;
+    const double d = *A11, df = __builtin_frexp(d, &de);
     *A11 = *w1;
     *w1 = hypot(t, 1.0);
     if (__builtin_copysign(1.0, *A12) == __builtin_copysign(1.0, *A22)) {
       const double a12 = __builtin_fma(*A22, t, *A12);
-      const T
-        a = ((T)*A22 * d),
-        b = ((T)*A12 * (T)*A21),
-        c = (a - b);
-      *A22 = (double)(c / d);
-      if (*w1 == 1.0)
+      double bf = 0.0, cf = 0.0;
+      int be = 0, ce = 0;
+      double af = PVN_FABI(pvn_ddet,PVN_DDET)(A22, A12, A21, &d, &cf, &ce);
+      if (*w1 == 1.0) {
         *A12 = a12;
+        ef_div(&be, &bf, ce, cf, de, df);
+      }
       else {
         *A12 = (a12 / *w1);
-        *A22 = (*A22 / *w1);
+        int ae = 0, we = 0;
+        const double wf = __builtin_frexp(*w1, &we);
+        ef_mul(&ae, &af, de, df, we, wf);
+        ef_div(&be, &bf, ce, cf, ae, af);
       }
+      *A22 = __builtin_scalbn(bf, be);
       *A21 = 1.0;
     }
     else {
       const double a22 = __builtin_fma(-*A12, t, *A22);
-      const T
-        a = ((T)*A12 * d),
-        b = ((T)*A22 * (T)*A21),
-        c = (a + b);
-      *A12 = (double)(c / d);
-      if (*w1 == 1.0)
+      double bf = -*A22, cf = 0.0;
+      int be = 0, ce = 0;
+      double af = PVN_FABI(pvn_ddet,PVN_DDET)(A12, &bf, A21, &d, &cf, &ce);
+      if (*w1 == 1.0) {
         *A22 = a22;
-      else {
-        *A12 = (*A12 / *w1);
-        *A22 = (a22 / *w1);
+        ef_div(&be, &bf, ce, cf, de, df);
       }
+      else {
+        *A22 = (a22 / *w1);
+        int ae = 0, we = 0;
+        const double wf = __builtin_frexp(*w1, &we);
+        ef_mul(&ae, &af, de, df, we, wf);
+        ef_div(&be, &bf, ce, cf, ae, af);
+      }
+      *A12 = __builtin_scalbn(bf, be);
       *A21 = -1.0;
     }
-#undef T
     return t;
   }
   else /* tan exact */
