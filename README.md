@@ -33,7 +33,7 @@ The library has been successfully built using:
 | nvc(7)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
-1. Homebrew (clang 22.1.6),
+1. Homebrew (clang 22.1.7),
 2. FreeBSD (clang 19.1.7),
 3. gcc.gnu.org (GCC 16.1.0),
 4. FreeBSD (GCC 14.2.0),
