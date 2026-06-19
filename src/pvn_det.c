@@ -106,7 +106,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
       w = (fb * fc),
       e = __builtin_fmaf(-fb, fc, w),
       f = __builtin_fmaf(fa, fd, -__builtin_scalbnf(w, s));
-    *x = __builtin_fmaf(__builtin_scalbnf(1.0f, s - 1), 2.0f * e, f);
+    *x = __builtin_fmaf(__builtin_scalbnf(0.5f, s), 2.0f * e, f);
     *x = __builtin_frexpf(*x, &s);
     *t += s;
     r = __builtin_scalbnf(*x, *t);
@@ -161,7 +161,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
       w = (fb * fc),
       e = __builtin_fma(-fb, fc, w),
       f = __builtin_fma(fa, fd, -__builtin_scalbn(w, s));
-    *x = __builtin_fma(__builtin_scalbn(1.0, s - 1), 2.0 * e, f);
+    *x = __builtin_fma(__builtin_scalbn(0.5, s), 2.0 * e, f);
     *x = __builtin_frexp(*x, &s);
     *t += s;
     r = __builtin_scalbn(*x, *t);
@@ -216,7 +216,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
       w = (fb * fc),
       e = __builtin_fmal(-fb, fc, w),
       f = __builtin_fmal(fa, fd, -__builtin_scalbnl(w, s));
-    *x = __builtin_fmal(__builtin_scalbnl(1.0L, s - 1), 2.0L * e, f);
+    *x = __builtin_fmal(__builtin_scalbnl(0.5L, s), 2.0L * e, f);
     *x = __builtin_frexpl(*x, &s);
     *t += s;
     r = __builtin_scalbnl(*x, *t);
@@ -271,7 +271,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
       w = (fb * fc),
       e = fmaq(-fb, fc, w),
       f = fmaq(fa, fd, -scalbnq(w, s));
-    *x = fmaq(scalbnq(1.0q, s - 1), 2.0q * e, f);
+    *x = fmaq(scalbnq(0.5q, s), 2.0q * e, f);
     *x = frexpq(*x, &s);
     *t += s;
     r = scalbnq(*x, *t);
@@ -336,8 +336,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   register const __m512 E = _mm512_mul_ps(_mm512_fnmadd_ps(fB, fC, W), _mm512_set1_ps(2.0f));
   W = _mm512_scalef_ps(W, S);
   register const __m512 F = _mm512_fmsub_ps(fA, fD, W);
-  W = _mm512_sub_ps(S, O);
-  W = _mm512_scalef_ps(O, W);
+  W = _mm512_scalef_ps(_mm512_set1_ps(0.5f), S);
   W = _mm512_fmadd_ps(W, E, F);
   ZFREXPF(W, S, W);
   _mm512_store_ps(x, W);
@@ -394,8 +393,7 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   register const __m512d E = _mm512_mul_pd(_mm512_fnmadd_pd(fB, fC, W), _mm512_set1_pd(2.0));
   W = _mm512_scalef_pd(W, S);
   register const __m512d F = _mm512_fmsub_pd(fA, fD, W);
-  W = _mm512_sub_pd(S, O);
-  W = _mm512_scalef_pd(O, W);
+  W = _mm512_scalef_pd(_mm512_set1_pd(0.5), S);
   W = _mm512_fmadd_pd(W, E, F);
   ZFREXP(W, S, W);
   _mm512_store_pd(x, W);
