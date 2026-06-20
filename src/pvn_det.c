@@ -416,7 +416,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   register const __m512 F = _mm512_fmsub_ps(fA, fD, W);
   W = _mm512_scalef_ps(_mm512_set1_ps(0.5f), S);
   W = _mm512_fmadd_ps(W, E, F);
-  ZFREXPF(W, S, W);
+  ZFREXPF(W, S, W, mC);
   _mm512_store_ps(x, W);
   T = _mm512_add_ps(T, S);
   _mm512_store_epi32(t, _mm512_cvtps_epi32(T));
@@ -475,7 +475,7 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   register const __m512d F = _mm512_fmsub_pd(fA, fD, W);
   W = _mm512_scalef_pd(_mm512_set1_pd(0.5), S);
   W = _mm512_fmadd_pd(W, E, F);
-  ZFREXP(W, S, W);
+  ZFREXP(W, S, W, mC);
   _mm512_store_pd(x, W);
   T = _mm512_add_pd(T, S);
   _mm256_store_si256((__m256i*)t, _mm512_cvtpd_epi32(T));
