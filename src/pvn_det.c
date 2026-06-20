@@ -362,7 +362,7 @@ long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long d
   return PVN_FABI(pvn_xdet,PVN_XDET)(a, b, c, d, x, t);
 }
 #endif /* ?PVN_QUADMATH */
-/* TODO: handle 0 */
+
 #ifdef __AVX512F__
 #ifndef ZFREXPF
 #define ZFREXPF(X,E,M,m)              \
@@ -397,6 +397,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   ZFREXPF(fD, eD, fD, mD);
   mB = _kand_mask16(mB, mC);
   mA = _kand_mask16(mA, mD);
+  mC = _kand_mask16(mA, mB);
   register const __m512 U = _mm512_add_ps(eB, eC);
   register const __m512 V = _mm512_add_ps(eA, eD);
   register __m512 S = _mm512_sub_ps(U, V);
@@ -416,9 +417,10 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   register const __m512 F = _mm512_fmsub_ps(fA, fD, W);
   W = _mm512_scalef_ps(_mm512_set1_ps(0.5f), S);
   W = _mm512_fmadd_ps(W, E, F);
-  ZFREXPF(W, S, W, mC);
-  _mm512_store_ps(x, W);
+  ZFREXPF(W, S, W, mD);
   T = _mm512_add_ps(T, S);
+  /* TODO: handle 0s */
+  _mm512_store_ps(x, W);
   _mm512_store_epi32(t, _mm512_cvtps_epi32(T));
   W = _mm512_scalef_ps(W, T);
   _mm512_store_ps(y, W);
@@ -456,6 +458,7 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   ZFREXP(fD, eD, fD, mD);
   mB = (__mmask8)_kand_mask16((__mmask16)mB, (__mmask16)mC);
   mA = (__mmask8)_kand_mask16((__mmask16)mA, (__mmask16)mD);
+  mC = (__mmask8)_kand_mask16((__mmask16)mA, (__mmask16)mB);
   register const __m512d U = _mm512_add_pd(eB, eC);
   register const __m512d V = _mm512_add_pd(eA, eD);
   register __m512d S = _mm512_sub_pd(U, V);
@@ -475,9 +478,10 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   register const __m512d F = _mm512_fmsub_pd(fA, fD, W);
   W = _mm512_scalef_pd(_mm512_set1_pd(0.5), S);
   W = _mm512_fmadd_pd(W, E, F);
-  ZFREXP(W, S, W, mC);
-  _mm512_store_pd(x, W);
+  ZFREXP(W, S, W, mD);
   T = _mm512_add_pd(T, S);
+  /* TODO: handle 0 */
+  _mm512_store_pd(x, W);
   _mm256_store_si256((__m256i*)t, _mm512_cvtpd_epi32(T));
   W = _mm512_scalef_pd(W, T);
   _mm512_store_pd(y, W);
