@@ -92,24 +92,43 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     const int
       u = (eb + ec),
       v = (ea + ed);
-    int
-      s = (u - v);
-    *t = (int)__builtin_fmaxf((float)(s - FLT_MAX_EXP), 0.0f);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = __builtin_scalbnf(fa, t_2);
-    fd = __builtin_scalbnf(fd, t_2);
-    s -= *t;
-    *t += v;
-    const float
-      w = (fb * fc),
-      e = __builtin_fmaf(-fb, fc, w),
-      f = __builtin_fmaf(fa, fd, -__builtin_scalbnf(w, s));
-    *x = __builtin_fmaf(__builtin_scalbnf(0.5f, s), 2.0f * e, f);
-    *x = __builtin_frexpf(*x, &s);
-    *t += s;
-    r = __builtin_scalbnf(*x, *t);
+    const float w = (fb * fc);
+    *x = (fa * fd);
+    if (w == 0.0f) {
+      if (*x == 0.0f) {
+        r = *x;
+        *t = 0;
+      }
+      else {
+        *x = __builtin_frexpf(*x, t);
+        *t += v;
+        r = __builtin_scalbnf(*x, *t);
+      }
+    }
+    else if (*x == 0.0f) {
+      *x = __builtin_frexpf(-w, t);
+      *t += u;
+      r = __builtin_scalbnf(*x, *t);
+    }
+    else {
+      int
+        s = (u - v);
+      *t = (int)__builtin_fmaxf((float)(s - FLT_MAX_EXP), 0.0f);
+      *t += (*t & 1);
+      const int
+        t_2 = -(*t >> 1);
+      fa = __builtin_scalbnf(fa, t_2);
+      fd = __builtin_scalbnf(fd, t_2);
+      s -= *t;
+      *t += v;
+      const float
+        e = __builtin_fmaf(-fb, fc, w),
+        f = __builtin_fmaf(fa, fd, -__builtin_scalbnf(w, s));
+      *x = __builtin_fmaf(__builtin_scalbnf(0.5f, s), 2.0f * e, f);
+      *x = __builtin_frexpf(*x, &s);
+      *t += s;
+      r = __builtin_scalbnf(*x, *t);
+    }
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 1) == 0))
   }
 #endif /* !safe */
@@ -147,24 +166,43 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     const int
       u = (eb + ec),
       v = (ea + ed);
-    int
-      s = (u - v);
-    *t = (int)__builtin_fmax((double)(s - DBL_MAX_EXP), 0.0);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = __builtin_scalbn(fa, t_2);
-    fd = __builtin_scalbn(fd, t_2);
-    s -= *t;
-    *t += v;
-    const double
-      w = (fb * fc),
-      e = __builtin_fma(-fb, fc, w),
-      f = __builtin_fma(fa, fd, -__builtin_scalbn(w, s));
-    *x = __builtin_fma(__builtin_scalbn(0.5, s), 2.0 * e, f);
-    *x = __builtin_frexp(*x, &s);
-    *t += s;
-    r = __builtin_scalbn(*x, *t);
+    const double w = (fb * fc);
+    *x = (fa * fd);
+    if (w == 0.0) {
+      if (*x == 0.0) {
+        r = *x;
+        *t = 0;
+      }
+      else {
+        *x = __builtin_frexp(*x, t);
+        *t += v;
+        r = __builtin_scalbn(*x, *t);
+      }
+    }
+    else if (*x == 0.0) {
+      *x = __builtin_frexp(-w, t);
+      *t += u;
+      r = __builtin_scalbn(*x, *t);
+    }
+    else {
+      int
+        s = (u - v);
+      *t = (int)__builtin_fmax((double)(s - DBL_MAX_EXP), 0.0);
+      *t += (*t & 1);
+      const int
+        t_2 = -(*t >> 1);
+      fa = __builtin_scalbn(fa, t_2);
+      fd = __builtin_scalbn(fd, t_2);
+      s -= *t;
+      *t += v;
+      const double
+        e = __builtin_fma(-fb, fc, w),
+        f = __builtin_fma(fa, fd, -__builtin_scalbn(w, s));
+      *x = __builtin_fma(__builtin_scalbn(0.5, s), 2.0 * e, f);
+      *x = __builtin_frexp(*x, &s);
+      *t += s;
+      r = __builtin_scalbn(*x, *t);
+    }
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 2) == 0))
   }
 #endif /* !safe */
@@ -202,24 +240,43 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     const int
       u = (eb + ec),
       v = (ea + ed);
-    int
-      s = (u - v);
-    *t = (int)__builtin_fmaxl((long double)(s - LDBL_MAX_EXP), 0.0L);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = __builtin_scalbnl(fa, t_2);
-    fd = __builtin_scalbnl(fd, t_2);
-    s -= *t;
-    *t += v;
-    const long double
-      w = (fb * fc),
-      e = __builtin_fmal(-fb, fc, w),
-      f = __builtin_fmal(fa, fd, -__builtin_scalbnl(w, s));
-    *x = __builtin_fmal(__builtin_scalbnl(0.5L, s), 2.0L * e, f);
-    *x = __builtin_frexpl(*x, &s);
-    *t += s;
-    r = __builtin_scalbnl(*x, *t);
+    const long double w = (fb * fc);
+    *x = (fa * fd);
+    if (w == 0.0L) {
+      if (*x == 0.0L) {
+        r = *x;
+        *t = 0;
+      }
+      else {
+        *x = __builtin_frexpl(*x, t);
+        *t += v;
+        r = __builtin_scalbnl(*x, *t);
+      }
+    }
+    else if (*x == 0.0L) {
+      *x = __builtin_frexpl(-w, t);
+      *t += u;
+      r = __builtin_scalbnl(*x, *t);
+    }
+    else {
+      int
+        s = (u - v);
+      *t = (int)__builtin_fmaxl((long double)(s - LDBL_MAX_EXP), 0.0L);
+      *t += (*t & 1);
+      const int
+        t_2 = -(*t >> 1);
+      fa = __builtin_scalbnl(fa, t_2);
+      fd = __builtin_scalbnl(fd, t_2);
+      s -= *t;
+      *t += v;
+      const long double
+        e = __builtin_fmal(-fb, fc, w),
+        f = __builtin_fmal(fa, fd, -__builtin_scalbnl(w, s));
+      *x = __builtin_fmal(__builtin_scalbnl(0.5L, s), 2.0L * e, f);
+      *x = __builtin_frexpl(*x, &s);
+      *t += s;
+      r = __builtin_scalbnl(*x, *t);
+    }
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 4) == 0))
   }
 #endif /* !safe */
@@ -257,24 +314,43 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
     const int
       u = (eb + ec),
       v = (ea + ed);
-    int
-      s = (u - v);
-    *t = ((s > FLT128_MAX_EXP) ? (s - FLT128_MAX_EXP) : 0);
-    *t += (*t & 1);
-    const int
-      t_2 = -(*t >> 1);
-    fa = scalbnq(fa, t_2);
-    fd = scalbnq(fd, t_2);
-    s -= *t;
-    *t += v;
-    const __float128
-      w = (fb * fc),
-      e = fmaq(-fb, fc, w),
-      f = fmaq(fa, fd, -scalbnq(w, s));
-    *x = fmaq(scalbnq(0.5q, s), 2.0q * e, f);
-    *x = frexpq(*x, &s);
-    *t += s;
-    r = scalbnq(*x, *t);
+    const __float128 w = (fb * fc);
+    *x = (fa * fd);
+    if (w == 0.0q) {
+      if (*x == 0.0q) {
+        r = *x;
+        *t = 0;
+      }
+      else {
+        *x = frexpq(*x, t);
+        *t += v;
+        r = scalbnq(*x, *t);
+      }
+    }
+    else if (*x == 0.0q) {
+      *x = frexpq(-w, t);
+      *t += u;
+      r = scalbnq(*x, *t);
+    }
+    else {
+      int
+        s = (u - v);
+      *t = ((s > FLT128_MAX_EXP) ? (s - FLT128_MAX_EXP) : 0);
+      *t += (*t & 1);
+      const int
+        t_2 = -(*t >> 1);
+      fa = scalbnq(fa, t_2);
+      fd = scalbnq(fd, t_2);
+      s -= *t;
+      *t += v;
+      const __float128
+        e = fmaq(-fb, fc, w),
+        f = fmaq(fa, fd, -scalbnq(w, s));
+      *x = fmaq(scalbnq(0.5q, s), 2.0q * e, f);
+      *x = frexpq(*x, &s);
+      *t += s;
+      r = scalbnq(*x, *t);
+    }
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 8) == 0))
   }
 #endif /* !safe */
@@ -286,10 +362,10 @@ long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long d
   return PVN_FABI(pvn_xdet,PVN_XDET)(a, b, c, d, x, t);
 }
 #endif /* ?PVN_QUADMATH */
-
+/* TODO: handle 0 */
 #ifdef __AVX512F__
 #ifndef ZFREXPF
-#define ZFREXPF(X,E,M)                \
+#define ZFREXPF(X,E,M,m)              \
   E = _mm512_getexp_ps(X);            \
   m = _mm512_cmplt_ps_mask(mI, E);    \
   E = _mm512_mask_add_ps(Z, m, E, O); \
@@ -314,11 +390,13 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   register const __m512 O = _mm512_set1_ps(1.0f);
   register const __m512 mI = _mm512_set1_ps(-__builtin_inff());
   register __m512 eA, eB, eC, eD;
-  register __mmask16 m;
-  ZFREXPF(fA, eA, fA);
-  ZFREXPF(fB, eB, fB);
-  ZFREXPF(fC, eC, fC);
-  ZFREXPF(fD, eD, fD);
+  register __mmask16 mA, mB, mC, mD;
+  ZFREXPF(fA, eA, fA, mA);
+  ZFREXPF(fB, eB, fB, mB);
+  ZFREXPF(fC, eC, fC, mC);
+  ZFREXPF(fD, eD, fD, mD);
+  mB = _kand_mask16(mB, mC);
+  mA = _kand_mask16(mA, mD);
   register const __m512 U = _mm512_add_ps(eB, eC);
   register const __m512 V = _mm512_add_ps(eA, eD);
   register __m512 S = _mm512_sub_ps(U, V);
@@ -346,7 +424,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   _mm512_store_ps(y, W);
 }
 #ifndef ZFREXP
-#define ZFREXP(X,E,M)                 \
+#define ZFREXP(X,E,M,m)               \
   E = _mm512_getexp_pd(X);            \
   m = _mm512_cmplt_pd_mask(mI, E);    \
   E = _mm512_mask_add_pd(Z, m, E, O); \
@@ -371,11 +449,13 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   register const __m512d O = _mm512_set1_pd(1.0);
   register const __m512d mI = _mm512_set1_pd(-__builtin_inf());
   register __m512d eA, eB, eC, eD;
-  register __mmask8 m;
-  ZFREXP(fA, eA, fA);
-  ZFREXP(fB, eB, fB);
-  ZFREXP(fC, eC, fC);
-  ZFREXP(fD, eD, fD);
+  register __mmask8 mA, mB, mC, mD;
+  ZFREXP(fA, eA, fA, mA);
+  ZFREXP(fB, eB, fB, mB);
+  ZFREXP(fC, eC, fC, mC);
+  ZFREXP(fD, eD, fD, mD);
+  mB = (__mmask8)_kand_mask16((__mmask16)mB, (__mmask16)mC);
+  mA = (__mmask8)_kand_mask16((__mmask16)mA, (__mmask16)mD);
   register const __m512d U = _mm512_add_pd(eB, eC);
   register const __m512d V = _mm512_add_pd(eA, eD);
   register __m512d S = _mm512_sub_pd(U, V);
