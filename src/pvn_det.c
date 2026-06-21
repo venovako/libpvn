@@ -386,7 +386,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   register __m512 fB = _mm512_load_ps(b);
   register __m512 fC = _mm512_load_ps(c);
   register __m512 fD = _mm512_load_ps(d);
-  register __m512 Z = _mm512_set1_pd(-0.0f);
+  register __m512 Z = _mm512_set1_ps(-0.0f);
   register const __m512 O = _mm512_set1_ps(1.0f);
   register const __m512 mI = _mm512_set1_ps(-__builtin_inff());
   register __m512 eA, eB, eC, eD;
