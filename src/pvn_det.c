@@ -113,7 +113,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
     else {
       int
         s = (u - v);
-      *t = (int)__builtin_fmaxf((float)(s - FLT_MAX_EXP), 0.0f);
+      *t = ((s > FLT_MAX_EXP) ? (s - FLT_MAX_EXP) : 0);
       *t += (*t & 1);
       const int
         t_2 = -(*t >> 1);
@@ -187,7 +187,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     else {
       int
         s = (u - v);
-      *t = (int)__builtin_fmax((double)(s - DBL_MAX_EXP), 0.0);
+      *t = ((s > DBL_MAX_EXP) ? (s - DBL_MAX_EXP) : 0);
       *t += (*t & 1);
       const int
         t_2 = -(*t >> 1);
@@ -261,7 +261,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
     else {
       int
         s = (u - v);
-      *t = (int)__builtin_fmaxl((long double)(s - LDBL_MAX_EXP), 0.0L);
+      *t = ((s > LDBL_MAX_EXP) ? (s - LDBL_MAX_EXP) : 0);
       *t += (*t & 1);
       const int
         t_2 = -(*t >> 1);
@@ -426,9 +426,10 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   mD = _kandn_mask16(mB, mA);
   W = _mm512_mask_mul_ps(W, mD, fA, fD);
   T = _mm512_mask_mov_ps(T, mD, V);
+  /* !mA & !mB should have already been implicitly handled */
   ZFREXPF(W, S, W, mD);
-  T = _mm512_add_ps(T, S);
   _mm512_store_ps(x, W);
+  T = _mm512_add_ps(T, S);
   _mm512_store_epi32(t, _mm512_cvtps_epi32(T));
   W = _mm512_scalef_ps(W, T);
   _mm512_store_ps(y, W);
@@ -495,9 +496,10 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   mD = (__mmask8)_kandn_mask16((__mmask16)mB, (__mmask16)mA);
   W = _mm512_mask_mul_pd(W, mD, fA, fD);
   T = _mm512_mask_mov_pd(T, mD, V);
+  /* !mA & !mB should have already been implicitly handled */
   ZFREXP(W, S, W, mD);
-  T = _mm512_add_pd(T, S);
   _mm512_store_pd(x, W);
+  T = _mm512_add_pd(T, S);
   _mm256_store_si256((__m256i*)t, _mm512_cvtpd_epi32(T));
   W = _mm512_scalef_pd(W, T);
   _mm512_store_pd(y, W);
