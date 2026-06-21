@@ -404,6 +404,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   register __m512 T = _mm512_set1_ps(FLT_MAX_EXP);
   T = _mm512_maskz_sub_ps(mC, S, T);
   T = _mm512_maskz_max_ps(mC, T, Z);
+  /* W = T & 1 [mC] */
   register __m512 W = _mm512_maskz_cvtepi32_ps(mC, _mm512_maskz_and_epi32(mC, _mm512_maskz_cvtps_epi32(mC, T), _mm512_set1_epi32(1)));
   T = _mm512_maskz_add_ps(mC, T, W);
   W = _mm512_maskz_mul_ps(mC, T, _mm512_set1_ps(-0.5f));
@@ -419,7 +420,8 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   W = _mm512_maskz_fmadd_ps(mC, W, E, F);
   /* !mA & mB */
   mD = _kandn_mask16(mA, mB);
-  Z = _mm512_castsi512_ps(_mm512_mask_xor_epi32(_mm512_castps_si512(fB), mD, _mm512_castps_si512(fB), _mm512_castps_si512(Z)));
+  /* Z = -fB [mD] */
+  Z = _mm512_castsi512_ps(_mm512_maskz_xor_epi32(mD, _mm512_castps_si512(fB), _mm512_castps_si512(Z)));
   W = _mm512_mask_mul_ps(W, mD, Z, fC);
   T = _mm512_mask_mov_ps(T, mD, U);
   /* !mB & mA */
@@ -474,6 +476,7 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   register __m512d T = _mm512_set1_pd(DBL_MAX_EXP);
   T = _mm512_maskz_sub_pd(mC, S, T);
   T = _mm512_maskz_max_pd(mC, T, Z);
+  /* W = T & 1 [mC] */
   register __m512d W = _mm512_maskz_cvtepi32_pd(mC, _mm256_and_si256(_mm512_maskz_cvtpd_epi32(mC, T), _mm256_set1_epi32(1)));
   T = _mm512_maskz_add_pd(mC, T, W);
   W = _mm512_maskz_mul_pd(mC, T, _mm512_set1_pd(-0.5));
@@ -489,7 +492,8 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   W = _mm512_maskz_fmadd_pd(mC, W, E, F);
   /* !mA & mB */
   mD = (__mmask8)_kandn_mask16((__mmask16)mA, (__mmask16)mB);
-  Z = _mm512_castsi512_pd(_mm512_mask_xor_epi64(_mm512_castpd_si512(fB), mD, _mm512_castpd_si512(fB), _mm512_castpd_si512(Z)));
+  /* Z = -fB [mD] */
+  Z = _mm512_castsi512_pd(_mm512_maskz_xor_epi64(mD, _mm512_castpd_si512(fB), _mm512_castpd_si512(Z)));
   W = _mm512_mask_mul_pd(W, mD, Z, fC);
   T = _mm512_mask_mov_pd(T, mD, U);
   /* !mB & mA */
