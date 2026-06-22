@@ -467,7 +467,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-S|-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-S|-s] [all|clean|help]"
 
 libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
@@ -484,9 +484,15 @@ libpvn.so: libpvn.a $(MKFS)
 ifdef STATIC
 %.exe : %.c $(HDRS) libpvn.a $(MKFS)
 	$(CC) $(CLFLAGS) -DPVN_TEST=2 $< -o $@ $(LDFLAGS) $(LNKX)
+
+pvn.exe: pvn.c $(HDRS) libpvn.a $(MKFS)
+	$(CC) $(CLFLAGS) -DPVN_TEST=2 $(NATIVE_MARCH) $< -o $@ $(LDFLAGS) $(LNKX)
 else # !STATIC
 %.exe : %.c $(HDRS) libpvn.$(DYNAMIC) $(MKFS)
 	$(CC) $(CLFLAGS) -DPVN_TEST=1 $< -o $@ $(LDFLAGS) $(LNKX)
+
+pvn.exe: pvn.c $(HDRS) libpvn.a $(MKFS)
+	$(CC) $(CLFLAGS) -DPVN_TEST=1 $(NATIVE_MARCH) $< -o $@ $(LDFLAGS) $(LNKX)
 endif # ?STATIC
 
 ../etc/gen_cbar.exe: ../etc/gen_cbar.c $(LIBS) $(MKFS)

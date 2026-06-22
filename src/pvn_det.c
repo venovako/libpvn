@@ -373,7 +373,7 @@ long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long d
 #else /* ZFREXPF */
 #error ZFREXPF already defined
 #endif /* ?ZFREXPF */
-void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, const float *const c, const float *const d, float *const x, int *const t, float *const y)
+void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const y)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
@@ -421,7 +421,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
   /* !mA & mB */
   mD = _kandn_mask16(mA, mB);
   /* Z = -fB [mD] */
-  Z = _mm512_castsi512_ps(_mm512_maskz_xor_epi32(mD, _mm512_castps_si512(fB), _mm512_castps_si512(Z)));
+  Z = _mm512_maskz_xor_ps(mD, fB, Z);
   W = _mm512_mask_mul_ps(W, mD, Z, fC);
   T = _mm512_mask_mov_ps(T, mD, U);
   /* !mB & mA */
@@ -445,7 +445,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, c
 #else /* ZFREXP */
 #error ZFREXP already defined
 #endif /* ?ZFREXP */
-void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, const double *const c, const double *const d, double *const x, int *const t, double *const y)
+void PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const y)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
@@ -467,9 +467,9 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   ZFREXP(fB, eB, fB, mB);
   ZFREXP(fC, eC, fC, mC);
   ZFREXP(fD, eD, fD, mD);
-  mB = (__mmask8)_kand_mask16((__mmask16)mB, (__mmask16)mC);
-  mA = (__mmask8)_kand_mask16((__mmask16)mA, (__mmask16)mD);
-  mC = (__mmask8)_kand_mask16((__mmask16)mA, (__mmask16)mB);
+  mB = _kand_mask8(mB, mC);
+  mA = _kand_mask8(mA, mD);
+  mC = _kand_mask8(mA, mB);
   register const __m512d U = _mm512_maskz_add_pd(mB, eB, eC);
   register const __m512d V = _mm512_maskz_add_pd(mA, eA, eD);
   register __m512d S = _mm512_maskz_sub_pd(mC, U, V);
@@ -491,20 +491,20 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, c
   W = _mm512_maskz_scalef_pd(mC, _mm512_set1_pd(0.5), S);
   W = _mm512_maskz_fmadd_pd(mC, W, E, F);
   /* !mA & mB */
-  mD = (__mmask8)_kandn_mask16((__mmask16)mA, (__mmask16)mB);
+  mD = _kandn_mask8(mA, mB);
   /* Z = -fB [mD] */
-  Z = _mm512_castsi512_pd(_mm512_maskz_xor_epi64(mD, _mm512_castpd_si512(fB), _mm512_castpd_si512(Z)));
+  Z = _mm512_maskz_xor_pd(mD, fB, Z);
   W = _mm512_mask_mul_pd(W, mD, Z, fC);
   T = _mm512_mask_mov_pd(T, mD, U);
   /* !mB & mA */
-  mD = (__mmask8)_kandn_mask16((__mmask16)mB, (__mmask16)mA);
+  mD = _kandn_mask8(mB, mA);
   W = _mm512_mask_mul_pd(W, mD, fA, fD);
   T = _mm512_mask_mov_pd(T, mD, V);
   /* !mA & !mB should have already been implicitly handled */
   ZFREXP(W, S, W, mD);
   _mm512_store_pd(x, W);
   T = _mm512_add_pd(T, S);
-  _mm256_store_si256((__m256i*)t, _mm512_cvtpd_epi32(T));
+  _mm256_store_si256(t, _mm512_cvtpd_epi32(T));
   W = _mm512_scalef_pd(W, T);
   _mm512_store_pd(y, W);
 }

@@ -98,9 +98,8 @@ PVN_EXTERN_C __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, c
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t);
 #endif /* ?PVN_QUADMATH */
-/* TODO: for now, it is assumed that all arguments are vector-aligned */
 #ifdef __AVX512F__
-PVN_EXTERN_C void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, const float *const c, const float *const d, float *const x, int *const t, float *const y);
-PVN_EXTERN_C void PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, const double *const c, const double *const d, double *const x, int *const t, double *const y);
+PVN_EXTERN_C void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const y);
+PVN_EXTERN_C void PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const y);
 #endif /* __AVX512F__ */
 #endif /* !PVN_DET_H */

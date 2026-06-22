@@ -19,8 +19,11 @@ CFLAGS=-O0 -g3
 CXXFLAGS=-O0 -g3
 FCFLAGS=-fpp -O0 -g3 -init=arrays,zero -check all
 endif # ?NDEBUG
+ifndef NATIVE
+NATIVE=Host
+endif # !NATIVE
 ifndef MARCH
-MARCH=Host
+MARCH=$(NATIVE)
 # common-avx512 for KNLs
 endif # !MARCH
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
@@ -70,3 +73,4 @@ ifdef STATIC
 # 1=scalar, 2=simd, 3=both
 PFLAGS += -DPVN_INTEL=3
 endif # STATIC
+NATIVE_MARCH=-x$(NATIVE)

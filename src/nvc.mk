@@ -17,8 +17,11 @@ PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 ifdef STRICT
 PFLAGS += -DPVN_STRICT=$(STRICT)
 endif # STRICT
+ifndef NATIVE
+NATIVE=native
+endif # !NATIVE
 ifndef MARCH
-MARCH=native
+MARCH=$(NATIVE)
 endif # !MARCH
 CFLAGS += -c23 -fpic -Kieee -Mcache_align -Mfma -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH)
 CXXFLAGS += -std=c++20 -fpic -Kieee -Mcache_align -Mfma -Minfo -Mint128 -Mm128 -Mnodaz -Mnoflushz -Mnofpapprox -Mnofprelaxed -Mno-recip-div -nvmalloc -pthread -tp=$(MARCH)
@@ -36,3 +39,4 @@ FCFLAGS += -mp
 endif # OPENMP
 CFLAGS += --diag_suppress integer_sign_change
 CXXFLAGS += --diag_suppress integer_sign_change
+NATIVE_MARCH=-tp=$(NATIVE)

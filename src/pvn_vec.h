@@ -25,6 +25,44 @@
 #error PVN_SAFELEN already defined
 #endif /* ?PVN_SAFELEN */
 
+#ifdef __AVX512F__
+#ifndef __AVX512DQ__
+#define _cvtmask8_u32(a) _cvtmask16_u32((__mmask16)(a))
+#define _cvtu32_mask8(a) (__mmask8)_cvtu32_mask16(a)
+#define _kadd_mask8(a,b) (__mmask8)_kadd_mask16((__mmask16)(a),(__mmask16)(b))
+#define _kand_mask8(a,b) (__mmask8)_kand_mask16((__mmask16)(a),(__mmask16)(b))
+#define _kandn_mask8(a,b) (__mmask8)_kandn_mask16((__mmask16)(a),(__mmask16)(b))
+#define _knot_mask8(a,b) (__mmask8)_knot_mask16((__mmask16)(a),(__mmask16)(b))
+#define _kor_mask8(a,b) (__mmask8)_kor_mask16((__mmask16)(a),(__mmask16)(b))
+#define _kxnor_mask8(a,b) (__mmask8)_kxnor_mask16((__mmask16)(a),(__mmask16)(b))
+#define _kxor_mask8(a,b) (__mmask8)_kxor_mask16((__mmask16)(a),(__mmask16)(b))
+#define _mm512_mask_and_ps(src,k,a,b) _mm512_castsi512_ps(_mm512_mask_and_epi32(_mm512_castps_si512(src),(k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_maskz_and_ps(k,a,b) _mm512_castsi512_ps(_mm512_maskz_and_epi32((k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_and_ps(a,b) _mm512_castsi512_ps(_mm512_and_epi32(_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_mask_and_pd(src,k,a,b) _mm512_castsi512_pd(_mm512_mask_and_epi64(_mm512_castpd_si512(src),(k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_maskz_and_pd(k,a,b) _mm512_castsi512_pd(_mm512_maskz_and_epi64((k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_and_pd(a,b) _mm512_castsi512_pd(_mm512_and_epi64(_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_mask_andnot_ps(src,k,a,b) _mm512_castsi512_ps(_mm512_mask_andnot_epi32(_mm512_castps_si512(src),(k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_maskz_andnot_ps(k,a,b) _mm512_castsi512_ps(_mm512_maskz_andnot_epi32((k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_andnot_ps(a,b) _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_mask_andnot_pd(src,k,a,b) _mm512_castsi512_pd(_mm512_mask_andnot_epi64(_mm512_castpd_si512(src),(k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_maskz_andnot_pd(k,a,b) _mm512_castsi512_pd(_mm512_maskz_andnot_epi64((k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_andnot_pd(a,b) _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_mask_or_ps(src,k,a,b) _mm512_castsi512_ps(_mm512_mask_or_epi32(_mm512_castps_si512(src),(k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_maskz_or_ps(k,a,b) _mm512_castsi512_ps(_mm512_maskz_or_epi32((k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_or_ps(a,b) _mm512_castsi512_ps(_mm512_or_epi32(_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_mask_or_pd(src,k,a,b) _mm512_castsi512_pd(_mm512_mask_or_epi64(_mm512_castpd_si512(src),(k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_maskz_or_pd(k,a,b) _mm512_castsi512_pd(_mm512_maskz_or_epi64((k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_or_pd(a,b) _mm512_castsi512_pd(_mm512_or_epi64(_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_mask_xor_ps(src,k,a,b) _mm512_castsi512_ps(_mm512_mask_xor_epi32(_mm512_castps_si512(src),(k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_maskz_xor_ps(k,a,b) _mm512_castsi512_ps(_mm512_maskz_xor_epi32((k),_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_xor_ps(a,b) _mm512_castsi512_ps(_mm512_xor_epi32(_mm512_castps_si512(a),_mm512_castps_si512(b)))
+#define _mm512_mask_xor_pd(src,k,a,b) _mm512_castsi512_pd(_mm512_mask_xor_epi64(_mm512_castpd_si512(src),(k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_maskz_xor_pd(k,a,b) _mm512_castsi512_pd(_mm512_maskz_xor_epi64((k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#define _mm512_xor_pd(a,b) _mm512_castsi512_pd(_mm512_xor_epi64(_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+#endif /* !__AVX512DQ__ */
+#endif /* __AVX512F__ */
+
 static inline float pvn_v1s_add_pos(const float X, const float Y)
 {
   return (X + Y);
@@ -937,11 +975,6 @@ static inline __m256d pvn_v4d_rsqrt(register const __m256d x)
 }
 
 #ifdef __AVX512F__
-#ifndef __AVX512DQ__
-#define _mm512_andnot_ps(b,a) _mm512_castsi512_ps(_mm512_andnot_epi32(_mm512_castps_si512(b), _mm512_castps_si512(a)))
-#define _mm512_andnot_pd(b,a) _mm512_castsi512_pd(_mm512_andnot_epi64(_mm512_castpd_si512(b), _mm512_castpd_si512(a)))
-#endif /* !__AVX512DQ__ */
-
 static inline __m512 pvn_v16s_add_pos(register const __m512 X, register const __m512 Y)
 {
   return _mm512_add_ps(X, Y);

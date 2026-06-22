@@ -63,21 +63,27 @@ else # !OPENMP
 CFLAGS += -fopenmp-simd
 CXXFLAGS += -fopenmp-simd
 endif # ?OPENMP
+ifndef NATIVE
+NATIVE=native
+endif # !NATIVE
 ifndef MARCH
-MARCH=native
+MARCH=$(NATIVE)
 endif # !MARCH
 ifeq ($(findstring BSD,$(OS)),BSD)
 ifeq ($(ARCH),arm64)
 CFLAGS += -mcpu=$(MARCH)
 CXXFLAGS += -mcpu=$(MARCH)
 FCFLAGS += -mcpu=$(MARCH)
+NATIVE_MARCH=-mcpu=$(NATIVE)
 else # !arm64
 CFLAGS += -march=$(MARCH)
 CXXFLAGS += -march=$(MARCH)
 FCFLAGS += -march=$(MARCH)
+NATIVE_MARCH=-march=$(NATIVE)
 endif # ?arm64
 else # !BSD
 CFLAGS += -march=$(MARCH)
 CXXFLAGS += -march=$(MARCH)
 FCFLAGS += -march=$(MARCH)
+NATIVE_MARCH=-march=$(NATIVE)
 endif # ?BSD

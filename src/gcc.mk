@@ -58,17 +58,22 @@ CFLAGS += -fopenmp-simd
 CXXFLAGS += -fopenmp-simd
 FCFLAGS += -fopenmp-simd
 endif # ?OPENMP
+ifndef NATIVE
+NATIVE=native
+endif # !NATIVE
 ifndef MARCH
-MARCH=native
+MARCH=$(NATIVE)
 endif # !MARCH
 ifeq ($(ARCH),ppc64le)
 CFLAGS += -mcpu=$(MARCH) -mpower8-fusion -mtraceback=full
 CXXFLAGS += -mcpu=$(MARCH) -mpower8-fusion -mtraceback=full
 FCFLAGS += -mcpu=$(MARCH) -mpower8-fusion -mtraceback=full
+NATIVE_MARCH=-mcpu=$(NATIVE)
 else # !ppc64le
 CFLAGS += -march=$(MARCH)
 CXXFLAGS += -march=$(MARCH)
 FCFLAGS += -march=$(MARCH)
+NATIVE_MARCH=-march=$(NATIVE)
 endif # ?ppc64le
 CFLAGS += -Wall -Wextra -Wno-stringop-truncation
 CXXFLAGS += -Wall -Wextra -Wno-stringop-truncation
