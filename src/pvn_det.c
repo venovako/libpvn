@@ -124,7 +124,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
       const float
         e = __builtin_fmaf(-fb, fc, w),
         f = __builtin_fmaf(fa, fd, -__builtin_scalbnf(w, s));
-      *x = __builtin_fmaf(__builtin_scalbnf(0.5f, s), 2.0f * e, f);
+      *x = __builtin_fmaf(__builtin_scalbnf(0.5f, s), (e + e), f);
       *x = __builtin_frexpf(*x, &s);
       *t += s;
       r = __builtin_scalbnf(*x, *t);
@@ -198,7 +198,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
       const double
         e = __builtin_fma(-fb, fc, w),
         f = __builtin_fma(fa, fd, -__builtin_scalbn(w, s));
-      *x = __builtin_fma(__builtin_scalbn(0.5, s), 2.0 * e, f);
+      *x = __builtin_fma(__builtin_scalbn(0.5, s), (e + e), f);
       *x = __builtin_frexp(*x, &s);
       *t += s;
       r = __builtin_scalbn(*x, *t);
@@ -272,7 +272,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
       const long double
         e = __builtin_fmal(-fb, fc, w),
         f = __builtin_fmal(fa, fd, -__builtin_scalbnl(w, s));
-      *x = __builtin_fmal(__builtin_scalbnl(0.5L, s), 2.0L * e, f);
+      *x = __builtin_fmal(__builtin_scalbnl(0.5L, s), (e + e), f);
       *x = __builtin_frexpl(*x, &s);
       *t += s;
       r = __builtin_scalbnl(*x, *t);
@@ -346,7 +346,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
       const __float128
         e = fmaq(-fb, fc, w),
         f = fmaq(fa, fd, -scalbnq(w, s));
-      *x = fmaq(scalbnq(0.5q, s), 2.0q * e, f);
+      *x = fmaq(scalbnq(0.5q, s), (e + e), f);
       *x = frexpq(*x, &s);
       *t += s;
       r = scalbnq(*x, *t);
