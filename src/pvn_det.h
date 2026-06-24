@@ -99,7 +99,7 @@ PVN_EXTERN_C __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, c
 PVN_EXTERN_C long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t);
 #endif /* ?PVN_QUADMATH */
 #ifdef __AVX512F__
-PVN_EXTERN_C void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const y);
-PVN_EXTERN_C void PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const y);
+PVN_EXTERN_C int PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const h);
+PVN_EXTERN_C int PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const h);
 #endif /* __AVX512F__ */
 #endif /* !PVN_DET_H */
