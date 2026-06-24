@@ -396,9 +396,9 @@ int PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, 
     X = _mm512_set1_ps(0.5f);
   register __m512i J = _mm512_set1_epi32(1);
   register __mmask16 mA, mB, mC, mD;
-  ZFREXPF(fA, eA, fA, mA);
   ZFREXPF(fB, eB, fB, mB);
   ZFREXPF(fC, eC, fC, mC);
+  ZFREXPF(fA, eA, fA, mA);
   ZFREXPF(fD, eD, fD, mD);
   mB = _kand_mask16(mB, mC);
   mA = _kand_mask16(mA, mD);
@@ -472,9 +472,9 @@ int PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, 
     X = _mm512_set1_pd(0.5);
   register __m256i J = _mm256_set1_epi32(1);
   register __mmask8 mA, mB, mC, mD;
-  ZFREXP(fA, eA, fA, mA);
   ZFREXP(fB, eB, fB, mB);
   ZFREXP(fC, eC, fC, mC);
+  ZFREXP(fA, eA, fA, mA);
   ZFREXP(fD, eD, fD, mD);
   mB = _kand_mask8(mB, mC);
   mA = _kand_mask8(mA, mD);
