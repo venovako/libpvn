@@ -373,7 +373,7 @@ long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long d
 #else /* ZFREXPF */
 #error ZFREXPF already defined
 #endif /* ?ZFREXPF */
-void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const y)
+void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const h)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
@@ -381,7 +381,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b,
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  PVN_ASSERT(y);
+  PVN_ASSERT(h);
   register __m512 fA = _mm512_load_ps(a);
   register __m512 fB = _mm512_load_ps(b);
   register __m512 fC = _mm512_load_ps(c);
@@ -434,7 +434,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b,
   T = _mm512_add_ps(T, S);
   _mm512_store_epi32(t, _mm512_cvtps_epi32(T));
   W = _mm512_scalef_ps(W, T);
-  _mm512_store_ps(y, W);
+  _mm512_store_ps(h, W);
 }
 #ifndef ZFREXP
 #define ZFREXP(X,E,M,m)             \
@@ -445,7 +445,7 @@ void PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b,
 #else /* ZFREXP */
 #error ZFREXP already defined
 #endif /* ?ZFREXP */
-void PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const y)
+void PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const h)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
@@ -453,7 +453,7 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b,
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  PVN_ASSERT(y);
+  PVN_ASSERT(h);
   register __m512d fA = _mm512_load_pd(a);
   register __m512d fB = _mm512_load_pd(b);
   register __m512d fC = _mm512_load_pd(c);
@@ -506,7 +506,7 @@ void PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b,
   T = _mm512_add_pd(T, S);
   _mm256_store_si256(t, _mm512_cvtpd_epi32(T));
   W = _mm512_scalef_pd(W, T);
-  _mm512_store_pd(y, W);
+  _mm512_store_pd(h, W);
 }
 #endif /* __AVX512F__ */
 #endif /* ?PVN_TEST */
