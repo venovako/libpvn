@@ -72,7 +72,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
   float r
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 1) == 0))
     = pvn_sdet(*a, *b, *c, *d);
-  if (__builtin_isfinite(r))
+  if (__builtin_isnormal(r))
     *x = __builtin_frexpf(r, t);
   else {
 #else /* safe */
@@ -146,7 +146,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
   double r
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 2) == 0))
     = pvn_ddet(*a, *b, *c, *d);
-  if (__builtin_isfinite(r))
+  if (__builtin_isnormal(r))
     *x = __builtin_frexp(r, t);
   else {
 #else /* safe */
@@ -220,7 +220,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   long double r
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 4) == 0))
     = pvn_xdet(*a, *b, *c, *d);
-  if (__builtin_isfinite(r))
+  if (__builtin_isnormal(r))
     *x = __builtin_frexpl(r, t);
   else {
 #else /* safe */
@@ -294,7 +294,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   __float128 r
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 8) == 0))
     = pvn_qdet(*a, *b, *c, *d);
-  if (isfiniteq(r))
+  if (isnormalq(r))
     *x = frexpq(r, t);
   else {
 #else /* safe */

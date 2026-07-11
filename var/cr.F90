@@ -8,6 +8,16 @@
 #define QFMA IEEE_FMA
 #endif
 #else
+#ifdef USE_NATIVE
+#define SFMA(A,B,C) ((A) * (B) + (C))
+#define DFMA(A,B,C) ((A) * (B) + (C))
+#ifdef __GFORTRAN__
+#define XFMA(A,B,C) ((A) * (B) + (C))
+#endif
+#ifndef __NVCOMPILER
+#define QFMA(A,B,C) ((A) * (B) + (C))
+#endif
+#else
   INTERFACE
      PURE FUNCTION SFMA(A, B, C) BIND(C,NAME='fmaf')
        USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: REAL32
@@ -53,6 +63,7 @@
   END INTERFACE
 #endif
 #endif
+#endif
 #define CFMA(A,B,C) CMPLX(SFMA(REAL(A),REAL(B),SFMA(-AIMAG(A),AIMAG(B),REAL(C))),SFMA(REAL(A),AIMAG(B),SFMA(AIMAG(A),REAL(B),AIMAG(C))),REAL32)
 #define ZFMA(A,B,C) CMPLX(DFMA(REAL(A),REAL(B),DFMA(-AIMAG(A),AIMAG(B),REAL(C))),DFMA(REAL(A),AIMAG(B),DFMA(AIMAG(A),REAL(B),AIMAG(C))),REAL64)
 #ifdef __GFORTRAN__
@@ -60,6 +71,9 @@
 #endif
 #ifndef __NVCOMPILER
 #define YFMA(A,B,C) CMPLX(QFMA(REAL(A),REAL(B),QFMA(-AIMAG(A),AIMAG(B),REAL(C))),QFMA(REAL(A),AIMAG(B),QFMA(AIMAG(A),REAL(B),AIMAG(C))),REAL128)
+#ifdef USE_NATIVE
+#define CR_SQRTQ SQRT
+#else
   INTERFACE
 #ifdef __GFORTRAN__
 #ifdef __GFC_REAL_10__
@@ -75,7 +89,8 @@
        REAL(KIND=REAL128), INTENT(IN), VALUE :: X
        REAL(KIND=REAL128) :: CR_SQRTQ
      END FUNCTION CR_SQRTQ
-   END INTERFACE
+  END INTERFACE
+#endif
 #endif
    INTERFACE CR_SINCOS
      PURE SUBROUTINE CR_SINCOSF(X, S, C) BIND(C,NAME='cr_sincosf')
@@ -91,6 +106,9 @@
        REAL(KIND=c_double), INTENT(OUT) :: S, C
      END SUBROUTINE CR_SINCOSD
   END INTERFACE CR_SINCOS
+#ifdef USE_NATIVE
+#define CR_RSQRT(X) (1.0 / SQRT(X))
+#else
   INTERFACE CR_RSQRT
      PURE FUNCTION CR_RSQRTF(X) BIND(C,NAME='cr_rsqrtf')
        USE, INTRINSIC :: ISO_C_BINDING, ONLY: c_float
@@ -121,6 +139,10 @@
      END FUNCTION CR_RSQRTQ
 #endif
   END INTERFACE CR_RSQRT
+#endif
+#ifdef USE_NATIVE
+#define CR_HYPOT HYPOT
+#else
   INTERFACE CR_HYPOT
      PURE FUNCTION CR_HYPOTF(X, Y) BIND(C,NAME='cr_hypotf')
        USE, INTRINSIC :: ISO_C_BINDING, ONLY: c_float
@@ -151,3 +173,4 @@
      END FUNCTION CR_HYPOTQ
 #endif
   END INTERFACE CR_HYPOT
+#endif
