@@ -60,6 +60,18 @@
 #define _mm512_mask_xor_pd(src,k,a,b) _mm512_castsi512_pd(_mm512_mask_xor_epi64(_mm512_castpd_si512(src),(k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
 #define _mm512_maskz_xor_pd(k,a,b) _mm512_castsi512_pd(_mm512_maskz_xor_epi64((k),_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
 #define _mm512_xor_pd(a,b) _mm512_castsi512_pd(_mm512_xor_epi64(_mm512_castpd_si512(a),_mm512_castpd_si512(b)))
+static inline __mmask16 pvn_v16s_finite(register const __m512 x)
+{
+  register const __m512 i = _mm512_set1_ps(__builtin_inff());
+  register const __m512 a = _mm512_and_ps(x, i);
+  return _mm512_cmpneq_ps_mask(a, i);
+}
+static inline __mmask8 pvn_v8d_finite(register const __m512d x)
+{
+  register const __m512d i = _mm512_set1_pd(__builtin_inf());
+  register const __m512d a = _mm512_and_pd(x, i);
+  return _mm512_cmpneq_pd_mask(a, i);
+}
 static inline __mmask16 pvn_v16s_normal(register const __m512 x)
 {
   register const __m512 i = _mm512_set1_ps(__builtin_inff());
@@ -73,6 +85,14 @@ static inline __mmask8 pvn_v8d_normal(register const __m512d x)
   return _mm512_mask_cmpneq_pd_mask(_mm512_cmpneq_pd_mask(a, _mm512_setzero_pd()), a, i);
 }
 #else /* __AVX512DQ__ */
+static inline __mmask16 pvn_v16s_finite(register const __m512 x)
+{
+  return _knot_mask16(_mm512_fpclass_ps_mask(x, 0x99));
+}
+static inline __mmask8 pvn_v8d_finite(register const __m512d x)
+{
+  return _knot_mask8(_mm512_fpclass_pd_mask(x, 0x99));
+}
 static inline __mmask16 pvn_v16s_normal(register const __m512 x)
 {
   return _knot_mask16(_mm512_fpclass_ps_mask(x, 0xBF));
