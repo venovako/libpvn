@@ -373,6 +373,67 @@ long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long d
 #else /* ZFREXPF */
 #error ZFREXPF already defined
 #endif /* ?ZFREXPF */
+#ifndef ZDETF_SLOW
+#define ZDETF_SLOW \
+  register const __m512 \
+    mI = _mm512_set1_ps(-__builtin_inff()), \
+    O = _mm512_set1_ps(1.0f); \
+  register __m512 eA, eB, eC, eD; \
+  register __mmask16 mA, mB, mC, mD; \
+  ZFREXPF(fB, eB, fB, mB); \
+  ZFREXPF(fC, eC, fC, mC); \
+  ZFREXPF(fA, eA, fA, mA); \
+  ZFREXPF(fD, eD, fD, mD); \
+  mB = _kand_mask16(mB, mC); \
+  mA = _kand_mask16(mA, mD); \
+  mC = _kand_mask16(mA, mB); \
+  register const __m512 \
+    U = _mm512_maskz_add_ps(mB, eB, eC), \
+    V = _mm512_maskz_add_ps(mA, eA, eD); \
+  register __m512 \
+    E = _mm512_set1_ps(FLT_MAX_EXP), \
+    Z = _mm512_set1_ps(-0.0f); \
+  register __m512i J = _mm512_set1_epi32(1); \
+  register __m512 \
+    S = _mm512_maskz_sub_ps(mC, U, V), \
+    W = _mm512_maskz_sub_ps(mC, S, E), \
+    T = _mm512_maskz_max_ps(mC, W, Z); \
+  J = _mm512_maskz_and_epi32(mC, _mm512_maskz_cvtps_epi32(mC, T), J); \
+  register __m512 F = _mm512_set1_ps(-0.5f); \
+  W = _mm512_maskz_cvtepi32_ps(mC, J); /* W = T & 1 {mC} */ \
+  register __m512 X = _mm512_set1_ps(0.5f); \
+  T = _mm512_maskz_add_ps(mC, T, W); \
+  W = _mm512_maskz_mul_ps(mC, T, F); \
+  fA = _mm512_mask_scalef_ps(fA, mC, fA, W); \
+  fD = _mm512_mask_scalef_ps(fD, mC, fD, W); \
+  S = _mm512_maskz_sub_ps(mC, S, T); \
+  T = _mm512_maskz_add_ps(mC, T, V); \
+  W = _mm512_maskz_mul_ps(mC, fB, fC); \
+  E = _mm512_maskz_fnmadd_ps(mC, fB, fC, W); \
+  W = _mm512_maskz_scalef_ps(mC, W, S); \
+  E = _mm512_maskz_add_ps(mC, E, E); \
+  F = _mm512_maskz_fmsub_ps(mC, fA, fD, W); \
+  W = _mm512_maskz_scalef_ps(mC, X, S); \
+  X = _mm512_maskz_fmadd_ps(mC, W, E, F); \
+  mD = _kandn_mask16(mA, mB); /* !mA & mB */ \
+  W = _mm512_maskz_xor_ps(mD, fB, Z); /* W = -fB {mD} */ \
+  X = _mm512_mask_mul_ps(X, mD, W, fC); \
+  T = _mm512_mask_mov_ps(T, mD, U); \
+  mD = _kandn_mask16(mB, mA); /* !mB & mA */ \
+  X = _mm512_mask_mul_ps(X, mD, fA, fD); \
+  T = _mm512_mask_mov_ps(T, mD, V); \
+  /* !mA & !mB should have already been implicitly handled */ \
+  ZFREXPF(X, S, X, mD); \
+  T = _mm512_add_ps(T, S); \
+  _mm512_store_ps(x, X); \
+  J = _mm512_cvtps_epi32(T); \
+  _mm512_store_epi32(t, J); \
+  W = _mm512_scalef_ps(X, T); \
+  _mm512_store_ps(h, W); \
+  return _mm_popcnt_u32(_cvtmask16_u32(mD))
+#else /* ZDETF_SLOW */
+#error ZDETF_SLOW already defined
+#endif /* ?ZDETF_SLOW */
 int PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const h)
 {
   PVN_ASSERT(a);
@@ -382,63 +443,12 @@ int PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, 
   PVN_ASSERT(x);
   PVN_ASSERT(t);
   PVN_ASSERT(h);
-  register const __m512
-    mI = _mm512_set1_ps(-__builtin_inff()),
-    Z = _mm512_set1_ps(-0.0f),
-    O = _mm512_set1_ps(1.0f);
-  register __m512 eA, eB, eC, eD, U, V, S, T, W,
+  register __m512
     fA = _mm512_load_ps(a),
     fB = _mm512_load_ps(b),
     fC = _mm512_load_ps(c),
-    fD = _mm512_load_ps(d),
-    E = _mm512_set1_ps(FLT_MAX_EXP),
-    F = _mm512_set1_ps(-0.5f),
-    X = _mm512_set1_ps(0.5f);
-  register __m512i J = _mm512_set1_epi32(1);
-  register __mmask16 mA, mB, mC, mD;
-  ZFREXPF(fB, eB, fB, mB);
-  ZFREXPF(fC, eC, fC, mC);
-  ZFREXPF(fA, eA, fA, mA);
-  ZFREXPF(fD, eD, fD, mD);
-  mB = _kand_mask16(mB, mC);
-  mA = _kand_mask16(mA, mD);
-  mC = _kand_mask16(mA, mB);
-  U = _mm512_maskz_add_ps(mB, eB, eC);
-  V = _mm512_maskz_add_ps(mA, eA, eD);
-  S = _mm512_maskz_sub_ps(mC, U, V);
-  W = _mm512_maskz_sub_ps(mC, S, E);
-  T = _mm512_maskz_max_ps(mC, W, Z);
-  J = _mm512_maskz_and_epi32(mC, _mm512_maskz_cvtps_epi32(mC, T), J);
-  W = _mm512_maskz_cvtepi32_ps(mC, J); // W = T & 1 {mC}
-  T = _mm512_maskz_add_ps(mC, T, W);
-  W = _mm512_maskz_mul_ps(mC, T, F);
-  fA = _mm512_mask_scalef_ps(fA, mC, fA, W);
-  fD = _mm512_mask_scalef_ps(fD, mC, fD, W);
-  S = _mm512_maskz_sub_ps(mC, S, T);
-  T = _mm512_maskz_add_ps(mC, T, V);
-  W = _mm512_maskz_mul_ps(mC, fB, fC);
-  E = _mm512_maskz_fnmadd_ps(mC, fB, fC, W);
-  W = _mm512_maskz_scalef_ps(mC, W, S);
-  E = _mm512_maskz_add_ps(mC, E, E);
-  F = _mm512_maskz_fmsub_ps(mC, fA, fD, W);
-  W = _mm512_maskz_scalef_ps(mC, X, S);
-  X = _mm512_maskz_fmadd_ps(mC, W, E, F);
-  mD = _kandn_mask16(mA, mB); // !mA & mB
-  W = _mm512_maskz_xor_ps(mD, fB, Z); // W = -fB {mD}
-  X = _mm512_mask_mul_ps(X, mD, W, fC);
-  T = _mm512_mask_mov_ps(T, mD, U);
-  mD = _kandn_mask16(mB, mA); // !mB & mA
-  X = _mm512_mask_mul_ps(X, mD, fA, fD);
-  T = _mm512_mask_mov_ps(T, mD, V);
-  // !mA & !mB should have already been implicitly handled
-  ZFREXPF(X, S, X, mD);
-  T = _mm512_add_ps(T, S);
-  J = _mm512_cvtps_epi32(T);
-  _mm512_store_epi32(t, J);
-  _mm512_store_ps(x, X);
-  W = _mm512_scalef_ps(X, T);
-  _mm512_store_ps(h, W);
-  return _mm_popcnt_u32(_cvtmask16_u32(mD));
+    fD = _mm512_load_ps(d);
+  ZDETF_SLOW;
 }
 #ifndef ZFREXP
 #define ZFREXP(X,E,M,m)             \
@@ -449,6 +459,67 @@ int PVN_FABI(pvn_zdetf,PVN_ZDETF)(const __m512 *const a, const __m512 *const b, 
 #else /* ZFREXP */
 #error ZFREXP already defined
 #endif /* ?ZFREXP */
+#ifndef ZDET_SLOW
+#define ZDET_SLOW \
+  register const __m512d \
+    mI = _mm512_set1_pd(-__builtin_inf()), \
+    O = _mm512_set1_pd(1.0); \
+  register __m512d eA, eB, eC, eD; \
+  register __mmask8 mA, mB, mC, mD; \
+  ZFREXP(fB, eB, fB, mB); \
+  ZFREXP(fC, eC, fC, mC); \
+  ZFREXP(fA, eA, fA, mA); \
+  ZFREXP(fD, eD, fD, mD); \
+  mB = _kand_mask8(mB, mC); \
+  mA = _kand_mask8(mA, mD); \
+  mC = _kand_mask8(mA, mB); \
+  register const __m512d \
+    U = _mm512_maskz_add_pd(mB, eB, eC), \
+    V = _mm512_maskz_add_pd(mA, eA, eD); \
+  register __m512d \
+    E = _mm512_set1_pd(DBL_MAX_EXP), \
+    Z = _mm512_set1_pd(-0.0); \
+  register __m256i J = _mm256_set1_epi32(1); \
+  register __m512d \
+    S = _mm512_maskz_sub_pd(mC, U, V), \
+    W = _mm512_maskz_sub_pd(mC, S, E), \
+    T = _mm512_maskz_max_pd(mC, W, Z); \
+  J = _mm256_and_si256(_mm512_maskz_cvtpd_epi32(mC, T), J); \
+  register __m512d F = _mm512_set1_pd(-0.5); \
+  W = _mm512_maskz_cvtepi32_pd(mC, J); /* W = T & 1 {mC} */ \
+  register __m512d X = _mm512_set1_pd(0.5); \
+  T = _mm512_maskz_add_pd(mC, T, W); \
+  W = _mm512_maskz_mul_pd(mC, T, F); \
+  fA = _mm512_mask_scalef_pd(fA, mC, fA, W); \
+  fD = _mm512_mask_scalef_pd(fD, mC, fD, W); \
+  S = _mm512_maskz_sub_pd(mC, S, T); \
+  T = _mm512_maskz_add_pd(mC, T, V); \
+  W = _mm512_maskz_mul_pd(mC, fB, fC); \
+  E = _mm512_maskz_fnmadd_pd(mC, fB, fC, W); \
+  W = _mm512_maskz_scalef_pd(mC, W, S); \
+  E = _mm512_maskz_add_pd(mC, E, E); \
+  F = _mm512_maskz_fmsub_pd(mC, fA, fD, W); \
+  W = _mm512_maskz_scalef_pd(mC, X, S); \
+  X = _mm512_maskz_fmadd_pd(mC, W, E, F); \
+  mD = _kandn_mask8(mA, mB); /* !mA & mB */ \
+  W = _mm512_maskz_xor_pd(mD, fB, Z); /* Z = -fB {mD} */ \
+  X = _mm512_mask_mul_pd(X, mD, W, fC); \
+  T = _mm512_mask_mov_pd(T, mD, U); \
+  mD = _kandn_mask8(mB, mA); /* !mB & mA */ \
+  X = _mm512_mask_mul_pd(X, mD, fA, fD); \
+  T = _mm512_mask_mov_pd(T, mD, V); \
+  /* !mA & !mB should have already been implicitly handled */ \
+  ZFREXP(X, S, X, mD); \
+  T = _mm512_add_pd(T, S); \
+  _mm512_store_pd(x, X); \
+  J = _mm512_cvtpd_epi32(T); \
+  _mm256_store_si256(t, J); \
+  W = _mm512_scalef_pd(X, T); \
+  _mm512_store_pd(h, W); \
+  return _mm_popcnt_u32(_cvtmask8_u32(mD))
+#else /* ZDET_SLOW */
+#error ZDET_SLOW already defined
+#endif /* ?ZDET_SLOW */
 int PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const h)
 {
   PVN_ASSERT(a);
@@ -458,63 +529,58 @@ int PVN_FABI(pvn_zdet,PVN_ZDET)(const __m512d *const a, const __m512d *const b, 
   PVN_ASSERT(x);
   PVN_ASSERT(t);
   PVN_ASSERT(h);
-  register const __m512d
-    mI = _mm512_set1_pd(-__builtin_inf()),
-    Z = _mm512_set1_pd(-0.0),
-    O = _mm512_set1_pd(1.0);
-  register __m512d eA, eB, eC, eD, U, V, S, T, W,
+  register __m512d
+    fA = _mm512_load_pd(a),
+    fB = _mm512_load_pd(b),
+    fC = _mm512_load_pd(c),
+    fD = _mm512_load_pd(d);
+  ZDET_SLOW;
+}
+int PVN_FABI(pvn_zdetfa,PVN_ZDETFA)(const __m512 *const a, const __m512 *const b, const __m512 *const c, const __m512 *const d, __m512 *const x, __m512i *const t, __m512 *const h)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  PVN_ASSERT(x);
+  PVN_ASSERT(t);
+  PVN_ASSERT(h);
+  register __m512
+    fA = _mm512_load_ps(a),
+    fB = _mm512_load_ps(b),
+    fC = _mm512_load_ps(c),
+    fD = _mm512_load_ps(d),
+    H = pvn_zdetf(fA, fB, fC, fD);
+  if (_mm_popcnt_u32(_cvtmask16_u32(pvn_v16s_normal(H))) == 16) {
+    _mm512_store_ps(h, H);
+    return -1;
+  }
+  else {
+    ZDETF_SLOW;
+  }
+}
+int PVN_FABI(pvn_zdeta,PVN_ZDETA)(const __m512d *const a, const __m512d *const b, const __m512d *const c, const __m512d *const d, __m512d *const x, __m256i *const t, __m512d *const h)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  PVN_ASSERT(x);
+  PVN_ASSERT(t);
+  PVN_ASSERT(h);
+  register __m512d
     fA = _mm512_load_pd(a),
     fB = _mm512_load_pd(b),
     fC = _mm512_load_pd(c),
     fD = _mm512_load_pd(d),
-    E = _mm512_set1_pd(DBL_MAX_EXP),
-    F = _mm512_set1_pd(-0.5),
-    X = _mm512_set1_pd(0.5);
-  register __m256i J = _mm256_set1_epi32(1);
-  register __mmask8 mA, mB, mC, mD;
-  ZFREXP(fB, eB, fB, mB);
-  ZFREXP(fC, eC, fC, mC);
-  ZFREXP(fA, eA, fA, mA);
-  ZFREXP(fD, eD, fD, mD);
-  mB = _kand_mask8(mB, mC);
-  mA = _kand_mask8(mA, mD);
-  mC = _kand_mask8(mA, mB);
-  U = _mm512_maskz_add_pd(mB, eB, eC);
-  V = _mm512_maskz_add_pd(mA, eA, eD);
-  S = _mm512_maskz_sub_pd(mC, U, V);
-  W = _mm512_maskz_sub_pd(mC, S, E);
-  T = _mm512_maskz_max_pd(mC, W, Z);
-  J = _mm256_and_si256(_mm512_maskz_cvtpd_epi32(mC, T), J);
-  W = _mm512_maskz_cvtepi32_pd(mC, J); // W = T & 1 {mC}
-  T = _mm512_maskz_add_pd(mC, T, W);
-  W = _mm512_maskz_mul_pd(mC, T, F);
-  fA = _mm512_mask_scalef_pd(fA, mC, fA, W);
-  fD = _mm512_mask_scalef_pd(fD, mC, fD, W);
-  S = _mm512_maskz_sub_pd(mC, S, T);
-  T = _mm512_maskz_add_pd(mC, T, V);
-  W = _mm512_maskz_mul_pd(mC, fB, fC);
-  E = _mm512_maskz_fnmadd_pd(mC, fB, fC, W);
-  W = _mm512_maskz_scalef_pd(mC, W, S);
-  E = _mm512_maskz_add_pd(mC, E, E);
-  F = _mm512_maskz_fmsub_pd(mC, fA, fD, W);
-  W = _mm512_maskz_scalef_pd(mC, X, S);
-  X = _mm512_maskz_fmadd_pd(mC, W, E, F);
-  mD = _kandn_mask8(mA, mB); // !mA & mB
-  W = _mm512_maskz_xor_pd(mD, fB, Z); // Z = -fB {mD}
-  X = _mm512_mask_mul_pd(X, mD, W, fC);
-  T = _mm512_mask_mov_pd(T, mD, U);
-  mD = _kandn_mask8(mB, mA); // !mB & mA
-  X = _mm512_mask_mul_pd(X, mD, fA, fD);
-  T = _mm512_mask_mov_pd(T, mD, V);
-  // !mA & !mB should have already been implicitly handled
-  ZFREXP(X, S, X, mD);
-  T = _mm512_add_pd(T, S);
-  J = _mm512_cvtpd_epi32(T);
-  _mm256_store_si256(t, J);
-  _mm512_store_pd(x, X);
-  W = _mm512_scalef_pd(X, T);
-  _mm512_store_pd(h, W);
-  return _mm_popcnt_u32(_cvtmask8_u32(mD));
+    H = pvn_zdet(fA, fB, fC, fD);
+  if (_mm_popcnt_u32(_cvtmask8_u32(pvn_v8d_normal(H))) == 8) {
+    _mm512_store_pd(h, H);
+    return -1;
+  }
+  else {
+    ZDET_SLOW;
+  }
 }
 #endif /* __AVX512F__ */
 #endif /* ?PVN_TEST */
