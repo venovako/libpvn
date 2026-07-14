@@ -48,6 +48,18 @@ static inline long long pvn_time_real_us()
   return (gettimeofday(&t, NULL) ? -1ll : pvn_t2us(&t));
 }
 
+static inline long long pvn_time_proc_ns()
+{
+  struct timespec t = { (time_t)0, 0l };
+  return (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t) ? -1ll : pvn_t2ns(&t));
+}
+
+static inline long long pvn_time_proc_res()
+{
+  struct timespec t = { (time_t)0, 0l };
+  return (clock_getres(CLOCK_PROCESS_CPUTIME_ID, &t) ? -1ll : pvn_t2ns(&t));
+}
+
 static inline long long pvn_time_thread_ns()
 {
   struct timespec t = { (time_t)0, 0l };
