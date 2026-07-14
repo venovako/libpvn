@@ -88,11 +88,10 @@ If the [OpenCilk](https://www.opencilk.org) compiler is used, please set `OPENMP
 If `long double` is not the 128-bit floating-point datatype (e.g., on Intel-compatible hardware), the `PVN_QUADMATH` macro should be set automatically to the name of a library implementing quadruple precision arithmetic, unless `COMPILER=clang` is used.
 
 The `SAFE` variable lists, as one or more comma-separated short names, the components for which a safe implementation is requested:
-- `DET` chooses a slower but sometimes slightly more reliable determinant calculation,
 - `NRM` selects `cr_hypot[f|l]` as the default norm computation backend and turns on the vector sorting before the final reductions where applicable, and
 - `SV2` uses a slightly more precise triangulation.
 
-So, `SAFE=DET,SV2,NRM`, e.g., requests the `DET`, `SV2`, and `NRM` safe implementations.
+So, `SAFE=SV2,NRM`, e.g., requests the `SV2` and `NRM` safe implementations.
 
 When the rounding mode is expected to vary, `STRICT=0` or `STRICT=1` should be set, where the latter is forcing the floating-point contractions to be standard-conformant.
 

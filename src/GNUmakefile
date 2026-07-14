@@ -144,30 +144,6 @@ PFLAGS += -DPVN_GMP=1
 endif # GMP
 
 ifdef SAFE
-ifeq ($(findstring DET,$(SAFE)),DET)
-PFLAGS += -DPVN_DET_SAFE=15
-endif # DET
-ifeq ($(findstring dET,$(SAFE)),dET)
-PFLAGS += -DPVN_DET_SAFE=13
-endif # dET
-ifeq ($(findstring DeT,$(SAFE)),DeT)
-PFLAGS += -DPVN_DET_SAFE=11
-endif # DeT
-ifeq ($(findstring deT,$(SAFE)),deT)
-PFLAGS += -DPVN_DET_SAFE=9
-endif # deT
-ifeq ($(findstring DEt,$(SAFE)),DEt)
-PFLAGS += -DPVN_DET_SAFE=7
-endif # DEt
-ifeq ($(findstring dEt,$(SAFE)),dEt)
-PFLAGS += -DPVN_DET_SAFE=5
-endif # dEt
-ifeq ($(findstring Det,$(SAFE)),Det)
-PFLAGS += -DPVN_DET_SAFE=3
-endif # Det
-ifeq ($(findstring det,$(SAFE)),det)
-PFLAGS += -DPVN_DET_SAFE=1
-endif # det
 ifeq ($(findstring NRM,$(SAFE)),NRM)
 PFLAGS += -DPVN_NRM_SAFE=15
 endif # NRM
