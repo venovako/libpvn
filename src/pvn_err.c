@@ -16,4 +16,14 @@ const char *pvn_get_error()
 {
   return strerror(errno);
 }
+
+int PVN_FABI(pvn_get_errno,PVN_GET_ERRNO)()
+{
+  return errno;
+}
+
+void PVN_FABI(pvn_set_errno,PVN_SET_ERRNO)(const int *const e)
+{
+  errno = (e ? *e : 0);
+}
 #endif /* ?PVN_TEST */

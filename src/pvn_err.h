@@ -52,6 +52,8 @@
 #endif /* ?_WIN32 */
 
 PVN_EXTERN_C const char *pvn_get_error();
+PVN_EXTERN_C int PVN_FABI(pvn_get_errno,PVN_GET_ERRNO)();
+PVN_EXTERN_C void PVN_FABI(pvn_set_errno,PVN_SET_ERRNO)(const int *const e);
 
 #ifndef PVN_SYSI_CALL
 #define PVN_SYSI_CALL(call) {                  \
