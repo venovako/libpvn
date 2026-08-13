@@ -35,7 +35,7 @@ The library has been successfully built using:
 Recent versions of the compilers have been provided by or used on:
 1. Homebrew (clang 22.1.7),
 2. FreeBSD (clang 19.1.7),
-3. gcc.gnu.org (GCC 16.1.0),
+3. gcc.gnu.org (GCC 16.2.0),
 4. FreeBSD (GCC 14.2.0),
 5. openSUSE Tumbleweed (GCC 16.1.1),
 6. Intel oneAPI (2026.1.0),
