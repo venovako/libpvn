@@ -93,11 +93,17 @@ static inline u128 sqrhU(u128 _a){
   return a11.a;
 }
 
+#ifdef _WIN32
+#define ulong unsigned long long
+#else /* !_WIN32 */
+#define ulong unsigned long
+#endif /* ?_WIN32 */
+
 #if (defined(__INTEL_COMPILER) || (defined(__GNUC__) && (__GNUC__ < 14)))
 // see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
-static inline unsigned long int __builtin_addcl(unsigned long a, unsigned long b, unsigned carry_in, unsigned long *carry_out)
+static inline ulong __builtin_addcl(ulong a, ulong b, ulong carry_in, ulong *carry_out)
 {
-  unsigned long s,
+  ulong s,
     c1 = __builtin_add_overflow(a, b, &s),
     c2 = __builtin_add_overflow(s, carry_in, &s);
   *(carry_out) = c1 | c2;
@@ -116,7 +122,7 @@ static inline u128 sqrU(u128 _a, u128 *t){
   //   a1a0
   //   a1a0
   // a1a1
-  unsigned long c;
+  ulong c;
   a00.b[1] = __builtin_addcl(a00.b[1], a10.b[0], 0, &c);
   a11.b[0] = __builtin_addcl(a11.b[0], a10.b[1], c, &c);
   a11.b[1] = __builtin_addcl(a11.b[1], 0, c, &c);
@@ -130,7 +136,7 @@ static inline u128 sqrU(u128 _a, u128 *t){
 // add two 128 bit numbers with overflow bit
 static inline u128 addUU(u64 *c, u128 _a, u128 _b){
   b128u128_u a, b;
-  unsigned long d;
+  ulong d;
   a.a = _a;
   b.a = _b;
   a.b[0] = __builtin_addcl(a.b[0], b.b[0], 0, &d);
