@@ -95,10 +95,9 @@ static inline u128 sqrhU(u128 _a){
 
 #ifdef _WIN32
 #define ulong unsigned long long
+#define __builtin_addcl __builtin_addcll
 #else /* !_WIN32 */
 #define ulong unsigned long
-#endif /* ?_WIN32 */
-
 #if (defined(__INTEL_COMPILER) || (defined(__GNUC__) && (__GNUC__ < 14)))
 // see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
 static inline ulong __builtin_addcl(ulong a, ulong b, ulong carry_in, ulong *carry_out)
@@ -110,6 +109,7 @@ static inline ulong __builtin_addcl(ulong a, ulong b, ulong carry_in, ulong *car
   return s;
 }
 #endif
+#endif /* ?_WIN32 */
 
 // get full product of unsigned 128x128 bit squaring
 static inline u128 sqrU(u128 _a, u128 *t){
