@@ -94,17 +94,23 @@ static inline u128 mhUU(u128 _a, u128 _b){
   return a1b1.a;
 }
 
+#ifdef _WIN32
+#define ulong unsigned long long
+#define __builtin_addcl __builtin_addcll
+#else /* !_WIN32 */
+#define ulong unsigned long
 #if (defined(__INTEL_COMPILER) || (defined(__GNUC__) && (__GNUC__ < 14)))
 // see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
-static inline unsigned long int __builtin_addcl(unsigned long a, unsigned long b, unsigned carry_in, unsigned long *carry_out)
+static inline ulong __builtin_addcl(ulong a, ulong b, ulong carry_in, ulong *carry_out)
 {
-  unsigned long s,
+  ulong s,
     c1 = __builtin_add_overflow(a, b, &s),
     c2 = __builtin_add_overflow(s, carry_in, &s);
   *(carry_out) = c1 | c2;
   return s;
 }
 #endif
+#endif /* ?_WIN32 */
 
 // get full product of unsigned 128x128 bit multiplication
 static inline u128 mUU(u128 _a, u128 _b, u128 *t){
@@ -119,7 +125,7 @@ static inline u128 mUU(u128 _a, u128 _b, u128 *t){
   //   a1b0
   //   a0b1
   // a1b1
-  unsigned long c;
+  ulong c;
   a0b0.b[1] = __builtin_addcl(a0b0.b[1], a1b0.b[0], 0, &c);
   a1b1.b[0] = __builtin_addcl(a1b1.b[0], a1b0.b[1], c, &c);
   a1b1.b[1] = __builtin_addcl(a1b1.b[1], 0, c, &c);
