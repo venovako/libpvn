@@ -56,15 +56,6 @@ typedef union {
   __float128 f;
 } b128u128_u;
 
-#if (defined(__x86_64__) && (defined(__APPLE__) || defined(_WIN32) || defined(__INTEL_COMPILER)))
-static inline __float128 local_nanq(__attribute__((unused)) const char *tagp){
-  b128u128_u u;
-  u.a = ~(u128)0u;
-  return u.f;
-}
-#define __builtin_nanf128(tagp) local_nanq(tagp)
-#endif
-
 // get high part of unsigned 64x64 bit multiplication
 static inline u64 mhuu(u64 _a, u64 _b){
   return ((u128)_a*_b)>>64;
@@ -98,17 +89,6 @@ static inline u128 sqrhU(u128 _a){
 #define __builtin_addcl __builtin_addcll
 #else /* !_WIN32 */
 #define ulong unsigned long
-#if (defined(__INTEL_COMPILER) || (defined(__GNUC__) && (__GNUC__ < 14)))
-// see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
-static inline ulong __builtin_addcl(ulong a, ulong b, ulong carry_in, ulong *carry_out)
-{
-  ulong s,
-    c1 = __builtin_add_overflow(a, b, &s),
-    c2 = __builtin_add_overflow(s, carry_in, &s);
-  *(carry_out) = c1 | c2;
-  return s;
-}
-#endif
 #endif /* ?_WIN32 */
 
 // get full product of unsigned 128x128 bit squaring
@@ -295,21 +275,13 @@ __float128 cr_hypotq(__float128 x, __float128 y) {
       if(__builtin_expect(oflagp!=flagp, 0)) _mm_setcsr(flagp);
       out = __builtin_nanf128("hypot");
     } else if(xnan+ynan==4) {//quiet NAN
-#ifdef __INTEL_COMPILER
-      out = 1.0q/0.0q;
-#else
       out = __builtin_inff128(); // hypot(+-inf,qnan) = inf and hypot(qnan, +-inf) = inf
-#endif
     } else if(xnan==3) {//quiet NAN
       out = reinterpret_u128_as_f128(a.a); // propagate nan
     } else if(ynan==3) {//quiet NAN
       out = reinterpret_u128_as_f128(b.a); // propagate nan
     } else { // infinity and a normal number
-#ifdef __INTEL_COMPILER
-      out = 1.0q/0.0q;
-#else
       out = __builtin_inff128();
-#endif
     }
     return out;
   }

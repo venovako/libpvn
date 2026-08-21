@@ -58,15 +58,6 @@ typedef union {
   __float128 f;
 } b128u128_u;
 
-#if (defined(__x86_64__) && (defined(__APPLE__) || defined(_WIN32)))
-static inline __float128 local_nanq(__attribute__((unused)) const char *tagp){
-  b128u128_u u;
-  u.a = ~(u128)0u;
-  return u.f;
-}
-#define __builtin_nanf128(tagp) local_nanq(tagp)
-#endif
-
 // get high part of unsigned 64x64 bit multiplication
 static inline u64 mhuu(u64 _a, u64 _b){
   return ((u128)_a*_b)>>64;

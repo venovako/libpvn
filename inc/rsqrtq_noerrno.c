@@ -58,15 +58,6 @@ typedef union {
   __float128 f;
 } b128u128_u;
 
-#if (defined(__x86_64__) && (defined(__APPLE__) || defined(_WIN32) || defined(__INTEL_COMPILER)))
-static inline __float128 local_nanq(__attribute__((unused)) const char *tagp){
-  b128u128_u u;
-  u.a = ~(u128)0u;
-  return u.f;
-}
-#define __builtin_nanf128(tagp) local_nanq(tagp)
-#endif
-
 static inline i64 mhui(u64 y, i64 x){
   return ((u128)(u64)x*(u128)y>>64) - ((x>>63)&y);
 }
@@ -99,17 +90,6 @@ static inline u128 mhUU(u128 _a, u128 _b){
 #define __builtin_addcl __builtin_addcll
 #else /* !_WIN32 */
 #define ulong unsigned long
-#if (defined(__INTEL_COMPILER) || (defined(__GNUC__) && (__GNUC__ < 14)))
-// see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
-static inline ulong __builtin_addcl(ulong a, ulong b, ulong carry_in, ulong *carry_out)
-{
-  ulong s,
-    c1 = __builtin_add_overflow(a, b, &s),
-    c2 = __builtin_add_overflow(s, carry_in, &s);
-  *(carry_out) = c1 | c2;
-  return s;
-}
-#endif
 #endif /* ?_WIN32 */
 
 // get full product of unsigned 128x128 bit multiplication
