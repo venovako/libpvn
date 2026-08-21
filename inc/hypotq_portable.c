@@ -86,9 +86,9 @@ static inline u128 sqrhU(u128 _a){
 #ifdef _WIN32
 #define ulong unsigned long long
 #define __builtin_addcl __builtin_addcll
-#else /* !_WIN32 */
+#else
 #define ulong unsigned long
-#endif /* ?_WIN32 */
+#endif
 
 // get full product of unsigned 128x128 bit squaring
 static inline u128 sqrU(u128 _a, u128 *t){

@@ -85,9 +85,9 @@ static inline u128 mhUU(u128 _a, u128 _b){
 #ifdef _WIN32
 #define ulong unsigned long long
 #define __builtin_addcl __builtin_addcll
-#else /* !_WIN32 */
+#else
 #define ulong unsigned long
-#endif /* ?_WIN32 */
+#endif
 
 // get full product of unsigned 128x128 bit multiplication
 static inline u128 mUU(u128 _a, u128 _b, u128 *t){
