@@ -221,11 +221,11 @@ __float128 cr_sqrtq(__float128 x) {
       errno = EDOM;
 #endif
       feraiseexcept (FE_INVALID);
-#ifdef _WIN32
+#if (defined(_WIN32) || defined(__APPLE__))
       return 0.0q / 0.0q;
-#else /* !_WIN32 */
+#else
       return __builtin_nanf128("<0");
-#endif /* ?_WIN32 */
+#endif
     } else{
       if(!(u.b[1]&(1ull<<47))) feraiseexcept (FE_INVALID); // complain about the snan argument by the invalid exception
       u.b[1] |= 1ull<<47; // snan -> qnan

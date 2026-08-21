@@ -243,11 +243,11 @@ __float128 cr_rsqrtq(__float128 x){
       errno = EDOM;
 #endif
       feraiseexcept (FE_INVALID);
-#ifdef _WIN32
+#if (defined(_WIN32) || defined(__APPLE__))
       return 0.0q / 0.0q;
-#else /* !_WIN32 */
+#else
       return __builtin_nanf128("<0");
-#endif /* ?_WIN32 */
+#endif
     } else{
       u.a |= (u128)1<<111; // snan -> qnan
       return u.f; // NaN

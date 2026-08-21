@@ -273,11 +273,11 @@ __float128 cr_hypotq(__float128 x, __float128 y) {
     if(xnan==2||ynan==2){ // signaling NAN
       flagp |= FE_INVALID;
       if(__builtin_expect(oflagp!=flagp, 0)) _mm_setcsr(flagp);
-#ifdef _WIN32
+#if (defined(_WIN32) || defined(__APPLE__))
       out = 0.0q / 0.0q;
-#else /* !_WIN32 */
+#else
       out = __builtin_nanf128("hypot");
-#endif /* ?_WIN32 */
+#endif
     } else if(xnan+ynan==4) {//quiet NAN
       out = __builtin_inff128(); // hypot(+-inf,qnan) = inf and hypot(qnan, +-inf) = inf
     } else if(xnan==3) {//quiet NAN
