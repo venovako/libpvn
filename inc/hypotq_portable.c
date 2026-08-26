@@ -234,7 +234,7 @@ __attribute__((noinline)) char getclass(u128 x){
 
 __float128 cr_hypotq(__float128 x, __float128 y) {
   int rm = fegetround();
-  const u64 smsk = 1ll<<63;
+  const u64 smsk = 1ull<<63;
   b128u128_u X = {.a = reinterpret_f128_as_u128(x)};
   b128u128_u Y = {.a = reinterpret_f128_as_u128(y)};
 
