@@ -75,8 +75,8 @@ CXXFLAGS += -march=$(MARCH)
 FCFLAGS += -march=$(MARCH)
 NATIVE_MARCH=-march=$(NATIVE)
 endif # ?ppc64le
-CFLAGS += -Wall -Wextra -Wno-stringop-truncation
-CXXFLAGS += -Wall -Wextra -Wno-stringop-truncation
+CFLAGS += -Wall -Wextra -Wno-deprecated -Wno-stringop-truncation
+CXXFLAGS += -Wall -Wextra -Wno-deprecated -Wno-stringop-truncation
 ifdef SLEEF
 ifneq ($(sleef),0)
 CFLAGS += -Wno-unknown-pragmas -Wno-unused-function -Wno-unused-parameter
