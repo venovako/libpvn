@@ -41,6 +41,8 @@ Recent versions of the compilers have been provided by or used on:
 6. Intel oneAPI (2026.1.0),
 7. NVIDIA HPC SDK (26.5).
 
+GCC version is assumed to be at least 14.
+
 Examples of building the library:
 ```bash
 cd src
@@ -53,8 +55,8 @@ make help
 # a release build with icx on x86_64 Linux with a high optimization level
 make COMPILER=icx NDEBUG=3 clean all
 #
-# a release build with the Homebrew's gcc on x86_64 macOS with a low optimization level
-make COMPILER=gcc COMPILER_SUFFIX=-15 NDEBUG=g clean all
+# a release build with gcc on x86_64 macOS with a low optimization level
+make COMPILER=gcc COMPILER_SUFFIX=-16 NDEBUG=g clean all
 #
 # a debug build with clang on FreeBSD (note the usage of gmake instead of make)
 gmake clean all

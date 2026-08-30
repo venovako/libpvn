@@ -21,7 +21,7 @@ ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
 CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 15 ]; then echo 2y; else echo 2x; fi) -fPIC -pthread -fvect-cost-model=unlimited
-CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 14 ]; then echo 2c; else echo 2b; fi) -fPIC -pthread -fvect-cost-model=unlimited
+CXXFLAGS += -std=gnu++2c -fPIC -pthread -fvect-cost-model=unlimited
 FCFLAGS += -fPIC -pthread -fvect-cost-model=unlimited -frecursive -fstack-arrays
 ifdef STRICT
 PFLAGS += -DPVN_STRICT=$(STRICT)
@@ -75,8 +75,8 @@ CXXFLAGS += -march=$(MARCH)
 FCFLAGS += -march=$(MARCH)
 NATIVE_MARCH=-march=$(NATIVE)
 endif # ?ppc64le
-CFLAGS += -Wall -Wextra -Wno-stringop-truncation
-CXXFLAGS += -Wall -Wextra -Wno-stringop-truncation
+CFLAGS += -Wall -Wextra -Wno-deprecated -Wno-stringop-truncation
+CXXFLAGS += -Wall -Wextra -Wno-deprecated -Wno-stringop-truncation
 FCFLAGS += -Wno-deprecated
 ifdef SLEEF
 ifneq ($(sleef),0)
