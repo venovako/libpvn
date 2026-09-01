@@ -324,7 +324,7 @@ is_exact (float x, float y)
   while (n0-- > 1)
     my = my * m;
   // |x^y| = my * 2^(e*n)
-  t = 32 - __builtin_clzll (my); // number of significant bits of m^n
+  t = 32 - __builtin_clz (my); // number of significant bits of m^n
   /* x^y is an odd multiple of 2^(e*n) thus we should have e*n >= -149,
      we also have 2^(t-1) <= m^n thus 2^(e*n+t-1) <= |x^y| < 2^(e*n+t)
      and we need e*n+t <= 128 */
