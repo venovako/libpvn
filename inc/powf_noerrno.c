@@ -77,7 +77,9 @@ roundeven_finite (double x)
     union { double f; uint64_t n; } u, v;
     u.f = ix;
     v.f = ix - __builtin_copysign (1.0, x);
-    if (__builtin_ctz (v.n) > __builtin_ctz (u.n))
+    /* Warning: v.n is 0 when x=0.5; while u.n cannot be zero since ix
+       is rounded away from zero. */
+    if (v.n == 0 || __builtin_ctzll (v.n) > __builtin_ctzll (u.n))
       ix = v.f;
   }
 # endif
@@ -322,7 +324,7 @@ is_exact (float x, float y)
   while (n0-- > 1)
     my = my * m;
   // |x^y| = my * 2^(e*n)
-  t = 32 - __builtin_clz (my); // number of significant bits of m^n
+  t = 32 - __builtin_clzll (my); // number of significant bits of m^n
   /* x^y is an odd multiple of 2^(e*n) thus we should have e*n >= -149,
      we also have 2^(t-1) <= m^n thus 2^(e*n+t-1) <= |x^y| < 2^(e*n+t)
      and we need e*n+t <= 128 */
