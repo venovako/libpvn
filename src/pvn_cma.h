@@ -12,18 +12,11 @@ static inline void pvn_cmul(float *const cr, float *const ci, const float ar, co
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  float x
-#ifndef NDEBUG
-    = 0.0f
-#endif /* !NDEBUG */
-    ;
-  int t
-#ifndef NDEBUG
-    = 0
-#endif /* !NDEBUG */
-    ;
+  float x = 0.0f;
+  int t = 0;
   *ci = -ai;
   *cr = PVN_FABI(pvn_sdet,PVN_SDET)(&ar, &ai, &bi, &br, &x, &t);
+  t = 0;
   *ci = PVN_FABI(pvn_sdet,PVN_SDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
@@ -31,18 +24,11 @@ static inline void pvn_zmul(double *const cr, double *const ci, const double ar,
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  double x
-#ifndef NDEBUG
-    = 0.0
-#endif /* !NDEBUG */
-    ;
-  int t
-#ifndef NDEBUG
-    = 0
-#endif /* !NDEBUG */
-    ;
+  double x = 0.0;
+  int t = 0;
   *ci = -ai;
   *cr = PVN_FABI(pvn_ddet,PVN_DDET)(&ar, &ai, &bi, &br, &x, &t);
+  t = 0;
   *ci = PVN_FABI(pvn_ddet,PVN_DDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
@@ -99,18 +85,11 @@ static inline void pvn_wmul(long double *const cr, long double *const ci, const 
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  long double x
-#ifndef NDEBUG
-    = 0.0L
-#endif /* !NDEBUG */
-    ;
-  int t
-#ifndef NDEBUG
-    = 0
-#endif /* !NDEBUG */
-    ;
+  long double x = 0.0L;
+  int t = 0;
   *ci = -ai;
   *cr = PVN_FABI(pvn_xdet,PVN_XDET)(&ar, &ai, &bi, &br, &x, &t);
+  t = 0;
   *ci = PVN_FABI(pvn_xdet,PVN_XDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
@@ -132,18 +111,11 @@ static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  __float128 x
-#ifndef NDEBUG
-    = 0.0q
-#endif /* !NDEBUG */
-    ;
-  int t
-#ifndef NDEBUG
-    = 0
-#endif /* !NDEBUG */
-    ;
+  __float128 x = 0.0q;
+  int t = 0;
   *ci = -ai;
   *cr = PVN_FABI(pvn_qdet,PVN_QDET)(&ar, &ai, &bi, &br, &x, &t);
+  t = 0;
   *ci = PVN_FABI(pvn_qdet,PVN_QDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
@@ -157,29 +129,12 @@ static inline void pvn_yfma(__float128 *const dr, __float128 *const di, const __
 #else /* !PVN_QUADMATH */
 static inline void pvn_ymul(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
 {
-  PVN_ASSERT(cr);
-  PVN_ASSERT(ci);
-  long double x
-#ifndef NDEBUG
-    = 0.0L
-#endif /* !NDEBUG */
-    ;
-  int t
-#ifndef NDEBUG
-    = 0
-#endif /* !NDEBUG */
-    ;
-  *ci = -ai;
-  *cr = PVN_FABI(pvn_xdet,PVN_XDET)(&ar, &ai, &bi, &br, &x, &t);
-  *ci = PVN_FABI(pvn_xdet,PVN_XDET)(&ar,  ci, &br, &bi, &x, &t);
+  pvn_wmul(cr, ci, ar, ai, br, bi);
 }
 
 static inline void pvn_yfma(long double *const dr, long double *const di, const long double ar, const long double ai, const long double br, const long double bi, const long double cr, const long double ci)
 {
-  PVN_ASSERT(dr);
-  PVN_ASSERT(di);
-  *dr = __builtin_fmal(ar, br, __builtin_fmal(-ai, bi, cr));
-  *di = __builtin_fmal(ar, bi, __builtin_fmal( ai, br, ci));
+  pvn_wfma(dr, di, ar, ai, br, bi, cr, ci);
 }
 #endif /* ?PVN_QUADMATH */
 
