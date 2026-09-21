@@ -12,11 +12,10 @@ static inline void pvn_cmul(float *const cr, float *const ci, const float ar, co
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  float x = 0.0f;
-  int t = 0;
+  float x;
+  int t;
   *ci = -ai;
   *cr = PVN_FABI(pvn_sdet,PVN_SDET)(&ar, &ai, &bi, &br, &x, &t);
-  t = 0;
   *ci = PVN_FABI(pvn_sdet,PVN_SDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
@@ -24,11 +23,10 @@ static inline void pvn_zmul(double *const cr, double *const ci, const double ar,
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  double x = 0.0;
-  int t = 0;
+  double x;
+  int t;
   *ci = -ai;
   *cr = PVN_FABI(pvn_ddet,PVN_DDET)(&ar, &ai, &bi, &br, &x, &t);
-  t = 0;
   *ci = PVN_FABI(pvn_ddet,PVN_DDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
@@ -85,11 +83,10 @@ static inline void pvn_wmul(long double *const cr, long double *const ci, const 
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  long double x = 0.0L;
-  int t = 0;
+  long double x;
+  int t;
   *ci = -ai;
   *cr = PVN_FABI(pvn_xdet,PVN_XDET)(&ar, &ai, &bi, &br, &x, &t);
-  t = 0;
   *ci = PVN_FABI(pvn_xdet,PVN_XDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
@@ -111,11 +108,10 @@ static inline void pvn_ymul(__float128 *const cr, __float128 *const ci, const __
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
-  __float128 x = 0.0q;
-  int t = 0;
+  __float128 x;
+  int t;
   *ci = -ai;
   *cr = PVN_FABI(pvn_qdet,PVN_QDET)(&ar, &ai, &bi, &br, &x, &t);
-  t = 0;
   *ci = PVN_FABI(pvn_qdet,PVN_QDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 

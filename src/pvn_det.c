@@ -69,7 +69,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  float r = *x;
+  float r;
 #ifdef NDEBUG
   int ea, eb, ec, ed;
 #else /* !NDEBUG */
@@ -132,7 +132,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  double r = *x;
+  double r;
 #ifdef NDEBUG
   int ea, eb, ec, ed;
 #else /* !NDEBUG */
@@ -195,7 +195,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  long double r = *x;
+  long double r;
 #ifdef NDEBUG
   int ea, eb, ec, ed;
 #else /* !NDEBUG */
@@ -258,7 +258,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  __float128 r = *x;
+  __float128 r;
 #ifdef NDEBUG
   int ea, eb, ec, ed;
 #else /* !NDEBUG */
