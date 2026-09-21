@@ -70,11 +70,7 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
   PVN_ASSERT(x);
   PVN_ASSERT(t);
   float r;
-#ifdef NDEBUG
   int ea, eb, ec, ed;
-#else /* !NDEBUG */
-  int ea = 0, eb = 0, ec = 0, ed = 0;
-#endif /* ?NDEBUG */
   const float
     fb = __builtin_frexpf(*b, &eb),
     fc = __builtin_frexpf(*c, &ec);
@@ -133,11 +129,7 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
   PVN_ASSERT(x);
   PVN_ASSERT(t);
   double r;
-#ifdef NDEBUG
   int ea, eb, ec, ed;
-#else /* !NDEBUG */
-  int ea = 0, eb = 0, ec = 0, ed = 0;
-#endif /* ?NDEBUG */
   const double
     fb = __builtin_frexp(*b, &eb),
     fc = __builtin_frexp(*c, &ec);
@@ -196,11 +188,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   PVN_ASSERT(x);
   PVN_ASSERT(t);
   long double r;
-#ifdef NDEBUG
   int ea, eb, ec, ed;
-#else /* !NDEBUG */
-  int ea = 0, eb = 0, ec = 0, ed = 0;
-#endif /* ?NDEBUG */
   const long double
     fb = __builtin_frexpl(*b, &eb),
     fc = __builtin_frexpl(*c, &ec);
@@ -259,11 +247,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   PVN_ASSERT(x);
   PVN_ASSERT(t);
   __float128 r;
-#ifdef NDEBUG
   int ea, eb, ec, ed;
-#else /* !NDEBUG */
-  int ea = 0, eb = 0, ec = 0, ed = 0;
-#endif /* ?NDEBUG */
   const __float128
     fb = frexpq(*b, &eb),
     fc = frexpq(*c, &ec);
