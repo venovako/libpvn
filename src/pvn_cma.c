@@ -49,6 +49,19 @@ void PVN_FABI(pvn_cfma,PVN_CFMA)(float *const dr, float *const di, const float *
   pvn_cfma(dr, di, *ar, *ai, *br, *bi, *cr, *ci);
 }
 
+void PVN_FABI(pvn_cfmma,PVN_CFMMA)(float *const er, float *const ei, const float *const ar, const float *const ai, const float *const br, const float *const bi, const float *const cr, const float *const ci, const float *const dr, const float *const di)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
+  pvn_cfmma(er, ei, *ar, *ai, *br, *bi, *cr, *ci, *dr, *di);
+}
+
 void PVN_FABI(pvn_zmul,PVN_ZMUL)(double *const cr, double *const ci, const double *const ar, const double *const ai, const double *const br, const double *const bi)
 {
   PVN_ASSERT(ar);
@@ -67,6 +80,19 @@ void PVN_FABI(pvn_zfma,PVN_ZFMA)(double *const dr, double *const di, const doubl
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
   pvn_zfma(dr, di, *ar, *ai, *br, *bi, *cr, *ci);
+}
+
+void PVN_FABI(pvn_zfmma,PVN_ZFMMA)(double *const er, double *const ei, const double *const ar, const double *const ai, const double *const br, const double *const bi, const double *const cr, const double *const ci, const double *const dr, const double *const di)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
+  pvn_zfmma(er, ei, *ar, *ai, *br, *bi, *cr, *ci, *dr, *di);
 }
 
 void PVN_FABI(pvn_wmul,PVN_WMUL)(long double *const cr, long double *const ci, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi)
@@ -89,6 +115,19 @@ void PVN_FABI(pvn_wfma,PVN_WFMA)(long double *const dr, long double *const di, c
   pvn_wfma(dr, di, *ar, *ai, *br, *bi, *cr, *ci);
 }
 
+void PVN_FABI(pvn_wfmma,PVN_WFMMA)(long double *const er, long double *const ei, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci, const long double *const dr, const long double *const di)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
+  pvn_wfmma(er, ei, *ar, *ai, *br, *bi, *cr, *ci, *dr, *di);
+}
+
 #ifdef PVN_QUADMATH
 void PVN_FABI(pvn_ymul,PVN_YMUL)(__float128 *const cr, __float128 *const ci, const __float128 *const ar, const __float128 *const ai, const __float128 *const br, const __float128 *const bi)
 {
@@ -109,6 +148,19 @@ void PVN_FABI(pvn_yfma,PVN_YFMA)(__float128 *const dr, __float128 *const di, con
   PVN_ASSERT(ci);
   pvn_yfma(dr, di, *ar, *ai, *br, *bi, *cr, *ci);
 }
+
+void PVN_FABI(pvn_yfmma,PVN_YFMMA)(__float128 *const er, __float128 *const ei, const __float128 *const ar, const __float128 *const ai, const __float128 *const br, const __float128 *const bi, const __float128 *const cr, const __float128 *const ci, const __float128 *const dr, const __float128 *const di)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
+  pvn_yfmma(er, ei, *ar, *ai, *br, *bi, *cr, *ci, *dr, *di);
+}
 #else /* !PVN_QUADMATH */
 void PVN_FABI(pvn_ymul,PVN_YMUL)(long double *const cr, long double *const ci, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi)
 {
@@ -128,6 +180,19 @@ void PVN_FABI(pvn_yfma,PVN_YFMA)(long double *const dr, long double *const di, c
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
   pvn_wfma(dr, di, *ar, *ai, *br, *bi, *cr, *ci);
+}
+
+void PVN_FABI(pvn_yfmma,PVN_YFMMA)(long double *const er, long double *const ei, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci, const long double *const dr, const long double *const di)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  PVN_ASSERT(dr);
+  PVN_ASSERT(di);
+  pvn_wfmma(er, ei, *ar, *ai, *br, *bi, *cr, *ci, *dr, *di);
 }
 #endif /* ?PVN_QUADMATH */
 #endif /* ?PVN_TEST */

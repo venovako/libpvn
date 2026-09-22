@@ -91,12 +91,17 @@ static inline __m512d pvn_zdet(register const __m512d a, register const __m512d 
 #endif /* __AVX__ && __FMA__ */
 
 PVN_EXTERN_C float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, const float *const c, const float *const d, float *const x, int *const t);
+PVN_EXTERN_C float PVN_FABI(pvn_sfmma,PVN_SFMMA)(const float *const a, const float *const b, const float *const c, const float *const d);
 PVN_EXTERN_C double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b, const double *const c, const double *const d, double *const x, int *const t);
+PVN_EXTERN_C double PVN_FABI(pvn_dfmma,PVN_DFMMA)(const double *const a, const double *const b, const double *const c, const double *const d);
 PVN_EXTERN_C long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t);
+PVN_EXTERN_C long double PVN_FABI(pvn_xfmma,PVN_XFMMA)(const long double *const a, const long double *const b, const long double *const c, const long double *const d);
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d, __float128 *const x, int *const t);
+PVN_EXTERN_C __float128 PVN_FABI(pvn_qfmma,PVN_QFMMA)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t);
+PVN_EXTERN_C long double PVN_FABI(pvn_qfmma,PVN_QFMMA)(const long double *const a, const long double *const b, const long double *const c, const long double *const d);
 #endif /* ?PVN_QUADMATH */
 #ifdef __AVX512F__
 PVN_EXTERN_C int PVN_FABI(pvn_zdetf,PVN_ZDETF)(const float *const a, const float *const b, const float *const c, const float *const d, float *const x, int *const t, float *const h);

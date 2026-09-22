@@ -120,6 +120,17 @@ float PVN_FABI(pvn_sdet,PVN_SDET)(const float *const a, const float *const b, co
   return r;
 }
 
+float PVN_FABI(pvn_sfmma,PVN_SFMMA)(const float *const a, const float *const b, const float *const c, const float *const d)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  float x = -*c;
+  int t;
+  return PVN_FABI(pvn_sdet,PVN_SDET)(a, &x, d, b, &x, &t);
+}
+
 double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b, const double *const c, const double *const d, double *const x, int *const t)
 {
   PVN_ASSERT(a);
@@ -177,6 +188,17 @@ double PVN_FABI(pvn_ddet,PVN_DDET)(const double *const a, const double *const b,
     r = __builtin_scalbn(*x, *t);
   }
   return r;
+}
+
+double PVN_FABI(pvn_dfmma,PVN_DFMMA)(const double *const a, const double *const b, const double *const c, const double *const d)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  double x = -*c;
+  int t;
+  return PVN_FABI(pvn_ddet,PVN_DDET)(a, &x, d, b, &x, &t);
 }
 
 long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t)
@@ -237,6 +259,17 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   }
   return r;
 }
+
+long double PVN_FABI(pvn_xfmma,PVN_XFMMA)(const long double *const a, const long double *const b, const long double *const c, const long double *const d)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  long double x = -*c;
+  int t;
+  return PVN_FABI(pvn_xdet,PVN_XDET)(a, &x, d, b, &x, &t);
+}
 #ifdef PVN_QUADMATH
 __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d, __float128 *const x, int *const t)
 {
@@ -296,10 +329,26 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   }
   return r;
 }
+
+__float128 PVN_FABI(pvn_qfmma,PVN_QFMMA)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_ASSERT(d);
+  __float128 x = -*c;
+  int t;
+  return PVN_FABI(pvn_qdet,PVN_QDET)(a, &x, d, b, &x, &t);
+}
 #else /* !PVN_QUADMATH */
 long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t)
 {
   return PVN_FABI(pvn_xdet,PVN_XDET)(a, b, c, d, x, t);
+}
+
+long double PVN_FABI(pvn_qfmma,PVN_QFMMA)(const long double *const a, const long double *const b, const long double *const c, const long double *const d)
+{
+  return PVN_FABI(pvn_xfmma,PVN_XFMMA)(a, b, c, d);
 }
 #endif /* ?PVN_QUADMATH */
 
