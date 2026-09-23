@@ -248,25 +248,16 @@ static inline void pvn_yfmma(long double *const er, long double *const ei, const
 #endif /* ?PVN_QUADMATH */
 
 PVN_EXTERN_C void PVN_FABI(pvn_cmul,PVN_CMUL)(float *const cr, float *const ci, const float *const ar, const float *const ai, const float *const br, const float *const bi);
-PVN_EXTERN_C float complex PVN_FABI(pvn_mulc,PVN_MULC)(const float complex *const a, const float complex *const b);
 PVN_EXTERN_C void PVN_FABI(pvn_cfma,PVN_CFMA)(float *const dr, float *const di, const float *const ar, const float *const ai, const float *const br, const float *const bi, const float *const cr, const float *const ci);
-PVN_EXTERN_C float complex PVN_FABI(pvn_fmac,PVN_FMAC)(const float complex *const a, const float complex *const b, const float complex *const c);
 PVN_EXTERN_C void PVN_FABI(pvn_cfmma,PVN_CFMMA)(float *const er, float *const ei, const float *const ar, const float *const ai, const float *const br, const float *const bi, const float *const cr, const float *const ci, const float *const dr, const float *const di);
-PVN_EXTERN_C float complex PVN_FABI(pvn_fmmac,PVN_FMMAC)(const float complex *const a, const float complex *const b, const float complex *const c, const float complex *const d);
 
 PVN_EXTERN_C void PVN_FABI(pvn_zmul,PVN_ZMUL)(double *const cr, double *const ci, const double *const ar, const double *const ai, const double *const br, const double *const bi);
-PVN_EXTERN_C double complex PVN_FABI(pvn_mulz,PVN_MULZ)(const double complex *const a, const double complex *const b);
 PVN_EXTERN_C void PVN_FABI(pvn_zfma,PVN_ZFMA)(double *const dr, double *const di, const double *const ar, const double *const ai, const double *const br, const double *const bi, const double *const cr, const double *const ci);
-PVN_EXTERN_C double complex PVN_FABI(pvn_fmaz,PVN_FMAZ)(const double complex *const a, const double complex *const b, const double complex *const c);
 PVN_EXTERN_C void PVN_FABI(pvn_zfmma,PVN_ZFMMA)(double *const er, double *const ei, const double *const ar, const double *const ai, const double *const br, const double *const bi, const double *const cr, const double *const ci, const double *const dr, const double *const di);
-PVN_EXTERN_C double complex PVN_FABI(pvn_fmmaz,PVN_FMMAZ)(const double complex *const a, const double complex *const b, const double complex *const c, const double complex *const d);
 
 PVN_EXTERN_C void PVN_FABI(pvn_wmul,PVN_WMUL)(long double *const cr, long double *const ci, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi);
-PVN_EXTERN_C long double complex PVN_FABI(pvn_mulw,PVN_MULW)(const long double complex *const a, const long double complex *const b);
 PVN_EXTERN_C void PVN_FABI(pvn_wfma,PVN_WFMA)(long double *const dr, long double *const di, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci);
-PVN_EXTERN_C long double complex PVN_FABI(pvn_fmaw,PVN_FMAW)(const long double complex *const a, const long double complex *const b, const long double complex *const c);
 PVN_EXTERN_C void PVN_FABI(pvn_wfmma,PVN_WFMMA)(long double *const er, long double *const ei, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci, const long double *const dr, const long double *const di);
-PVN_EXTERN_C long double complex PVN_FABI(pvn_fmmaw,PVN_FMMAW)(const long double complex *const a, const long double complex *const b, const long double complex *const c, const long double complex *const d);
 #ifdef PVN_QUADMATH
 PVN_EXTERN_C void PVN_FABI(pvn_ymul,PVN_YMUL)(__float128 *const cr, __float128 *const ci, const __float128 *const ar, const __float128 *const ai, const __float128 *const br, const __float128 *const bi);
 PVN_EXTERN_C __complex128 PVN_FABI(pvn_muly,PVN_MULY)(const __complex128 *const a, const __complex128 *const b);
@@ -281,4 +272,48 @@ PVN_EXTERN_C long double complex PVN_FABI(pvn_fmay,PVN_FMAY)(const long double c
 PVN_EXTERN_C void PVN_FABI(pvn_yfmma,PVN_YFMMA)(long double *const er, long double *const ei, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci, const long double *const dr, const long double *const di);
 PVN_EXTERN_C long double complex PVN_FABI(pvn_fmmay,PVN_FMMAY)(const long double complex *const a, const long double complex *const b, const long double complex *const c, const long double complex *const d);
 #endif /* ?PVN_QUADMATH */
+
+#if (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
+PVN_EXTERN_C float complex PVN_FABI(pvn_mulc,PVN_MULC)(const float complex *const a, const float complex *const b);
+PVN_EXTERN_C float complex PVN_FABI(pvn_fmac,PVN_FMAC)(const float complex *const a, const float complex *const b, const float complex *const c);
+PVN_EXTERN_C float complex PVN_FABI(pvn_fmmac,PVN_FMMAC)(const float complex *const a, const float complex *const b, const float complex *const c, const float complex *const d);
+
+PVN_EXTERN_C double complex PVN_FABI(pvn_mulz,PVN_MULZ)(const double complex *const a, const double complex *const b);
+PVN_EXTERN_C double complex PVN_FABI(pvn_fmaz,PVN_FMAZ)(const double complex *const a, const double complex *const b, const double complex *const c);
+PVN_EXTERN_C double complex PVN_FABI(pvn_fmmaz,PVN_FMMAZ)(const double complex *const a, const double complex *const b, const double complex *const c, const double complex *const d);
+
+PVN_EXTERN_C long double complex PVN_FABI(pvn_mulw,PVN_MULW)(const long double complex *const a, const long double complex *const b);
+PVN_EXTERN_C long double complex PVN_FABI(pvn_fmaw,PVN_FMAW)(const long double complex *const a, const long double complex *const b, const long double complex *const c);
+PVN_EXTERN_C long double complex PVN_FABI(pvn_fmmaw,PVN_FMMAW)(const long double complex *const a, const long double complex *const b, const long double complex *const c, const long double complex *const d);
+#ifdef PVN_QUADMATH
+PVN_EXTERN_C __complex128 PVN_FABI(pvn_muly,PVN_MULY)(const __complex128 *const a, const __complex128 *const b);
+PVN_EXTERN_C __complex128 PVN_FABI(pvn_fmay,PVN_FMAY)(const __complex128 *const a, const __complex128 *const b, const __complex128 *const c);
+PVN_EXTERN_C __complex128 PVN_FABI(pvn_fmmay,PVN_FMMAY)(const __complex128 *const a, const __complex128 *const b, const __complex128 *const c, const __complex128 *const d);
+#else /* !PVN_QUADMATH */
+PVN_EXTERN_C long double complex PVN_FABI(pvn_muly,PVN_MULY)(const long double complex *const a, const long double complex *const b);
+PVN_EXTERN_C long double complex PVN_FABI(pvn_fmay,PVN_FMAY)(const long double complex *const a, const long double complex *const b, const long double complex *const c);
+PVN_EXTERN_C long double complex PVN_FABI(pvn_fmmay,PVN_FMMAY)(const long double complex *const a, const long double complex *const b, const long double complex *const c, const long double complex *const d);
+#endif /* ?PVN_QUADMATH */
+#else /* !gfortran */
+PVN_EXTERN_C void PVN_FABI(pvn_mulc,PVN_MULC)(float complex *const c, const float complex *const a, const float complex *const b);
+PVN_EXTERN_C void PVN_FABI(pvn_fmac,PVN_FMAC)(float complex *const d, const float complex *const a, const float complex *const b, const float complex *const c);
+PVN_EXTERN_C void PVN_FABI(pvn_fmmac,PVN_FMMAC)(float complex *const e, const float complex *const a, const float complex *const b, const float complex *const c, const float complex *const d);
+
+PVN_EXTERN_C void PVN_FABI(pvn_mulz,PVN_MULZ)(double complex *const c, const double complex *const a, const double complex *const b);
+PVN_EXTERN_C void PVN_FABI(pvn_fmaz,PVN_FMAZ)(double complex *const d, const double complex *const a, const double complex *const b, const double complex *const c);
+PVN_EXTERN_C void PVN_FABI(pvn_fmmaz,PVN_FMMAZ)(double complex *const e, const double complex *const a, const double complex *const b, const double complex *const c, const double complex *const d);
+
+PVN_EXTERN_C void PVN_FABI(pvn_mulw,PVN_MULW)(long double complex *const c, const long double complex *const a, const long double complex *const b);
+PVN_EXTERN_C void PVN_FABI(pvn_fmaw,PVN_FMAW)(long double complex *const d, const long double complex *const a, const long double complex *const b, const long double complex *const c);
+PVN_EXTERN_C void PVN_FABI(pvn_fmmaw,PVN_FMMAW)(long double complex *const e, const long double complex *const a, const long double complex *const b, const long double complex *const c, const long double complex *const d);
+#ifdef PVN_QUADMATH
+PVN_EXTERN_C void PVN_FABI(pvn_muly,PVN_MULY)(__complex128 *const c, const __complex128 *const a, const __complex128 *const b);
+PVN_EXTERN_C void PVN_FABI(pvn_fmay,PVN_FMAY)(__complex128 *const d, const __complex128 *const a, const __complex128 *const b, const __complex128 *const c);
+PVN_EXTERN_C void PVN_FABI(pvn_fmmay,PVN_FMMAY)(__complex128 *const e, const __complex128 *const a, const __complex128 *const b, const __complex128 *const c, const __complex128 *const d);
+#else /* !PVN_QUADMATH */
+PVN_EXTERN_C void PVN_FABI(pvn_muly,PVN_MULY)(long double complex *const c, const long double complex *const a, const long double complex *const b);
+PVN_EXTERN_C void PVN_FABI(pvn_fmay,PVN_FMAY)(long double complex *const d, const long double complex *const a, const long double complex *const b, const long double complex *const c);
+PVN_EXTERN_C void PVN_FABI(pvn_fmmay,PVN_FMMAY)(long double complex *const e, const long double complex *const a, const long double complex *const b, const long double complex *const c, const long double complex *const d);
+#endif /* ?PVN_QUADMATH */
+#endif /* ?gfortran */
 #endif /* !PVN_CMA_H */
