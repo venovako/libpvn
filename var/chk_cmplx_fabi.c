@@ -10,6 +10,7 @@
 #endif /* ?__cplusplus */
 #endif /* ?Intel */
 
+#if (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
 float complex
 #ifdef _WIN32
 CHK_CMPLX
@@ -20,3 +21,15 @@ chk_cmplx_
 {
   return *a + *b;
 }
+#else /* !gfortran */
+void
+#ifdef _WIN32
+CHK_CMPLX
+#else /* !_WIN32 */
+chk_cmplx_
+#endif /* ?_WIN32 */
+(float complex *const c, const float complex *const a, const float complex *const b)
+{
+  *c = *a + *b;
+}
+#endif /* ?gfortran */
