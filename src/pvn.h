@@ -147,6 +147,9 @@ PVN_EXTERN_C unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)();
 /* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
 #ifdef __MATHIMF_H_INCLUDED
+#ifndef __complex128
+#define __complex128 __float128 complex
+#endif /* !__complex128 */
 #ifndef FLT128_MAX
 #define FLT128_MAX 1.18973149535723176508575932662800702E+4932q
 #else /* FLT128_MAX */
@@ -252,6 +255,9 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #else /* !__MATHIMF_H_INCLUDED */
 #ifdef __GNUC__
 #include <quadmath.h>
+#ifndef __complex128
+#define __complex128 _Float128 complex
+#endif /* !__complex128 */
 #ifndef FLT128_TRUE_MIN
 #define FLT128_TRUE_MIN FLT128_DENORM_MIN
 #else /* FLT128_TRUE_MIN */

@@ -165,12 +165,12 @@ void PVN_FABI(pvn_ymul,PVN_YMUL)(__float128 *const cr, __float128 *const ci, con
   pvn_ymul(cr, ci, *ar, *ai, *br, *bi);
 }
 
-_Float128 complex PVN_FABI(pvn_muly,PVN_MULY)(const _Float128 complex *const a, const _Float128 complex *const b)
+__complex128 PVN_FABI(pvn_muly,PVN_MULY)(const __complex128 *const a, const __complex128 *const b)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
-  _Float128 complex c;
-  PVN_FABI(pvn_ymul,PVN_YMUL)((_Float128*)&c, (_Float128*)&c + 1, (const _Float128*)a, (const _Float128*)a + 1, (const _Float128*)b, (const _Float128*)b + 1);
+  __complex128 c;
+  PVN_FABI(pvn_ymul,PVN_YMUL)((__float128*)&c, (__float128*)&c + 1, (const __float128*)a, (const __float128*)a + 1, (const __float128*)b, (const __float128*)b + 1);
   return c;
 }
 
