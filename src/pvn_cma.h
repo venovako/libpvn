@@ -7,6 +7,7 @@
 
 /* C = A * B */
 /* rounding to nearest-even is assumed */
+/* the componentwise relative error should be bounded by ≈2ε */
 
 static inline void pvn_cmul(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
 {
@@ -21,6 +22,7 @@ static inline void pvn_cmul(float *const cr, float *const ci, const float ar, co
 
 /* D = A * B + C */
 /* rounding to nearest-even is assumed */
+/* not correctly rounded, but unwarranted overflow should be avoided */
 
 static inline float pvn_xtpyf(float x, int t, const float y)
 {
@@ -46,6 +48,7 @@ static inline void pvn_cfma(float *const dr, float *const di, const float ar, co
 
 /* E = A * B + C * D */
 /* rounding to nearest-even is assumed */
+/* not correctly rounded, but unwarranted overflow should be avoided */
 
 static inline float pvn_wspxtf(const float w, const int s, const float x, const int t)
 {
