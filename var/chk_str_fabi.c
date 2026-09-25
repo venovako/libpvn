@@ -24,3 +24,18 @@ chk_str_
     ret |= 2;
   return ret;
 }
+
+void
+#ifdef _WIN32
+CHK_RET
+#else /* !_WIN32 */
+chk_ret_
+#endif /* ?_WIN32 */
+(char *const s, const size_t ls, const char *const a, const size_t la)
+{
+  const size_t lm = ((ls <= la) ? ls : la);
+  size_t i = 0u;
+  (void)printf("%zu %zu\n", ls, la);
+  for (; i < lm; ++i)
+    s[i] = a[i];
+}
