@@ -27,4 +27,10 @@
 #endif /* ?_WIN32 */
 #endif /* !PVN_EXTERN_C */
 
+#ifndef PVN_QUADMATH
+#ifndef __float128
+#define __float128 _Float128
+#endif /* !__float128 */
+#endif /* !PVN_QUADMATH */
+
 #endif /* !PVN_EXT_H */

@@ -236,12 +236,10 @@ CR_SRCS += \
 ../inc/rsqrtq_noerrno.c \
 ../inc/sqrtq_noerrno.c
 else # !QUADMATH
-ifeq ($(ARCH),ppc64le)
 CR_SRCS += \
 ../inc/hypotq_portable.c \
 ../inc/rsqrtq_portable.c \
 ../inc/sqrtq_portable.c
-endif # ppc64le
 endif # ?QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
 ifneq ($(findstring MINGW64,$(OS)),MINGW64)
