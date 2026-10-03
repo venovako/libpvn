@@ -20,11 +20,11 @@ int main(int argc, char *argv[])
   (void)printf("cr_hypotl =%18p\n", cr_hypotl);
   (void)printf("cr_powl   =%18p\n", cr_powl);
   (void)printf("cr_rsqrtl =%18p\n", cr_rsqrtl);
-#if (defined(PVN_QUADMATH) || (defined(__PPC64__) && defined(__LITTLE_ENDIAN__) && defined(_ARCH_PWR9)))
+#if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER) && !defined(__APPLE__)))
   (void)printf("cr_hypotq =%18p\n", cr_hypotq);
   (void)printf("cr_rsqrtq =%18p\n", cr_rsqrtq);
   (void)printf("cr_sqrtq  =%18p\n", cr_sqrtq);
-#endif /* PVN_QUADMATH */
+#endif /* PVN_QUADMATH || gcc */
 #endif /* PVN_CR_MATH */
   return EXIT_SUCCESS;
 }
