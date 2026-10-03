@@ -34,6 +34,24 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else /* !PVN_TEST */
+#if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER) && !defined(__APPLE__)))
+/* it is assumed that no pseudo-NaN, pseudo-Inf, pseudo-subnormal and unnormal extended precision values are supplied */
+__float128 PVN_FABI(pvn_djs_x2q,PVN_DJS_X2Q)(const void *const x)
+{
+  PVN_ASSERT(x);
+  __float128 r = 0.0q;
+  const unsigned long long m = (*(const unsigned long long*)x << 1u);
+  unsigned short *const p = (unsigned short*)&r;
+  const unsigned short *const s = (const unsigned short*)&m;
+  p[3] = s[0];
+  p[4] = s[1];
+  p[5] = s[2];
+  p[6] = s[3];
+  p[7] = ((const unsigned short*)x)[4];
+  return r;
+}
+#endif /* PVN_QUADMATH || gcc */
+
 void PVN_FABI(pvn_djs_denc,PVN_DJS_DENC)(double *const e, const float *const f, const unsigned *const p, const unsigned *const q)
 {
   PVN_ASSERT(e);

@@ -5,6 +5,10 @@
 #error pvn_djs.h not intended for direct inclusion
 #endif /* !PVN_H */
 
+#if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER) && !defined(__APPLE__)))
+PVN_EXTERN_C __float128 PVN_FABI(pvn_djs_x2q,PVN_DJS_X2Q)(const void *const x);
+#endif /* PVN_QUADMATH || gcc */
+
 PVN_EXTERN_C void PVN_FABI(pvn_djs_denc,PVN_DJS_DENC)(double *const e, const float *const f, const unsigned *const p, const unsigned *const q);
 PVN_EXTERN_C void PVN_FABI(pvn_djs_ddec,PVN_DJS_DDEC)(const double *const e, unsigned *const p, unsigned *const q);
 PVN_EXTERN_C void PVN_FABI(pvn_djs_xenc,PVN_DJS_XENC)(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q);
