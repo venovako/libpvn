@@ -339,7 +339,7 @@ void PVN_FABI(pvn_wdot,PVN_WDOT)(long double *const zr, long double *const zi, c
 }
 
 #ifdef PVN_QUADMATH
-void PVN_FABI(pvn_qdot,PVN_QDOT)(__float128 *const d, const int *const m, const __float128 *const x, const unsigned *const ix, const __float128 *const y, const unsigned *const iy)
+void PVN_FABI(pvn_qdot,PVN_QDOT)(_Float128 *const d, const int *const m, const _Float128 *const x, const unsigned *const ix, const _Float128 *const y, const unsigned *const iy)
 {
   PVN_ASSERT(d);
   PVN_ASSERT(m);
@@ -356,8 +356,8 @@ void PVN_FABI(pvn_qdot,PVN_QDOT)(__float128 *const d, const int *const m, const 
     n = (unsigned)-*m;
   if (!n)
     return;
-  const __float128 *x_ = x;
-  const __float128 *y_ = y;
+  const _Float128 *x_ = x;
+  const _Float128 *y_ = y;
   for (unsigned i = 0u; i < n; ++i) {
     *d = fmaq(*x_, *y_, *d);
     x_ += *ix;
@@ -365,7 +365,7 @@ void PVN_FABI(pvn_qdot,PVN_QDOT)(__float128 *const d, const int *const m, const 
   }
 }
 
-void PVN_FABI(pvn_ydot,PVN_YDOT)(__float128 *const zr, __float128 *const zi, const int *const m, const __float128 *const xr, const unsigned *const ixr, const __float128 *const xi, const unsigned *const ixi, const __float128 *const yr, const unsigned *const iyr, const __float128 *const yi, const unsigned *const iyi)
+void PVN_FABI(pvn_ydot,PVN_YDOT)(_Float128 *const zr, _Float128 *const zi, const int *const m, const _Float128 *const xr, const unsigned *const ixr, const _Float128 *const xi, const unsigned *const ixi, const _Float128 *const yr, const unsigned *const iyr, const _Float128 *const yi, const unsigned *const iyi)
 {
   PVN_ASSERT(zr);
   PVN_ASSERT(zi);
@@ -390,10 +390,10 @@ void PVN_FABI(pvn_ydot,PVN_YDOT)(__float128 *const zr, __float128 *const zi, con
     return;
   if (*ixi) {
     if (*iyi) {
-      const __float128 *xr_ = xr;
-      const __float128 *xi_ = xi;
-      const __float128 *yr_ = yr;
-      const __float128 *yi_ = yi;
+      const _Float128 *xr_ = xr;
+      const _Float128 *xi_ = xi;
+      const _Float128 *yr_ = yr;
+      const _Float128 *yi_ = yi;
       for (unsigned i = 0u; i < n; ++i) {
         pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
         xr_ += *ixr;
@@ -403,10 +403,10 @@ void PVN_FABI(pvn_ydot,PVN_YDOT)(__float128 *const zr, __float128 *const zi, con
       }
     }
     else {
-      const __float128 *xr_ = xr;
-      const __float128 *xi_ = xi;
-      const __float128 *yr_ = yr;
-      const __float128 *yi_ = (yi + 1);
+      const _Float128 *xr_ = xr;
+      const _Float128 *xi_ = xi;
+      const _Float128 *yr_ = yr;
+      const _Float128 *yi_ = (yi + 1);
       for (unsigned i = 0u; i < n; ++i) {
         pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
         xr_ += *ixr;
@@ -418,10 +418,10 @@ void PVN_FABI(pvn_ydot,PVN_YDOT)(__float128 *const zr, __float128 *const zi, con
   }
   else {
     if (*iyi) {
-      const __float128 *xr_ = xr;
-      const __float128 *xi_ = (xi + 1);
-      const __float128 *yr_ = yr;
-      const __float128 *yi_ = yi;
+      const _Float128 *xr_ = xr;
+      const _Float128 *xi_ = (xi + 1);
+      const _Float128 *yr_ = yr;
+      const _Float128 *yi_ = yi;
       for (unsigned i = 0u; i < n; ++i) {
         pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
         xr_ += *ixr;
@@ -431,10 +431,10 @@ void PVN_FABI(pvn_ydot,PVN_YDOT)(__float128 *const zr, __float128 *const zi, con
       }
     }
     else {
-      const __float128 *xr_ = xr;
-      const __float128 *xi_ = (xi + 1);
-      const __float128 *yr_ = yr;
-      const __float128 *yi_ = (yi + 1);
+      const _Float128 *xr_ = xr;
+      const _Float128 *xi_ = (xi + 1);
+      const _Float128 *yr_ = yr;
+      const _Float128 *yi_ = (yi + 1);
       for (unsigned i = 0u; i < n; ++i) {
         pvn_yfma(zr, zi, *xr_, -*xi_, *yr_, *yi_, *zr, *zi);
         xr_ += *ixr;

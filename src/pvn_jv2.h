@@ -23,8 +23,8 @@ PVN_EXTERN_C int PVN_FABI(pvn_xljv2,PVN_XLJV2)(const long double *const a11, con
 PVN_EXTERN_C int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, long double *const th, int *const es);
 
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, __float128 *const th, int *const es);
-PVN_EXTERN_C int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, __float128 *const th, int *const es);
+PVN_EXTERN_C int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21, _Float128 *const ch, _Float128 *const sh, _Float128 *const th, int *const es);
+PVN_EXTERN_C int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21r, const _Float128 *const a21i, _Float128 *const ch, _Float128 *const shr, _Float128 *const shi, _Float128 *const th, int *const es);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const ch, long double *const sh, long double *const th, int *const es);
 PVN_EXTERN_C int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const long double *const a11, const long double *const a22, const long double *const a21r, const long double *const a21i, long double *const ch, long double *const shr, long double *const shi, long double *const th, int *const es);

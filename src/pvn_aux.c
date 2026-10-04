@@ -186,7 +186,7 @@ int PVN_FABI(pvn_signbitl,PVN_SIGNBITL)(const long double *const x)
 }
 
 #ifdef PVN_QUADMATH
-int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const __float128 *const x)
+int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const _Float128 *const x)
 {
   PVN_ASSERT(x);
   return ((((const unsigned*)x)[3u] & 0x80000000u) != 0u);

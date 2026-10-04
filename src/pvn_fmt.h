@@ -15,8 +15,8 @@ PVN_EXTERN_C char *pvn_dtoa(char *const s, const double x);
 PVN_EXTERN_C long double pvn_atox(const char *const s);
 PVN_EXTERN_C char *pvn_xtoa(char *const s, const long double x);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C __float128 pvn_atoq(const char *const s);
-PVN_EXTERN_C char *pvn_qtoa(char *const s, const __float128 x);
+PVN_EXTERN_C _Float128 pvn_atoq(const char *const s);
+PVN_EXTERN_C char *pvn_qtoa(char *const s, const _Float128 x);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C long double pvn_atoq(const char *const s);
 PVN_EXTERN_C char *pvn_qtoa(char *const s, const long double x);

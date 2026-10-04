@@ -31,10 +31,10 @@ PVN_EXTERN_C int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, c
 /* at present, the functions declared below might not be fail-safe */
 
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const tg, int *const es);
-PVN_EXTERN_C int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const l1, __float128 *const l2, int *const es);
-PVN_EXTERN_C int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const tg, int *const es);
-PVN_EXTERN_C int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const l1, __float128 *const l2, int *const es);
+PVN_EXTERN_C int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21, _Float128 *const cs, _Float128 *const sn, _Float128 *const tg, int *const es);
+PVN_EXTERN_C int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21, _Float128 *const cs, _Float128 *const sn, _Float128 *const l1, _Float128 *const l2, int *const es);
+PVN_EXTERN_C int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21r, const _Float128 *const a21i, _Float128 *const cs, _Float128 *const snr, _Float128 *const sni, _Float128 *const tg, int *const es);
+PVN_EXTERN_C int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21r, const _Float128 *const a21i, _Float128 *const cs, _Float128 *const snr, _Float128 *const sni, _Float128 *const l1, _Float128 *const l2, int *const es);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const tg, int *const es);
 PVN_EXTERN_C int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const long double *const a11, const long double *const a22, const long double *const a21, long double *const cs, long double *const sn, long double *const l1, long double *const l2, int *const es);

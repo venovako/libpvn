@@ -357,82 +357,82 @@ static inline long double pvn_v1x_rsqrt(const long double x)
 }
 
 #ifdef PVN_QUADMATH
-static inline __float128 pvn_v1q_add_pos(const __float128 X, const __float128 Y)
+static inline _Float128 pvn_v1q_add_pos(const _Float128 X, const _Float128 Y)
 {
   return (X + Y);
 }
 
-static inline __float128 pvn_v1q_add_abs(const __float128 x, const __float128 y)
+static inline _Float128 pvn_v1q_add_abs(const _Float128 x, const _Float128 y)
 {
   return (fabsq(x) + fabsq(y));
 }
 
-static inline __float128 pvn_v1q_hypot_pos(const __float128 X, const __float128 Y)
+static inline _Float128 pvn_v1q_hypot_pos(const _Float128 X, const _Float128 Y)
 {
-  const __float128 m = fminq(X, Y);
-  const __float128 M = fmaxq(X, Y);
-  const __float128 q = (m / M);
-  const __float128 Q = fmaxq(q, 0.0q);
-  const __float128 S = fmaq(Q, Q, 1.0q);
-  const __float128 s = sqrtq(S);
+  const _Float128 m = fminq(X, Y);
+  const _Float128 M = fmaxq(X, Y);
+  const _Float128 q = (m / M);
+  const _Float128 Q = fmaxq(q, 0.0q);
+  const _Float128 S = fmaq(Q, Q, 1.0q);
+  const _Float128 s = sqrtq(S);
   return (M * s);
 }
 
-static inline __float128 pvn_v1q_hypot(const __float128 x, const __float128 y)
+static inline _Float128 pvn_v1q_hypot(const _Float128 x, const _Float128 y)
 {
-  const __float128 X = fabsq(x);
-  const __float128 Y = fabsq(y);
-  const __float128 m = fminq(X, Y);
-  const __float128 M = fmaxq(X, Y);
-  const __float128 q = (m / M);
-  const __float128 Q = fmaxq(q, 0.0q);
-  const __float128 S = fmaq(Q, Q, 1.0q);
-  const __float128 s = sqrtq(S);
+  const _Float128 X = fabsq(x);
+  const _Float128 Y = fabsq(y);
+  const _Float128 m = fminq(X, Y);
+  const _Float128 M = fmaxq(X, Y);
+  const _Float128 q = (m / M);
+  const _Float128 Q = fmaxq(q, 0.0q);
+  const _Float128 S = fmaq(Q, Q, 1.0q);
+  const _Float128 s = sqrtq(S);
   return (M * s);
 }
 
-static inline __float128 pvn_v1q_lp_pos(const __float128 p, const __float128 X, const __float128 Y)
+static inline _Float128 pvn_v1q_lp_pos(const _Float128 p, const _Float128 X, const _Float128 Y)
 {
-  const __float128 s = (p * 0.5q);
-  const __float128 c = (1.0q / p);
-  const __float128 M = fmaxq(X, Y);
-  const __float128 m = fminq(X, Y);
-  const __float128 q = (m / M);
-  const __float128 Q = fmaxq(q, 0.0q);
-  const __float128 S = powq(Q, s);
-  const __float128 Z = fmaq(S, S, 1.0q);
-  const __float128 C = powq(Z, c);
+  const _Float128 s = (p * 0.5q);
+  const _Float128 c = (1.0q / p);
+  const _Float128 M = fmaxq(X, Y);
+  const _Float128 m = fminq(X, Y);
+  const _Float128 q = (m / M);
+  const _Float128 Q = fmaxq(q, 0.0q);
+  const _Float128 S = powq(Q, s);
+  const _Float128 Z = fmaq(S, S, 1.0q);
+  const _Float128 C = powq(Z, c);
   return (M * C);
 }
 
-static inline __float128 pvn_v1q_lp(const __float128 p, const __float128 x, const __float128 y)
+static inline _Float128 pvn_v1q_lp(const _Float128 p, const _Float128 x, const _Float128 y)
 {
   /* s and c should be computed only once for a fixed p */
-  const __float128 s = (p * 0.5q);
-  const __float128 c = (1.0q / p);
-  const __float128 X = fabsq(x);
-  const __float128 Y = fabsq(y);
-  const __float128 M = fmaxq(X, Y);
-  const __float128 m = fminq(X, Y);
-  const __float128 q = (m / M);
-  const __float128 Q = fmaxq(q, 0.0q);
-  const __float128 S = powq(Q, s);
-  const __float128 Z = fmaq(S, S, 1.0q);
-  const __float128 C = powq(Z, c);
+  const _Float128 s = (p * 0.5q);
+  const _Float128 c = (1.0q / p);
+  const _Float128 X = fabsq(x);
+  const _Float128 Y = fabsq(y);
+  const _Float128 M = fmaxq(X, Y);
+  const _Float128 m = fminq(X, Y);
+  const _Float128 q = (m / M);
+  const _Float128 Q = fmaxq(q, 0.0q);
+  const _Float128 S = powq(Q, s);
+  const _Float128 Z = fmaq(S, S, 1.0q);
+  const _Float128 C = powq(Z, c);
   return (M * C);
 }
 
-static inline __float128 pvn_v1q_max_pos(const __float128 X, const __float128 Y)
+static inline _Float128 pvn_v1q_max_pos(const _Float128 X, const _Float128 Y)
 {
   return fmaxq(X, Y);
 }
 
-static inline __float128 pvn_v1q_max_abs(const __float128 x, const __float128 y)
+static inline _Float128 pvn_v1q_max_abs(const _Float128 x, const _Float128 y)
 {
   return fmaxq(fabsq(x), fabsq(y));
 }
 
-static inline __float128 pvn_v1q_rsqrt(const __float128 x)
+static inline _Float128 pvn_v1q_rsqrt(const _Float128 x)
 {
 #if (defined(PVN_INTEL) && (PVN_INTEL != 2) && (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER)))
   return __invsqrtq(x);

@@ -128,14 +128,14 @@ char *pvn_dtoa(char *const s, const double x)
 long double pvn_atox(const char *const s)
 {
   char *e = (char*)NULL;
-  const __float128 x = ((s && *s) ? strtoflt128(s, &e) : 0.0q);
+  const _Float128 x = ((s && *s) ? strtoflt128(s, &e) : 0.0q);
   return ((e && *e) ? 0.0L : (long double)x);
 }
 
 char *pvn_xtoa(char *const s, const long double x)
 {
   if (s) {
-    const __float128 x_ = (__float128)x;
+    const _Float128 x_ = (_Float128)x;
     int l = quadmath_snprintf((char*)memset(s, 0, (size_t)31u), (size_t)31u, "%# -30.21QE", x_);
     if (l <= 0)
       return (char*)NULL;
@@ -221,14 +221,14 @@ char *pvn_xtoa(char *const s, const long double x)
 }
 #endif /* ?_WIN32 */
 #ifdef PVN_QUADMATH
-__float128 pvn_atoq(const char *const s)
+_Float128 pvn_atoq(const char *const s)
 {
   char *e = (char*)NULL;
-  const __float128 x = ((s && *s) ? strtoflt128(s, &e) : 0.0q);
+  const _Float128 x = ((s && *s) ? strtoflt128(s, &e) : 0.0q);
   return ((e && *e) ? 0.0q : x);
 }
 
-char *pvn_qtoa(char *const s, const __float128 x)
+char *pvn_qtoa(char *const s, const _Float128 x)
 {
   if (s) {
     int l = quadmath_snprintf((char*)memset(s, 0, (size_t)46u), (size_t)46u, "%# -45.36QE", x);

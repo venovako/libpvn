@@ -147,9 +147,6 @@ PVN_EXTERN_C unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)();
 /* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
 #ifdef __MATHIMF_H_INCLUDED
-#ifndef __complex128
-#define __complex128 __float128 complex
-#endif /* !__complex128 */
 #ifndef FLT128_MAX
 #define FLT128_MAX 1.18973149535723176508575932662800702E+4932q
 #else /* FLT128_MAX */
@@ -185,19 +182,19 @@ PVN_EXTERN_C unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)();
 #else /* FLT128_MIN_EXP */
 #error FLT128_MIN_EXP already defined
 #endif /* ?FLT128_MIN_EXP */
-EXTERN_C __float128 __copysignq(__float128, __float128);
-EXTERN_C __float128 __fabsq(__float128);
-EXTERN_C __float128 __fmaq(__float128, __float128, __float128);
-EXTERN_C __float128 __fmaxq(__float128, __float128);
-EXTERN_C __float128 __fminq(__float128, __float128);
-EXTERN_C __float128 __frexpq(__float128, int*);
-EXTERN_C __float128 __invsqrtq(__float128);
-EXTERN_C int __isfiniteq(__float128);
-EXTERN_C int __isnormalq(__float128);
-EXTERN_C __float128 __hypotq(__float128, __float128);
-EXTERN_C __float128 __powq(__float128, __float128);
-EXTERN_C __float128 __scalbnq(__float128, int);
-EXTERN_C __float128 __sqrtq(__float128);
+EXTERN_C _Float128 __copysignq(_Float128, _Float128);
+EXTERN_C _Float128 __fabsq(_Float128);
+EXTERN_C _Float128 __fmaq(_Float128, _Float128, _Float128);
+EXTERN_C _Float128 __fmaxq(_Float128, _Float128);
+EXTERN_C _Float128 __fminq(_Float128, _Float128);
+EXTERN_C _Float128 __frexpq(_Float128, int*);
+EXTERN_C _Float128 __invsqrtq(_Float128);
+EXTERN_C int __isfiniteq(_Float128);
+EXTERN_C int __isnormalq(_Float128);
+EXTERN_C _Float128 __hypotq(_Float128, _Float128);
+EXTERN_C _Float128 __powq(_Float128, _Float128);
+EXTERN_C _Float128 __scalbnq(_Float128, int);
+EXTERN_C _Float128 __sqrtq(_Float128);
 #ifndef copysignq
 #define copysignq __copysignq
 #else /* copysignq */
@@ -250,14 +247,11 @@ EXTERN_C __float128 __sqrtq(__float128);
 #endif /* ?scalbnq */
 #if (!defined(_WIN32) || defined(_DLL))
 EXTERN_C int quadmath_snprintf(char *str, size_t size, const char *format, ...);
-EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
+EXTERN_C _Float128 strtoflt128 (const char *s, char **sp);
 #endif /* !_WIN32 || _DLL */
 #else /* !__MATHIMF_H_INCLUDED */
 #ifdef __GNUC__
 #include <quadmath.h>
-#ifndef __complex128
-#define __complex128 _Float128 complex
-#endif /* !__complex128 */
 #ifndef FLT128_TRUE_MIN
 #define FLT128_TRUE_MIN FLT128_DENORM_MIN
 #else /* FLT128_TRUE_MIN */
@@ -330,8 +324,8 @@ EXTERN_C __float128 strtoflt128 (const char *s, char **sp);
 #endif /* PVN_GMP */
 #ifdef PVN_MPFR
 #ifdef PVN_QUADMATH
-#define MPFR_WANT_FLOAT128 __float128
-#define mpfr_float128 __float128
+#define MPFR_WANT_FLOAT128 _Float128
+#define mpfrFloat128 _Float128
 #endif /* PVN_QUADMATH */
 #include "mpfr.h"
 #include "pvn_mpfr.h"

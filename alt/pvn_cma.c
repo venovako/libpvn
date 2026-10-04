@@ -510,9 +510,9 @@ void pvn_wfma(long double *const dr, long double *const di, const long double ar
 }
 
 #ifdef PVN_QUADMATH
-t_ab_cd(q,__float128,FLT128)
+t_ab_cd(q,_Float128,FLT128)
 
-void pvn_ymul(__float128 *const cr, __float128 *const ci, const __float128 ar, const __float128 ai, const __float128 br, const __float128 bi)
+void pvn_ymul(_Float128 *const cr, _Float128 *const ci, const _Float128 ar, const _Float128 ai, const _Float128 br, const _Float128 bi)
 {
   PVN_ASSERT(cr);
   PVN_ASSERT(ci);
@@ -538,10 +538,10 @@ void pvn_ymul(__float128 *const cr, __float128 *const ci, const __float128 ar, c
   }
   else {
     int are = 0, aie = 0, bre = 0, bie = 0;
-    const __float128 arf = frexpq(ar, &are);
-    const __float128 aif = frexpq(ai, &aie);
-    const __float128 brf = frexpq(br, &bre);
-    const __float128 bif = frexpq(bi, &bie);
+    const _Float128 arf = frexpq(ar, &are);
+    const _Float128 aif = frexpq(ai, &aie);
+    const _Float128 brf = frexpq(br, &bre);
+    const _Float128 bif = frexpq(bi, &bie);
     const int arbre = (are + bre);
     const int aibie = (aie + bie);
     *cr = (((arbre > aibie) || ((arbre == aibie) && (fabsq(arf * brf) >= fabsq(aif * bif)))) ?
@@ -555,9 +555,9 @@ void pvn_ymul(__float128 *const cr, __float128 *const ci, const __float128 ar, c
   }
 }
 
-t_ab_cd_e(q,__float128,FLT128)
+t_ab_cd_e(q,_Float128,FLT128)
 
-void pvn_yfma(__float128 *const dr, __float128 *const di, const __float128 ar, const __float128 ai, const __float128 br, const __float128 bi, const __float128 cr, const __float128 ci)
+void pvn_yfma(_Float128 *const dr, _Float128 *const di, const _Float128 ar, const _Float128 ai, const _Float128 br, const _Float128 bi, const _Float128 cr, const _Float128 ci)
 {
   PVN_ASSERT(dr);
   PVN_ASSERT(di);
@@ -583,12 +583,12 @@ void pvn_yfma(__float128 *const dr, __float128 *const di, const __float128 ar, c
   }
   else {
     int are = 0, aie = 0, bre = 0, bie = 0, cre = 0, cie = 0;
-    const __float128 arf = frexpl(ar, &are);
-    const __float128 aif = frexpl(ai, &aie);
-    const __float128 brf = frexpl(br, &bre);
-    const __float128 bif = frexpl(bi, &bie);
-    const __float128 crf = frexpl(cr, &cre);
-    const __float128 cif = frexpl(ci, &cie);
+    const _Float128 arf = frexpl(ar, &are);
+    const _Float128 aif = frexpl(ai, &aie);
+    const _Float128 brf = frexpl(br, &bre);
+    const _Float128 bif = frexpl(bi, &bie);
+    const _Float128 crf = frexpl(cr, &cre);
+    const _Float128 cif = frexpl(ci, &cie);
     const int arbre = (are + bre);
     const int aibie = (aie + bie);
     const int ermax = pvn_imax3(arbre, aibie, ((crf == 0.0q) ? INT_MIN : cre));
@@ -676,7 +676,7 @@ void PVN_FABI(pvn_wfma,PVN_WFMA)(long double *const dr, long double *const di, c
 }
 
 #ifdef PVN_QUADMATH
-void PVN_FABI(pvn_ymul,PVN_YMUL)(__float128 *const cr, __float128 *const ci, const __float128 *const ar, const __float128 *const ai, const __float128 *const br, const __float128 *const bi)
+void PVN_FABI(pvn_ymul,PVN_YMUL)(_Float128 *const cr, _Float128 *const ci, const _Float128 *const ar, const _Float128 *const ai, const _Float128 *const br, const _Float128 *const bi)
 {
   PVN_ASSERT(ar);
   PVN_ASSERT(ai);
@@ -685,7 +685,7 @@ void PVN_FABI(pvn_ymul,PVN_YMUL)(__float128 *const cr, __float128 *const ci, con
   pvn_ymul(cr, ci, *ar, *ai, *br, *bi);
 }
 
-void PVN_FABI(pvn_yfma,PVN_YFMA)(__float128 *const dr, __float128 *const di, const __float128 *const ar, const __float128 *const ai, const __float128 *const br, const __float128 *const bi, const __float128 *const cr, const __float128 *const ci)
+void PVN_FABI(pvn_yfma,PVN_YFMA)(_Float128 *const dr, _Float128 *const di, const _Float128 *const ar, const _Float128 *const ai, const _Float128 *const br, const _Float128 *const bi, const _Float128 *const cr, const _Float128 *const ci)
 {
   PVN_ASSERT(ar);
   PVN_ASSERT(ai);

@@ -6,7 +6,7 @@
 #endif /* !PVN_H */
 
 #if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER) && !defined(__APPLE__)))
-PVN_EXTERN_C __float128 PVN_FABI(pvn_djs_x2q,PVN_DJS_X2Q)(const void *const x);
+PVN_EXTERN_C _Float128 PVN_FABI(pvn_djs_x2q,PVN_DJS_X2Q)(const void *const x);
 #endif /* PVN_QUADMATH || gcc */
 
 PVN_EXTERN_C void PVN_FABI(pvn_djs_denc,PVN_DJS_DENC)(double *const e, const float *const f, const unsigned *const p, const unsigned *const q);
@@ -14,8 +14,8 @@ PVN_EXTERN_C void PVN_FABI(pvn_djs_ddec,PVN_DJS_DDEC)(const double *const e, uns
 PVN_EXTERN_C void PVN_FABI(pvn_djs_xenc,PVN_DJS_XENC)(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q);
 PVN_EXTERN_C void PVN_FABI(pvn_djs_xdec,PVN_DJS_XDEC)(const long double *const e, unsigned *const p, unsigned *const q);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C void PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(__float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q);
-PVN_EXTERN_C void PVN_FABI(pvn_djs_qdec,PVN_DJS_QDEC)(const __float128 *const e, unsigned *const p, unsigned *const q);
+PVN_EXTERN_C void PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(_Float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q);
+PVN_EXTERN_C void PVN_FABI(pvn_djs_qdec,PVN_DJS_QDEC)(const _Float128 *const e, unsigned *const p, unsigned *const q);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C void PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(long double *const e, const double *const d, const unsigned *const p, const unsigned *const q);
 PVN_EXTERN_C void PVN_FABI(pvn_djs_qdec,PVN_DJS_QDEC)(const long double *const e, unsigned *const p, unsigned *const q);

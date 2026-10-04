@@ -244,12 +244,12 @@ long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u)
 }
 
 #ifdef PVN_QUADMATH
-__float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p)
+_Float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p)
 {
   PVN_ASSERT(u);
-  const __float128 rmin = (p ? scalbnq(FLT128_MIN, *p) : FLT128_MIN);
-  const __float128 rmax = (FLT128_MAX * 0.25q);
-  __float128 a = FLT128_MAX, r = 0.0q;
+  const _Float128 rmin = (p ? scalbnq(FLT128_MIN, *p) : FLT128_MIN);
+  const _Float128 rmax = (FLT128_MAX * 0.25q);
+  _Float128 a = FLT128_MAX, r = 0.0q;
   if (*u < 0)
     return r;
   while (!(a >= rmin) || !(a <= rmax)) {
@@ -276,10 +276,10 @@ __float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int
   return r;
 }
 
-__float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
+_Float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u)
 {
   PVN_ASSERT(u);
-  __float128 r = ((*u < 0) ? (0.0q / 0.0q) : 0.0q);
+  _Float128 r = ((*u < 0) ? (0.0q / 0.0q) : 0.0q);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
   while (!_rdrand64_step((unsigned long long*)&r)) /**/;
   while (!_rdrand64_step((unsigned long long*)&r + 1)) /**/;

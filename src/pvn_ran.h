@@ -19,8 +19,8 @@ PVN_EXTERN_C double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u);
 PVN_EXTERN_C long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const int *const p);
 PVN_EXTERN_C long double PVN_FABI(pvn_ran_l,PVN_RAN_L)(const int *const u);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C __float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p);
-PVN_EXTERN_C __float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u);
+PVN_EXTERN_C _Float128 PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p);
+PVN_EXTERN_C _Float128 PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C long double PVN_FABI(pvn_ran_safe_q,PVN_RAN_SAFE_Q)(const int *const u, const int *const p);
 PVN_EXTERN_C long double PVN_FABI(pvn_ran_q,PVN_RAN_Q)(const int *const u);

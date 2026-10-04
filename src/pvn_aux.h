@@ -30,7 +30,7 @@ pvn_Tswp(float,f)
 pvn_Tswp(double,d)
 pvn_Tswp(long double,L)
 #ifdef PVN_QUADMATH
-pvn_Tswp(__float128,q)
+pvn_Tswp(_Float128,q)
 #endif /* PVN_QUADMATH */
 
 #ifndef pvn_Tmin
@@ -155,7 +155,7 @@ PVN_EXTERN_C int PVN_FABI(pvn_signbitf,PVN_SIGNBITF)(const float *const x);
 PVN_EXTERN_C int PVN_FABI(pvn_signbit,PVN_SIGNBIT)(const double *const x);
 PVN_EXTERN_C int PVN_FABI(pvn_signbitl,PVN_SIGNBITL)(const long double *const x);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const __float128 *const x);
+PVN_EXTERN_C int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const _Float128 *const x);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C int PVN_FABI(pvn_signbitq,PVN_SIGNBITQ)(const long double *const x);
 #endif /* ?PVN_QUADMATH */

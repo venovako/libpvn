@@ -33,7 +33,7 @@ SOFTWARE.
 
 /* modified by venovako */
 #include "pvn_ext.h"
-PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
+PVN_EXTERN_C _Float128 cr_rsqrtq(_Float128 x);
 
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
@@ -52,7 +52,7 @@ typedef union {
   i128 as;
   u64 b[2];
   i64 bs[2];
-  __float128 f;
+  _Float128 f;
 } b128u128_u;
 
 static inline i64 mhui(u64 y, i64 x){
@@ -113,12 +113,12 @@ static inline u128 mUU(u128 _a, u128 _b, u128 *t){
   return a1b1.a;
 }
 
-static inline __float128 reinterpret_u128_as_f128(u128 t){
+static inline _Float128 reinterpret_u128_as_f128(u128 t){
   b128u128_u u = {.a = t};
   return u.f;
 }
 
-static inline u128 reinterpret_f128_as_u128(__float128 z){
+static inline u128 reinterpret_f128_as_u128(_Float128 z){
   b128u128_u u = {.f = z};
   return u.a;
 }
@@ -186,7 +186,7 @@ static inline u64 rsqrt9(u64 m){
   return r;
 }
 
-__float128 cr_rsqrtq(__float128 x){
+_Float128 cr_rsqrtq(_Float128 x){
   b128u128_u u = {.a = reinterpret_f128_as_u128(x)};
   i32 e = u.b[1]>>48; // exponent
   if(__builtin_expect(e==0, 0)){ // x is subnormal or x=+0

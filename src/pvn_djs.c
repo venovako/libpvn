@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
   (void)fprintf(stdout, "x=%s\n", pvn_xtoa(s, x));
 #endif /* __x86_64__ */
 #ifdef PVN_QUADMATH
-  __float128 e = 0.0q;
+  _Float128 e = 0.0q;
 #else /* !PVN_QUADMATH */
   long double e = 0.0L;
 #endif /* ?PVN_QUADMATH */
@@ -36,18 +36,39 @@ int main(int argc, char *argv[])
 #else /* !PVN_TEST */
 #if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER) && !defined(__APPLE__)))
 /* it is assumed that no pseudo-NaN, pseudo-Inf, pseudo-subnormal and unnormal extended precision values are supplied */
-__float128 PVN_FABI(pvn_djs_x2q,PVN_DJS_X2Q)(const void *const x)
+_Float128 PVN_FABI(pvn_djs_x2q,PVN_DJS_X2Q)(const void *const x)
 {
   PVN_ASSERT(x);
-  __float128 r = 0.0q;
-  const unsigned long long m = (*(const unsigned long long*)x << 1u);
-  unsigned short *const p = (unsigned short*)&r;
-  const unsigned short *const s = (const unsigned short*)&m;
-  p[3] = s[0];
-  p[4] = s[1];
-  p[5] = s[2];
-  p[6] = s[3];
-  p[7] = ((const unsigned short*)x)[4];
+  _Float128 r;
+  unsigned long long m;
+  unsigned char *const s = (unsigned char*)&m;
+  const unsigned char *const e = (const unsigned char*)x;
+  s[0] = e[0];
+  s[1] = e[1];
+  s[2] = e[2];
+  s[3] = e[3];
+  s[4] = e[4];
+  s[5] = e[5];
+  s[6] = e[6];
+  s[7] = e[7];
+  m <<= 1u;
+  unsigned char *const p = (unsigned char*)&r;
+  p[0] = 0u;
+  p[1] = 0u;
+  p[2] = 0u;
+  p[3] = 0u;
+  p[4] = 0u;
+  p[5] = 0u;
+  p[6] = s[0];
+  p[7] = s[1];
+  p[8] = s[2];
+  p[9] = s[3];
+  p[10] = s[4];
+  p[11] = s[5];
+  p[12] = s[6];
+  p[13] = s[7];
+  p[14] = e[8];
+  p[15] = e[9];
   return r;
 }
 #endif /* PVN_QUADMATH || gcc */
@@ -121,7 +142,7 @@ void PVN_FABI(pvn_djs_xdec,PVN_DJS_XDEC)(const long double *const e, unsigned *c
 }
 
 #ifdef PVN_QUADMATH
-void PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(__float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q)
+void PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(_Float128 *const e, const double *const d, const unsigned *const p, const unsigned *const q)
 {
   PVN_ASSERT(e);
   PVN_ASSERT(d);
@@ -129,7 +150,7 @@ void PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(__float128 *const e, const double *cons
   PVN_ASSERT(q);
   PVN_ASSERT(*p);
   PVN_ASSERT(*q);
-  *e = (__float128)*d;
+  *e = (_Float128)*d;
 #ifdef NDEBUG
   *(unsigned long long*)e = (*(const unsigned long long*)e | ((unsigned long long)(*p - 1u) << 30u) | (unsigned long long)(*q - 1u));
 #else /* !NDEBUG */
@@ -137,7 +158,7 @@ void PVN_FABI(pvn_djs_qenc,PVN_DJS_QENC)(__float128 *const e, const double *cons
 #endif /* ?NDEBUG */
 }
 
-void PVN_FABI(pvn_djs_qdec,PVN_DJS_QDEC)(const __float128 *const e, unsigned *const p, unsigned *const q)
+void PVN_FABI(pvn_djs_qdec,PVN_DJS_QDEC)(const _Float128 *const e, unsigned *const p, unsigned *const q)
 {
   PVN_ASSERT(e);
   PVN_ASSERT(p);

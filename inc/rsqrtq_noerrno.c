@@ -26,7 +26,7 @@ SOFTWARE.
 
 /* modified by venovako */
 #include "pvn_ext.h"
-PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
+PVN_EXTERN_C _Float128 cr_rsqrtq(_Float128 x);
 
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
@@ -55,7 +55,7 @@ typedef union {
   i128 as;
   u64 b[2];
   i64 bs[2];
-  __float128 f;
+  _Float128 f;
 } b128u128_u;
 
 static inline i64 mhui(u64 y, i64 x){
@@ -116,13 +116,13 @@ static inline u128 mUU(u128 _a, u128 _b, u128 *t){
   return a1b1.a;
 }
 
-static inline __float128 reinterpret_u128_as_f128(u128 t){
+static inline _Float128 reinterpret_u128_as_f128(u128 t){
 #if defined(__x86_64__) && !defined(__clang__)
   // put u128 into xmm register
   __m128i m = {0, 0};
   m = _mm_insert_epi64 (m, t, 0);
   m = _mm_insert_epi64 (m, t>>64, 1);
-  __float128 r;
+  _Float128 r;
   asm("": "=x"(r): "0"(m));
   return r;
 #else
@@ -131,7 +131,7 @@ static inline __float128 reinterpret_u128_as_f128(u128 t){
 #endif
 }
 
-static inline u128 reinterpret_f128_as_u128(__float128 z){
+static inline u128 reinterpret_f128_as_u128(_Float128 z){
 #if defined(__x86_64__) && !defined(__clang__)
   __m128i t;
   asm("" : "=x" (t) :"0" (z));
@@ -207,7 +207,7 @@ static inline u64 rsqrt9(u64 m){
   return r;
 }
 
-__float128 cr_rsqrtq(__float128 x){
+_Float128 cr_rsqrtq(_Float128 x){
   unsigned flagp = _mm_getcsr(), oflagp = flagp;
   b128u128_u u = {.a = reinterpret_f128_as_u128(x)};
   i32 e = u.b[1]>>48; // exponent

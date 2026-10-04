@@ -283,7 +283,7 @@ long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long d
   return r;
 }
 #ifdef PVN_QUADMATH
-__float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d, __float128 *const x, int *const t)
+_Float128 PVN_FABI(pvn_qdet,PVN_QDET)(const _Float128 *const a, const _Float128 *const b, const _Float128 *const c, const _Float128 *const d, _Float128 *const x, int *const t)
 {
   PVN_ASSERT(a);
   PVN_ASSERT(b);
@@ -291,7 +291,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
   PVN_ASSERT(d);
   PVN_ASSERT(x);
   PVN_ASSERT(t);
-  __float128 r
+  _Float128 r
 #if (!defined(PVN_DET_SAFE) || ((PVN_DET_SAFE & 8) == 0))
     = pvn_qdet(*a, *b, *c, *d);
   if (isfiniteq(r))
@@ -305,16 +305,16 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
 #else /* !NDEBUG */
     int ea = 0, eb = 0, ec = 0, ed = 0;
 #endif /* ?NDEBUG */
-    const __float128
+    const _Float128
       fb = frexpq(*b, &eb),
       fc = frexpq(*c, &ec);
-    __float128
+    _Float128
       fa = frexpq(*a, &ea),
       fd = frexpq(*d, &ed);
     const int
       u = (eb + ec),
       v = (ea + ed);
-    const __float128 w = (fb * fc);
+    const _Float128 w = (fb * fc);
     *x = (fa * fd);
     if (w == 0.0q) {
       if (*x == 0.0q) {
@@ -343,7 +343,7 @@ __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float1
       fd = scalbnq(fd, t_2);
       s -= *t;
       *t += v;
-      const __float128
+      const _Float128
         e = fmaq(-fb, fc, w),
         f = fmaq(fa, fd, -scalbnq(w, s));
       *x = fmaq(scalbnq(0.5q, s), 2.0q * e, f);

@@ -38,9 +38,9 @@ static inline long double pvn_xdet(const long double a, const long double b, con
 }
 
 #ifdef PVN_QUADMATH
-static inline __float128 pvn_qdet(const __float128 a, const __float128 b, const __float128 c, const __float128 d)
+static inline _Float128 pvn_qdet(const _Float128 a, const _Float128 b, const _Float128 c, const _Float128 d)
 {
-  const __float128
+  const _Float128
     w = (b * c),
     e = fmaq(-b, c, w),
     f = fmaq(a, d, -w),
@@ -97,8 +97,8 @@ PVN_EXTERN_C double PVN_FABI(pvn_dfmma,PVN_DFMMA)(const double *const a, const d
 PVN_EXTERN_C long double PVN_FABI(pvn_xdet,PVN_XDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t);
 PVN_EXTERN_C long double PVN_FABI(pvn_xfmma,PVN_XFMMA)(const long double *const a, const long double *const b, const long double *const c, const long double *const d);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C __float128 PVN_FABI(pvn_qdet,PVN_QDET)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d, __float128 *const x, int *const t);
-PVN_EXTERN_C __float128 PVN_FABI(pvn_qfmma,PVN_QFMMA)(const __float128 *const a, const __float128 *const b, const __float128 *const c, const __float128 *const d);
+PVN_EXTERN_C _Float128 PVN_FABI(pvn_qdet,PVN_QDET)(const _Float128 *const a, const _Float128 *const b, const _Float128 *const c, const _Float128 *const d, _Float128 *const x, int *const t);
+PVN_EXTERN_C _Float128 PVN_FABI(pvn_qfmma,PVN_QFMMA)(const _Float128 *const a, const _Float128 *const b, const _Float128 *const c, const _Float128 *const d);
 #else /* !PVN_QUADMATH */
 PVN_EXTERN_C long double PVN_FABI(pvn_qdet,PVN_QDET)(const long double *const a, const long double *const b, const long double *const c, const long double *const d, long double *const x, int *const t);
 PVN_EXTERN_C long double PVN_FABI(pvn_qfmma,PVN_QFMMA)(const long double *const a, const long double *const b, const long double *const c, const long double *const d);

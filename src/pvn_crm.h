@@ -52,11 +52,11 @@ PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #define cabsl(z) hypotl(creall(z), cimagl(z))
 #define rsqrtl cr_rsqrtl
 #if (defined(PVN_QUADMATH) || (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER) && !defined(__APPLE__)))
-PVN_EXTERN_C __float128 cr_hypotq(__float128 x, __float128 y);
+PVN_EXTERN_C _Float128 cr_hypotq(_Float128 x, _Float128 y);
 #define hypotq cr_hypotq
-PVN_EXTERN_C __float128 cr_rsqrtq(__float128 x);
+PVN_EXTERN_C _Float128 cr_rsqrtq(_Float128 x);
 #define rsqrtq cr_rsqrtq
-PVN_EXTERN_C __float128 cr_sqrtq(__float128 x);
+PVN_EXTERN_C _Float128 cr_sqrtq(_Float128 x);
 #define sqrtq cr_sqrtq
 #endif /* PVN_QUADMATH || gcc */
 #else /* !PVN_CR_MATH */
@@ -85,7 +85,7 @@ PVN_EXTERN_C float rhypotf(float x, float y);
 PVN_EXTERN_C double rhypot(double x, double y);
 PVN_EXTERN_C long double rhypotl(long double x, long double y);
 #ifdef PVN_QUADMATH
-PVN_EXTERN_C __float128 rhypotq(__float128 x, __float128 y);
+PVN_EXTERN_C _Float128 rhypotq(_Float128 x, _Float128 y);
 #endif /* PVN_QUADMATH */
 
 #endif /* !PVN_CRM_H */

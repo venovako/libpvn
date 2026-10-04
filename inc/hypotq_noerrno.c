@@ -26,7 +26,7 @@ SOFTWARE.
 
 /* modified by venovako */
 #include "pvn_ext.h"
-PVN_EXTERN_C __float128 cr_hypotq(__float128 x, __float128 y);
+PVN_EXTERN_C _Float128 cr_hypotq(_Float128 x, _Float128 y);
 
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
@@ -53,7 +53,7 @@ typedef union {
   i128 as;
   u64 b[2];
   i64 bs[2];
-  __float128 f;
+  _Float128 f;
 } b128u128_u;
 
 // get high part of unsigned 64x64 bit multiplication
@@ -153,13 +153,13 @@ static inline i128 mhIU(i128 _b, u128 _a){
   return mhUIm(_a,_b,(u64)(_b>>127));
 }
 
-static inline __float128 reinterpret_u128_as_f128(u128 t){
+static inline _Float128 reinterpret_u128_as_f128(u128 t){
 #if defined(__x86_64__) && !defined(__clang__)
   // put u128 into xmm register
   __m128i m = {0, 0};
   m = _mm_insert_epi64 (m, t, 0);
   m = _mm_insert_epi64 (m, t>>64, 1);
-  __float128 r;
+  _Float128 r;
   asm("": "=x"(r): "0"(m));
   return r;
 #else
@@ -168,7 +168,7 @@ static inline __float128 reinterpret_u128_as_f128(u128 t){
 #endif
 }
 
-static inline u128 reinterpret_f128_as_u128(__float128 z){
+static inline u128 reinterpret_f128_as_u128(_Float128 z){
 #if defined(__x86_64__) && !defined(__clang__)
   __m128i t;
   asm("" : "=x" (t) :"0" (z));
@@ -251,7 +251,7 @@ __attribute__((noinline)) char getclass(u128 x){
   return (t>=0x7fff<<16) + (t>=(0x7fff<<16)+1) + (t>=(0x7fff8<<12));
 }
 
-__float128 cr_hypotq(__float128 x, __float128 y) {
+_Float128 cr_hypotq(_Float128 x, _Float128 y) {
   unsigned flagp = _mm_getcsr(), oflagp = flagp, rm = flagp&_MM_ROUND_MASK;
   const u64 smsk = 1ull<<63;
   b128u128_u X = {.a = reinterpret_f128_as_u128(x)};
@@ -267,7 +267,7 @@ __float128 cr_hypotq(__float128 x, __float128 y) {
   b.a = Y.a + dab;
   int xn = a.b[1]>>48, yn = b.b[1]>>48;
   if(__builtin_expect(xn==0x7fff, 0)){
-    __float128 out;
+    _Float128 out;
     // 1 -- infinity, 2 -- snan, 3 -- qnan
     char xnan = getclass(a.a), ynan = getclass(b.a);
     if(xnan==2||ynan==2){ // signaling NAN

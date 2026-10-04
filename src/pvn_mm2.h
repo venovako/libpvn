@@ -106,7 +106,7 @@ static inline void pvn_wmm2(long double *const c11r, long double *const c11i, lo
 }
 
 #ifdef PVN_QUADMATH
-static inline void pvn_qmm2(__float128 *const c11, __float128 *const c21, __float128 *const c12, __float128 *const c22, const __float128 a11, const __float128 a21, const __float128 a12, const __float128 a22, const __float128 b11, const __float128 b21, const __float128 b12, const __float128 b22)
+static inline void pvn_qmm2(_Float128 *const c11, _Float128 *const c21, _Float128 *const c12, _Float128 *const c22, const _Float128 a11, const _Float128 a21, const _Float128 a12, const _Float128 a22, const _Float128 b11, const _Float128 b21, const _Float128 b12, const _Float128 b22)
 {
   PVN_ASSERT(c11);
   PVN_ASSERT(c21);
@@ -118,7 +118,7 @@ static inline void pvn_qmm2(__float128 *const c11, __float128 *const c21, __floa
   *c22 = fmaq(a21, b12, a22 * b22);
 }
 
-static inline void pvn_ymm2(__float128 *const c11r, __float128 *const c11i, __float128 *const c21r, __float128 *const c21i, __float128 *const c12r, __float128 *const c12i, __float128 *const c22r, __float128 *const c22i, const __float128 a11r, const __float128 a11i, const __float128 a21r, const __float128 a21i, const __float128 a12r, const __float128 a12i, const __float128 a22r, const __float128 a22i, const __float128 b11r, const __float128 b11i, const __float128 b21r, const __float128 b21i, const __float128 b12r, const __float128 b12i, const __float128 b22r, const __float128 b22i)
+static inline void pvn_ymm2(_Float128 *const c11r, _Float128 *const c11i, _Float128 *const c21r, _Float128 *const c21i, _Float128 *const c12r, _Float128 *const c12i, _Float128 *const c22r, _Float128 *const c22i, const _Float128 a11r, const _Float128 a11i, const _Float128 a21r, const _Float128 a21i, const _Float128 a12r, const _Float128 a12i, const _Float128 a22r, const _Float128 a22i, const _Float128 b11r, const _Float128 b11i, const _Float128 b21r, const _Float128 b21i, const _Float128 b12r, const _Float128 b12i, const _Float128 b22r, const _Float128 b22i)
 {
   PVN_ASSERT(c11r);
   PVN_ASSERT(c11i);
@@ -249,7 +249,7 @@ static inline void pvn_wmma2(long double *const c11r, long double *const c11i, l
 }
 
 #ifdef PVN_QUADMATH
-static inline void pvn_qmma2(__float128 *const c11, __float128 *const c21, __float128 *const c12, __float128 *const c22, const __float128 a11, const __float128 a21, const __float128 a12, const __float128 a22, const __float128 b11, const __float128 b21, const __float128 b12, const __float128 b22)
+static inline void pvn_qmma2(_Float128 *const c11, _Float128 *const c21, _Float128 *const c12, _Float128 *const c22, const _Float128 a11, const _Float128 a21, const _Float128 a12, const _Float128 a22, const _Float128 b11, const _Float128 b21, const _Float128 b12, const _Float128 b22)
 {
   PVN_ASSERT(c11);
   PVN_ASSERT(c21);
@@ -261,7 +261,7 @@ static inline void pvn_qmma2(__float128 *const c11, __float128 *const c21, __flo
   *c22 = fmaq(a21, b12, fmaq(a22, b22, *c22));
 }
 
-static inline void pvn_ymma2(__float128 *const c11r, __float128 *const c11i, __float128 *const c21r, __float128 *const c21i, __float128 *const c12r, __float128 *const c12i, __float128 *const c22r, __float128 *const c22i, const __float128 a11r, const __float128 a11i, const __float128 a21r, const __float128 a21i, const __float128 a12r, const __float128 a12i, const __float128 a22r, const __float128 a22i, const __float128 b11r, const __float128 b11i, const __float128 b21r, const __float128 b21i, const __float128 b12r, const __float128 b12i, const __float128 b22r, const __float128 b22i)
+static inline void pvn_ymma2(_Float128 *const c11r, _Float128 *const c11i, _Float128 *const c21r, _Float128 *const c21i, _Float128 *const c12r, _Float128 *const c12i, _Float128 *const c22r, _Float128 *const c22i, const _Float128 a11r, const _Float128 a11i, const _Float128 a21r, const _Float128 a21i, const _Float128 a12r, const _Float128 a12i, const _Float128 a22r, const _Float128 a22i, const _Float128 b11r, const _Float128 b11i, const _Float128 b21r, const _Float128 b21i, const _Float128 b12r, const _Float128 b12i, const _Float128 b22r, const _Float128 b22i)
 {
   PVN_ASSERT(c11r);
   PVN_ASSERT(c11i);

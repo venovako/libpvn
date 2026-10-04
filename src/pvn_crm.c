@@ -45,7 +45,7 @@ long double rhypotl(long double x, long double y)
 }
 
 #ifdef PVN_QUADMATH
-__float128 rhypotq(__float128 x, __float128 y)
+_Float128 rhypotq(_Float128 x, _Float128 y)
 {
   return (1.0q / hypotq(x, y));
 }

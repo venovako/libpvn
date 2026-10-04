@@ -1586,12 +1586,12 @@ long double PVN_FABI(pvn_xnrmp,PVN_XNRMP)(const long double *const p, const size
 #ifdef PVN_QUADMATH
 #ifdef PVN_MPFR
 #ifdef PVN_CILK
-static int mpq_nrm1(mpfr_t r, const size_t n, const __float128 *const x)
+static int mpq_nrm1(mpfr_t r, const size_t n, const _Float128 *const x)
 {
   if (!n || !x)
     return 0;
   if (n == (size_t)1u) {
-    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
+    (void)mpfr_setFloat128(r, fabsq(*x), MPFR_RNDN);
     return 1;
   }
   int fl = 0, fr = 0;
@@ -1599,8 +1599,8 @@ static int mpq_nrm1(mpfr_t r, const size_t n, const __float128 *const x)
   (void)mpfr_init(ml);
   (void)mpfr_init(mr);
   if (n == (size_t)2u) {
-    (void)mpfr_set_float128(ml, fabsq(x[0u]), MPFR_RNDN);
-    (void)mpfr_set_float128(mr, fabsq(x[1u]), MPFR_RNDN);
+    (void)mpfr_setFloat128(ml, fabsq(x[0u]), MPFR_RNDN);
+    (void)mpfr_setFloat128(mr, fabsq(x[1u]), MPFR_RNDN);
     (void)mpfr_add(r, ml, mr, MPFR_RNDN);
   }
   else {
@@ -1617,12 +1617,12 @@ static int mpq_nrm1(mpfr_t r, const size_t n, const __float128 *const x)
   return (pvn_imax(fl, fr) + 1);
 }
 
-static int mpq_nrmf(mpfr_t r, const size_t n, const __float128 *const x)
+static int mpq_nrmf(mpfr_t r, const size_t n, const _Float128 *const x)
 {
   if (!n || !x)
     return 0;
   if (n == (size_t)1u) {
-    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
+    (void)mpfr_setFloat128(r, fabsq(*x), MPFR_RNDN);
     return 1;
   }
   int fl = 0, fr = 0;
@@ -1630,8 +1630,8 @@ static int mpq_nrmf(mpfr_t r, const size_t n, const __float128 *const x)
   (void)mpfr_init(ml);
   (void)mpfr_init(mr);
   if (n == (size_t)2u) {
-    (void)mpfr_set_float128(ml, x[0u], MPFR_RNDN);
-    (void)mpfr_set_float128(mr, x[1u], MPFR_RNDN);
+    (void)mpfr_setFloat128(ml, x[0u], MPFR_RNDN);
+    (void)mpfr_setFloat128(mr, x[1u], MPFR_RNDN);
   }
   else {
     const size_t nl = ((n >> 1u) + (n & (size_t)1u));
@@ -1647,12 +1647,12 @@ static int mpq_nrmf(mpfr_t r, const size_t n, const __float128 *const x)
   return (pvn_imax(fl, fr) + 1);
 }
 
-static int mpq_nrmp(mpfr_t r, const __float128 p, const size_t n, const __float128 *const x)
+static int mpq_nrmp(mpfr_t r, const _Float128 p, const size_t n, const _Float128 *const x)
 {
   if (!n || !x)
     return 0;
   if (n == (size_t)1u) {
-    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
+    (void)mpfr_setFloat128(r, fabsq(*x), MPFR_RNDN);
     return 1;
   }
   int fl = 0, fr = 0;
@@ -1660,17 +1660,17 @@ static int mpq_nrmp(mpfr_t r, const __float128 p, const size_t n, const __float1
   (void)mpfr_init(mp);
   (void)mpfr_init(ml);
   (void)mpfr_init(mr);
-  (void)mpfr_set_float128(mp, (p * 0.5q), MPFR_RNDN);
+  (void)mpfr_setFloat128(mp, (p * 0.5q), MPFR_RNDN);
   if (n == (size_t)2u) {
-    const __float128 xl = fabsq(x[0u]);
-    const __float128 xr = fabsq(x[1u]);
+    const _Float128 xl = fabsq(x[0u]);
+    const _Float128 xr = fabsq(x[1u]);
     if (xl < xr) {
-      (void)mpfr_set_float128(ml, xr, MPFR_RNDN);
-      (void)mpfr_set_float128(mr, xl, MPFR_RNDN);
+      (void)mpfr_setFloat128(ml, xr, MPFR_RNDN);
+      (void)mpfr_setFloat128(mr, xl, MPFR_RNDN);
     }
     else {
-      (void)mpfr_set_float128(ml, xl, MPFR_RNDN);
-      (void)mpfr_set_float128(mr, xr, MPFR_RNDN);
+      (void)mpfr_setFloat128(ml, xl, MPFR_RNDN);
+      (void)mpfr_setFloat128(mr, xr, MPFR_RNDN);
     }
   }
   else {
@@ -1703,7 +1703,7 @@ static int mpq_nrmp(mpfr_t r, const __float128 p, const size_t n, const __float1
   return (pvn_imax(fl, fr) + 1);
 }
 
-__float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const _Float128 *const p, const size_t *const n, const _Float128 *const x)
 {
   if (!p || !(*p > 0.0q))
     return -1.0q;
@@ -1713,7 +1713,7 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
     return -0.0q;
   if (!x)
     return -3.0q;
-  __float128 f = 0.0q;
+  _Float128 f = 0.0q;
   if (!isfiniteq(*p)) {
     for (size_t i = (size_t)0u; i < *n; ++i)
       f = fmaxq(f, fabsq(x[i]));
@@ -1728,12 +1728,12 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
     l = mpq_nrmf(mf, *n, x);
   else
     l = mpq_nrmp(mf, *p, *n, x);
-  f = mpfr_get_float128(mf, MPFR_RNDN);
+  f = mpfr_getFloat128(mf, MPFR_RNDN);
   mpfr_clear(mf);
   return f;
 }
 #else /* !PVN_CILK */
-__float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const _Float128 *const p, const size_t *const n, const _Float128 *const x)
 {
   if (!p || !(*p > 0.0q))
     return -1.0q;
@@ -1744,7 +1744,7 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
   if (!x)
     return -3.0q;
   const size_t m = *n;
-  __float128 f = 0.0q;
+  _Float128 f = 0.0q;
   if (!isfiniteq(*p)) {
     for (size_t i = (size_t)0u; i < m; ++i)
       f = fmaxq(f, fabsq(x[i]));
@@ -1755,14 +1755,14 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
   (void)mpfr_init(mx);
   if (*p == 1.0q) {
     for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
+      (void)mpfr_setFloat128(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
       (void)mpfr_add(mf, mf, mx, MPFR_RNDN);
     }
   }
   else if (*p == 2.0q) {
     for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
+      (void)mpfr_setFloat128(mx, x[i], MPFR_RNDN);
       (void)mpfr_fma(mf, mx, mx, mf, MPFR_RNDN);
     }
     (void)mpfr_sqrt(mf, mf, MPFR_RNDN);
@@ -1770,9 +1770,9 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
   else {
     mpfr_t mp;
     (void)mpfr_init(mp);
-    (void)mpfr_set_float128(mf, *p, MPFR_RNDN);
+    (void)mpfr_setFloat128(mf, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
+      (void)mpfr_setFloat128(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
       (void)mpfr_pow(mx, mx, mp, MPFR_RNDN);
       (void)mpfr_add(mf, mf, mx, MPFR_RNDN);
@@ -1781,7 +1781,7 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
     (void)mpfr_pow(mf, mf, mp, MPFR_RNDN);
     mpfr_clear(mp);
   }
-  f = mpfr_get_float128(mf, MPFR_RNDN);
+  f = mpfr_getFloat128(mf, MPFR_RNDN);
   mpfr_clear(mx);
   mpfr_clear(mf);
   return f;
@@ -1789,7 +1789,7 @@ __float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const __float128 *const p, const 
 #endif /* ?PVN_CILK */
 #endif /* PVN_MPFR */
 
-__float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const _Float128 *const x)
 {
 #ifndef NDEBUG
   if (!n)
@@ -1805,7 +1805,7 @@ __float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __fl
     return hypotq(x[0], x[1]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  __float128 fl, fr;
+  _Float128 fl, fr;
   cilk_scope {
     fl = cilk_spawn PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&nl, x);
     fr = PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(&nr, (x + nl));
@@ -1813,7 +1813,7 @@ __float128 PVN_FABI(pvn_req_nrmf,PVN_REQ_NRMF)(const size_t *const n, const __fl
   return hypotq(fl, fr);
 }
 
-__float128 PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(const size_t *const n, const _Float128 *const x)
 {
 #ifndef NDEBUG
   if (!n)
@@ -1829,7 +1829,7 @@ __float128 PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(const size_t *const n, const __fl
     return (fabsq(x[0]) + fabsq(x[1]));
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  __float128 fl, fr;
+  _Float128 fl, fr;
   cilk_scope {
     fl = cilk_spawn PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(&nl, x);
     fr = PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(&nr, (x + nl));
@@ -1837,7 +1837,7 @@ __float128 PVN_FABI(pvn_req_nrm1,PVN_REQ_NRM1)(const size_t *const n, const __fl
   return (fl + fr);
 }
 
-__float128 PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(const size_t *const n, const _Float128 *const x)
 {
 #ifndef NDEBUG
   if (!n)
@@ -1853,7 +1853,7 @@ __float128 PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(const size_t *const n, const __fl
     return fmaxq(fabsq(x[0]), fabsq(x[1]));
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  __float128 fl, fr;
+  _Float128 fl, fr;
   cilk_scope {
     fl = cilk_spawn PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(&nl, x);
     fr = PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(&nr, (x + nl));
@@ -1861,7 +1861,7 @@ __float128 PVN_FABI(pvn_req_nrmi,PVN_REQ_NRMI)(const size_t *const n, const __fl
   return fmaxq(fl, fr);
 }
 
-__float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const _Float128 *const x)
 {
 #ifndef NDEBUG
   if (!n)
@@ -1885,7 +1885,7 @@ __float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const __fl
 #endif /* ?__MATHIMF_H_INCLUDED */
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  __float128 fl, fr;
+  _Float128 fl, fr;
   cilk_scope {
     fl = cilk_spawn PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(&nl, x);
     fr = PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(&nr, (x + nl));
@@ -1901,7 +1901,7 @@ __float128 PVN_FABI(pvn_rfq_nrmf,PVN_RFQ_NRMF)(const size_t *const n, const __fl
 #endif /* ?__MATHIMF_H_INCLUDED */
 }
 
-__float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const _Float128 *const x)
 {
 #ifndef NDEBUG
   if (!n)
@@ -1917,7 +1917,7 @@ __float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __fl
     return pvn_v1q_hypot(x[0], x[1]);
   const size_t nl = ((*n >> 1u) + (*n & (size_t)1u));
   const size_t nr = (*n - nl);
-  __float128 fl, fr;
+  _Float128 fl, fr;
   cilk_scope {
     fl = cilk_spawn PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nl, x);
     fr = PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(&nr, (x + nl));
@@ -1925,7 +1925,7 @@ __float128 PVN_FABI(pvn_rhq_nrmf,PVN_RHQ_NRMF)(const size_t *const n, const __fl
   return pvn_v1q_hypot_pos(fl, fr);
 }
 
-__float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const _Float128 *const x)
 {
   if (!n)
     return -1.0q;
@@ -1935,7 +1935,7 @@ __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128
     return -2.0q;
 #if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
-  __float128 p[mt];
+  _Float128 p[mt];
   for (size_t i = 0u; i < mt; ++i)
     p[i] = 0.0q;
 #pragma omp parallel default(none) shared(n,x,p)
@@ -1975,13 +1975,13 @@ __float128 PVN_FABI(pvn_qnrm2,PVN_QNRM2)(const size_t *const n, const __float128
 #endif /* ?PVN_OPENMP */
 }
 
-__float128 PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_ynrm2,PVN_YNRM2)(const size_t *const n, const _Float128 *const x)
 {
   const size_t m = (n ? (*n << 1u) : (size_t)0u);
   return PVN_FABI(pvn_qnrm2,PVN_QNRM2)(&m, x);
 }
 
-__float128 PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const _Float128 *const x)
 {
   if (!n)
     return -1.0q;
@@ -1991,7 +1991,7 @@ __float128 PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const __float128
     return -2.0q;
 #if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
-  __float128 p[mt];
+  _Float128 p[mt];
   for (size_t i = 0u; i < mt; ++i)
     p[i] = 0.0q;
 #pragma omp parallel default(none) shared(n,x,p)
@@ -2019,7 +2019,7 @@ __float128 PVN_FABI(pvn_qnrm1,PVN_QNRM1)(const size_t *const n, const __float128
 #endif /* ?PVN_OPENMP */
 }
 
-__float128 PVN_FABI(pvn_qnrmi,PVN_QNRMI)(const size_t *const n, const __float128 *const x)
+_Float128 PVN_FABI(pvn_qnrmi,PVN_QNRMI)(const size_t *const n, const _Float128 *const x)
 {
   if (!n)
     return -1.0q;
@@ -2029,7 +2029,7 @@ __float128 PVN_FABI(pvn_qnrmi,PVN_QNRMI)(const size_t *const n, const __float128
     return -2.0q;
 #if (defined(PVN_OPENMP) && (PVN_OPENMP > 1))
   const size_t mt = (size_t)omp_get_max_threads();
-  __float128 p[mt];
+  _Float128 p[mt];
   for (size_t i = 0u; i < mt; ++i)
     p[i] = 0.0q;
 #pragma omp parallel default(none) shared(n,x,p)

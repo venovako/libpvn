@@ -914,7 +914,7 @@ int PVN_FABI(pvn_wljev2,PVN_WLJEV2)(const long double *const a11, const long dou
 #define FLT128_BIG_EXP (FLT128_MAX_EXP - 2)
 #endif /* ?FLT128_BIG_EXP */
 
-int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const tg, int *const es)
+int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21, _Float128 *const cs, _Float128 *const sn, _Float128 *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -923,13 +923,13 @@ int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float12
   PVN_ASSERT(sn);
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
-  __float128 a1 = *a11;
+  _Float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;
-  __float128 a2 = *a22;
+  _Float128 a2 = *a22;
   if (!isfiniteq(a2))
     return -2;
-  __float128 ar = *a21;
+  _Float128 ar = *a21;
   if (!isfiniteq(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
@@ -950,11 +950,11 @@ int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float12
     ar = scalbnq(ar, *es);
     *es = -*es;
   }
-  const __float128
+  const _Float128
     aa = fabsq(ar);
   /* a non-zero element underflows due to scaling */
   e1 = ((((er & 1) && (fabsq(a1) < FLT128_MIN)) || ((er & 2) && (fabsq(a2) < FLT128_MIN)) || ((er & 4) && (aa < FLT128_MIN))) << 1);
-  const __float128
+  const _Float128
     as = copysignq(1.0q, ar),
     an = (aa * 2.0q),
     ad = (a1 - a2),
@@ -967,7 +967,7 @@ int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float12
   if (wt)
     *sn = (as * t1);
   else {
-    const __float128 s1 = (t1 / sc);
+    const _Float128 s1 = (t1 / sc);
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
@@ -975,7 +975,7 @@ int PVN_FABI(pvn_qljeu2,PVN_QLJEU2)(const __float128 *const a11, const __float12
   return (wt | e1 | e2);
 }
 
-int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const cs, __float128 *const sn, __float128 *const l1, __float128 *const l2, int *const es)
+int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21, _Float128 *const cs, _Float128 *const sn, _Float128 *const l1, _Float128 *const l2, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -985,13 +985,13 @@ int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float12
   PVN_ASSERT(l1);
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
-  __float128 a1 = *a11;
+  _Float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;
-  __float128 a2 = *a22;
+  _Float128 a2 = *a22;
   if (!isfiniteq(a2))
     return -2;
-  __float128 ar = *a21;
+  _Float128 ar = *a21;
   if (!isfiniteq(ar))
     return -3;
   const int wt = (*es ? 1 : 0);
@@ -1012,11 +1012,11 @@ int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float12
     ar = scalbnq(ar, *es);
     *es = -*es;
   }
-  const __float128
+  const _Float128
     aa = fabsq(ar);
   /* a non-zero element underflows due to scaling */
   e1 = ((((er & 1) && (fabsq(a1) < FLT128_MIN)) || ((er & 2) && (fabsq(a2) < FLT128_MIN)) || ((er & 4) && (aa < FLT128_MIN))) << 1);
-  const __float128
+  const _Float128
     as = copysignq(1.0q, ar),
     an = (aa * 2.0q),
     ad = (a1 - a2),
@@ -1028,7 +1028,7 @@ int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float12
   if (wt)
     *sn = (as * t1);
   else {
-    const __float128 s1 = (t1 / sc);
+    const _Float128 s1 = (t1 / sc);
     *sn = (as * s1);
   }
   /* sine/tangent underflows with a non-zero aa */
@@ -1040,7 +1040,7 @@ int PVN_FABI(pvn_qljev2,PVN_QLJEV2)(const __float128 *const a11, const __float12
   return (wt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const tg, int *const es)
+int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21r, const _Float128 *const a21i, _Float128 *const cs, _Float128 *const snr, _Float128 *const sni, _Float128 *const tg, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -1051,16 +1051,16 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
   PVN_ASSERT(sni);
   PVN_ASSERT(tg);
   PVN_ASSERT(es);
-  __float128 a1 = *a11;
+  _Float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;
-  __float128 a2 = *a22;
+  _Float128 a2 = *a22;
   if (!isfiniteq(a2))
     return -2;
-  __float128 ar = *a21r;
+  _Float128 ar = *a21r;
   if (!isfiniteq(ar))
     return -3;
-  __float128 ai = *a21i;
+  _Float128 ai = *a21i;
   if (!isfiniteq(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
@@ -1084,7 +1084,7 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
     ai = scalbnq(ai, *es);
     *es = -*es;
   }
-  const __float128
+  const _Float128
     ar_ = fabsq(ar),
     ai_ = fabsq(ai),
     aa = hypotq(ar_, ai_);
@@ -1096,7 +1096,7 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
   e1 = ((((ei & 1) && (fabsq(a1) < FLT128_MIN)) || ((ei & 2) && (fabsq(a2) < FLT128_MIN)) || ((ei & 4) && (ar_ < FLT128_MIN)) || ((ei & 8) && (ai_ < FLT128_MIN))) << 1);
   ar = copysignq(fminq(ar_ / aa, 1.0q), ar);
   ai = ai / fmaxq(aa, FLT128_TRUE_MIN);
-  const __float128
+  const _Float128
     an = (aa * 2.0q),
     ad = (a1 - a2),
     t2 = copysignq(fminq(fmaxq(an / fabsq(ad), 0.0q), FLT128_MAX), ad),
@@ -1110,7 +1110,7 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
     *sni = (ai * t1);
   }
   else {
-    const __float128 s1 = (t1 / sc);
+    const _Float128 s1 = (t1 / sc);
     *snr = (ar * s1);
     *sni = (ai * s1);
   }
@@ -1120,7 +1120,7 @@ int PVN_FABI(pvn_yljeu2,PVN_YLJEU2)(const __float128 *const a11, const __float12
   return (wt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const cs, __float128 *const snr, __float128 *const sni, __float128 *const l1, __float128 *const l2, int *const es)
+int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21r, const _Float128 *const a21i, _Float128 *const cs, _Float128 *const snr, _Float128 *const sni, _Float128 *const l1, _Float128 *const l2, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -1132,16 +1132,16 @@ int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float12
   PVN_ASSERT(l1);
   PVN_ASSERT(l2);
   PVN_ASSERT(es);
-  __float128 a1 = *a11;
+  _Float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;
-  __float128 a2 = *a22;
+  _Float128 a2 = *a22;
   if (!isfiniteq(a2))
     return -2;
-  __float128 ar = *a21r;
+  _Float128 ar = *a21r;
   if (!isfiniteq(ar))
     return -3;
-  __float128 ai = *a21i;
+  _Float128 ai = *a21i;
   if (!isfiniteq(ai))
     return -4;
   const int wt = (*es ? 1 : 0);
@@ -1165,7 +1165,7 @@ int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float12
     ai = scalbnq(ai, *es);
     *es = -*es;
   }
-  const __float128
+  const _Float128
     ar_ = fabsq(ar),
     ai_ = fabsq(ai),
     aa = hypotq(ar_, ai_);
@@ -1173,7 +1173,7 @@ int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float12
   e1 = ((((ei & 1) && (fabsq(a1) < FLT128_MIN)) || ((ei & 2) && (fabsq(a2) < FLT128_MIN)) || ((ei & 4) && (ar_ < FLT128_MIN)) || ((ei & 8) && (ai_ < FLT128_MIN))) << 1);
   ar = copysignq(fminq(ar_ / aa, 1.0q), ar);
   ai = ai / fmaxq(aa, FLT128_TRUE_MIN);
-  const __float128
+  const _Float128
     an = (aa * 2.0q),
     ad = (a1 - a2),
     t2 = copysignq(fminq(fmaxq(an / fabsq(ad), 0.0q), FLT128_MAX), ad),
@@ -1186,7 +1186,7 @@ int PVN_FABI(pvn_yljev2,PVN_YLJEV2)(const __float128 *const a11, const __float12
     *sni = (ai * t1);
   }
   else {
-    const __float128 s1 = (t1 / sc);
+    const _Float128 s1 = (t1 / sc);
     *snr = (ar * s1);
     *sni = (ai * s1);
   }

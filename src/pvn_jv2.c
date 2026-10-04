@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   char s[46u] = { '\0' };
   if (4 == argc) {
 #ifdef PVN_QUADMATH
-    __float128 c[2][2];
+    _Float128 c[2][2];
 #else /* !PVN_QUADMATH */
     long double c[2][2];
 #endif /* ?PVN_QUADMATH */
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
   }
   else {
 #ifdef PVN_QUADMATH
-    __float128 c[2][4];
+    _Float128 c[2][4];
 #else /* !PVN_QUADMATH */
     long double c[2][4];
 #endif /* ?PVN_QUADMATH */
@@ -712,7 +712,7 @@ int PVN_FABI(pvn_wljv2,PVN_WLJV2)(const long double *const a11, const long doubl
 #define FLT128_BIG_EXP (FLT128_MAX_EXP - 2)
 #endif /* ?FLT128_BIG_EXP */
 
-int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21, __float128 *const ch, __float128 *const sh, __float128 *const th, int *const es)
+int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21, _Float128 *const ch, _Float128 *const sh, _Float128 *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -721,13 +721,13 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
   PVN_ASSERT(sh);
   PVN_ASSERT(th);
   PVN_ASSERT(es);
-  __float128 a1 = *a11;
+  _Float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;
-  __float128 a2 = *a22;
+  _Float128 a2 = *a22;
   if (!isfiniteq(a2))
     return -2;
-  __float128 ar = *a21;
+  _Float128 ar = *a21;
   if (!isfiniteq(ar))
     return -3;
   int wt = 0, bt = 0;
@@ -751,7 +751,7 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
     e1 = (a1 != 0.0q),
     e2 = (a2 != 0.0q),
     er = (ar != 0.0q);
-  __float128 t1 = 0.0q, aa = 0.0q;
+  _Float128 t1 = 0.0q, aa = 0.0q;
   if (er) {
     *es = (e1 | (e2 << 1) | (er << 2));
     if (*es) {
@@ -772,7 +772,7 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
       /* a non-zero element underflows due to scaling */
       e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (aa < FLT128_MIN))) << 2);
       ar = copysignq(1.0q, ar);
-      const __float128
+      const _Float128
         an = (2.0q * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0q : (an / ad));
@@ -798,7 +798,7 @@ int PVN_FABI(pvn_qljv2,PVN_QLJV2)(const __float128 *const a11, const __float128 
   return (wt | bt | e1 | e2 | er);
 }
 
-int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 *const a22, const __float128 *const a21r, const __float128 *const a21i, __float128 *const ch, __float128 *const shr, __float128 *const shi, __float128 *const th, int *const es)
+int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const _Float128 *const a11, const _Float128 *const a22, const _Float128 *const a21r, const _Float128 *const a21i, _Float128 *const ch, _Float128 *const shr, _Float128 *const shi, _Float128 *const th, int *const es)
 {
   PVN_ASSERT(a11);
   PVN_ASSERT(a22);
@@ -809,16 +809,16 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
   PVN_ASSERT(shi);
   PVN_ASSERT(th);
   PVN_ASSERT(es);
-  __float128 a1 = *a11;
+  _Float128 a1 = *a11;
   if (!isfiniteq(a1))
     return -1;
-  __float128 a2 = *a22;
+  _Float128 a2 = *a22;
   if (!isfiniteq(a2))
     return -2;
-  __float128 ar = *a21r;
+  _Float128 ar = *a21r;
   if (!isfiniteq(ar))
     return -3;
-  __float128 ai = *a21i;
+  _Float128 ai = *a21i;
   if (!isfiniteq(ai))
     return -4;
   int wt = 0, bt = 0;
@@ -843,7 +843,7 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
     e2 = (a2 != 0.0q),
     er = (ar != 0.0q),
     ei = (ai != 0.0q);
-  __float128 t1 = 0.0q, aa = 0.0q;
+  _Float128 t1 = 0.0q, aa = 0.0q;
   if (er || ei) {
     *es = (e1 | (e2 << 1) | (er << 2) | (ei << 3));
     if (*es) {
@@ -863,7 +863,7 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
       *es = -*es;
     }
     if (er || ei) {
-      const __float128
+      const _Float128
         ar_ = fabsq(ar),
         ai_ = fabsq(ai);
       aa = hypotq(ar_, ai_);
@@ -875,7 +875,7 @@ int PVN_FABI(pvn_yljv2,PVN_YLJV2)(const __float128 *const a11, const __float128 
       e1 = ((((e2 & 1) && (a1 < FLT128_MIN)) || ((e2 & 2) && (a2 < FLT128_MIN)) || ((e2 & 4) && (ar_ < FLT128_MIN)) || ((e2 & 8) && (ai_ < FLT128_MIN))) << 2);
       ar = (ar / aa);
       ai = (ai / aa);
-      const __float128
+      const _Float128
         an = (2.0q * aa),
         ad = (a1 + a2),
         t2 = -((an >= ad) ? 1.0q : (an / ad));
