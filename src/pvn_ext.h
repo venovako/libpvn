@@ -27,10 +27,10 @@
 #endif /* ?_WIN32 */
 #endif /* !PVN_EXTERN_C */
 
-#ifdef __MATHIMF_H_INCLUDED
+#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
 #ifndef _Float128
 #define _Float128 __float128
 #endif /* !_Float128 */
-#endif /* __MATHIMF_H_INCLUDED */
+#endif /* icx */
 
 #endif /* !PVN_EXT_H */
