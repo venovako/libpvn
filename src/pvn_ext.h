@@ -27,4 +27,10 @@
 #endif /* ?_WIN32 */
 #endif /* !PVN_EXTERN_C */
 
+#ifdef __MATHIMF_H_INCLUDED
+#ifndef _Float128
+#define _Float128 __float128
+#endif /* !_Float128 */
+#endif /* __MATHIMF_H_INCLUDED */
+
 #endif /* !PVN_EXT_H */

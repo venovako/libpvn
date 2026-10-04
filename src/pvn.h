@@ -147,9 +147,6 @@ PVN_EXTERN_C unsigned PVN_FABI(pvn_cilk_nworkers,PVN_CILK_NWORKERS)();
 /* the constants have been taken from the GCC's quadmath.h and modified */
 #ifdef PVN_QUADMATH
 #ifdef __MATHIMF_H_INCLUDED
-#ifndef _Float128
-#define _Float128 __float128
-#endif /* !_Float128 */
 #ifndef FLT128_MAX
 #define FLT128_MAX 1.18973149535723176508575932662800702E+4932q
 #else /* FLT128_MAX */
