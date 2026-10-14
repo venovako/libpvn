@@ -51,7 +51,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-S|-s] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-S|-s] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux with a high optimization level
@@ -102,8 +102,7 @@ When the rounding mode is expected to vary, `STRICT=0` or `STRICT=1` should be s
 The other options are for testing, debugging, and profiling, and should not be set unless their effects are fully understood.
 For example, some numerical testers require that `GMP`, `MPFR`, and `SLEEF` are set to the installation prefixes of the respective libraries.
 Assume, e.g., that [GMP](https://gmplib.org) is located at `/opt/gmp`, [MPFR](https://mpfr.org) at `/opt/mpfr`, and [SLEEF](https://sleef.org) at `/opt/sleef`.
-Then, `GMP=/opt/gmp`, `MPFR=/opt/mpfr`, and `SLEEF=/opt/sleef`.
-It is advisable to build those packages from their recent development sources, and the libraries' installation directories should be uniformly named, i.e., either `lib` or `lib64`.
+Then, `GMP=/opt/gmp/lib[64]`, `MPFR=/opt/mpfr/lib[64]`, and `SLEEF=/opt/sleef/lib[64]`, depending on whether the libraries are to be found in the `lib` or `lib64` subdirectories.
 Also, `VECLEN` should sometimes be set to the size in bytes of the widest vector datatype, as shown in the [VecNrmP](https://github.com/venovako/VecNrmP) examples.
 As a side effect, some additional and often undesired optimizations are turned on by explicitly setting it!
 

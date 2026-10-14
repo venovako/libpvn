@@ -26,9 +26,6 @@ DYNAMIC=dylib
 else # !Darwin
 DYNAMIC=so
 endif # ?Darwin
-ifndef LIB64
-LIB64=lib
-endif # !LIB64
 RM=rm -rfv
 
 ifndef COMPILER
@@ -120,26 +117,20 @@ ifdef SLEEF
 ifndef sleef
 sleef=1
 endif # !sleef
-INCS += -I$(SLEEF)/include
+INCS += -I$(SLEEF)/../include
 PFLAGS += -DPVN_SLEEF=$(sleef)
 endif # SLEEF
 ifdef MPC
-INCS += -I$(MPC)/include
+INCS += -I$(MPC)/../include
 PFLAGS += -DPVN_MPC=1
-ifndef MPFR
-MPFR=/usr/local
-endif # !MPFR
 endif # MPC
 ifdef MPFR
 SRCS += pvn_mpfr.c
-INCS += -I$(MPFR)/include
+INCS += -I$(MPFR)/../include
 PFLAGS += -DPVN_MPFR=1
-ifndef GMP
-GMP=/usr/local
-endif # !GMP
 endif # MPFR
 ifdef GMP
-INCS += -I$(GMP)/include
+INCS += -I$(GMP)/../include
 PFLAGS += -DPVN_GMP=1
 endif # GMP
 
@@ -330,12 +321,12 @@ LDFLAGS += -Wl,--sort-common -Wl,--warn-common
 endif # ?Darwin
 LNK=
 ifdef SLEEF
-LNK += -L$(SLEEF)/$(LIB64)
+LNK += -L$(SLEEF)
 ifeq ($(OS),Darwin)
-LNK += -Wl,-rpath,$(SLEEF)/$(LIB64)
+LNK += -Wl,-rpath,$(SLEEF)
 else # !Darwin
 ifndef STATIC
-LNK += -Wl,-rpath=$(SLEEF)/$(LIB64)
+LNK += -Wl,-rpath=$(SLEEF)
 endif # !STATIC
 endif # ?Darwin
 ifeq ($(sleef),0)
@@ -344,34 +335,34 @@ endif # ?sleef
 LNK += -lsleef -ltlfloat
 endif # SLEEF
 ifdef MPC
-LNK += -L$(MPC)/$(LIB64)
+LNK += -L$(MPC)
 ifeq ($(OS),Darwin)
-LNK += -Wl,-rpath,$(MPC)/$(LIB64)
+LNK += -Wl,-rpath,$(MPC)
 else # !Darwin
 ifndef STATIC
-LNK += -Wl,-rpath=$(MPC)/$(LIB64)
+LNK += -Wl,-rpath=$(MPC)
 endif # !STATIC
 endif # ?Darwin
 LNK += -lmpc
 endif # MPC
 ifdef MPFR
-LNK += -L$(MPFR)/$(LIB64)
+LNK += -L$(MPFR)
 ifeq ($(OS),Darwin)
-LNK += -Wl,-rpath,$(MPFR)/$(LIB64)
+LNK += -Wl,-rpath,$(MPFR)
 else # !Darwin
 ifndef STATIC
-LNK += -Wl,-rpath=$(MPFR)/$(LIB64)
+LNK += -Wl,-rpath=$(MPFR)
 endif # !STATIC
 endif # ?Darwin
 LNK += -lmpfr
 endif # MPFR
 ifdef GMP
-LNK += -L$(GMP)/$(LIB64)
+LNK += -L$(GMP)
 ifeq ($(OS),Darwin)
-LNK += -Wl,-rpath,$(GMP)/$(LIB64)
+LNK += -Wl,-rpath,$(GMP)
 else # !Darwin
 ifndef STATIC
-LNK += -Wl,-rpath=$(GMP)/$(LIB64)
+LNK += -Wl,-rpath=$(GMP)
 endif # !STATIC
 endif # ?Darwin
 LNK += -lgmp
@@ -445,7 +436,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [LIB64=lib|lib64] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-S|-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-S|-s] [all|clean|help]"
 
 libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
