@@ -1591,7 +1591,7 @@ static int mpq_nrm1(mpfr_t r, const size_t n, const _Float128 *const x)
   if (!n || !x)
     return 0;
   if (n == (size_t)1u) {
-    (void)mpfr_setFloat128(r, fabsq(*x), MPFR_RNDN);
+    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
     return 1;
   }
   int fl = 0, fr = 0;
@@ -1599,8 +1599,8 @@ static int mpq_nrm1(mpfr_t r, const size_t n, const _Float128 *const x)
   (void)mpfr_init(ml);
   (void)mpfr_init(mr);
   if (n == (size_t)2u) {
-    (void)mpfr_setFloat128(ml, fabsq(x[0u]), MPFR_RNDN);
-    (void)mpfr_setFloat128(mr, fabsq(x[1u]), MPFR_RNDN);
+    (void)mpfr_set_float128(ml, fabsq(x[0u]), MPFR_RNDN);
+    (void)mpfr_set_float128(mr, fabsq(x[1u]), MPFR_RNDN);
     (void)mpfr_add(r, ml, mr, MPFR_RNDN);
   }
   else {
@@ -1622,7 +1622,7 @@ static int mpq_nrmf(mpfr_t r, const size_t n, const _Float128 *const x)
   if (!n || !x)
     return 0;
   if (n == (size_t)1u) {
-    (void)mpfr_setFloat128(r, fabsq(*x), MPFR_RNDN);
+    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
     return 1;
   }
   int fl = 0, fr = 0;
@@ -1630,8 +1630,8 @@ static int mpq_nrmf(mpfr_t r, const size_t n, const _Float128 *const x)
   (void)mpfr_init(ml);
   (void)mpfr_init(mr);
   if (n == (size_t)2u) {
-    (void)mpfr_setFloat128(ml, x[0u], MPFR_RNDN);
-    (void)mpfr_setFloat128(mr, x[1u], MPFR_RNDN);
+    (void)mpfr_set_float128(ml, x[0u], MPFR_RNDN);
+    (void)mpfr_set_float128(mr, x[1u], MPFR_RNDN);
   }
   else {
     const size_t nl = ((n >> 1u) + (n & (size_t)1u));
@@ -1652,7 +1652,7 @@ static int mpq_nrmp(mpfr_t r, const _Float128 p, const size_t n, const _Float128
   if (!n || !x)
     return 0;
   if (n == (size_t)1u) {
-    (void)mpfr_setFloat128(r, fabsq(*x), MPFR_RNDN);
+    (void)mpfr_set_float128(r, fabsq(*x), MPFR_RNDN);
     return 1;
   }
   int fl = 0, fr = 0;
@@ -1660,17 +1660,17 @@ static int mpq_nrmp(mpfr_t r, const _Float128 p, const size_t n, const _Float128
   (void)mpfr_init(mp);
   (void)mpfr_init(ml);
   (void)mpfr_init(mr);
-  (void)mpfr_setFloat128(mp, (p * 0.5q), MPFR_RNDN);
+  (void)mpfr_set_float128(mp, (p * 0.5q), MPFR_RNDN);
   if (n == (size_t)2u) {
     const _Float128 xl = fabsq(x[0u]);
     const _Float128 xr = fabsq(x[1u]);
     if (xl < xr) {
-      (void)mpfr_setFloat128(ml, xr, MPFR_RNDN);
-      (void)mpfr_setFloat128(mr, xl, MPFR_RNDN);
+      (void)mpfr_set_float128(ml, xr, MPFR_RNDN);
+      (void)mpfr_set_float128(mr, xl, MPFR_RNDN);
     }
     else {
-      (void)mpfr_setFloat128(ml, xl, MPFR_RNDN);
-      (void)mpfr_setFloat128(mr, xr, MPFR_RNDN);
+      (void)mpfr_set_float128(ml, xl, MPFR_RNDN);
+      (void)mpfr_set_float128(mr, xr, MPFR_RNDN);
     }
   }
   else {
@@ -1755,14 +1755,14 @@ _Float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const _Float128 *const p, const si
   (void)mpfr_init(mx);
   if (*p == 1.0q) {
     for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_setFloat128(mx, x[i], MPFR_RNDN);
+      (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
       (void)mpfr_add(mf, mf, mx, MPFR_RNDN);
     }
   }
   else if (*p == 2.0q) {
     for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_setFloat128(mx, x[i], MPFR_RNDN);
+      (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
       (void)mpfr_fma(mf, mx, mx, mf, MPFR_RNDN);
     }
     (void)mpfr_sqrt(mf, mf, MPFR_RNDN);
@@ -1770,9 +1770,9 @@ _Float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const _Float128 *const p, const si
   else {
     mpfr_t mp;
     (void)mpfr_init(mp);
-    (void)mpfr_setFloat128(mf, *p, MPFR_RNDN);
+    (void)mpfr_set_float128(mf, *p, MPFR_RNDN);
     for (size_t i = 0u; i < m; ++i) {
-      (void)mpfr_setFloat128(mx, x[i], MPFR_RNDN);
+      (void)mpfr_set_float128(mx, x[i], MPFR_RNDN);
       (void)mpfr_abs(mx, mx, MPFR_RNDN);
       (void)mpfr_pow(mx, mx, mp, MPFR_RNDN);
       (void)mpfr_add(mf, mf, mx, MPFR_RNDN);
