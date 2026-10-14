@@ -1728,7 +1728,7 @@ _Float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const _Float128 *const p, const si
     l = mpq_nrmf(mf, *n, x);
   else
     l = mpq_nrmp(mf, *p, *n, x);
-  f = mpfr_getFloat128(mf, MPFR_RNDN);
+  f = mpfr_get_float128(mf, MPFR_RNDN);
   mpfr_clear(mf);
   return f;
 }
@@ -1781,7 +1781,7 @@ _Float128 PVN_FABI(pvn_mpq_nrmp,PVN_MPQ_NRMP)(const _Float128 *const p, const si
     (void)mpfr_pow(mf, mf, mp, MPFR_RNDN);
     mpfr_clear(mp);
   }
-  f = mpfr_getFloat128(mf, MPFR_RNDN);
+  f = mpfr_get_float128(mf, MPFR_RNDN);
   mpfr_clear(mx);
   mpfr_clear(mf);
   return f;
