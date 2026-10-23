@@ -31,19 +31,20 @@ The library has been successfully built using:
 | gcc(5)   | Linux   | x86_64   |
 | gcc(6)   | Linux   | ppc64le  |
 | icx(7)   | Linux   | x86_64   |
+| icx(7)   | Windows | x64      |
 | nvc(8)   | Linux   | x86_64   |
 
 Recent versions of the compilers have been provided by or used on:
-1. Homebrew (clang 23.1.3_1),
+1. Homebrew (clang 23.1.4),
 2. FreeBSD (clang 19.1.7),
 3. gcc.gnu.org (GCC 16.2.0),
 4. FreeBSD (GCC 14.2.0),
 5. openSUSE Tumbleweed (GCC 16.2.1),
 6. Fedora 45β (GCC 16.2.1),
-7. Intel oneAPI (2026.1.1),
+7. Intel oneAPI (2026.2.0),
 8. NVIDIA HPC SDK (26.9).
 
-GCC version is assumed to be at least 14.
+GCC version is assumed to be at least _14_.
 
 Examples of building the library:
 ```bash
