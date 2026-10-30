@@ -20,6 +20,24 @@ static inline void pvn_cmul(float *const cr, float *const ci, const float ar, co
   *ci = PVN_FABI(pvn_sdet,PVN_SDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
+/* C = A / B */
+/* rounding to nearest-even is assumed */
+/* the componentwise relative error should be bounded */
+
+static inline void pvn_cdiv(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
+{
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  float xd, xn;
+  int td, tn;
+  *ci = -bi;
+  *cr = PVN_FABI(pvn_sdet,PVN_SDET)(&br,  ci, &bi, &br, &xd, &td);
+  *cr = PVN_FABI(pvn_sdet,PVN_SDET)(&ar, &ai,  ci, &br, &xn, &tn);
+  *cr = __builtin_scalbnf((xn / xd), (tn - td));
+  *ci = PVN_FABI(pvn_sdet,PVN_SDET)(&ai, &ar, &bi, &br, &xn, &tn);
+  *ci = __builtin_scalbnf((xn / xd), (tn - td));
+}
+
 /* D = A * B + C */
 /* rounding to nearest-even is assumed */
 /* not correctly rounded, but unwarranted overflow should be avoided */
@@ -82,6 +100,20 @@ static inline void pvn_zmul(double *const cr, double *const ci, const double ar,
   *ci = PVN_FABI(pvn_ddet,PVN_DDET)(&ar,  ci, &br, &bi, &x, &t);
 }
 
+static inline void pvn_zdiv(double *const cr, double *const ci, const double ar, const double ai, const double br, const double bi)
+{
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  double xd, xn;
+  int td, tn;
+  *ci = -bi;
+  *cr = PVN_FABI(pvn_ddet,PVN_DDET)(&br,  ci, &bi, &br, &xd, &td);
+  *cr = PVN_FABI(pvn_ddet,PVN_DDET)(&ar, &ai,  ci, &br, &xn, &tn);
+  *cr = __builtin_scalbn((xn / xd), (tn - td));
+  *ci = PVN_FABI(pvn_ddet,PVN_DDET)(&ai, &ar, &bi, &br, &xn, &tn);
+  *ci = __builtin_scalbn((xn / xd), (tn - td));
+}
+
 static inline double pvn_xtpy(double x, int t, const double y)
 {
   if (t >= DBL_MAX_EXP) {
@@ -134,6 +166,20 @@ static inline void pvn_wmul(long double *const cr, long double *const ci, const 
   *ci = -ai;
   *cr = PVN_FABI(pvn_xdet,PVN_XDET)(&ar, &ai, &bi, &br, &x, &t);
   *ci = PVN_FABI(pvn_xdet,PVN_XDET)(&ar,  ci, &br, &bi, &x, &t);
+}
+
+static inline void pvn_wdiv(long double *const cr, long double *const ci, const long double ar, const long double ai, const long double br, const long double bi)
+{
+  PVN_ASSERT(cr);
+  PVN_ASSERT(ci);
+  long double xd, xn;
+  int td, tn;
+  *ci = -bi;
+  *cr = PVN_FABI(pvn_xdet,PVN_XDET)(&br,  ci, &bi, &br, &xd, &td);
+  *cr = PVN_FABI(pvn_xdet,PVN_XDET)(&ar, &ai,  ci, &br, &xn, &tn);
+  *cr = __builtin_scalbnl((xn / xd), (tn - td));
+  *ci = PVN_FABI(pvn_xdet,PVN_XDET)(&ai, &ar, &bi, &br, &xn, &tn);
+  *ci = __builtin_scalbnl((xn / xd), (tn - td));
 }
 
 static inline long double pvn_xtpyl(long double x, int t, const long double y)

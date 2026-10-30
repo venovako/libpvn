@@ -25,6 +25,9 @@ int main(int argc, char *argv[])
     pvn_zmul(&cr, &ci, ar, ai, br, bi);
     (void)printf("pvn_zmul=(%s,", pvn_dtoa(s, cr));
     (void)printf("%s)\n", pvn_dtoa(s, ci));
+    pvn_zdiv(&cr, &ci, ar, ai, br, bi);
+    (void)printf("pvn_zdiv=(%s,", pvn_dtoa(s, cr));
+    (void)printf("%s)\n", pvn_dtoa(s, ci));
   }
   return EXIT_SUCCESS;
 }

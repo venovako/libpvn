@@ -40,7 +40,7 @@ endif # ?STRICT
 else # !STRICT
 CFLAGS += -ffp-contract=fast
 CXXFLAGS += -ffp-contract=fast
-FCFLAGS += -ffp-contract=fast
+FCFLAGS += -ffp-contract=fast $(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 16 ]; then echo -fcx-method=stdc; fi)
 endif # ?STRICT
 FCFLAGS += -fprotect-parens
 ifndef VECLEN
