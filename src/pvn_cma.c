@@ -41,6 +41,15 @@ void PVN_FABI(pvn_cmul,PVN_CMUL)(float *const cr, float *const ci, const float *
   pvn_cmul(cr, ci, *ar, *ai, *br, *bi);
 }
 
+void PVN_FABI(pvn_cdiv,PVN_CDIV)(float *const cr, float *const ci, const float *const ar, const float *const ai, const float *const br, const float *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  pvn_cdiv(cr, ci, *ar, *ai, *br, *bi);
+}
+
 void PVN_FABI(pvn_cfma,PVN_CFMA)(float *const dr, float *const di, const float *const ar, const float *const ai, const float *const br, const float *const bi, const float *const cr, const float *const ci)
 {
   PVN_ASSERT(ar);
@@ -72,6 +81,15 @@ void PVN_FABI(pvn_zmul,PVN_ZMUL)(double *const cr, double *const ci, const doubl
   PVN_ASSERT(br);
   PVN_ASSERT(bi);
   pvn_zmul(cr, ci, *ar, *ai, *br, *bi);
+}
+
+void PVN_FABI(pvn_zdiv,PVN_ZDIV)(double *const cr, double *const ci, const double *const ar, const double *const ai, const double *const br, const double *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  pvn_zdiv(cr, ci, *ar, *ai, *br, *bi);
 }
 
 void PVN_FABI(pvn_zfma,PVN_ZFMA)(double *const dr, double *const di, const double *const ar, const double *const ai, const double *const br, const double *const bi, const double *const cr, const double *const ci)
@@ -107,6 +125,15 @@ void PVN_FABI(pvn_wmul,PVN_WMUL)(long double *const cr, long double *const ci, c
   pvn_wmul(cr, ci, *ar, *ai, *br, *bi);
 }
 
+void PVN_FABI(pvn_wdiv,PVN_WDIV)(long double *const cr, long double *const ci, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  pvn_wdiv(cr, ci, *ar, *ai, *br, *bi);
+}
+
 void PVN_FABI(pvn_wfma,PVN_WFMA)(long double *const dr, long double *const di, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci)
 {
   PVN_ASSERT(ar);
@@ -140,6 +167,15 @@ void PVN_FABI(pvn_ymul,PVN_YMUL)(_Float128 *const cr, _Float128 *const ci, const
   pvn_ymul(cr, ci, *ar, *ai, *br, *bi);
 }
 
+void PVN_FABI(pvn_ydiv,PVN_YDIV)(_Float128 *const cr, _Float128 *const ci, const _Float128 *const ar, const _Float128 *const ai, const _Float128 *const br, const _Float128 *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  pvn_ydiv(cr, ci, *ar, *ai, *br, *bi);
+}
+
 void PVN_FABI(pvn_yfma,PVN_YFMA)(_Float128 *const dr, _Float128 *const di, const _Float128 *const ar, const _Float128 *const ai, const _Float128 *const br, const _Float128 *const bi, const _Float128 *const cr, const _Float128 *const ci)
 {
   PVN_ASSERT(ar);
@@ -171,6 +207,15 @@ void PVN_FABI(pvn_ymul,PVN_YMUL)(long double *const cr, long double *const ci, c
   PVN_ASSERT(br);
   PVN_ASSERT(bi);
   pvn_wmul(cr, ci, *ar, *ai, *br, *bi);
+}
+
+void PVN_FABI(pvn_ydiv,PVN_YDIV)(long double *const cr, long double *const ci, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  pvn_wdiv(cr, ci, *ar, *ai, *br, *bi);
 }
 
 void PVN_FABI(pvn_yfma,PVN_YFMA)(long double *const dr, long double *const di, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci)
@@ -208,6 +253,15 @@ float complex PVN_FABI(pvn_mulc,PVN_MULC)(const float complex *const a, const fl
   return c;
 }
 
+float complex PVN_FABI(pvn_divc,PVN_DIVC)(const float complex *const a, const float complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  float complex c;
+  PVN_FABI(pvn_cdiv,PVN_CDIV)((float*)&c, (float*)&c + 1, (const float*)a, (const float*)a + 1, (const float*)b, (const float*)b + 1);
+  return c;
+}
+
 float complex PVN_FABI(pvn_fmac,PVN_FMAC)(const float complex *const a, const float complex *const b, const float complex *const c)
 {
   PVN_ASSERT(a);
@@ -235,6 +289,15 @@ double complex PVN_FABI(pvn_mulz,PVN_MULZ)(const double complex *const a, const 
   PVN_ASSERT(b);
   double complex c;
   PVN_FABI(pvn_zmul,PVN_ZMUL)((double*)&c, (double*)&c + 1, (const double*)a, (const double*)a + 1, (const double*)b, (const double*)b + 1);
+  return c;
+}
+
+double complex PVN_FABI(pvn_divz,PVN_DIVZ)(const double complex *const a, const double complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  double complex c;
+  PVN_FABI(pvn_zdiv,PVN_ZDIV)((double*)&c, (double*)&c + 1, (const double*)a, (const double*)a + 1, (const double*)b, (const double*)b + 1);
   return c;
 }
 
@@ -268,6 +331,15 @@ long double complex PVN_FABI(pvn_mulw,PVN_MULW)(const long double complex *const
   return c;
 }
 
+long double complex PVN_FABI(pvn_divw,PVN_DIVW)(const long double complex *const a, const long double complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  long double complex c;
+  PVN_FABI(pvn_wdiv,PVN_WDIV)((long double*)&c, (long double*)&c + 1, (const long double*)a, (const long double*)a + 1, (const long double*)b, (const long double*)b + 1);
+  return c;
+}
+
 long double complex PVN_FABI(pvn_fmaw,PVN_FMAW)(const long double complex *const a, const long double complex *const b, const long double complex *const c)
 {
   PVN_ASSERT(a);
@@ -298,6 +370,15 @@ _Float128 complex PVN_FABI(pvn_muly,PVN_MULY)(const _Float128 complex *const a, 
   return c;
 }
 
+_Float128 complex PVN_FABI(pvn_divy,PVN_DIVY)(const _Float128 complex *const a, const _Float128 complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  _Float128 complex c;
+  PVN_FABI(pvn_ydiv,PVN_YDIV)((_Float128*)&c, (_Float128*)&c + 1, (const _Float128*)a, (const _Float128*)a + 1, (const _Float128*)b, (const _Float128*)b + 1);
+  return c;
+}
+
 _Float128 complex PVN_FABI(pvn_fmay,PVN_FMAY)(const _Float128 complex *const a, const _Float128 complex *const b, const _Float128 complex *const c)
 {
   PVN_ASSERT(a);
@@ -324,6 +405,11 @@ long double complex PVN_FABI(pvn_muly,PVN_MULY)(const long double complex *const
   return PVN_FABI(pvn_mulw,PVN_MULW)(a, b);
 }
 
+long double complex PVN_FABI(pvn_divy,PVN_DIVY)(const long double complex *const a, const long double complex *const b)
+{
+  return PVN_FABI(pvn_divw,PVN_DIVW)(a, b);
+}
+
 long double complex PVN_FABI(pvn_fmay,PVN_FMAY)(const long double complex *const a, const long double complex *const b, const long double complex *const c)
 {
   return PVN_FABI(pvn_fmaw,PVN_FMAW)(a, b, c);
@@ -341,6 +427,14 @@ void PVN_FABI(pvn_mulc,PVN_MULC)(float complex *const c, const float complex *co
   PVN_ASSERT(b);
   PVN_ASSERT(c);
   PVN_FABI(pvn_cmul,PVN_CMUL)((float*)c, (float*)c + 1, (const float*)a, (const float*)a + 1, (const float*)b, (const float*)b + 1);
+}
+
+void PVN_FABI(pvn_divc,PVN_DIVC)(float complex *const c, const float complex *const a, const float complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_FABI(pvn_cdiv,PVN_CDIV)((float*)c, (float*)c + 1, (const float*)a, (const float*)a + 1, (const float*)b, (const float*)b + 1);
 }
 
 void PVN_FABI(pvn_fmac,PVN_FMAC)(float complex *const d, const float complex *const a, const float complex *const b, const float complex *const c)
@@ -370,6 +464,14 @@ void PVN_FABI(pvn_mulz,PVN_MULZ)(double complex *const c, const double complex *
   PVN_FABI(pvn_zmul,PVN_ZMUL)((double*)c, (double*)c + 1, (const double*)a, (const double*)a + 1, (const double*)b, (const double*)b + 1);
 }
 
+void PVN_FABI(pvn_divz,PVN_DIVZ)(double complex *const c, const double complex *const a, const double complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_FABI(pvn_zdiv,PVN_ZDIV)((double*)c, (double*)c + 1, (const double*)a, (const double*)a + 1, (const double*)b, (const double*)b + 1);
+}
+
 void PVN_FABI(pvn_fmaz,PVN_FMAZ)(double complex *const d, const double complex *const a, const double complex *const b, const double complex *const c)
 {
   PVN_ASSERT(a);
@@ -395,6 +497,14 @@ void PVN_FABI(pvn_mulw,PVN_MULW)(long double complex *const c, const long double
   PVN_ASSERT(b);
   PVN_ASSERT(c);
   PVN_FABI(pvn_wmul,PVN_WMUL)((long double*)c, (long double*)c + 1, (const long double*)a, (const long double*)a + 1, (const long double*)b, (const long double*)b + 1);
+}
+
+void PVN_FABI(pvn_divw,PVN_DIVW)(long double complex *const c, const long double complex *const a, const long double complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_FABI(pvn_wdiv,PVN_WDIV)((long double*)c, (long double*)c + 1, (const long double*)a, (const long double*)a + 1, (const long double*)b, (const long double*)b + 1);
 }
 
 void PVN_FABI(pvn_fmaw,PVN_FMAW)(long double complex *const d, const long double complex *const a, const long double complex *const b, const long double complex *const c)
@@ -424,6 +534,14 @@ void PVN_FABI(pvn_muly,PVN_MULY)(_Float128 complex *const c, const _Float128 com
   PVN_FABI(pvn_ymul,PVN_YMUL)((_Float128*)c, (_Float128*)c + 1, (const _Float128*)a, (const _Float128*)a + 1, (const _Float128*)b, (const _Float128*)b + 1);
 }
 
+void PVN_FABI(pvn_divy,PVN_DIVY)(_Float128 complex *const c, const _Float128 complex *const a, const _Float128 complex *const b)
+{
+  PVN_ASSERT(a);
+  PVN_ASSERT(b);
+  PVN_ASSERT(c);
+  PVN_FABI(pvn_ydiv,PVN_YDIV)((_Float128*)c, (_Float128*)c + 1, (const _Float128*)a, (const _Float128*)a + 1, (const _Float128*)b, (const _Float128*)b + 1);
+}
+
 void PVN_FABI(pvn_fmay,PVN_FMAY)(_Float128 complex *const d, const _Float128 complex *const a, const _Float128 complex *const b, const _Float128 complex *const c)
 {
   PVN_ASSERT(a);
@@ -446,6 +564,11 @@ void PVN_FABI(pvn_fmmay,PVN_FMMAY)(_Float128 complex *const e, const _Float128 c
 void PVN_FABI(pvn_muly,PVN_MULY)(long double complex *const c, const long double complex *const a, const long double complex *const b)
 {
   PVN_FABI(pvn_mulw,PVN_MULW)(c, a, b);
+}
+
+void PVN_FABI(pvn_divy,PVN_DIVY)(long double complex *const c, const long double complex *const a, const long double complex *const b)
+{
+  PVN_FABI(pvn_divw,PVN_DIVW)(c, a, b);
 }
 
 void PVN_FABI(pvn_fmay,PVN_FMAY)(long double complex *const d, const long double complex *const a, const long double complex *const b, const long double complex *const c)
