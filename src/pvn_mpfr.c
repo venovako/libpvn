@@ -21,30 +21,34 @@ int main(int argc, char *argv[])
 #else /* !PVN_TEST */
 int PVN_FABI(pvn_mpfr_start,PVN_MPFR_START)(mpfr_rnd_t *const rnd, mpfr_prec_t *const prec, mpfr_exp_t *const emin, mpfr_exp_t *const emax)
 {
-  PVN_ASSERT(rnd);
-  PVN_ASSERT(prec);
-  PVN_ASSERT(emin);
-  PVN_ASSERT(emax);
-  if (*rnd == __MPFR_RND_INVALID)
-    *rnd = mpfr_get_default_rounding_mode();
-  else if ((*rnd < MPFR_RNDN) || (*rnd > MPFR_RNDF))
-    return -1;
-  else
-    mpfr_set_default_rounding_mode(*rnd);
-  if (*prec == __MPFR_PREC_INVALID)
-    *prec = mpfr_get_default_prec();
-  else if ((*prec < MPFR_PREC_MIN) || (*prec > MPFR_PREC_MAX))
-    return -2;
-  else
-    mpfr_set_default_prec(*prec);
-  if (*emin == __MPFR_EXP_INVALID)
-    *emin = mpfr_get_emin_min();
-  if (mpfr_set_emin(*emin))
-    return 1;
-  if (*emax == __MPFR_EXP_INVALID)
-    *emax = mpfr_get_emax_max();
-  if (mpfr_set_emax(*emax))
-    return 2;
+  if (rnd) {
+    if (*rnd == __MPFR_RND_INVALID)
+      *rnd = mpfr_get_default_rounding_mode();
+    else if ((*rnd < MPFR_RNDN) || (*rnd > MPFR_RNDF))
+      return -1;
+    else
+      mpfr_set_default_rounding_mode(*rnd);
+  }
+  if (prec) {
+    if (*prec == __MPFR_PREC_INVALID)
+      *prec = mpfr_get_default_prec();
+    else if ((*prec < MPFR_PREC_MIN) || (*prec > MPFR_PREC_MAX))
+      return -2;
+    else
+      mpfr_set_default_prec(*prec);
+  }
+  if (emin) {
+    if (*emin == __MPFR_EXP_INVALID)
+      *emin = mpfr_get_emin_min();
+    if (mpfr_set_emin(*emin))
+      return 1;
+  }
+  if (emax) {
+    if (*emax == __MPFR_EXP_INVALID)
+      *emax = mpfr_get_emax_max();
+    if (mpfr_set_emax(*emax))
+      return 2;
+  }
   return 0;
 }
 

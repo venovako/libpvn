@@ -321,6 +321,7 @@ EXTERN_C _Float128 strtoflt128 (const char *s, char **sp);
 
 #ifdef PVN_GMP
 #include "gmp.h"
+#include "pvn_gmp.h"
 #endif /* PVN_GMP */
 #ifdef PVN_MPFR
 #ifdef PVN_QUADMATH
@@ -332,6 +333,7 @@ EXTERN_C _Float128 strtoflt128 (const char *s, char **sp);
 #endif /* PVN_MPFR */
 #ifdef PVN_MPC
 #include "mpc.h"
+#include "pvn_mpc.h"
 #endif /* PVN_MPC */
 
 static inline int pvn_le()

@@ -121,6 +121,7 @@ INCS += -I$(SLEEF)/../include
 PFLAGS += -DPVN_SLEEF=$(sleef)
 endif # SLEEF
 ifdef MPC
+SRCS += pvn_mpc.c
 INCS += -I$(MPC)/../include
 PFLAGS += -DPVN_MPC=1
 endif # MPC
@@ -130,6 +131,7 @@ INCS += -I$(MPFR)/../include
 PFLAGS += -DPVN_MPFR=1
 endif # MPFR
 ifdef GMP
+SRCS += pvn_gmp.c
 INCS += -I$(GMP)/../include
 PFLAGS += -DPVN_GMP=1
 endif # GMP
@@ -436,7 +438,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=0|1|2]] [STATIC=-S|-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=1|0|2]] [STATIC=-S|-s] [all|clean|help]"
 
 libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
