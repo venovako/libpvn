@@ -24,10 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C _Float128 cr_hypotq(_Float128 x, _Float128 y);
-
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
@@ -41,6 +37,10 @@ PVN_EXTERN_C _Float128 cr_hypotq(_Float128 x, _Float128 y);
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #endif
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C _Float128 cr_hypotq(_Float128 x, _Float128 y);
 
 typedef __int128 i128;
 typedef unsigned __int128 u128;

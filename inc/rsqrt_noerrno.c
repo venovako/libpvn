@@ -24,10 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C double cr_rsqrt(double x);
-
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
@@ -52,6 +48,10 @@ PVN_EXTERN_C double cr_rsqrt(double x);
 #if defined(_MSC_VER)
 #include <arm64intr.h>
 #endif
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C double cr_rsqrt(double x);
 
 typedef struct
 {

@@ -497,7 +497,7 @@ int PVN_FABI(pvn_zdet,PVN_ZDET)(const double *const a, const double *const b, co
   W = _mm512_maskz_scalef_pd(mC, X, S);
   X = _mm512_maskz_fmadd_pd(mC, W, E, F);
   mD = _kandn_mask8(mA, mB); /* !mA & mB */
-  W = _mm512_maskz_xor_pd(mD, fB, Z); /* Z = -fB {mD} */
+  W = _mm512_maskz_xor_pd(mD, fB, Z); /* W = -fB {mD} */
   X = _mm512_mask_mul_pd(X, mD, W, fC);
   T = _mm512_mask_mov_pd(T, mD, U);
   mD = _kandn_mask8(mB, mA); /* !mB & mA */

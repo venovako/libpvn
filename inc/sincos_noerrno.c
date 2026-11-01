@@ -24,10 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
-
 #include <stdint.h>
 #include <inttypes.h>
 #include <fenv.h> // for fegetround, FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, ...
@@ -41,6 +37,10 @@ PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 #endif
 
 #pragma STDC FENV_ACCESS ON
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C void cr_sincos(double x, double *s, double *c);
 
 /******************** code copied from dint.h and pow.[ch] *******************/
 

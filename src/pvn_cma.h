@@ -341,6 +341,13 @@ PVN_EXTERN_C void PVN_FABI(pvn_yfma,PVN_YFMA)(long double *const dr, long double
 PVN_EXTERN_C void PVN_FABI(pvn_yfmma,PVN_YFMMA)(long double *const er, long double *const ei, const long double *const ar, const long double *const ai, const long double *const br, const long double *const bi, const long double *const cr, const long double *const ci, const long double *const dr, const long double *const di);
 #endif /* ?PVN_QUADMATH */
 
+#ifdef __AVX512F__
+PVN_EXTERN_C void PVN_FABI(pvn_zmulc,PVN_ZMULC)(float *const cr, float *const ci, const float *const ar, const float *const ai, const float *const br, const float *const bi);
+PVN_EXTERN_C void PVN_FABI(pvn_zdivc,PVN_ZDIVC)(float *const cr, float *const ci, const float *const ar, const float *const ai, const float *const br, const float *const bi);
+PVN_EXTERN_C void PVN_FABI(pvn_zmulz,PVN_ZMULZ)(double *const cr, double *const ci, const double *const ar, const double *const ai, const double *const br, const double *const bi);
+PVN_EXTERN_C void PVN_FABI(pvn_zdivz,PVN_ZDIVZ)(double *const cr, double *const ci, const double *const ar, const double *const ai, const double *const br, const double *const bi);
+#endif /* __AVX512F__ */
+
 #if (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
 PVN_EXTERN_C float complex PVN_FABI(pvn_mulc,PVN_MULC)(const float complex *const a, const float complex *const b);
 PVN_EXTERN_C float complex PVN_FABI(pvn_divc,PVN_DIVC)(const float complex *const a, const float complex *const b);

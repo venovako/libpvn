@@ -29,10 +29,6 @@ SOFTWARE.
        Paul Zimmermann, https://inria.hal.science/hal-04480440, February 2024.
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C long double cr_rsqrtl(long double x);
-
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
@@ -44,6 +40,10 @@ PVN_EXTERN_C long double cr_rsqrtl(long double x);
 #endif
 
 #pragma STDC FENV_ACCESS ON
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C long double cr_rsqrtl(long double x);
 
 // anonymous structs, see https://port70.net/~nsz/c/c11/n1570.html#6.7.2.1p19
 typedef union {

@@ -24,10 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C float cr_powf(float x, float y);
-
 #include <stdint.h>
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
@@ -46,6 +42,10 @@ PVN_EXTERN_C float cr_powf(float x, float y);
 #endif
 
 #pragma STDC FENV_ACCESS ON
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C float cr_powf(float x, float y);
 
 typedef union {float f; uint32_t u;} b32u32_u;
 typedef union {double f; uint64_t u;} b64u64_u;

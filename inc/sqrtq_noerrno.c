@@ -24,10 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C _Float128 cr_sqrtq(_Float128 x);
-
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
@@ -43,6 +39,10 @@ PVN_EXTERN_C _Float128 cr_sqrtq(_Float128 x);
 #endif
 
 //#pragma STDC FENV_ACCESS ON
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C _Float128 cr_sqrtq(_Float128 x);
 
 typedef __int128 i128;
 typedef unsigned __int128 u128;

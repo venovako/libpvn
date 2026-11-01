@@ -54,10 +54,6 @@ SOFTWARE.
    This code corresponds to reference [5].       
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C double cr_pow(double x, double y);
-
 #include <stdio.h> // needed in case of rounding-test failure
 #include <stdint.h>
 #include <stdlib.h> // for exit
@@ -80,6 +76,10 @@ PVN_EXTERN_C double cr_pow(double x, double y);
 #endif
 
 #pragma STDC FENV_ACCESS ON
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C double cr_pow(double x, double y);
 
 #ifndef POW_ITERATION
 #define POW_ITERATION 15

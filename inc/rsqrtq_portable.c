@@ -31,15 +31,15 @@ SOFTWARE.
 
 #pragma STDC FENV_ACCESS ON
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C _Float128 cr_rsqrtq(_Float128 x);
-
 #ifdef CORE_MATH_SUPPORT_ERRNO
 #include <errno.h>
 #endif
 #include <fenv.h> // for feraiseexcept, FE_INVALID, FE_INEXACT
 #include <stdint.h>
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C _Float128 cr_rsqrtq(_Float128 x);
 
 typedef __int128 i128;
 typedef unsigned __int128 u128;

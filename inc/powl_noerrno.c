@@ -35,10 +35,6 @@ SOFTWARE.
        vol. 58, nb. 2, pages 197-207, 2009.
  */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C long double cr_powl(long double x, long double y);
-
 #include <stdint.h>
 #include <fenv.h> // for FE_TONEAREST, FE_UPWARD, FE_DOWNWARD, ...
 #include <stdbool.h>
@@ -102,6 +98,11 @@ typedef union {
 } b64u64_t;
 
 #include "qint_powl.h"
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C long double cr_powl(long double x, long double y);
+
 static inline int get_rounding_mode (void)
 {
 #if defined(__x86_64__)

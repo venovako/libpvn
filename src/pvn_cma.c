@@ -243,6 +243,78 @@ void PVN_FABI(pvn_yfmma,PVN_YFMMA)(long double *const er, long double *const ei,
 }
 #endif /* ?PVN_QUADMATH */
 
+#ifdef __AVX512F__
+void PVN_FABI(pvn_zmulc,PVN_ZMULC)(float *const cr, float *const ci, const float *const ar, const float *const ai, const float *const br, const float *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  alignas(64) float x[16];
+  alignas(64) int t[16];
+  _mm512_storeu_ps(cr, _mm512_xor_ps(_mm512_loadu_ps(ai), _mm512_set1_ps(-0.0f)));
+  (void)PVN_FABI(pvn_zdetf,PVN_ZDETF)(ar, cr, br, bi, x, t, ci);
+  (void)PVN_FABI(pvn_zdetf,PVN_ZDETF)(ar, ai, bi, br, x, t, cr);
+}
+
+void PVN_FABI(pvn_zdivc,PVN_ZDIVC)(float *const cr, float *const ci, const float *const ar, const float *const ai, const float *const br, const float *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  alignas(64) float xd[16], xn[16];
+  alignas(64) int td[16], tn[16];
+  _mm512_storeu_ps(cr, _mm512_xor_ps(_mm512_loadu_ps(bi), _mm512_set1_ps(-0.0f)));
+  (void)PVN_FABI(pvn_zdetf,PVN_ZDETF)(br, cr, bi, br, xd, td, ci);
+  register const __m512 _xd = _mm512_load_ps(xd);
+  register const __m512i _td = _mm512_load_epi32(td);
+  (void)PVN_FABI(pvn_zdetf,PVN_ZDETF)(ar, ai, cr, br, xn, tn, ci);
+  register __m512 _xn = _mm512_load_ps(xn);
+  register __m512i _tn = _mm512_load_epi32(tn);
+  _mm512_storeu_ps(cr, _mm512_scalef_ps(_mm512_div_ps(_xn, _xd), _mm512_cvtepi32_ps(_mm512_sub_epi32(_tn, _td))));
+  (void)PVN_FABI(pvn_zdetf,PVN_ZDETF)(ai, ar, bi, br, xn, tn, ci);
+  _xn = _mm512_load_ps(xn);
+  _tn = _mm512_load_epi32(tn);
+  _mm512_storeu_ps(ci, _mm512_scalef_ps(_mm512_div_ps(_xn, _xd), _mm512_cvtepi32_ps(_mm512_sub_epi32(_tn, _td))));
+}
+
+void PVN_FABI(pvn_zmulz,PVN_ZMULZ)(double *const cr, double *const ci, const double *const ar, const double *const ai, const double *const br, const double *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  alignas(64) double x[8];
+  alignas(32) int t[8];
+  _mm512_storeu_pd(cr, _mm512_xor_pd(_mm512_loadu_pd(ai), _mm512_set1_pd(-0.0)));
+  (void)PVN_FABI(pvn_zdet,PVN_ZDET)(ar, cr, br, bi, x, t, ci);
+  (void)PVN_FABI(pvn_zdet,PVN_ZDET)(ar, ai, bi, br, x, t, cr);
+}
+
+void PVN_FABI(pvn_zdivz,PVN_ZDIVZ)(double *const cr, double *const ci, const double *const ar, const double *const ai, const double *const br, const double *const bi)
+{
+  PVN_ASSERT(ar);
+  PVN_ASSERT(ai);
+  PVN_ASSERT(br);
+  PVN_ASSERT(bi);
+  alignas(64) double xd[8], xn[8];
+  alignas(32) int td[8], tn[8];
+  _mm512_storeu_pd(cr, _mm512_xor_pd(_mm512_loadu_pd(bi), _mm512_set1_pd(-0.0)));
+  (void)PVN_FABI(pvn_zdet,PVN_ZDET)(br, cr, bi, br, xd, td, ci);
+  register const __m512d _xd = _mm512_load_pd(xd);
+  register const __m256i _td = _mm256_load_si256((__m256i*)td);
+  (void)PVN_FABI(pvn_zdet,PVN_ZDET)(ar, ai, cr, br, xn, tn, ci);
+  register __m512d _xn = _mm512_load_pd(xn);
+  register __m256i _tn = _mm256_load_si256((__m256i*)tn);
+  _mm512_storeu_pd(cr, _mm512_scalef_pd(_mm512_div_pd(_xn, _xd), _mm512_cvtepi32_pd(_mm256_sub_epi32(_tn, _td))));
+  (void)PVN_FABI(pvn_zdet,PVN_ZDET)(ai, ar, bi, br, xn, tn, ci);
+  _xn = _mm512_load_pd(xn);
+  _tn = _mm256_load_si256((__m256i*)tn);
+  _mm512_storeu_pd(ci, _mm512_scalef_pd(_mm512_div_pd(_xn, _xd), _mm512_cvtepi32_pd(_mm256_sub_epi32(_tn, _td))));
+}
+#endif /* __AVX512F__ */
+
 #if (defined(__GNUC__) && !defined(__clang__) && !defined(__NVCOMPILER))
 float complex PVN_FABI(pvn_mulc,PVN_MULC)(const float complex *const a, const float complex *const b)
 {

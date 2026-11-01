@@ -28,10 +28,6 @@ SOFTWARE.
    format.
 */
 
-/* modified by venovako */
-#include "pvn_ext.h"
-PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
-
 #include <stdint.h>
 #include <fenv.h> // for fexcept_t, fegetexceptflag, FE_INEXACT
 #include <errno.h>
@@ -48,6 +44,10 @@ typedef unsigned __int128 u128;
 #endif
 
 #pragma STDC FENV_ACCESS ON
+
+/* modified by venovako */
+#include "pvn_ext.h"
+PVN_EXTERN_C long double cr_hypotl(long double x, long double y);
 
 typedef union {long double f; struct {uint64_t m; uint16_t e;};} b80u80_t;
 
