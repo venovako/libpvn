@@ -31,11 +31,10 @@ int PVN_FABI(pvn_ran_open,PVN_RAN_OPEN)()
 
 int PVN_FABI(pvn_ran_close,PVN_RAN_CLOSE)(const int *const u)
 {
-  PVN_ASSERT(u);
 #if (defined(__RDRND__) && !defined(__NVCOMPILER))
-  return ((*u < 0) ? -1 : 0);
+  return (u ? ((*u < 0) ? -1 : 0) : -1);
 #else /* !__RDRND__ */
-  return close(*u);
+  return (u ? close(*u) : -1);
 #endif /* ?__RDRND__ */
 }
 
@@ -172,6 +171,23 @@ double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
     r = __builtin_nan("");
 #endif /* ?__RDRND__ */
   return r;
+}
+
+double PVN_FABI(pvn_ran_d,PVN_RAN_D)(const int *const u)
+{
+  PVN_ASSERT(u);
+  double s = __builtin_nan("");
+  while (!isnormal(s)) {
+    if (!PVN_FABI(pvn_ran_64,PVN_RAN_64)(u, (uint64_t*)&s))
+      return s;
+  }
+  int e = 0;
+  s = __builtin_frexp(s, &e);
+  if ((e >= 511) || (e <= -485)) {
+    e /= 2;
+    s = __builtin_scalbn(s, e);
+  }
+  return s;
 }
 
 long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const int *const p)
