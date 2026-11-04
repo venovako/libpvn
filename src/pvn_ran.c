@@ -184,9 +184,8 @@ double PVN_FABI(pvn_ran_d,PVN_RAN_D)(const int *const u)
   }
   int e = 0;
   s = __builtin_frexp(s, &e);
-  e = ((e - DBL_MIN_EXP) % (FLT_MAX_EXP - FLT_MIN_EXP)) + FLT_MIN_EXP;
-  s = __builtin_scalbn(s, e);
-  return s;
+  e = ((e - DBL_MIN_EXP) % (FLT_MAX_EXP - FLT_MIN_EXP + 1)) + FLT_MIN_EXP;
+  return (s = __builtin_scalbn(s, e));
 }
 
 long double PVN_FABI(pvn_ran_safe_l,PVN_RAN_SAFE_L)(const int *const u, const int *const p)
