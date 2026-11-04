@@ -173,6 +173,7 @@ double PVN_FABI(pvn_ran,PVN_RAN)(const int *const u)
   return r;
 }
 
+/* a random double within the float range */
 double PVN_FABI(pvn_ran_d,PVN_RAN_D)(const int *const u)
 {
   PVN_ASSERT(u);
@@ -183,10 +184,8 @@ double PVN_FABI(pvn_ran_d,PVN_RAN_D)(const int *const u)
   }
   int e = 0;
   s = __builtin_frexp(s, &e);
-  if ((e >= 511) || (e <= -485)) {
-    e /= 2;
-    s = __builtin_scalbn(s, e);
-  }
+  e = ((e - DBL_MIN_EXP) % (FLT_MAX_EXP - FLT_MIN_EXP)) + FLT_MIN_EXP;
+  s = __builtin_scalbn(s, e);
   return s;
 }
 
