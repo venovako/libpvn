@@ -22,7 +22,8 @@ static inline void pvn_cmul(float *const cr, float *const ci, const float ar, co
 
 /* C = A / B */
 /* rounding to nearest-even is assumed */
-/* the componentwise relative error should be bounded */
+/* the componentwise relative error should be bounded
+   (barring overflow or underflow of the results) */
 
 static inline void pvn_cdiv(float *const cr, float *const ci, const float ar, const float ai, const float br, const float bi)
 {
