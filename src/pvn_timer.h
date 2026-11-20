@@ -110,7 +110,8 @@ static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long rem[stat
 {
   unsigned long long hz = 0ull;
   unsigned eax = 0u, ebx = 0u, ecx = 0u, edx = 0u;
-  if ((*rem = (unsigned long long)__get_cpuid(0x15u, &eax, &ebx, &ecx, &edx)) && eax) {
+  if ((*rem = (unsigned long long)__get_cpuid(0x15u, &eax, &ebx, &ecx, &edx)) && eax && ebx && ecx) {
+    /* ecx * (ebx / eax) = (ecx * ebx) / eax */
     const unsigned long long num = (unsigned long long)ebx * (unsigned long long)ecx;
     *rem = (unsigned long long)eax;
     hz = num / *rem;
