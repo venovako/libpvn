@@ -123,6 +123,8 @@ static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long rem[stat
       hz = (unsigned long long)eax * 1000000ull;
       *rem = (unsigned long long)ebx * 1000000ull + (unsigned long long)ecx;
     }
+    else /* set the TSC_FREQ_HZ environment variable to the refined TSC clocksource calibration value from `dmesg` */
+      hz = (unsigned long long)pvn_atoz(getenv("TSC_FREQ_HZ"));
   }
   return hz;
 }
