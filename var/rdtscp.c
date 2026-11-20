@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <cpuid.h>
 
-#ifndef __RDTSCP__
-#error __RDTSCP__ not defined
-#endif /* !__RDTSCP__ */
+#ifndef __RDTSC__
+#error __RDTSC__ not defined
+#endif /* !__RDTSC__ */
 
 static inline unsigned long long rdtsc_beg(unsigned aux[static restrict 1])
 {
