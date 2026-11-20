@@ -126,9 +126,14 @@ static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long rem[stat
   return hz;
 }
 
+static inline long double pvn_tsc_sec(const unsigned long long freq_hz, const unsigned long long dif)
+{
+  return (dif ? ((long double)dif / (long double)freq_hz) : 0.0L);
+}
+
 static inline long double pvn_tsc_lap(const unsigned long long freq_hz, const unsigned long long beg, const unsigned long long end)
 {
-  return ((end >= beg) ? ((end == beg) ? 0.0L : ((long double)(end - beg) / (long double)freq_hz)) : __builtin_nanl(""));
+  return ((end >= beg) ? pvn_tsc_sec(freq_hz, (end - beg)) : __builtin_nanl(""));
 }
 #endif /* !__NVCOMPILER && __x86_64__ */
 
