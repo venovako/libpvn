@@ -84,7 +84,7 @@ static inline long long pvn_time_mono_res()
   return (clock_getres(PVN_CLOCK_MONOTONIC, &t) ? -1ll : pvn_t2ns(&t));
 }
 
-#ifdef __x86_64__
+#if !defined(__NVCOMPILER) && defined(__x86_64__)
 #include <cpuid.h>
 
 static inline unsigned long long pvn_rdtsc_beg(unsigned aux[static restrict 1])
@@ -130,7 +130,7 @@ static inline long double pvn_tsc_lap(const unsigned long long freq_hz, const un
 {
   return ((end >= beg) ? ((end == beg) ? 0.0L : ((long double)(end - beg) / (long double)freq_hz)) : __builtin_nanl(""));
 }
-#endif /* __x86_64__ */
+#endif /* !__NVCOMPILER && __x86_64__ */
 
 PVN_EXTERN_C long long PVN_FABI(pvn_time_real_us,PVN_TIME_REAL_US)();
 PVN_EXTERN_C long long PVN_FABI(pvn_time_thread_ns,PVN_TIME_THREAD_NS)();
