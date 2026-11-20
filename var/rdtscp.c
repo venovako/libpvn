@@ -38,6 +38,11 @@ static inline long long tsc_get_freq_hz(lldiv_t qr[static restrict 1])
   return (qr->quot);
 }
 
+static inline long double tsc_lap(const long long freq_hz, const unsigned long long beg, const unsigned long long end)
+{
+  return ((freq_hz > 0ll) ? ((end >= beg) ? ((long double)(end - beg) / (long double)freq_hz) : __builtin_nanl("")) : __builtin_nanl(""));
+}
+
 int main()
 {
   lldiv_t qr;
@@ -48,11 +53,12 @@ int main()
   (void)printf("Max. freq [MHz] = %d\n", maxF);
   (void)printf("Bus  freq [MHz] = %d\n", busF);
   (void)printf("CPUID 0x16 = %d\n", res);
-  (void)printf("CPUID 0x15 [Hz] = %lld (%lld, %lld)\n", hz, qr.quot, qr.rem);
-  unsigned aux = 0u;
-  (void)printf("beg = %llu (", rdtsc_beg(&aux));
-  (void)printf("%u)\n", aux);
-  (void)printf("end = %llu (", rdtsc_end(&aux));
-  (void)printf("%u)\n", aux);
+  (void)printf("CPUID 0x15 [Hz] = %lld (%lld)\n", hz, qr.rem);
+  const unsigned long long beg = rdtsc_beg((unsigned*)&res);
+  (void)printf("beg = %llu (%u)\n", beg, res);
+  const unsigned long long end = rdtsc_end((unsigned*)&res);
+  (void)printf("end = %llu (%u)\n", end, res);
+  const long double lap = tsc_lap(hz, beg, end);
+  (void)printf("lap = %#.9LF [s]\n", lap);
   return EXIT_SUCCESS;
 }
