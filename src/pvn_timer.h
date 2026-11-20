@@ -84,6 +84,54 @@ static inline long long pvn_time_mono_res()
   return (clock_getres(PVN_CLOCK_MONOTONIC, &t) ? -1ll : pvn_t2ns(&t));
 }
 
+#ifdef __x86_64__
+#include <cpuid.h>
+
+static inline unsigned long long pvn_rdtsc_beg(unsigned aux[static restrict 1])
+{
+  _mm_mfence();
+  return (unsigned long long)__rdtscp(aux);
+}
+
+static inline unsigned long long pvn_rdtsc_end(unsigned aux[static restrict 1])
+{
+  const unsigned long long tsc = (unsigned long long)__rdtscp(aux);
+  _mm_lfence();
+  return tsc;
+}
+
+static inline void pvn_cpu_get_freq_MHz(unsigned baseF[static restrict 1], unsigned maxF[static restrict 1], unsigned busF[static restrict 1], unsigned res[static restrict 1])
+{
+  *res = *busF = *maxF = *baseF = 0u;
+  *res = (unsigned)__get_cpuid(0x16u, baseF, maxF, busF, res);
+}
+
+static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long rem[static restrict 1])
+{
+  unsigned long long hz = 0ull;
+  unsigned eax = 0u, ebx = 0u, ecx = 0u, edx = 0u;
+  if ((*rem = (unsigned long long)__get_cpuid(0x15u, &eax, &ebx, &ecx, &edx)) && eax) {
+    const unsigned long long num = (unsigned long long)ebx * (unsigned long long)ecx;
+    *rem = (unsigned long long)eax;
+    hz = num / *rem;
+    *rem = num % *rem;
+  }
+  else {
+    pvn_cpu_get_freq_MHz(&eax, &ebx, &ecx, &edx);
+    if (edx) {
+      hz = (unsigned long long)eax * 1000000ull;
+      *rem = (unsigned long long)ebx * 1000000ull + (unsigned long long)ecx;
+    }
+  }
+  return hz;
+}
+
+static inline long double pvn_tsc_lap(const unsigned long long freq_hz, const unsigned long long beg, const unsigned long long end)
+{
+  return ((end >= beg) ? ((end == beg) ? 0.0L : ((long double)(end - beg) / (long double)freq_hz)) : __builtin_nanl(""));
+}
+#endif /* __x86_64__ */
+
 PVN_EXTERN_C long long PVN_FABI(pvn_time_real_us,PVN_TIME_REAL_US)();
 PVN_EXTERN_C long long PVN_FABI(pvn_time_thread_ns,PVN_TIME_THREAD_NS)();
 PVN_EXTERN_C long long PVN_FABI(pvn_time_thread_res,PVN_TIME_THREAD_RES)();
