@@ -42,7 +42,7 @@ Recent versions of the compilers have been provided by or used on:
 5. openSUSE Tumbleweed (GCC 16.2.1),
 6. Fedora 45 (GCC 16.2.1),
 7. Intel oneAPI (2026.2.0),
-8. NVIDIA HPC SDK (26.9).
+8. NVIDIA HPC SDK (26.11).
 
 GCC version is assumed to be at least _14_.
 
