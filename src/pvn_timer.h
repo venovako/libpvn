@@ -86,6 +86,9 @@ static inline long long pvn_time_mono_res()
 
 #if !defined(__NVCOMPILER) && defined(__x86_64__)
 #include <cpuid.h>
+#if defined(__clang__) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+#include <x86intrin.h>
+#endif /* Clang */
 
 static inline unsigned long long pvn_rdtsc_beg(unsigned aux[static restrict 1])
 {
