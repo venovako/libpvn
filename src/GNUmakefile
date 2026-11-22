@@ -405,13 +405,15 @@ else # !Darwin
 ifdef STATIC
 LNK += -static-libgcc
 else # !STATIC
+ifeq ($(findstring BSD,$(OS)),BSD)
+ifeq ($(COMPILER),gcc)
+LNK += -Wl,-rpath=/usr/local/lib/gcc$(shell $(CC) -dumpversion | cut -f1 -d.)
+endif # gcc
+endif # BSD
 LNK += -lgcc_s
 endif # ?STATIC
 endif # ?Darwin
 ifeq ($(findstring BSD,$(OS)),BSD)
-ifeq ($(COMPILER),gcc)
-LNK += -Wl,-rpath=/usr/local/lib/gcc14
-endif # gcc
 LNK += -lexecinfo -lelf
 endif # BSD
 LNK += -lpthread -lm
