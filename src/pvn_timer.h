@@ -156,9 +156,40 @@ static inline void pvn_cpu_get_freq_MHz(unsigned baseF[static restrict 1], unsig
 }
 
 static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long *const rem)
-{
+{ // Google & https://learn.arm.com/learning-paths/servers-and-cloud-computing/arm_pmu/assembly/
   uint64_t freq;
   asm volatile("mrs %0, cntfrq_el0" : "=r"(freq));
+  if (rem)
+    *rem = 0ull;
+  return (unsigned long long)freq;
+}
+#elif defined(__PPC__)
+#include <sys/platform/ppc.h>
+
+static inline unsigned long long pvn_rdtsc_beg(unsigned *const aux)
+{ // Google
+  const uint64_t val = __ppc_get_timebase();
+  if (aux)
+    *aux = 0u;
+  return (unsigned long long)val;
+}
+
+static inline unsigned long long pvn_rdtsc_end(unsigned *const aux)
+{ // Google
+  const uint64_t val = __ppc_get_timebase();
+  if (aux)
+    *aux = 0u;
+  return (unsigned long long)val;
+}
+
+static inline void pvn_cpu_get_freq_MHz(unsigned baseF[static restrict 1], unsigned maxF[static restrict 1], unsigned busF[static restrict 1], unsigned res[static restrict 1])
+{
+  *res = *busF = *maxF = *baseF = 0u;
+}
+
+static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long *const rem)
+{ // Google
+  const uint64_t freq = __ppc_get_timebase_freq();
   if (rem)
     *rem = 0ull;
   return (unsigned long long)freq;
