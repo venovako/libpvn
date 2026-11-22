@@ -131,6 +131,39 @@ static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long rem[stat
   }
   return hz;
 }
+#elif defined(__aarch64__)
+static inline unsigned long long pvn_rdtsc_beg(unsigned *const aux)
+{ // Google & https://learn.arm.com/learning-paths/servers-and-cloud-computing/arm_pmu/assembly/
+  uint64_t val;
+  asm volatile("isb; mrs %0, cntvct_el0" : "=r"(val));
+  if (aux)
+    *aux = 0u;
+  return (unsigned long long)val;
+}
+
+static inline unsigned long long pvn_rdtsc_end(unsigned *const aux)
+{ // Google & https://learn.arm.com/learning-paths/servers-and-cloud-computing/arm_pmu/assembly/
+  uint64_t val;
+  asm volatile("isb; mrs %0, cntvct_el0" : "=r"(val));
+  if (aux)
+    *aux = 0u;
+  return (unsigned long long)val;
+}
+
+static inline void pvn_cpu_get_freq_MHz(unsigned baseF[static restrict 1], unsigned maxF[static restrict 1], unsigned busF[static restrict 1], unsigned res[static restrict 1])
+{
+  *res = *busF = *maxF = *baseF = 0u;
+}
+
+static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long *const rem)
+{
+  uint64_t freq;
+  asm volatile("mrs %0, cntfrq_el0" : "=r"(freq));
+  if (rem)
+    *rem = 0ull;
+  return (unsigned long long)freq;
+}
+#endif /* arch */
 
 static inline long double pvn_tsc_sec(const unsigned long long freq_hz, const unsigned long long dif)
 {
@@ -141,7 +174,6 @@ static inline long double pvn_tsc_lap(const unsigned long long freq_hz, const un
 {
   return ((end >= beg) ? pvn_tsc_sec(freq_hz, (end - beg)) : __builtin_nanl(""));
 }
-#endif /* !__NVCOMPILER && __x86_64__ */
 
 PVN_EXTERN_C long long PVN_FABI(pvn_time_real_us,PVN_TIME_REAL_US)();
 PVN_EXTERN_C long long PVN_FABI(pvn_time_thread_ns,PVN_TIME_THREAD_NS)();
