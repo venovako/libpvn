@@ -152,8 +152,8 @@ static inline unsigned long long pvn_rdtsc_end(unsigned *const aux)
 
 static inline void pvn_cpu_get_freq_MHz(unsigned baseF[static restrict 1], unsigned maxF[static restrict 1], unsigned busF[static restrict 1], unsigned res[static restrict 1])
 {
-  *baseF = (unsigned)(pvn_atoz(getenv("TSC_FREQ_HZ")) / 1000000u);
-  *res = *busF = *maxF = 0u;
+  *busF = (unsigned)(pvn_atoz(getenv("TSC_FREQ_HZ")) / 1000000u);
+  *res = *maxF = *baseF = 0u;
 }
 
 static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long *const rem)
@@ -185,8 +185,8 @@ static inline unsigned long long pvn_rdtsc_end(unsigned *const aux)
 
 static inline void pvn_cpu_get_freq_MHz(unsigned baseF[static restrict 1], unsigned maxF[static restrict 1], unsigned busF[static restrict 1], unsigned res[static restrict 1])
 {
-  *baseF = (unsigned)(pvn_atoz(getenv("TSC_FREQ_HZ")) / 1000000u);
-  *res = *busF = *maxF = 0u;
+  *busF = (unsigned)(pvn_atoz(getenv("TSC_FREQ_HZ")) / 1000000u);
+  *res = *maxF = *baseF = 0u;
 }
 
 static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long *const rem)
@@ -213,8 +213,8 @@ static inline unsigned long long pvn_rdtsc_end(unsigned *const aux)
 
 static inline void pvn_cpu_get_freq_MHz(unsigned baseF[static restrict 1], unsigned maxF[static restrict 1], unsigned busF[static restrict 1], unsigned res[static restrict 1])
 {
-  *baseF = (unsigned)(pvn_atoz(getenv("TSC_FREQ_HZ")) / 1000000u);
-  *res = *busF = *maxF = 0u;
+  *busF = (unsigned)(pvn_atoz(getenv("TSC_FREQ_HZ")) / 1000000u);
+  *res = *maxF = *baseF = 0u;
 }
 
 static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long *const rem)
