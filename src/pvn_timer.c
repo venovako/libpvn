@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
   (void)printf("QueryPerformanceFrequency: %ld Hz.\n", (long)PVN_FABI(pvn_time_mono_freq,PVN_TIME_MONO_FREQ)());
 #else /* !_WIN32 */
   (void)printf("%s resolution: %lld ns.\n", ((PVN_CLOCK_MONOTONIC == CLOCK_MONOTONIC) ? "CLOCK_MONOTONIC" : "CLOCK_MONOTONIC_RAW"), pvn_time_mono_res());
-#if (!defined(__NVCOMPILER) && defined(__x86_64__)) || defined(__aarch64__) || defined(__PPC__)
   unsigned long long rem = 0ull;
   const unsigned long long hz = pvn_tsc_get_freq_Hz(&rem);
   unsigned baseF = 0u, maxF = 0u, busF = 0u, res = 0u;
@@ -27,7 +26,6 @@ int main(int argc, char *argv[])
   (void)printf("end = %llu (%u)\n", end, res);
   const long double lap = pvn_tsc_lap(hz, beg, end);
   (void)printf("lap = %#.9LF [s]\n", lap);
-#endif /* arch */
 #endif /* ?_WIN32 */
   return EXIT_SUCCESS;
 }
