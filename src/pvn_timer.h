@@ -85,11 +85,6 @@ static inline long long pvn_time_mono_res()
 }
 
 #if !defined(__NVCOMPILER) && defined(__x86_64__)
-#include <cpuid.h>
-#if defined(__clang__) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
-#include <x86intrin.h>
-#endif /* Clang */
-
 static inline unsigned long long pvn_rdtsc_beg(unsigned aux[static restrict 1])
 {
   _mm_mfence();
@@ -165,8 +160,6 @@ static inline unsigned long long pvn_tsc_get_freq_Hz(unsigned long long *const r
   return (unsigned long long)freq;
 }
 #elif defined(__PPC__)
-#include <sys/platform/ppc.h>
-
 static inline unsigned long long pvn_rdtsc_beg(unsigned *const aux)
 { // Google
   const uint64_t val = __ppc_get_timebase();

@@ -288,7 +288,14 @@ EXTERN_C _Float128 strtoflt128 (const char *s, char **sp);
 
 #ifdef __AVX__
 #include <immintrin.h>
+#include <cpuid.h>
+#if defined(__clang__) && !(defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+#include <x86intrin.h>
+#endif /* Clang */
 #endif /* __AVX__ */
+#ifdef __PPC__
+#include <sys/platform/ppc.h>
+#endif /* __PPC__ */
 
 #include "pvn_aux.h"
 #include "pvn_bio.h"

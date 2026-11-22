@@ -443,7 +443,6 @@ static inline _Float128 pvn_v1q_rsqrt(const _Float128 x)
 #endif /* PVN_QUADMATH */
 
 #if (defined(__AVX__) && defined(__FMA__))
-#include <immintrin.h>
 
 #if (defined(PVN_SLEEF) && (PVN_SLEEF > 0))
 #ifndef PVN_INTEL
