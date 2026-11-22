@@ -409,6 +409,9 @@ LNK += -lgcc_s
 endif # ?STATIC
 endif # ?Darwin
 ifeq ($(findstring BSD,$(OS)),BSD)
+ifeq ($(COMPILER),gcc)
+LNK += -Wl,-rpath=/usr/local/lib/gcc14
+endif # gcc
 LNK += -lexecinfo -lelf
 endif # BSD
 LNK += -lpthread -lm
