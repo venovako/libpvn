@@ -7,9 +7,9 @@ CLANG=$(CC)
 endif # !CLANG
 ifdef NDEBUG
 PFLAGS=-DNDEBUG=$(NDEBUG)
-CFLAGS=-O$(NDEBUG) -fno-math-errno
-CXXFLAGS=-O$(NDEBUG) -fno-math-errno
-FCFLAGS=-cpp -O$(NDEBUG)
+CFLAGS=-O$(NDEBUG) -fno-math-errno -fvectorize -fslp-vectorize
+CXXFLAGS=-O$(NDEBUG) -fno-math-errno -fvectorize -fslp-vectorize
+FCFLAGS=-cpp -O$(NDEBUG) -fvectorize -fslp-vectorize
 else # DEBUG
 PFLAGS=-DPVN_DEBUG=STDERR_FILENO
 CFLAGS=-Og -g
@@ -19,9 +19,9 @@ endif # ?NDEBUG
 ifeq ($(OS),Linux)
 PFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE
 endif # Linux
-CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -pthread -fvectorize -fslp-vectorize
-CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -pthread -fvectorize -fslp-vectorize
-FCFLAGS += -fPIC -pthread -fvectorize -fslp-vectorize -fimplicit-none -fstack-arrays
+CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -pthread
+CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -pthread
+FCFLAGS += -fPIC -pthread -fimplicit-none -fstack-arrays
 ifdef STRICT
 PFLAGS += -DPVN_STRICT=$(STRICT)
 CFLAGS += -ffp-model=strict -Wno-overriding-option
