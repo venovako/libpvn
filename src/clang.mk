@@ -50,7 +50,6 @@ FCFLAGS += -fno-omit-frame-pointer
 endif # !VECLEN
 CFLAGS += -Wno-overriding-option
 CXXFLAGS += -Wno-overriding-option
-FCFLAGS += -Wno-unused-command-line-argument
 ifdef OPENMP
 ifeq ($(OPENMP),cilk)
 PFLAGS += -DPVN_CILK=3
