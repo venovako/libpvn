@@ -43,7 +43,7 @@ Recent versions of the compilers have been provided by or used on:
 5. FreeBSD (GCC 14.2.0),
 6. openSUSE Tumbleweed (GCC 16.2.1),
 7. Fedora 45 (GCC 16.2.1),
-8. Intel oneAPI (2026.2.0),
+8. Intel oneAPI (2026.2.1),
 9. NVIDIA HPC SDK (26.11).
 
 GCC version is assumed to be at least _14_.
