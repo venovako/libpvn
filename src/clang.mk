@@ -22,10 +22,12 @@ endif # Linux
 CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -pthread
 CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -pthread
 FCFLAGS += -fPIC -pthread -fimplicit-none -fstack-arrays
+CFLAGS += -Wno-overriding-option
+CXXFLAGS += -Wno-overriding-option
 ifdef STRICT
 PFLAGS += -DPVN_STRICT=$(STRICT)
-CFLAGS += -ffp-model=strict -Wno-overriding-option
-CXXFLAGS += -ffp-model=strict -Wno-overriding-option
+CFLAGS += -ffp-model=strict
+CXXFLAGS += -ffp-model=strict
 ifeq ($(STRICT),0)
 CFLAGS += -ffp-contract=fast
 CXXFLAGS += -ffp-contract=fast
@@ -38,7 +40,7 @@ endif # ?STRICT
 else # !STRICT
 CFLAGS += -ffp-model=precise -ffp-contract=fast -fno-math-errno
 CXXFLAGS += -ffp-model=precise -ffp-contract=fast -fno-math-errno
-FCFLAGS += -ffp-model=precise -ffp-contract=fast
+FCFLAGS += -ffp-contract=fast
 endif # ?STRICT
 CFLAGS += -fprotect-parens
 CXXFLAGS += -fprotect-parens
