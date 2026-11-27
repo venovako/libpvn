@@ -14,7 +14,7 @@ Some functions have been adapted from those in the repositories [JACSD](https://
 A `getopt(3)`, `getopt_long(3)`, and `getopt_long_only(3)` implementation for Windows, in the `inc` subdirectory, has been modified from the [OpenBSD](https://www.openbsd.org) sources.
 
 Several correctly-rounded mathematical functions provided by the [CORE-MATH](https://core-math.gitlabpages.inria.fr) project are used.
-Their slightly modified implementations included here, in the `inc` subdirectory, will be taken if the `CR_MATH` make variable is not set.
+Their slightly modified implementations are included here, in the `inc` subdirectory.
 
 Some norm-related testers, results, and documentation has been *moved* to the [VecNrmP](https://github.com/venovako/VecNrmP) repository.
 
@@ -54,7 +54,7 @@ cd src
 # query the building options (GNU make is necessary)
 make help
 # the output should be something like:
-# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=ERR|OUT] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=1|0|2]] [STATIC=-S|-s] [all|clean|help]
+# make [COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=ERR|OUT] [VECLEN=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=1|0|2]] [STATIC=-S|-s] [all|clean|help]
 # where gcc is the default compiler to be used on Linux, and clang is otherwise
 #
 # a release build with icx on x86_64 Linux with a high optimization level
@@ -77,10 +77,6 @@ You might wish to tune the compiler flags to match yours, especially if you are 
 Fortran (column-major) array order is assumed for the functions that operate on matrices.
 All functions declared with `PVN_FABI` should be callable from Fortran without an explicit interface, just by declaring them `EXTERNAL`.
 If a Fortran-callable function takes a string as an argument, the string should be nul-terminated (e.g., by appending `c_null_char` to it).
-
-Setting the `CR_MATH` variable in a `[g]make` invocation to the cloned `core-math` source code directory path overrides the included choice of the CORE-MATH functions.
-If the object files have not been prepared beforehand, the source files will be compiled in either case.
-The object files will be integrated into `libpvn.so` and `libpvn.a` for easier re-use by other software linked with it.
 
 The `MARCH` option can be used to indicate another CPU architecture than `native` (for `clang` and `gcc`) or `Host` (for `icx`).
 

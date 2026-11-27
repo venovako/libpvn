@@ -179,36 +179,6 @@ ifdef VECLEN
 PFLAGS += -DPVN_VECLEN=$(VECLEN)
 endif # VECLEN
 
-ifdef CR_MATH
-ifdef NDEBUG
-PFLAGS += -DPVN_CR_MATH=2
-else # !NDEBUG
-PFLAGS += -DPVN_CR_MATH=4 -DCORE_MATH_SUPPORT_ERRNO
-endif # ?NDEBUG
-CR_SRCS= \
-$(realpath $(CR_MATH)/src/binary32/hypot/hypotf.c) \
-$(realpath $(CR_MATH)/src/binary32/pow/powf.c) \
-$(realpath $(CR_MATH)/src/binary32/rsqrt/rsqrtf.c) \
-$(realpath $(CR_MATH)/src/binary32/sincos/sincosf.c) \
-$(realpath $(CR_MATH)/src/binary64/hypot/hypot.c) \
-$(realpath $(CR_MATH)/src/binary64/pow/pow.c) \
-$(realpath $(CR_MATH)/src/binary64/rsqrt/rsqrt.c) \
-$(realpath $(CR_MATH)/src/binary64/sincos/sincos.c)
-ifdef QUADMATH
-CR_SRCS += \
-$(realpath $(CR_MATH)/src/binary128/rsqrt/hypotq.c) \
-$(realpath $(CR_MATH)/src/binary128/rsqrt/rsqrtq.c) \
-$(realpath $(CR_MATH)/src/binary128/sqrt/sqrtq.c)
-endif # QUADMATH
-ifeq ($(findstring 86,$(ARCH)),86)
-ifneq ($(findstring MINGW64,$(OS)),MINGW64)
-CR_SRCS += \
-$(realpath $(CR_MATH)/src/binary80/hypot/hypotl.c) \
-$(realpath $(CR_MATH)/src/binary80/pow/powl.c) \
-$(realpath $(CR_MATH)/src/binary80/rsqrt/rsqrtl.c)
-endif # !MINGW64
-endif # 86
-else # !CR_MATH
 ifdef NDEBUG
 PFLAGS += -DPVN_CR_MATH=1
 else # !NDEBUG
@@ -229,14 +199,10 @@ CR_SRCS += \
 ../inc/rsqrtq_noerrno.c \
 ../inc/sqrtq_noerrno.c
 else # !QUADMATH
-ifeq ($(COMPILER),gcc)
-ifneq ($(OS),Darwin)
 CR_SRCS += \
 ../inc/hypotq_portable.c \
 ../inc/rsqrtq_portable.c \
 ../inc/sqrtq_portable.c
-endif # !Darwin
-endif # gcc
 endif # ?QUADMATH
 ifeq ($(findstring 86,$(ARCH)),86)
 ifneq ($(findstring MINGW64,$(OS)),MINGW64)
@@ -246,7 +212,6 @@ CR_SRCS += \
 ../inc/rsqrtl_noerrno.c
 endif # !MINGW64
 endif # 86
-endif # ?CR_MATH
 CR_OBJS=$(CR_SRCS:.c=.o)
 
 ifdef OPENMP
@@ -443,7 +408,7 @@ all: $(LIBS) $(EXES)
 	@echo "BUILT: $(LIBS) $(EXES)"
 
 help:
-	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [CR_MATH=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=1|0|2]] [STATIC=-S|-s] [all|clean|help]"
+	@echo $(MAKE) "[COMPILER=clang|gcc|icx|nvc] [COMPILER_PREFIX=...] [COMPILER_SUFFIX=...] [NATIVE=...] [MARCH=...] [NDEBUG=0|1|2|3|...] [STRICT=0|1] [PRINTOUT=OUT|ERR] [VECLEN=...] [OPENMP=...] [PROFILE=...] [SAFE=...] [QUADMATH=...] [GMP=...] [MPFR=...] [MPC=...] [SLEEF=... [sleef=1|0|2]] [STATIC=-S|-s] [all|clean|help]"
 
 libpvn.a: $(OBJS) $(MKFS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
