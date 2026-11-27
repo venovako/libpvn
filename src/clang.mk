@@ -36,9 +36,9 @@ CXXFLAGS += -ffp-contract=on
 FCFLAGS += -ffp-contract=on
 endif # ?STRICT
 else # !STRICT
-CFLAGS += -ffp-model=precise -ffp-contract=fast
-CXXFLAGS += -ffp-model=precise -ffp-contract=fast
-FCFLAGS += -ffp-contract=fast
+CFLAGS += -ffp-model=precise -ffp-contract=fast -fno-math-errno
+CXXFLAGS += -ffp-model=precise -ffp-contract=fast -fno-math-errno
+FCFLAGS += -ffp-model=precise -ffp-contract=fast
 endif # ?STRICT
 CFLAGS += -fprotect-parens
 CXXFLAGS += -fprotect-parens
