@@ -27,10 +27,10 @@
 #endif /* ?_WIN32 */
 #endif /* !PVN_EXTERN_C */
 
-#if (defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__INTEL_COMPILER))
+#ifdef __clang__
 #ifndef _Float128
 #define _Float128 __float128
 #endif /* !_Float128 */
-#endif /* icx */
+#endif /* __clang__ */
 
 #endif /* !PVN_EXT_H */
