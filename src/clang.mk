@@ -22,8 +22,6 @@ endif # Linux
 CFLAGS += -std=gnu$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2y; else echo 18; fi) -fPIC -pthread
 CXXFLAGS += -std=gnu++$(shell if [ `$(CC) -dumpversion | cut -f1 -d.` -ge 19 ]; then echo 2c; else echo 2b; fi) -fPIC -pthread
 FCFLAGS += -fPIC -pthread -fimplicit-none -fstack-arrays
-CFLAGS += -Wno-overriding-option
-CXXFLAGS += -Wno-overriding-option
 ifdef STRICT
 PFLAGS += -DPVN_STRICT=$(STRICT)
 CFLAGS += -ffp-model=strict
@@ -50,6 +48,9 @@ CFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 CXXFLAGS += -fexceptions -fasynchronous-unwind-tables -fno-omit-frame-pointer
 FCFLAGS += -fno-omit-frame-pointer
 endif # !VECLEN
+CFLAGS += -Wno-overriding-option
+CXXFLAGS += -Wno-overriding-option
+FCFLAGS += -Wno-unused-command-line-argument
 ifdef OPENMP
 ifeq ($(OPENMP),cilk)
 PFLAGS += -DPVN_CILK=3
