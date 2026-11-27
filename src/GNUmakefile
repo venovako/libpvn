@@ -179,11 +179,6 @@ ifdef VECLEN
 PFLAGS += -DPVN_VECLEN=$(VECLEN)
 endif # VECLEN
 
-ifdef NDEBUG
-PFLAGS += -DPVN_CR_MATH=1
-else # !NDEBUG
-PFLAGS += -DPVN_CR_MATH=3 -DCORE_MATH_SUPPORT_ERRNO
-endif # ?NDEBUG
 CR_SRCS= \
 ../inc/hypotf_noerrno.c \
 ../inc/powf_noerrno.c \
@@ -212,8 +207,28 @@ CR_SRCS += \
 ../inc/hypotl_noerrno.c \
 ../inc/powl_noerrno.c \
 ../inc/rsqrtl_noerrno.c
-endif # !MINGW64
-endif # 86
+ifdef QUADMATH
+PFLAGS += -DPVN_CR_MATH=15
+else # !QUADMATH
+PFLAGS += -DPVN_CR_MATH=11
+endif # ?QUADMATH
+else # MINGW64
+ifdef QUADMATH
+PFLAGS += -DPVN_CR_MATH=7
+else # !QUADMATH
+PFLAGS += -DPVN_CR_MATH=3
+endif # ?QUADMATH
+endif # ?MINGW64
+else # !86
+ifeq ($(COMPILER),gcc)
+PFLAGS += -DPVN_CR_MATH=7
+else # !gcc
+PFLAGS += -DPVN_CR_MATH=3
+endif # ?gcc
+endif # ?86
+ifndef NDEBUG
+PFLAGS += -DCORE_MATH_SUPPORT_ERRNO
+endif # !NDEBUG
 CR_OBJS=$(CR_SRCS:.c=.o)
 
 ifdef OPENMP
