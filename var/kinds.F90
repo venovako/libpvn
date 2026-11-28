@@ -3,7 +3,7 @@ PROGRAM kinds
   USE, INTRINSIC :: iso_fortran_env
   IMPLICIT NONE
 
-#ifdef __GNUC__
+#ifdef __GFORTRAN__
   INTEGER, PARAMETER :: INT128 = 16
 #endif
   INTEGER :: CK, IK, LK, RK, I
